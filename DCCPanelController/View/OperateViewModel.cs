@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Models.DataModel;
@@ -73,13 +74,12 @@ public partial class OperateViewModel : ConnectionViewModel {
                 await SelectPanelAsync(CurrentPanelIndex);
             }
         } catch (Exception ex) {
-            Console.WriteLine($"Error in OnPropertyChanged '{e.PropertyName}:{ex.Message}");
+            Debug.WriteLine($"Error in OnPropertyChanged '{e.PropertyName}:{ex.Message}");
         }
     }
 
     public async void OnProfileChanged() {
         try {
-            Console.WriteLine("Profile has changed to: " + _profileService.ActiveProfile?.ProfileName);
             Panels = null;
             var profile = _profileService.ActiveProfile;
             Panels = profile?.Panels ?? throw new ApplicationException("OperateViewModel: Panels Collection should not be empty.");
@@ -87,7 +87,7 @@ public partial class OperateViewModel : ConnectionViewModel {
             HaveClosedWelcome = !ShowWelcomePage;
             await SelectPanelAsync(0);
         } catch (Exception e) {
-            Console.WriteLine("Error loading profile: " + e.Message);
+            Debug.WriteLine("Error loading profile: " + e.Message);
         }
     }
 
@@ -104,7 +104,7 @@ public partial class OperateViewModel : ConnectionViewModel {
         try {
             await SelectPanelAsync(CurrentPanelIndex);
         } catch {
-            Console.WriteLine("Error reselecting panel:  probably should never happen.");
+            Debug.WriteLine("Error reselecting panel:  probably should never happen.");
         }
     }
 
@@ -138,7 +138,7 @@ public partial class OperateViewModel : ConnectionViewModel {
             ShowWelcomePage = Panels?.Count <= 0 || !HaveClosedWelcome;
             RaiseAllProperties();
         } catch (Exception ex) {
-            Console.WriteLine("Error selecting panel: " + ex.Message);
+            Debug.WriteLine("Error selecting panel: " + ex.Message);
         }
     }
 

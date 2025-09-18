@@ -20,7 +20,6 @@ public partial class AppStateService : ObservableObject, INotifyPropertyChanged 
     [ObservableProperty] private Color _tabBarUnselectedColor = Colors.DarkGray;
 
     public AppStateService(ProfileService.ProfileService profileService) {
-        Console.WriteLine("AppStateService created");
         _profileService = profileService;
         _profileService.ActiveProfileChanged += OnActiveProfileChanged;
         _profileService.ActiveProfileDataChanged += OnActiveProfileDataChanged;
@@ -86,8 +85,6 @@ public partial class AppStateService : ObservableObject, INotifyPropertyChanged 
                     ShellUnselectedColor = Colors.DarkGray;
                 }
             }
-        } else {
-            Console.WriteLine("Proile Changed but not active profile. Do nothing");
         }
     }
 }

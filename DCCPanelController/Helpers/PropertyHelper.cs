@@ -1,3 +1,5 @@
+using System.Diagnostics;
+
 namespace DCCPanelController.Helpers;
 
 public static class PropertyHelper {
@@ -74,7 +76,7 @@ public static class PropertyHelper {
         try {
             property.SetValue(obj, enumValue);
         } catch (Exception e) {
-            Console.WriteLine($"Unable to set enum value '{enumValue}' on property '{propertyName}' of type {property.PropertyType.Name}: {e.Message}");
+            Debug.WriteLine($"Unable to set enum value '{enumValue}' on property '{propertyName}' of type {property.PropertyType.Name}: {e.Message}");
         }
     }
 

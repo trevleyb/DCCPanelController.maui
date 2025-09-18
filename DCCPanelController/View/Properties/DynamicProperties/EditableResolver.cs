@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Diagnostics;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.DataModel.Entities.Actions;
 
@@ -71,7 +72,7 @@ public sealed class EditableExtractorResolver : IEditorKindResolver {
         }
 
         // 5) fallback
-        Console.WriteLine($"No editor kind found for {t.Name}");
+        Debug.WriteLine($"No editor kind found for {t.Name}");
         return EditorKinds.Text;
     }
 

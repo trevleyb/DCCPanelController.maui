@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.Diagnostics;
 using DCCPanelController.Models.ViewModel.Interfaces;
 using DCCPanelController.Services;
 using DCCPanelController.Services.ProfileService;
@@ -61,7 +62,7 @@ public partial class OperatePage : ContentPage, INotifyPropertyChanged {
             await HelpService.Current.InitializeAsync();
             await Navigation.PushAsync(new HelpPage());
         } catch (Exception ex) {
-            Console.WriteLine($"Unable to load the Help system: {ex.Message}");
+            Debug.WriteLine($"Unable to load the Help system: {ex.Message}");
         }
     }
 
@@ -79,7 +80,7 @@ public partial class OperatePage : ContentPage, INotifyPropertyChanged {
                 await viewModel.SelectPanelAsync(0);
             }
         } catch (Exception ex) {
-            Console.WriteLine($"Unable to close the Help Welcome page: {ex.Message}");
+            Debug.WriteLine($"Unable to close the Help Welcome page: {ex.Message}");
         }
     }
 

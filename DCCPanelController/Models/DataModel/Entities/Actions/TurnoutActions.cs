@@ -29,7 +29,6 @@ public class TurnoutActions : ObservableCollection<TurnoutAction>, ICloneable {
                         TurnoutStateEnum.Thrown => action.WhenOff,
                         _                       => ButtonStateEnum.Unknown,
                     };
-                    Console.WriteLine($"BUTTON(t): {turnout.Id} => {actionButton.Id} from {actionButton.State} to {newState}");;
                     if (newState != ButtonStateEnum.Unknown) {
                         //actionButton.SetState(newState, StateChangeSource.Internal, context);
                         actionButton.State = newState;
@@ -44,7 +43,6 @@ public class TurnoutActions : ObservableCollection<TurnoutAction>, ICloneable {
                         TurnoutStateEnum.Thrown => action.WhenThrown,
                         _                       => TurnoutStateEnum.Unknown,
                     };
-                    Console.WriteLine($"TURNOUT(t): {turnout.Id} => {actionTurnout.Id} from {actionTurnout.State} to {newState}");
                     if (newState != TurnoutStateEnum.Unknown) {
                         //actionTurnout.SetState(newState, StateChangeSource.Internal, context);
                         actionTurnout.State = newState;

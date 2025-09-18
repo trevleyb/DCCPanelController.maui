@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Text;
 using CommunityToolkit.Maui.Storage;
 
@@ -23,7 +24,7 @@ public static class FileHelper {
             await Share.RequestAsync(shareRequest);
             return tempPath;
         } catch (Exception ex) {
-            Console.WriteLine($"Error saving file: {ex.Message}");
+            Debug.WriteLine($"Error saving file: {ex.Message}");
             return null;
         }
     }
@@ -42,7 +43,7 @@ public static class FileHelper {
             }
             return null;
         } catch (Exception ex) {
-            Console.WriteLine($"Error saving file: {ex.Message}");
+            Debug.WriteLine($"Error saving file: {ex.Message}");
             return null;
         }
     }
@@ -65,7 +66,7 @@ public static class FileHelper {
             using var reader = new StreamReader(fileStream);
             return await reader.ReadToEndAsync();
         } catch (Exception ex) {
-            Console.WriteLine($"Error opening file: {ex.Message}");
+            Debug.WriteLine($"Error opening file: {ex.Message}");
             return null;
         }
     }

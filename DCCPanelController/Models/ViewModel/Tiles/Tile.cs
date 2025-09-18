@@ -131,8 +131,8 @@ public abstract class Tile : ContentView, ITile, IDisposable {
                          }
                      });
                      if (HaveDimensionsChanged) OnTileChanged(TileChangeType.Dimensions);
-                 } catch (Exception) {
-                     //Console.WriteLine($"Error rebuilding tile: {ex.Message}");
+                 } catch (Exception ex) {
+                     Debug.WriteLine($"Error rebuilding tile: {ex.Message}");
                  }
              }, token, TaskContinuationOptions.OnlyOnRanToCompletion, TaskScheduler.Default);
     }

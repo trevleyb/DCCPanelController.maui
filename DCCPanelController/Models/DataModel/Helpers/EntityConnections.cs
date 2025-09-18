@@ -28,10 +28,7 @@ public class EntityConnections {
     public ConnectionType[] GetConnections(int rotation) {
         var normalizedRotation = NormalizeRotation(rotation);
         var rotationIndex = CalculateRotationIndex(normalizedRotation);
-
-        //if (rotationIndex == 0) return(ConnectionType[])_baseConnections.Clone();
         var rotated = RotateConnections(_baseConnections, rotationIndex);
-        //Console.WriteLine($"Rotated: {normalizedRotation}:{rotationIndex} -> {ConvertDirectionsToString(rotated)}");
         return rotated;
     }
 

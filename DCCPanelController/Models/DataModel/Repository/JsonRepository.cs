@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Text.RegularExpressions;
@@ -56,7 +57,7 @@ public static class JsonRepository {
 
                         // FUTURE: Add Support for difference Schema Versions and conversion between them
                         var version = GetSchemaVersion(jsonString);
-                        Console.WriteLine($"Profile Version: {version} | Repository Version: {Version}");
+                        Debug.WriteLine($"Profile Version: {version} | Repository Version: {Version}");
 
                         var profile = JsonSerializer.Deserialize<Profile?>(jsonString, JsonOptions.Options) ?? throw new ApplicationException("Could not deserialize settings.");
                         LoggingLevelHelper.SetLogLevel(profile.Settings.LogLevel);

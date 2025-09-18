@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.Diagnostics;
 using CommunityToolkit.Maui.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -248,7 +249,7 @@ public partial class SettingsPageViewModel : ConnectionViewModel {
                 var jsonBytes = await ProfileService.DownloadProfileZipAsync(Profile);
                 var location = await FileHelper.ShareFileAsync("Save Profile", jsonBytes, saveFile);
                 await DisplayAlertHelper.DisplayToastAlert("Success: Profile Downloaded");
-                Console.WriteLine($"Profile Saved to: {saveFile}");
+                Debug.WriteLine($"Profile Saved to: {saveFile}");
             }
         } catch (Exception ex) {
             await DisplayAlertHelper.DisplayOkAlertAsync("Error", $"An error occurred: {ex.Message}");

@@ -1,3 +1,5 @@
+
+using System.Diagnostics;
 #if IOS || MACCATALYST
 using CoreGraphics;
 using UIKit;
@@ -13,14 +15,14 @@ public static class SetDragPreviewHelper {
         e.PlatformArgs?.SetPreviewProvider(() => {
             try {
                 if ((sender as VisualElement)?.Handler?.PlatformView is not UIView sourceView || sourceView.Window is null) {
-                    Console.WriteLine("Error setting drag preview: No source view found.");
+                    Debug.WriteLine("Error setting drag preview: No source view found.");
                     return null;
                 }
 
                 var image = UIImage.FromBundle(Path.GetFileNameWithoutExtension(imageName))
                          ?? UIImage.FromFile(imageName);
                 if (image is null) {
-                    Console.WriteLine("Error setting drag preview: Image not found.");
+                    Debug.WriteLine("Error setting drag preview: Image not found.");
                     return null;
                 }
 
@@ -31,7 +33,7 @@ public static class SetDragPreviewHelper {
 
                 var target = new UIDragPreview(iv);
             } catch (Exception ex) {
-                Console.WriteLine($"Error setting drag preview: {ex.Message}");
+                Debug.WriteLine($"Error setting drag preview: {ex.Message}");
                 return null;
             }
             return null;

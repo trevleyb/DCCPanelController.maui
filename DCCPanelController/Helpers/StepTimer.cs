@@ -19,7 +19,7 @@ public static class StepTimer {
             _name = name ?? "StepTimer";
             _stopwatch = Stopwatch.StartNew();
             _lastStep = TimeSpan.Zero;
-            Console.WriteLine($"[{_name}] Started");
+            Debug.WriteLine($"[{_name}] Started");
         }
     }
 
@@ -30,7 +30,7 @@ public static class StepTimer {
     public static void Step(string description) {
         lock (_lock) {
             if (_stopwatch is null) {
-                Console.WriteLine($"[{_name}] Step called before Start: {description}");
+                Debug.WriteLine($"[{_name}] Step called before Start: {description}");
                 return;
             }
 
@@ -38,7 +38,7 @@ public static class StepTimer {
             var sinceLast = elapsed - _lastStep;
             _lastStep = elapsed;
 
-            Console.WriteLine($"[{_name}] {description} | Step: {sinceLast.TotalMilliseconds:N1} ms | Total: {elapsed.TotalMilliseconds:N1} ms");
+            Debug.WriteLine($"[{_name}] {description} | Step: {sinceLast.TotalMilliseconds:N1} ms | Total: {elapsed.TotalMilliseconds:N1} ms");
         }
     }
 
@@ -48,12 +48,12 @@ public static class StepTimer {
     public static void Finish() {
         lock (_lock) {
             if (_stopwatch is null) {
-                Console.WriteLine($"[{_name}] Finish called before Start");
+                Debug.WriteLine($"[{_name}] Finish called before Start");
                 return;
             }
 
             var elapsed = _stopwatch.Elapsed;
-            Console.WriteLine($"[{_name}] Finished | Total duration: {elapsed.TotalMilliseconds:N1} ms");
+            Debug.WriteLine($"[{_name}] Finished | Total duration: {elapsed.TotalMilliseconds:N1} ms");
             _stopwatch = null;
         }
     }

@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Helpers;
@@ -99,7 +100,7 @@ public partial class PanelViewerViewModel : ConnectionViewModel {
                     //var location = await FileHelper.SaveFileAsync("Save Panel", panelAsJson, fileName);
                     if (!string.IsNullOrEmpty(location)) {
                         await DisplayAlertHelper.DisplayToastAlert("Panel Downloaded");
-                        Console.WriteLine($"Panel Saved to: {location}");
+                        Debug.WriteLine($"Panel Saved to: {location}");
                     }
                 }
             }

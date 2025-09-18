@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.Diagnostics;
 using CommunityToolkit.Maui.Core;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.ViewModel.Interfaces;
@@ -133,10 +134,9 @@ public partial class SideSelectorPanel {
                     }
                 }
             }
-            Console.WriteLine("Unable to find tile at pointer location: Should not happen.");
             e.Cancel = true;
         } catch (Exception ex) {
-            Console.WriteLine("Error selecting tile: " + ex.Message);
+            Debug.WriteLine("Error selecting tile: " + ex.Message);
         }
     }
 
@@ -154,19 +154,12 @@ public partial class SideSelectorPanel {
     }
 
     private void TileCollectionByCategory_OnSelectionChanged(object? sender, SelectionChangedEventArgs e) {
-        Console.WriteLine("Selection Changed");
         var currentSelection = e.CurrentSelection.ToList().FirstOrDefault() as ITile;
         var previousSelection = e.PreviousSelection.ToList().FirstOrDefault() as ITile;
         if (currentSelection == previousSelection) {
-            Console.WriteLine("Selection did not change - turn off the item");
             ViewModel.SelectedTile = null;
         }
         ViewModel.SelectedTile = currentSelection;
-        Console.WriteLine($"Selection Changed: {previousSelection?.Entity?.EntityName} -> {currentSelection?.Entity.EntityName} ==> {ViewModel?.SelectedTile?.Entity.EntityName}");
-
-        //if (e.CurrentSelection.ToList().FirstOrDefault() is Tile { } tile) {
         AppStateService.Instance.SelectedTile = ViewModel?.SelectedTile;
-
-        //}
     }
 }

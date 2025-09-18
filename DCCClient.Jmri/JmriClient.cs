@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.Net.WebSockets;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -103,7 +104,7 @@ public class JmriClient : IDisposable {
             try {
                 await _connectionTask.WaitAsync(TimeSpan.FromSeconds(5));
             } catch (TimeoutException) {
-                Console.WriteLine("DisconnectAsync: Connection task didn't complete within timeout");
+                Debug.WriteLine("DisconnectAsync: Connection task didn't complete within timeout");
             }
         }
         OnConnectionStateChanged(ConnectionState, "Disconnected from JMRI server.");
@@ -207,7 +208,7 @@ public class JmriClient : IDisposable {
                     messageBuffer.Clear();
                 }
             } else if (result.MessageType == WebSocketMessageType.Close) {
-                Console.WriteLine("WebSocket was CLOSED.");
+                Debug.WriteLine("WebSocket was CLOSED.");
                 break;
             }
         }
@@ -243,7 +244,7 @@ public class JmriClient : IDisposable {
                     _            => false
                 };
                 if (!isValidMessage) {
-                    Console.WriteLine($"Invalid JSON Data from JMRI: {type} => {root}");
+                    Debug.WriteLine($"Invalid JSON Data from JMRI: {type} => {root}");
                 }
             }
         } catch (Exception ex) {
@@ -303,7 +304,7 @@ public class JmriClient : IDisposable {
                 await SendCommandAsync(JsonSerializer.Serialize(new { type = "ping" }));
             }
         } catch (Exception ex) {
-            Console.WriteLine($"Could not send heartbeat: {ex.Message}");
+            Debug.WriteLine($"Could not send heartbeat: {ex.Message}");
         }
     }
 
@@ -325,7 +326,7 @@ public class JmriClient : IDisposable {
                 await SubscribeToUpdatesAsync();
             }
         } catch (Exception ex) {
-            Console.WriteLine($"Could not send refresh command: {ex.Message}");
+            Debug.WriteLine($"Could not send refresh command: {ex.Message}");
         }
     }
 
@@ -413,7 +414,7 @@ public class JmriClient : IDisposable {
             try {
                 await _webSocket.SendAsync(new ArraySegment<byte>(bytes), WebSocketMessageType.Text, true, CancellationToken.None);
             } catch (Exception ex) {
-                Console.WriteLine($"Failed to send message to server: {ex.Message}");
+                Debug.WriteLine($"Failed to send message to server: {ex.Message}");
                 throw;
             }
         }

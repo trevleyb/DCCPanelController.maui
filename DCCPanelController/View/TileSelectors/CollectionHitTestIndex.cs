@@ -29,7 +29,6 @@ public static class CollectionHitIndex {
             break;
 
             default:
-                Console.WriteLine($"Unknown ItemsLayout: {collectionView.ItemsLayout}");
                 return null; // unknown layout
         }
 

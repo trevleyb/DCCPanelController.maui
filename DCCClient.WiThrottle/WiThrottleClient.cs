@@ -1,4 +1,5 @@
 using System.Data;
+using System.Diagnostics;
 using System.Net.Sockets;
 using System.Text;
 using System.Timers;
@@ -59,14 +60,14 @@ public class WiThrottleClient {
                 return;                      // Exit the loop on success
             } catch (Exception ex) {
                 retryCount++;
-                Console.WriteLine($"Failed to connect: {ex.Message} Retrying... {retryCount}/{maxRetries}");
+                Debug.WriteLine($"Failed to connect: {ex.Message} Retrying... {retryCount}/{maxRetries}");
                 if (retryCount >= maxRetries) {
                     // Log and rethrow the exception if max retries are reached
-                    Console.WriteLine($"Failed to connect after {maxRetries} attempts: {ex.Message}");
+                    Debug.WriteLine($"Failed to connect after {maxRetries} attempts: {ex.Message}");
                     throw;
                 }
 
-                Console.WriteLine($"Retrying connection... Attempt {retryCount}/{maxRetries}");
+                Debug.WriteLine($"Retrying connection... Attempt {retryCount}/{maxRetries}");
                 await Task.Delay(delayMilliseconds); // Wait before retrying
             }
         }
@@ -76,7 +77,7 @@ public class WiThrottleClient {
     ///     Used to connect, or try again, to get a connection
     /// </summary>
     private async Task EstablishConnection() {
-        Console.WriteLine("Establishing connection...");
+        Debug.WriteLine("Establishing connection...");
         if (_client is not null && _client.Connected) return;
         if (_client is not null) CloseConnection();
 
@@ -86,7 +87,7 @@ public class WiThrottleClient {
         }
         _stream = _client.GetStream();
         IsRunning = true;
-        Console.WriteLine("Connection established.");
+        Debug.WriteLine("Connection established.");
     }
 
     /// <summary>
@@ -119,7 +120,7 @@ public class WiThrottleClient {
                     }
                 }
             } catch (Exception ex) {
-                Console.WriteLine($"Listener encountered an error: {ex.Message}");
+                Debug.WriteLine($"Listener encountered an error: {ex.Message}");
                 EstablishConnectionWithRetries().Wait();
                 if (_client is null) {
                     ConnectionEvent?.Invoke(new ConnectionEvent(ex.Message, GetConnectionState(), false));
@@ -133,7 +134,7 @@ public class WiThrottleClient {
     }
 
     private void CloseConnection() {
-        Console.WriteLine("Closing connection...");
+        Debug.WriteLine("Closing connection...");
         IsRunning = false;
         _client?.Close();
         _client = null;

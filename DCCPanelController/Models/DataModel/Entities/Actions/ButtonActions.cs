@@ -29,7 +29,6 @@ public class ButtonActions : ObservableCollection<ButtonAction>, ICloneable {
                         ButtonStateEnum.Off => action.WhenOff,
                         _                   => ButtonStateEnum.Unknown,
                     };
-                    Console.WriteLine($"BUTTON(b): {button.Id} => {actionButton.Id} from {actionButton.State} to {newState}");
                     if (newState != ButtonStateEnum.Unknown) {
                         //actionButton.SetState(newState, StateChangeSource.Internal, context);
                         actionButton.State = newState;
@@ -44,7 +43,6 @@ public class ButtonActions : ObservableCollection<ButtonAction>, ICloneable {
                         ButtonStateEnum.Off => action.WhenThrown,
                         _                   => TurnoutStateEnum.Unknown,
                     };
-                    Console.WriteLine($"TURNOUT(b): {button.Id} => {actionTurnout.Id} from {actionTurnout.State} to {newState}");
                     if (newState != TurnoutStateEnum.Unknown) {
                         // actionTurnout.SetState(newState, StateChangeSource.Internal, context);
                         // Removed Cascade as it causes issues

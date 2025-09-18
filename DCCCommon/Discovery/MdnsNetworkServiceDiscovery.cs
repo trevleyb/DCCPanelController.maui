@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.Net.Sockets;
 using Makaretu.Dns;
 
@@ -90,9 +91,9 @@ public sealed class MdnsNetworkServiceDiscovery : INetworkServiceDiscovery {
             try {
                 _mdns.Start(); // Safe to call
             } catch (SocketException se) when (se.SocketErrorCode == SocketError.AddressAlreadyInUse) {
-                Console.WriteLine($"MdnsNetworkServiceDiscovery: mDNS port (5353) is already in use. Assuming another mDNS service is running. {se.Message}");
+                Debug.WriteLine($"MdnsNetworkServiceDiscovery: mDNS port (5353) is already in use. Assuming another mDNS service is running. {se.Message}");
             } catch (Exception ex) {
-                Console.WriteLine($"MdnsNetworkServiceDiscovery: Error starting mDNS listener: {ex.Message}");
+                Debug.WriteLine($"MdnsNetworkServiceDiscovery: Error starting mDNS listener: {ex.Message}");
                 throw; // Rethrow if it's a critical failure
             }
         }
@@ -236,7 +237,7 @@ public sealed class MdnsNetworkServiceDiscovery : INetworkServiceDiscovery {
                     try {
                         _mdns.Stop(); // Safe to call
                     } catch (Exception ex) {
-                        Console.WriteLine($"MdnsNetworkServiceDiscovery: Error stopping mDNS on dispose: {ex.Message}");
+                        Debug.WriteLine($"MdnsNetworkServiceDiscovery: Error stopping mDNS on dispose: {ex.Message}");
                     }
                     _mdns.Dispose();
                 }

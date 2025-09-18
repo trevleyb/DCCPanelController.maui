@@ -110,7 +110,6 @@ internal sealed class ImageRenderer : BaseRenderer, IPropertyRenderer {
             stack.Children.Insert(0, spinner);
             return WrapWithLabel(ctx, stack);
         } catch (Exception ex) {
-            Console.WriteLine($"Unable to create an Image: {ex.Message}");
             return new InvalidRenderer("Error generating Image");
         }
     }

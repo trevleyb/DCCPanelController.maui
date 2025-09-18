@@ -9,7 +9,6 @@ public class SideSelectorPanelViewModel : TileSelectorViewModel {
     public ITile? SelectedTile {
         get;
         set {
-            Console.WriteLine($"SidePalette: Selected Tile Changed: {field?.Entity.EntityName} -> {value?.Entity.EntityName}");
             if (field == value) return;
             field = value;
             AppStateService.Instance.SelectedTile = value;

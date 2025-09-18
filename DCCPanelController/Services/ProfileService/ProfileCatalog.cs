@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -124,7 +125,7 @@ public sealed partial class ProfileCatalog {
         var json = JsonSerializer.Serialize(this, JsonOptions.Options);
         var path = JsonRepository.GetStorageFilePath(FileNameOnDisk);
         File.WriteAllText(path, json);
-        Console.WriteLine($"Saved ProfileCatalog {member}@{line}: {path}");
+        Debug.WriteLine($"Saved ProfileCatalog {member}@{line}: {path}");
     }
 
     [GeneratedRegex(@"^(.*?)(\s*)(\d+)$")]

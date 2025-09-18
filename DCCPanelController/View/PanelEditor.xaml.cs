@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.Diagnostics;
 using CommunityToolkit.Maui.Core.Extensions;
 using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel;
@@ -70,7 +71,7 @@ public partial class PanelEditor : ContentPage {
         base.OnNavigatedFrom(args);
 
         if (!_viewModel.ExitViaBackButton) {
-            Console.WriteLine("WARNING! Exiting Editor NOT via Back Button. No SAVE");
+            Debug.WriteLine("WARNING! Exiting Editor NOT via Back Button. No SAVE");
         }
 
         PanelView.TileSelected -= PanelViewOnTileSelected;
@@ -114,7 +115,7 @@ public partial class PanelEditor : ContentPage {
                 }
             }
         } catch (Exception ex) {
-            Console.WriteLine($"Exception in PanelViewOnTileTapped: {ex.Message}");
+            Debug.WriteLine($"Exception in PanelViewOnTileTapped: {ex.Message}");
         }
     }
 

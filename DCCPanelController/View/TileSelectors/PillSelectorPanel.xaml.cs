@@ -90,7 +90,6 @@ public partial class PillSelectorPanel : ContentView {
                 return;
             }
         }
-        Console.WriteLine("Unable to find tile at pointer location: Should not happen.");
         e.Cancel = true;
     }
 

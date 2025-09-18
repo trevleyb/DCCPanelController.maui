@@ -13,8 +13,6 @@ public class ProfileService {
 
     #region Ctor
     public async Task InitializeAsync() {
-        Console.WriteLine("Loading Profiles");
-
         _catalog = ProfileCatalog.Load();
         if (_catalog is null) throw new ApplicationException("Failed to load profile catalog.");
 
@@ -24,8 +22,6 @@ public class ProfileService {
             : await LoadAsync(activeFile);
 
         ActiveProfile ??= await CreateAsync("Default");
-
-        Console.WriteLine("Profiles Loaded");
         ActiveProfileChanged?.Invoke(this, new ProfileChangedEventArgs(null, ActiveProfile));
     }
     #endregion

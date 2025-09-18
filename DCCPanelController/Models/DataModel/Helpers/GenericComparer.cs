@@ -20,8 +20,7 @@ public static class GenericComparer {
     }
 
     private static bool CompareResult(bool result, string? message = "", object? obj1 = null, object? obj2 = null, [CallerLineNumber] int lineNumber = 0) =>
-
-        //if (!result) Console.WriteLine($"[{lineNumber}] {message}: {obj1} == {obj2} = {result}");
+        //if (!result) Debug.WriteLine($"[{lineNumber}] {message}: {obj1} == {obj2} = {result}");
         result;
 
     private static bool AreEqualInternal(object? obj1, object? obj2,

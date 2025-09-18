@@ -286,7 +286,6 @@ public class PickerSelector : ContentView {
 
     private static void ItemSourceChanged(BindableObject bindable, object oldValue, object newValue) {
         if (bindable is PickerSelector selector) {
-            Console.WriteLine($"ItemsSource changed from {oldValue} to {newValue}");
             selector.DrawPopup();
         }
     }

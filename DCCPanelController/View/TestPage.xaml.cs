@@ -42,7 +42,6 @@ public partial class TestPage : ContentPage {
     }
 
     private void GridGesturesOnTileDragCancelled(object? sender, TileDragEventArgs e) {
-        Console.WriteLine($"Tile CANCEL Selection @{e.CurrentCol},{e.CurrentRow} Start @{e.StartCol},{e.StartRow}");
         if (e.Tile is Tile foundTile) {
             foundTile.Entity.Col = e.StartCol;
             foundTile.Entity.Row = e.StartRow;
@@ -52,7 +51,6 @@ public partial class TestPage : ContentPage {
     }
 
     private void GridGesturesOnTileDragCompleted(object? sender, TileDragEventArgs e) {
-        Console.WriteLine($"Tile END Selection @{e.CurrentCol},{e.CurrentRow} Start @{e.StartCol},{e.StartRow}");
         if (e.Tile is Tile foundTile) {
             foundTile.Entity.Col = e.CurrentCol;
             foundTile.Entity.Row = e.CurrentRow;
@@ -62,7 +60,6 @@ public partial class TestPage : ContentPage {
     }
 
     private void GridGesturesOnTileDragMoved(object? sender, TileDragEventArgs e) {
-        Console.WriteLine($"Tile MOVE Selection @{e.CurrentCol},{e.CurrentRow} Start @{e.StartCol},{e.StartRow}");
         if (e.Tile is Tile foundTile) {
             foundTile.Entity.Col = e.CurrentCol;
             foundTile.Entity.Row = e.CurrentRow;

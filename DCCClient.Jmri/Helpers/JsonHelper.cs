@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Text.Json;
 
 namespace DccClients.Jmri.Helpers;
@@ -8,7 +9,7 @@ public static class JsonHelper {
         try {
             return (element.TryGetProperty(propertyName, out var prop) ? prop.GetString() : null) ?? string.Empty;
         } catch {
-            Console.WriteLine($"Failed to get 'string' property: {propertyName} from {element}");
+            Debug.WriteLine($"Failed to get 'string' property: {propertyName} from {element}");
             return string.Empty;
         }
     }
@@ -17,7 +18,7 @@ public static class JsonHelper {
         try {
             return element.TryGetProperty(propertyName, out var prop) ? prop.GetInt32() : 0;
         } catch {
-            Console.WriteLine($"Failed to get 'int' property: {propertyName} from {element}");
+            Debug.WriteLine($"Failed to get 'int' property: {propertyName} from {element}");
             return 0;
         }
     }
@@ -26,7 +27,7 @@ public static class JsonHelper {
         try {
             return element.TryGetProperty(propertyName, out var prop) ? prop.GetDouble() : 0.0;
         } catch {
-            Console.WriteLine($"Failed to get 'double' property: {propertyName} from {element}");
+            Debug.WriteLine($"Failed to get 'double' property: {propertyName} from {element}");
             return 0;
         }
     }
@@ -35,7 +36,7 @@ public static class JsonHelper {
         try {
             return element.TryGetProperty(propertyName, out var prop) && prop.GetBoolean();
         } catch {
-            Console.WriteLine($"Failed to get 'bool' property: {propertyName} from {element}");
+            Debug.WriteLine($"Failed to get 'bool' property: {propertyName} from {element}");
             return false;
         }
     }

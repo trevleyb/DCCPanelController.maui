@@ -65,9 +65,6 @@ public sealed class HelpService {
                 Directory.CreateDirectory(renderedDir);
                 filePath = Path.Combine(renderedDir, $"{id}.html");
                 await File.WriteAllTextAsync(filePath, fullHtml);
-
-                Console.WriteLine($"[Help] Catalyst loading file: {filePath}");
-                Console.WriteLine($"[Help] Image dir exists? {Directory.Exists(Path.Combine(InstalledRoot, "images"))}");
                 #endif
                 return new HelpDocument(meta.Title, fullHtml, baseFileUri, filePath);
             }

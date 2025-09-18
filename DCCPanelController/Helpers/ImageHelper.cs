@@ -1,3 +1,5 @@
+using System.Diagnostics;
+
 namespace DCCPanelController.Helpers;
 
 public static class ImageHelper {
@@ -18,7 +20,7 @@ public static class ImageHelper {
             MemoryStream imageDecodeStream = new(imageBytes);
             return ImageSource.FromStream(() => imageDecodeStream) ?? null;
         } catch (Exception ex) {
-            Console.WriteLine($"Unable to convert Image from Base64: {ex.Message}");
+            Debug.WriteLine($"Unable to convert Image from Base64: {ex.Message}");
             return null;
         }
     }

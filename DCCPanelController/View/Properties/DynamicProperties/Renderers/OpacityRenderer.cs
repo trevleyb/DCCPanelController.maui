@@ -57,7 +57,6 @@ internal sealed class OpacityRenderer : BaseRenderer, IPropertyRenderer {
         if (percentage.EndsWith("%") && double.TryParse(percentage.TrimEnd('%'), NumberStyles.Number, CultureInfo.InvariantCulture, out var parsedValue)) {
             return Math.Clamp(parsedValue / 100.0, 0.0, 1.0);
         }
-        Console.WriteLine($"Invalid percentage format: {percentage}. Ensure the value ends with '%' and represents a valid number.");
         return 0.0;
     }
 }

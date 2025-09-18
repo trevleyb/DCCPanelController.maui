@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using CommunityToolkit.Maui.Behaviors;
 using CommunityToolkit.Maui.Markup;
 using CommunityToolkit.Maui.Views;
@@ -104,7 +105,7 @@ public partial class DynamicTilePropertyPage {
             var view = (DynamicTilePropertyPage)bindable;
             view.State = await view.RebuildAsync(view.PropertyHost);
         } catch (Exception ex) {
-            Console.WriteLine($"Error rebuilding DynamicTilePropertyPopupContent: {ex.Message}");
+            Debug.WriteLine($"Error rebuilding DynamicTilePropertyPopupContent: {ex.Message}");
         }
     }
     #endregion
@@ -125,7 +126,7 @@ public partial class DynamicTilePropertyPage {
             };
             return content;
         } catch (Exception ex) {
-            Console.WriteLine($"Error Launching DynamicTilePropertyPopupContent: {ex.Message}");
+            Debug.WriteLine($"Error Launching DynamicTilePropertyPopupContent: {ex.Message}");
         }
         return null;
     }
@@ -152,7 +153,7 @@ public partial class DynamicTilePropertyPage {
             };
             page.Popup.Show();
         } catch (Exception ex) {
-            Console.WriteLine($"Error Launching DynamicTilePropertyPopupContent: {ex.Message}");
+            Debug.WriteLine($"Error Launching DynamicTilePropertyPopupContent: {ex.Message}");
         }
     }
 
@@ -212,7 +213,7 @@ public partial class DynamicTilePropertyPage {
                 page.ClosePropertyPage();
             }
         } catch (Exception ex) {
-            Console.WriteLine($"Error Applying DynamicTilePropertyPopupContent: {ex.Message}");
+            Debug.WriteLine($"Error Applying DynamicTilePropertyPopupContent: {ex.Message}");
         }
     }
 
@@ -224,33 +225,9 @@ public partial class DynamicTilePropertyPage {
                 page.ClosePropertyPage();
             }
         } catch (Exception ex) {
-            Console.WriteLine($"Error Cancelling DynamicTilePropertyPopupContent: {ex.Message}");
+            Debug.WriteLine($"Error Cancelling DynamicTilePropertyPopupContent: {ex.Message}");
         }
     }
-
-    // [RelayCommand]
-    // public async Task<IResult<ValidationSummary>> ValidateAsync() {
-    //     if (Form == null) return Result<ValidationSummary>.Fail("Form is null");
-    //     var summary = await Form.ValidateAsync();
-    //     return summary.HasErrors
-    //         ? Result<ValidationSummary>.Fail("Validation Failed").WithValue(summary)
-    //         : Result<ValidationSummary>.Ok();
-    // }
-
-    // [RelayCommand]
-    // public async Task<IResult> ApplyAsync() {
-    //     if (Form == null) return Result.Fail("Form should not be null");
-    //     var ok = await Form.ApplyAsync(requireAtomic: false);
-    //     if (!ok) return Result.Fail("No Changes to apply");
-    //     Applied?.Invoke(this, EventArgs.Empty);
-    //     return Result.Ok();
-    // }
-
-    // [RelayCommand]
-    // public async Task CancelAsync() {
-    //     await _undo.UndoAsync();
-    //     Cancelled?.Invoke(this, EventArgs.Empty);
-    // }
     #endregion
 
     #region Group Helpers

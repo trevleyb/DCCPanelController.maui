@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Diagnostics;
 using System.Reflection;
 using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel;
@@ -272,10 +273,10 @@ public sealed class DynamicTilePropertyForm {
             }
             return true;
         } catch (Exception ex) when (!requireAtomic) {
-            Console.WriteLine("Requires Atomic? rolling back: " + ex.Message);
+            Debug.WriteLine("Requires Atomic? rolling back: " + ex.Message);
             return false;
         } catch (Exception ex) {
-            Console.WriteLine("Apply failed, rolling back: " + ex.Message);
+            Debug.WriteLine("Apply failed, rolling back: " + ex.Message);
             await tx.RollbackAsync().ConfigureAwait(false);
             return false;
         }
