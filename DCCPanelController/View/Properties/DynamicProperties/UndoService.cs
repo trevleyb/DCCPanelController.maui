@@ -1,3 +1,5 @@
+using DCCPanelController.Models.DataModel.Entities;
+
 namespace DCCPanelController.View.Properties.DynamicProperties;
 
 public sealed record PropertyChange(object Entity, EditableField Field, object? OldValue, object? NewValue);

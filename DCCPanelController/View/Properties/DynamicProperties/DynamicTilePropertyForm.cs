@@ -1,7 +1,10 @@
 using System.Collections;
+using System.Reflection;
 using DCCPanelController.Helpers;
+using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.DataModel.Entities.Actions;
+using DCCPanelController.Models.DataModel.Entities.Interfaces;
 using DCCPanelController.View.Properties.DynamicProperties.Renderers;
 
 namespace DCCPanelController.View.Properties.DynamicProperties;
@@ -59,7 +62,6 @@ public sealed class DynamicTilePropertyForm {
 
     public static DynamicTilePropertyForm CreateForm(IEnumerable<Entity> selection,
         double width, double height) {
-
         var extractor = new EditableExtractorCache();
         var renderers = new PropertyRendererRegistry();
         EditorKinds.RegisterDefaults(renderers);
@@ -152,20 +154,20 @@ public sealed class DynamicTilePropertyForm {
             var firstVal = values[0];
             var allEqual = values.All(v => _equality.AreEqual(v, firstVal, repField.Accessor.PropertyType));
 
-            var isCollection = typeof(IEnumerable).IsAssignableFrom(repField.Accessor.PropertyType) 
+            var isCollection = typeof(IEnumerable).IsAssignableFrom(repField.Accessor.PropertyType)
                             && repField.Accessor.PropertyType != typeof(string);
 
             if (isCollection) {
                 var baseline = allEqual ? DeepCloneIfSupported(firstVal) : null;
                 row.OriginalValue = baseline;
-                row.CurrentValue  = baseline is null ? null : DeepCloneIfSupported(baseline);
+                row.CurrentValue = baseline is null ? null : DeepCloneIfSupported(baseline);
                 row.HasMixedValues = !allEqual;
             } else {
                 row.OriginalValue = allEqual ? firstVal : null;
-                row.CurrentValue  = row.OriginalValue;
+                row.CurrentValue = row.OriginalValue;
                 row.HasMixedValues = !allEqual;
             }
-            
+
             group.Rows.Add(row);
             flatRows.Add(row);
         }
@@ -220,35 +222,26 @@ public sealed class DynamicTilePropertyForm {
 
                 // record the concrete field for the entity’s type so Apply/Rollback can use it
                 changes.Add(new PropertyChange(entity, ef, oldVal, newVal));
+                
+                var looksLikeId = ef.Accessor.PropertyType == typeof(string) && propName.IndexOf("ID", StringComparison.OrdinalIgnoreCase) >= 0;
+                if (looksLikeId && oldVal is string os && newVal is string ns && !string.Equals(os, ns, StringComparison.Ordinal)) {
+                    if (AddCascadeRenameChangesIfNeeded(entity, propName, os, ns, changes)) {
+                        changes.Add(new PropertyChange(entity, ef, oldVal, newVal));
+                    }
+                }
             }
         }
         return changes;
     }
-    
+
     // helper (inside DynamicTilePropertyForm)
     private static object? DeepCloneIfSupported(object? v) {
-        if (v is null) return null;
-
-        // Prefer ICloneable collections like your TurnoutActions
-        if (v is ICloneable cloneable) return cloneable.Clone();
-
-        // Fallback for IEnumerable<TurnoutAction>
-        if (v is IEnumerable<TurnoutAction> src) {
-            var copy = new TurnoutActions();
-            foreach (var a in src)
-                copy.Add(new TurnoutAction(a)); // uses your copy-ctor
-            return copy;
-        }
-
-        if (v is IEnumerable<ButtonAction> btnsrc) {
-            var copy = new ButtonActions();
-            foreach (var a in btnsrc)
-                copy.Add(new ButtonAction(a)); // uses your copy-ctor
-            return copy;
-        }
-        return v;
+        return v switch {
+            null => null,
+            ICloneable cloneable => cloneable.Clone(),
+            _                    => v
+        };
     }
-
 
     public async Task<bool> ApplyAsync(bool requireAtomic = false) {
         if (!HasCommonProperties) return false;
@@ -287,4 +280,57 @@ public sealed class DynamicTilePropertyForm {
             return false;
         }
     }
+
+    #region Helpers for cascading changes to turnoutID or ButtonID
+    private static IEnumerable<Entity> EnumerateAllEntitiesFrom(Entity anyEntityInTree) {
+        var root = anyEntityInTree?.Parent?.Panels ?? [];
+        
+        // First, return all global defined items
+        // -------------------------------------------------------
+        foreach (var p in root) {
+            foreach (var e in p.Entities.Where(x => x is TurnoutEntity or ActionButtonEntity) ?? []) {
+                yield return e;
+            }
+        }
+        
+        // Now return any linked to this editing panel as this panel is not live till saved
+        // --------------------------------------------------------------------------------
+        foreach (var e in anyEntityInTree?.Parent?.Entities.Where(x => x is TurnoutEntity or ActionButtonEntity) ?? []) {
+            yield return e;
+        }
+    }
+
+    // Decides which collections to touch based on what changed
+    private bool AddCascadeRenameChangesIfNeeded(Entity changedEntity, string idPropName, string oldId, string newId, List<PropertyChange> changes) {
+
+        var isTurnoutRename = changedEntity.GetType().Name.Contains("TurnoutEntity", StringComparison.OrdinalIgnoreCase);
+        var isButtonRename = changedEntity.GetType().Name.Contains("ActionButtonEntity", StringComparison.OrdinalIgnoreCase)
+                          || changedEntity.GetType().Name.Contains("ButtonEntity", StringComparison.OrdinalIgnoreCase);
+
+        if (!isTurnoutRename && !isButtonRename) return false;
+
+        var changed = false;
+        foreach (var e in EnumerateAllEntitiesFrom(changedEntity)) {
+            if (e is IActionEntity actions) {
+                if (isButtonRename) {
+                    foreach (var b in actions.ButtonPanelActions) {
+                        if (b.ActionID == oldId) {
+                            b.ActionID = newId;
+                            changed = true;
+                        }
+                    }
+                }
+                if (isTurnoutRename) {
+                    foreach (var b in actions.TurnoutPanelActions) {
+                        if (b.ActionID == oldId) {
+                            changed = true;
+                            b.ActionID = newId;
+                        }
+                    }
+                }
+            }
+        }
+        return changed;
+    }
+    #endregion
 }
