@@ -1,9 +1,7 @@
 using System.Collections.ObjectModel;
-using System.Text.RegularExpressions;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.ViewModel.Interfaces;
@@ -13,10 +11,8 @@ using DCCPanelController.View.ControlPanel;
 using DCCPanelController.View.Helpers;
 using DCCPanelController.View.Properties.DynamicProperties;
 using DCCPanelController.View.Properties.PanelProperties;
-using DCCPanelController.View.TileSelectors;
 using Microsoft.Extensions.Logging;
 using Syncfusion.Maui.Toolkit.Popup;
-using IImage = Microsoft.Maui.IImage;
 using PanelPropertyViewModel = DCCPanelController.View.Properties.PanelProperties.PanelPropertyViewModel;
 
 namespace DCCPanelController.View;
@@ -86,7 +82,7 @@ public partial class PanelEditorViewModel : ObservableObject {
     public PopupAction LastAction { get; set; } = PopupAction.None;
     public bool AcceptIsValid { get; set; } = true; // assume true by default
 
-    public string Title => Panel.Title ?? "Panel";
+    public string Title => Panel.Title;
     public Entity? SelectedEntity => SelectedEntities.FirstOrDefault();
     public List<Entity> SelectedEntities => SelectedTiles.Select(x => x.Entity).ToList();
 
@@ -154,7 +150,7 @@ public partial class PanelEditorViewModel : ObservableObject {
     private async Task SaveAsync() {
         try {
             IsProcessing = true;
-            if (Panel.Panels?.Profile is { } profile) {
+            if (Panel.Panels?.Profile is { }) {
                 Panel.Base64Image = await GetThumbnailImageAsync(_panelView);
                 UpdateOriginalFromCopy();
                 await _profileService.SaveAsync();
@@ -165,14 +161,14 @@ public partial class PanelEditorViewModel : ObservableObject {
         }
     }
 
-    // Take a snapshot/thumnail of the panel and return it as a base64 string.
+    // Take a snapshot/thumbnail of the panel and return it as a base64 string.
     // Only call this on exiting this editor as it will turn off the Grid
     // ----------------------------------------------------------------------
     public async Task<string> GetThumbnailImageAsync(Microsoft.Maui.Controls.View panelView) {
         try {
             _panelView.ClearAllSelectedTiles();
             if (_panelView.ShowGrid) _panelView.ShowGrid = false;
-            await LetUICatchUpAsync(16);
+            await LetUiCatchUpAsync(16);
 
             //var result = await CaptureHelper.CaptureStableAsync(_panelEditorContainer, 16, true);
             var shot = await CleanCapture.CaptureAsync(_panelEditorContainer);
@@ -249,7 +245,7 @@ public partial class PanelEditorViewModel : ObservableObject {
         try {
             if (Panel is { } panel && _panelEditor is { }) {
                 IsProcessing = true;
-                await LetUICatchUpAsync();
+                await LetUiCatchUpAsync();
                 var propertiesViewModel = new PanelPropertyViewModel(panel);
                 var propertiesPage = new PanelPropertyPage(propertiesViewModel);
                 ShowPropertyPopup("Panel Properties", propertiesViewModel, propertiesPage, AcceptPanelPropertiesPopupCommand);
@@ -264,9 +260,8 @@ public partial class PanelEditorViewModel : ObservableObject {
     private async Task EditTilePropertiesPopupAsync() {
         try {
             IsProcessing = true;
-            await LetUICatchUpAsync();
-            if (SelectedEntities?.Count > 0 && _panelEditor is { }) {
-                var originalLayers = SelectedEntities.Select(entity => entity.Layer).ToList();
+            await LetUiCatchUpAsync();
+            if (SelectedEntities.Count > 0 && _panelEditor is { }) {
                 var page = await DynamicTilePropertyPage.CreatePropertyPage(SelectedEntities, _panelView.Width, _panelView.Height);
                 if (page is { }) {
                     page.Applied += PageOnApplied;
@@ -277,7 +272,7 @@ public partial class PanelEditorViewModel : ObservableObject {
             _logger.LogCritical("Error Launching Tile Properties Page: " + ex.Message);
         } finally {
             IsProcessing = false;
-            await LetUICatchUpAsync();
+            await LetUiCatchUpAsync();
         }
     }
 
@@ -331,7 +326,7 @@ public partial class PanelEditorViewModel : ObservableObject {
         if (_propertyPage is { }) {
             try {
                 IsProcessing = true;
-                await LetUICatchUpAsync();
+                await LetUiCatchUpAsync();
                 await _propertyPage.ApplyChangesAsync();
                 await _panelView.ForceRefreshAsync();
             } finally {
@@ -340,7 +335,7 @@ public partial class PanelEditorViewModel : ObservableObject {
         }
     }
 
-    private static async Task LetUICatchUpAsync(int ms = 10) {
+    private static async Task LetUiCatchUpAsync(int ms = 10) {
         await Task.Yield();
         await Task.Delay(ms);
     }
