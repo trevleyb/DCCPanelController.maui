@@ -6,16 +6,16 @@ using DCCPanelController.View.Properties.DynamicProperties;
 
 namespace DCCPanelController.Models.DataModel.Entities;
 
-public partial class TurnoutButtonEntity : ButtonEntity, IEntityGeneratingID, IInteractiveEntity {
+public partial class TurnoutButtonEntity : ButtonEntity, IInteractiveEntity {
     [ObservableProperty] [property: Editable("Button Size", "", 1)]
     private ButtonSizeEnum _buttonSize = ButtonSizeEnum.Normal;
 
     [ObservableProperty] [property: Editable("Indicator Color", "Default color of the Indicator.", 11, "Colors")]
     private Color? _colorIndicator;
 
-    [ObservableProperty] [property: Editable("Button Name", "Unique Name for this Button so it can be referenced by actions.", 0)]
-    private string _id = string.Empty;
-
+    // [ObservableProperty] [property: Editable("Button Name", "Unique Name for this Button so it can be referenced by actions.", 0)]
+    // private string _id = string.Empty;
+    
     [ObservableProperty]
     [property: Editable("Show Indicator", "Show the Button Indicator?", 10, "Colors")]
     private bool _showIndicator = true;
@@ -37,7 +37,7 @@ public partial class TurnoutButtonEntity : ButtonEntity, IEntityGeneratingID, II
     private ButtonStateEnum _whenThrown;
 
     [JsonConstructor]
-    public TurnoutButtonEntity() => Id = NextID();
+    public TurnoutButtonEntity() { }
 
     public TurnoutButtonEntity(Panel panel) : base(panel) { }
     //public TurnoutButtonEntity(TurnoutButtonEntity entity) : base(entity) { }
@@ -56,17 +56,6 @@ public partial class TurnoutButtonEntity : ButtonEntity, IEntityGeneratingID, II
         "message is recieved from the controller. So you may find you click the button and nothing happens." +
         "This is because while a message to change the turnout has been sent to the controller,  " +
         "no response has yet been processed so the state will not change. ";
-
-    /// <summary>
-    ///     Because when we are editing a panel the entities do not actually exist UNTIL we save,
-    ///     we need to get all saved IDs from the parent AND we need to get any which are in the
-    ///     local panel (unsaved) combine them and use that list to generate a unique ID.
-    /// </summary>
-    public string NextID(Panel? targetPanel = null) {
-        targetPanel ??= Parent;
-        var nextID = EntityHelper.GenerateID(EntityHelper.GetAllEntitiesByType<TurnoutButtonEntity>(targetPanel), "Button");
-        return nextID;
-    }
 
     public override Entity Clone() => new TurnoutButtonEntity(this);
 }

@@ -6,7 +6,7 @@ using DCCPanelController.View.Properties.DynamicProperties;
 
 namespace DCCPanelController.Models.DataModel.Entities;
 
-public partial class RouteEntity : ButtonEntity, IEntityID, IInteractiveEntity {
+public partial class RouteEntity : ButtonEntity, IInteractiveEntity {
     [ObservableProperty] [property: Editable("Button Size", Order = 2)]
     private ButtonSizeEnum _buttonSize = ButtonSizeEnum.Normal;
 
@@ -42,10 +42,4 @@ public partial class RouteEntity : ButtonEntity, IEntityID, IInteractiveEntity {
     public override Entity Clone() => new RouteEntity(this);
 
     public override string ToString() => Id;
-
-    public string NextID(Panel? targetPanel = null) {
-        targetPanel ??= Parent;
-        var nextID = EntityHelper.GenerateID(EntityHelper.GetAllEntitiesByType<RouteEntity>(targetPanel), "Route");
-        return nextID;
-    }
 }

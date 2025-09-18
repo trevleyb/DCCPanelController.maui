@@ -16,7 +16,7 @@ public abstract partial class TurnoutEntity : TrackEntity, IEntityGeneratingID, 
     private string _id = string.Empty;
 
     [ObservableProperty]
-    private TurnoutStateEnum _state = TurnoutStateEnum.Unknown;
+    private TurnoutStateEnum _state = TurnoutStateEnum.Unknown; // We should not need to know this
 
     private StateChangeSource _stateChangeSource = StateChangeSource.External;
 

@@ -9,10 +9,17 @@ using DCCPanelController.Services;
 namespace DCCPanelController.Models.ViewModel.Tiles;
 
 public abstract class TurnoutTile : TrackTile, ITileInteractive {
+
     protected TurnoutTile(TurnoutEntity entity, double gridSize) : base(entity, gridSize) {
         VisualProperties.Add(nameof(TurnoutEntity.State));
         VisualProperties.Add(nameof(TurnoutEntity.TrackNotSelectedColor));
         VisualProperties.Add(nameof(TurnoutEntity.TurnoutStyle));
+        if (Entity is TurnoutEntity turnoutEntity) {
+            if (turnoutEntity.Turnout is { } turnout) {
+                turnoutEntity.State = turnout.State;
+                turnout.StateChanged += (_, state) => turnoutEntity.State = state;
+            } else turnoutEntity.State = TurnoutStateEnum.Unknown;
+        }
     }
 
     public async Task<bool> Interact(ConnectionService? connectionService) {
