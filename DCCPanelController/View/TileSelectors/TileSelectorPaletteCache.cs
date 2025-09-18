@@ -15,7 +15,7 @@ public static class TileSelectorPaletteCache {
     public static PaletteResult PrebuildDefaultPalette() => GetPalette(DefaultPalette, CreateDefaultPanel);
 
     public static PaletteResult GetDefaultPalette() => GetPalette(DefaultPalette, CreateDefaultPanel);
-    
+
     public static PaletteResult GetPalette(Panel panel) => GetPalette(panel.Guid.ToString(), () => panel.CloneEmptyPanel("Selector"));
 
     public static PaletteResult GetPalette(string key, Panel panel) => GetPalette(key, () => panel.CloneEmptyPanel("Selector"));
@@ -27,19 +27,17 @@ public static class TileSelectorPaletteCache {
     // --- Core (thread-safe) lookup/build -------------------------------------
 
     private static PaletteResult GetPalette(string key, Func<Panel> panelFactory) {
-        using (new CodeTimer($"Getting Tile Palette: {key}")) {
-            var lazy = Cache.GetOrAdd(
-                key,
-                _ => new Lazy<PaletteResult>(
-                    () => {
-                        var panel = panelFactory();
-                        var result = BuildTilesForPanel(panel);
-                        return result ?? throw new InvalidOperationException("Unable to build palette.");
-                    },
-                    LazyThreadSafetyMode.ExecutionAndPublication));
+        var lazy = Cache.GetOrAdd(
+            key,
+            _ => new Lazy<PaletteResult>(
+                () => {
+                    var panel = panelFactory();
+                    var result = BuildTilesForPanel(panel);
+                    return result ?? throw new InvalidOperationException("Unable to build palette.");
+                },
+                LazyThreadSafetyMode.ExecutionAndPublication));
 
-            return lazy.Value;
-        }
+        return lazy.Value;
     }
 
     // --- Implementation details ----------------------------------------------

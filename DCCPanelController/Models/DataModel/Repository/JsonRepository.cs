@@ -13,75 +13,67 @@ public static class JsonRepository {
     public static string Version { get; set; } = "1.0.1";
 
     public static async Task SaveAsync(Profile profile, [CallerMemberName] string caller = "", [CallerLineNumber] int lineNumber = 0) {
-        using (new CodeTimer($"Save JSON File: {caller}@{lineNumber}", false)) {
-            try {
-                var jsonString = JsonSerializer.Serialize(profile, JsonOptions.Options);
-                if (string.IsNullOrEmpty(jsonString)) return;
+        try {
+            var jsonString = JsonSerializer.Serialize(profile, JsonOptions.Options);
+            if (string.IsNullOrEmpty(jsonString)) return;
 
-                var fileName = GetStorageFilePath(profile.Filename);
-                if (string.IsNullOrWhiteSpace(fileName)) throw new ArgumentNullException(nameof(profile.Filename));
-                await File.WriteAllTextAsync(fileName, jsonString);
-                Logger.LogInformation("Saved Data: {fileName}", fileName);
-            } catch (Exception ex) {
-                Logger.LogError("Unable to SAVE Data: {Message}", ex.Message);
-            }
+            var fileName = GetStorageFilePath(profile.Filename);
+            if (string.IsNullOrWhiteSpace(fileName)) throw new ArgumentNullException(nameof(profile.Filename));
+            await File.WriteAllTextAsync(fileName, jsonString);
+            Logger.LogInformation("Saved Data: {fileName}", fileName);
+        } catch (Exception ex) {
+            Logger.LogError("Unable to SAVE Data: {Message}", ex.Message);
         }
         LoggingLevelHelper.SetLogLevel(profile.Settings.LogLevel);
     }
 
     public static void Save(Profile profile, [CallerMemberName] string caller = "", [CallerLineNumber] int lineNumber = 0) {
-        using (new CodeTimer($"Save JSON File: {caller}@{lineNumber}", false)) {
-            try {
-                var jsonString = JsonSerializer.Serialize(profile, JsonOptions.Options);
-                if (string.IsNullOrEmpty(jsonString)) return;
+        try {
+            var jsonString = JsonSerializer.Serialize(profile, JsonOptions.Options);
+            if (string.IsNullOrEmpty(jsonString)) return;
 
-                var fileName = GetStorageFilePath(profile.Filename);
-                if (string.IsNullOrWhiteSpace(fileName)) throw new ArgumentNullException(nameof(profile.Filename));
-                File.WriteAllText(fileName, jsonString);
-                Logger.LogInformation("Saved Data: {fileName}", fileName);
-            } catch (Exception ex) {
-                Logger.LogError("Unable to SAVE Data: {Message}", ex.Message);
-            }
+            var fileName = GetStorageFilePath(profile.Filename);
+            if (string.IsNullOrWhiteSpace(fileName)) throw new ArgumentNullException(nameof(profile.Filename));
+            File.WriteAllText(fileName, jsonString);
+            Logger.LogInformation("Saved Data: {fileName}", fileName);
+        } catch (Exception ex) {
+            Logger.LogError("Unable to SAVE Data: {Message}", ex.Message);
         }
         LoggingLevelHelper.SetLogLevel(profile.Settings.LogLevel);
     }
 
     public static async Task<Profile?> LoadAsync(string profileName, [CallerMemberName] string caller = "", [CallerLineNumber] int lineNumber = 0) {
         var filePath = GetStorageFilePath(profileName);
-        using (new CodeTimer($"Load JSON File: {caller}@{lineNumber}", false)) {
-            try {
-                if (File.Exists(filePath)) {
-                    try {
-                        var jsonString = await File.ReadAllTextAsync(filePath);
-                        if (string.IsNullOrWhiteSpace(jsonString)) return null;
+        try {
+            if (File.Exists(filePath)) {
+                try {
+                    var jsonString = await File.ReadAllTextAsync(filePath);
+                    if (string.IsNullOrWhiteSpace(jsonString)) return null;
 
-                        // FUTURE: Add Support for difference Schema Versions and conversion between them
-                        var version = GetSchemaVersion(jsonString);
-                        Debug.WriteLine($"Profile Version: {version} | Repository Version: {Version}");
+                    // FUTURE: Add Support for difference Schema Versions and conversion between them
+                    var version = GetSchemaVersion(jsonString);
+                    Debug.WriteLine($"Profile Version: {version} | Repository Version: {Version}");
 
-                        var profile = JsonSerializer.Deserialize<Profile?>(jsonString, JsonOptions.Options) ?? throw new ApplicationException("Could not deserialize settings.");
-                        LoggingLevelHelper.SetLogLevel(profile.Settings.LogLevel);
-                        profile.FixLoadedPanels();
-                        return profile;
-                    } catch (Exception ex) {
-                        Logger.LogError("Could not deserialize settings. New set created: {Message}", ex.Message);
-                        return null;
-                    }
+                    var profile = JsonSerializer.Deserialize<Profile?>(jsonString, JsonOptions.Options) ?? throw new ApplicationException("Could not deserialize settings.");
+                    LoggingLevelHelper.SetLogLevel(profile.Settings.LogLevel);
+                    profile.FixLoadedPanels();
+                    return profile;
+                } catch (Exception ex) {
+                    Logger.LogError("Could not deserialize settings. New set created: {Message}", ex.Message);
+                    return null;
                 }
-                Logger.LogInformation("File not found: {profileName}", profileName);
-                return null;
-            } catch (Exception ex) {
-                Logger.LogWarning("Could not access Profile. New Profile created. {Message}", ex.Message);
-                return null;
             }
+            Logger.LogInformation("File not found: {profileName}", profileName);
+            return null;
+        } catch (Exception ex) {
+            Logger.LogWarning("Could not access Profile. New Profile created. {Message}", ex.Message);
+            return null;
         }
     }
 
     private static string GetSchemaVersion(string jsonString) {
         if (string.IsNullOrWhiteSpace(jsonString)) return"Undefined";
         try {
-            // Match "schemaVersion" or "version" JSON keys and capture either a quoted string or a number (e.g., 1, 1.2.3)
-            // Ensures we only match a proper JSON key by requiring surrounding quotes.
             var match = Regex.Match(
                 jsonString,
                 "\"(?i:(schemaVersion|version|Version))\"\\s*:\\s*(?:\"(?<val>(?:[^\"\\\\]|\\\\.)*)\"|(?<val>-?\\d+(?:\\.\\d+)*))",

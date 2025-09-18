@@ -170,24 +170,22 @@ public partial class PanelEditorViewModel : ObservableObject {
     // ----------------------------------------------------------------------
     public async Task<string> GetThumbnailImageAsync(Microsoft.Maui.Controls.View panelView) {
         try {
-            using (new CodeTimer("Capture to Thumbnail Image")) {
-                _panelView.ClearAllSelectedTiles();
-                if (_panelView.ShowGrid) _panelView.ShowGrid = false;
-                await LetUICatchUpAsync(16);
+            _panelView.ClearAllSelectedTiles();
+            if (_panelView.ShowGrid) _panelView.ShowGrid = false;
+            await LetUICatchUpAsync(16);
 
-                //var result = await CaptureHelper.CaptureStableAsync(_panelEditorContainer, 16, true);
-                var shot = await CleanCapture.CaptureAsync(_panelEditorContainer);
-                if (shot == null) return string.Empty;
-                
-                var base64 = await Task.Run(async () => {
-                                            using var ms = new MemoryStream(64 * 1024); // small initial capacity; grows as needed
-                                            await shot.CopyToAsync(ms, ScreenshotFormat.Jpeg, 75);
-                                            var length = (int)ms.Length;
-                                            return Convert.ToBase64String(ms.GetBuffer(), 0, length);
-                                        })
-                                       .ConfigureAwait(false);
-                return base64;
-            }
+            //var result = await CaptureHelper.CaptureStableAsync(_panelEditorContainer, 16, true);
+            var shot = await CleanCapture.CaptureAsync(_panelEditorContainer);
+            if (shot == null) return string.Empty;
+
+            var base64 = await Task.Run(async () => {
+                                        using var ms = new MemoryStream(64 * 1024); // small initial capacity; grows as needed
+                                        await shot.CopyToAsync(ms, ScreenshotFormat.Jpeg, 75);
+                                        var length = (int)ms.Length;
+                                        return Convert.ToBase64String(ms.GetBuffer(), 0, length);
+                                    })
+                                   .ConfigureAwait(false);
+            return base64;
         } catch (Exception ex) {
             _logger.LogDebug("Error Capturing Thumbnail Image: {Message}", ex.Message);
             return string.Empty;
@@ -262,7 +260,7 @@ public partial class PanelEditorViewModel : ObservableObject {
             IsProcessing = false;
         }
     }
-    
+
     private async Task EditTilePropertiesPopupAsync() {
         try {
             IsProcessing = true;
