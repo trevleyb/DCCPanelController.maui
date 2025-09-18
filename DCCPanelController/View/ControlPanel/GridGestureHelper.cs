@@ -12,10 +12,12 @@ namespace DCCPanelController.View.ControlPanel;
 public class GridGestureHelper : IDisposable {
     // Gesture state management
     public enum GestureOwner { None, Tap, LongPress, DragSelect }
+
     public bool EnableDoubleTap { get; set; } = true;
 
-    private const int    DoubleTapThreshold = 225;
-    private const double DragSlopPx         = 3.5;
+    private       DateTime _lastTapUtc        = DateTime.MinValue;
+    private const int      DoubleTapThreshold = 225;
+    private const double   DragSlopPx         = 3.5;
 
     // Debouce Support
     private const int MoveMinIntervalMs = 10; // try 8–12
@@ -33,13 +35,14 @@ public class GridGestureHelper : IDisposable {
     // Gesture recognizers (kept as references for enable/disable)
     private TapGestureRecognizer? _gridTap;
     private TouchBehavior?        _gridTouch;
-    private int                   _lastDragCol;
-    private int                   _lastDragRow;
-    private int                   _lastMoveCol;
-    private long                  _lastMoveProcessedMs;
-    private int                   _lastMoveRow;
-    private int                   _lastProcessedCol = -1;
-    private int                   _lastProcessedRow = -1;
+
+    private int  _lastDragCol;
+    private int  _lastDragRow;
+    private int  _lastMoveCol;
+    private long _lastMoveProcessedMs;
+    private int  _lastMoveRow;
+    private int  _lastProcessedCol = -1;
+    private int  _lastProcessedRow = -1;
 
     // Long press state
     private bool  _longPressActive;
@@ -123,20 +126,27 @@ public class GridGestureHelper : IDisposable {
 
     #region Gesture Event Handlers
     private void OnTapped(object? sender, TappedEventArgs e) {
-        if (_longPressActive) return;
-        if (TapsSuppressed()) return;
-        if (_gestureOwner == GestureOwner.LongPress) return;
-        if (IsSelecting) return;
+        if (_longPressActive || TapsSuppressed() || _gestureOwner == GestureOwner.LongPress || IsSelecting)
+            return;
 
+        var pos = GridPositionHelper.GetGridPosition(e.GetPosition(_grid), _grid) ?? (-1, -1);
+        var args = new GridGestureEventArgs(sender, pos.Col, pos.Row);
+
+        if (!EnableDoubleTap) {
+            // Fire single-tap immediately
+            args.TapCount = 1;
+            SingleTap?.Invoke(this, args);
+            _gestureOwner = GestureOwner.None;
+            return;
+        }
+
+        // Double-tap is enabled → use timer logic
         lock (_tapLock) {
-            var pos = GridPositionHelper.GetGridPosition(e.GetPosition(_grid), _grid) ?? (-1, -1);
             _tapCount++;
             _gestureOwner = GestureOwner.Tap;
             _tapTimer?.Dispose();
-            _tapTimer = new Timer(OnTapTimerElapsed,
-                new GridGestureEventArgs(sender, pos.Col, pos.Row),
-                DoubleTapThreshold,
-                Timeout.Infinite);
+            _tapTimer = new Timer(OnTapTimerElapsed, args,
+                DoubleTapThreshold, Timeout.Infinite);
         }
     }
 

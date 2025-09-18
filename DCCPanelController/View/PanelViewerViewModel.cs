@@ -136,6 +136,7 @@ public partial class PanelViewerViewModel : ConnectionViewModel {
         try {
             if (SelectedPanel is { } panel && NavigationService is { } navigation) {
                 IsLoading = true;
+                StepTimer.Start();
                 await Task.Yield();
                 await Task.Delay(10);
                 var editorPage = new PanelEditor(LogHelper.CreateLogger<PanelEditor>(), panel, _profileService);

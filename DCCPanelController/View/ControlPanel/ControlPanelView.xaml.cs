@@ -2,6 +2,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using CommunityToolkit.Maui.Core;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel;
@@ -53,7 +54,7 @@ public partial class ControlPanelView {
             _panelSurface.Children.Add(v);
         }
 
-        // Finally add the surface where the grid used to be:
+        // Finally, add the surface where the grid used to be:
         // ---------------------------------------------------------------
         ControlPanelLayout.Children.Add(_panelSurface);
 
