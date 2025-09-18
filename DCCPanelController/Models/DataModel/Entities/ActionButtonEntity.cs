@@ -14,6 +14,9 @@ public partial class ActionButtonEntity : ButtonEntity, IEntityGeneratingID, IIn
     [ObservableProperty] [property: Editable("Button Size", Order = 2)]
     private ButtonSizeEnum _buttonSize = ButtonSizeEnum.Normal;
 
+    [ObservableProperty] [property: Editable("Button Type", Order = 2)]
+    private ButtonStyleEnum _buttonStyle = ButtonStyleEnum.Round;
+
     [ObservableProperty] [property: Editable("Button Name", "Unique Name for this Button so it can be referenced by actions.", Order = 1)]
     private string _id = string.Empty;
 
@@ -58,6 +61,9 @@ public partial class ActionButtonEntity : ButtonEntity, IEntityGeneratingID, IIn
     }
 
     public override Entity Clone() => new ActionButtonEntity(this);
+
+    public event EventHandler<ButtonStateEnum>? StateChanged;
+    partial void OnStateChanged(ButtonStateEnum value) => StateChanged?.Invoke(this, value);
 
     public void SetState(ButtonStateEnum newState, StateChangeSource source, ActionExecutionContext? context = null) {
         if (State == newState) return;

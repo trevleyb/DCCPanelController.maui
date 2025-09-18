@@ -45,10 +45,8 @@ public abstract class TrackTile : Tile, ITileTrack {
 
     protected Microsoft.Maui.Controls.View? CreateTrackTileAsCanvas(string trackName, int trackRotation, float scale, SvgStyle? addStyle = null) {
         SvgImage = SvgImages.GetImage(trackName, trackRotation);
-
         var style = GetDefaultStyle();
         if (addStyle is { }) style.AddExisting(addStyle);
-        SvgImage.ApplyStyle(style.Build());
 
         // Build a stable descriptor of the style to hash (names+colors+visibility)
         // ---------------------------------------------------------------------------------
@@ -71,13 +69,13 @@ public abstract class TrackTile : Tile, ITileTrack {
             Flags: IsPath ? "Path" : (IsOccupied ? "Occ" : null)
         );
 
-        var cachedImage = GetOrRender(baseKey, SvgImage);
+        var cachedImage = GetOrRender(baseKey, SvgImage, style);
 
         var view = new SKCanvasView();
         view.PaintSurface += (sender, e) => {
             var c = e.Surface.Canvas;
             c.Clear(SKColors.Transparent);
-            EnsureImageMatchesSurfaceSize(ref cachedImage, baseKey, e.Info.Width, e.Info.Height, SvgImage!);
+            EnsureImageMatchesSurfaceSize(ref cachedImage, style, baseKey, e.Info.Width, e.Info.Height, SvgImage!);
             var dest = SKRect.Create(e.Info.Width, e.Info.Height);
             c.DrawImage(cachedImage, dest); // rotated already
         };
@@ -94,13 +92,13 @@ public abstract class TrackTile : Tile, ITileTrack {
         return absoluteLayout;
     }
 
-    private void EnsureImageMatchesSurfaceSize(ref SKImage img, TileRenderKey baseKey, int w, int h, SvgImage svg) {
+    private void EnsureImageMatchesSurfaceSize(ref SKImage img, SvgStyleBuilder svgStyle, TileRenderKey baseKey, int w, int h, SvgImage svg) {
         if (img.Width == w && img.Height == h) return;
 
         var sizedKey = baseKey with { PixelWidth = w, PixelHeight = h };
         img = TileRenderCache.Shared.TryGet(sizedKey, out var found)
             ? found
-            : GetOrRender(sizedKey, svg);
+            : GetOrRender(sizedKey, svg, svgStyle);
     }
 
     private static int NormalizeDeg(int deg) {
@@ -108,16 +106,19 @@ public abstract class TrackTile : Tile, ITileTrack {
         return deg < 0 ? deg + 360 : deg;
     }
 
-    private SKImage GetOrRender(TileRenderKey key, SvgImage svg) {
-        if (TileRenderCache.Shared.TryGet(key, out var cached)) return cached;
+    private SKImage GetOrRender(TileRenderKey key, SvgImage svgImage, SvgStyleBuilder style) {
+        if (TileRenderCache.Shared.TryGet(key, out var cached)) {
+            return cached;
+        }
 
+        svgImage.ApplyStyle(style.Build());
         var info = new SKImageInfo(key.PixelWidth, key.PixelHeight, SKColorType.Rgba8888, SKAlphaType.Premul);
         using var surface = SKSurface.Create(info);
         var canvas = surface.Canvas;
         canvas.Clear(SKColors.Transparent);
 
         var dest = SKRect.Create(key.PixelWidth, key.PixelHeight);
-        svg.ImageManager.Draw(canvas, destWorld: dest, rotationDegrees: key.RotationDeg);
+        svgImage.ImageManager.Draw(canvas, destWorld: dest, rotationDegrees: key.RotationDeg);
 
         var img = surface.Snapshot();         // immutable SKImage
         TileRenderCache.Shared.Put(key, img); // LRU + dispose on eviction inside Put
@@ -197,7 +198,7 @@ public abstract class TrackTile : Tile, ITileTrack {
             }
 
             if (Entity is StraightEntity straightEntity) {
-                style.Add(e => e.WithName(SvgElementType.Terminator).WithColor(straightEntity.TrackColor ?? Entity.Parent?.TerminatorColor ?? Colors.Gray).Visible());
+                style.Add(e => e.WithName(SvgElementType.Terminator).WithColor(straightEntity.TerminatorColor ?? Entity.Parent?.TerminatorColor ?? Colors.Gray).Visible());
             }
 
             if (IsPath) {

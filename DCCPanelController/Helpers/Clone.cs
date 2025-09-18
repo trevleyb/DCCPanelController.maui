@@ -77,10 +77,6 @@ public static class ObjectCloner {
     private static object? CloneObject(object? source, Dictionary<object, object> referenceMap, HashSet<string> exclusions) {
         if (source == null) return null;
 
-        if (source is ButtonActions or TurnoutActions) {
-            Console.WriteLine("Cloning actions");
-        }
-        
         var type = source.GetType();
 
         // Handle circular references

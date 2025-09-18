@@ -5,6 +5,7 @@ using DCCPanelController.Services;
 using DCCPanelController.Services.ProfileService;
 using DCCPanelController.View;
 using DCCPanelController.View.Components;
+using DCCPanelController.View.TileSelectors;
 using Microsoft.Extensions.Logging;
 using Serilog;
 using SkiaSharp.Views.Maui.Controls.Hosting;
@@ -59,7 +60,7 @@ public static class MauiProgram {
         // Register the Main Entry Page that we will use 
         // --------------------------------------------------------------------------
         services.AddSingleton<AppShell>();
-
+        
         // Add dependant Services
         // --------------------------------------------------------------------------
         services.AddSingleton<ProfileService>();

@@ -27,7 +27,7 @@ public static class GenericComparer {
     private static bool AreEqualInternal(object? obj1, object? obj2,
         GenericComparerOptions options,
         HashSet<(object, object)> visited, int depth) {
-        // Handle null cases
+
         if (obj1 == null && obj2 == null) return CompareResult(true, "Both Objects are Null");
         if (obj1 == null || obj2 == null) return CompareResult(false, "One of the objects is null");
 

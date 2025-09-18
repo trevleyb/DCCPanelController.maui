@@ -8,8 +8,20 @@ namespace DCCPanelController.View;
 public partial class LoadingPage : ContentPage {
     private bool _started;
 
+    public int Steps => 5;
+    public int Progress { get; set; }
+
+    public async void IncrementProgress() {
+        Progress++;
+        OnPropertyChanged(nameof(Progress));
+        await Task.Yield();
+        await Task.Delay(10);
+
+    }
+    
     public LoadingPage() {
         InitializeComponent();
+        BindingContext = this;
         NavigationPage.SetHasNavigationBar(this, false);
     }
 
@@ -25,24 +37,33 @@ public partial class LoadingPage : ContentPage {
 
                 try {
                     // 1) Initialize domain state
+                    IncrementProgress();
                     await profileService.InitializeAsync();
 
                     // Optional: any other one-time startup work here (help assets, migrations, etc.)
+                    IncrementProgress();
                     await HelpService.Current.InitializeAsync(true);
+
                     #if DEBUG
                     await ValidateBundleAsync();
                     await ValidateExtractedAsync();
                     #endif
 
                     // 2) Only now create Shell and replace the root
+                    IncrementProgress();
                     var shell = services.GetRequiredService<AppShell>();
 
+                    // 3) Prebuild the Palette Cache
+                    IncrementProgress();
+                    TileSelectorPaletteCache.PrebuildDefaultPalette();
+                    
                     // Important: swap the root page instead of navigating
+                    IncrementProgress();
                     var window = Application.Current?.Windows[0];
+                    Progress = Steps;
                     window?.Page = shell; // Avoid Application.Current.MainPage (obsolete)
-                } catch (Exception ex) {
+                    } catch (Exception ex) {
                     await DisplayAlert("Startup error", ex.Message, "Quit");
-                    App.Current.Quit();
                 }
             }
         });

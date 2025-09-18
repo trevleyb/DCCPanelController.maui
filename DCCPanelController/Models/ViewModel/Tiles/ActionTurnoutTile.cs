@@ -13,6 +13,7 @@ public class ActionTurnoutTile : Tile, ITileInteractive {
     public ActionTurnoutTile(TurnoutButtonEntity entity, double gridSize) : base(entity, gridSize) {
         VisualProperties.Add(nameof(ActionButtonEntity.State));
         VisualProperties.Add(nameof(ActionButtonEntity.ButtonSize));
+        VisualProperties.Add(nameof(ActionButtonEntity.ButtonStyle));
 
         if (Entity is TurnoutButtonEntity button) {
             if (button.Turnout is { } turnout) {
@@ -55,10 +56,11 @@ public class ActionTurnoutTile : Tile, ITileInteractive {
 
     protected override Microsoft.Maui.Controls.View? CreateTile() {
         if (Entity is TurnoutButtonEntity button) {
+            var size = button.ButtonStyle == ButtonStyleEnum.Round ? "Round" : "Square";
             SvgImage = button.ButtonSize switch {
-                ButtonSizeEnum.Large => SvgImages.GetImage("TurnoutLarge", Entity.Rotation),
-                ButtonSizeEnum.Small => SvgImages.GetImage("TurnoutSmall", Entity.Rotation),
-                _                    => SvgImages.GetImage("Turnout", Entity.Rotation),
+                ButtonSizeEnum.Large => SvgImages.GetImage($"Button{size}Large", Entity.Rotation),
+                ButtonSizeEnum.Small => SvgImages.GetImage($"Button{size}Small", Entity.Rotation),
+                _                    => SvgImages.GetImage($"Button{size}", Entity.Rotation),
             };
 
             var buttonColor = button.State switch {

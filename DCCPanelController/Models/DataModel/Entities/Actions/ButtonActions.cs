@@ -29,7 +29,11 @@ public class ButtonActions : ObservableCollection<ButtonAction>, ICloneable {
                         ButtonStateEnum.Off => action.WhenOff,
                         _                   => ButtonStateEnum.Unknown,
                     };
-                    actionButton.SetState(newState, StateChangeSource.Internal, context);
+                    Console.WriteLine($"BUTTON(b): {button.Id} => {actionButton.Id} from {actionButton.State} to {newState}");
+                    if (newState != ButtonStateEnum.Unknown) {
+                        //actionButton.SetState(newState, StateChangeSource.Internal, context);
+                        actionButton.State = newState;
+                    }
                 }
             }
 
@@ -40,9 +44,14 @@ public class ButtonActions : ObservableCollection<ButtonAction>, ICloneable {
                         ButtonStateEnum.Off => action.WhenThrown,
                         _                   => TurnoutStateEnum.Unknown,
                     };
-                    actionTurnout.SetState(newState, StateChangeSource.Internal, context);
-                    if (connectionService.Client is { } client && actionTurnout.Turnout != null) {
-                        await client.SendTurnoutCmdAsync(actionTurnout.Turnout, newState != TurnoutStateEnum.Closed);
+                    Console.WriteLine($"TURNOUT(b): {button.Id} => {actionTurnout.Id} from {actionTurnout.State} to {newState}");
+                    if (newState != TurnoutStateEnum.Unknown) {
+                        // actionTurnout.SetState(newState, StateChangeSource.Internal, context);
+                        // Removed Cascade as it causes issues
+                        actionTurnout.State = newState;
+                        if (connectionService.Client is { } client && actionTurnout.Turnout != null) {
+                            await client.SendTurnoutCmdAsync(actionTurnout.Turnout, newState != TurnoutStateEnum.Closed);
+                        }
                     }
                 }
             }

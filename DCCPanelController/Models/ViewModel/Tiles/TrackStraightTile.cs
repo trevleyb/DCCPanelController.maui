@@ -3,7 +3,10 @@ using DCCPanelController.Models.DataModel.Entities;
 namespace DCCPanelController.Models.ViewModel.Tiles;
 
 public class TrackStraightTile : TrackTile {
-    public TrackStraightTile(StraightEntity entity, double gridSize) : base(entity, gridSize) { }
+    public TrackStraightTile(StraightEntity entity, double gridSize) : base(entity, gridSize) {
+        VisualProperties.Add(nameof(StraightEntity.TerminatorColor));
+        VisualProperties.Add(nameof(StraightEntity.TrackStyle));
+    }
 
     protected override Microsoft.Maui.Controls.View? CreateTile() =>
         ((StraightEntity)Entity).TrackStyle switch {

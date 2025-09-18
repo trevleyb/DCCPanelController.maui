@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Text.RegularExpressions;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -15,6 +16,7 @@ using DCCPanelController.View.Properties.PanelProperties;
 using DCCPanelController.View.TileSelectors;
 using Microsoft.Extensions.Logging;
 using Syncfusion.Maui.Toolkit.Popup;
+using IImage = Microsoft.Maui.IImage;
 using PanelPropertyViewModel = DCCPanelController.View.Properties.PanelProperties.PanelPropertyViewModel;
 
 namespace DCCPanelController.View;
@@ -73,9 +75,6 @@ public partial class PanelEditorViewModel : ObservableObject {
         _panelEditor = panelEditor;
         _panelEditorContainer = panelEditorContainer;
 
-        // Pre-build the palette cache
-        TileSelectorPaletteCache.Prebuild(_panel);
-
         ExitViaBackButton = false;
         CheckIfPanelChanged();
         if (HavePropertiesChanged) {
@@ -131,7 +130,7 @@ public partial class PanelEditorViewModel : ObservableObject {
     public void CheckIfPanelChanged() {
         ArgumentNullException.ThrowIfNull(_original, "Original Panel should never be undefined.");
         ArgumentNullException.ThrowIfNull(Panel, "Panel should never be undefined.");
-        HavePropertiesChanged = !_original.IsEqualTo(Panel);
+        HavePropertiesChanged = HavePropertiesChanged || !_original.IsEqualTo(Panel);
     }
 
     [RelayCommand]
@@ -172,17 +171,17 @@ public partial class PanelEditorViewModel : ObservableObject {
     public async Task<string> GetThumbnailImageAsync(Microsoft.Maui.Controls.View panelView) {
         try {
             using (new CodeTimer("Capture to Thumbnail Image")) {
-                if (_panelView.ShowGrid) _panelView.ShowGrid = false;
                 _panelView.ClearAllSelectedTiles();
-                await LetUICatchUpAsync();
+                if (_panelView.ShowGrid) _panelView.ShowGrid = false;
+                await LetUICatchUpAsync(16);
 
-                var result = await _panelEditorContainer.CaptureAsync();
-                if (result == null) return string.Empty;
-
-                //var base64 = Convert.ToBase64String(ms.GetBuffer(), 0, length);
+                //var result = await CaptureHelper.CaptureStableAsync(_panelEditorContainer, 16, true);
+                var shot = await CleanCapture.CaptureAsync(_panelEditorContainer);
+                if (shot == null) return string.Empty;
+                
                 var base64 = await Task.Run(async () => {
                                             using var ms = new MemoryStream(64 * 1024); // small initial capacity; grows as needed
-                                            await result.CopyToAsync(ms, ScreenshotFormat.Jpeg, 75);
+                                            await shot.CopyToAsync(ms, ScreenshotFormat.Jpeg, 75);
                                             var length = (int)ms.Length;
                                             return Convert.ToBase64String(ms.GetBuffer(), 0, length);
                                         })
@@ -219,6 +218,7 @@ public partial class PanelEditorViewModel : ObservableObject {
             // If multiple items selected, then only MOVE or COPY allowed
             EditMode = EditMode == EditModeEnum.Move ? EditModeEnum.Copy : EditModeEnum.Move;
         }
+        CheckIfPanelChanged();
     }
 
     [RelayCommand]
@@ -243,7 +243,7 @@ public partial class PanelEditorViewModel : ObservableObject {
         } else {
             await EditPanelPropertiesPopupAsync();
         }
-        EditMode = EditModeEnum.Move;   // Reset the edit mode after editing properties
+        EditMode = EditModeEnum.Move; // Reset the edit mode after editing properties
         CheckIfPanelChanged();
     }
 
@@ -262,40 +262,6 @@ public partial class PanelEditorViewModel : ObservableObject {
             IsProcessing = false;
         }
     }
-
-    // Attempted to use a Navigation Page, but caused other issues???
-    // private async Task EditTilePropertiesNavPage() {
-    //     try {
-    //         if (Panel is { } panel && SelectedEntities is {Count: > 0}) {
-    //             IsProcessing = true;
-    //             var originalLayers = SelectedEntities.Select(entity => entity.Layer).ToList();
-    //
-    //             OnBeginPushModal?.Invoke();
-    //             if (SelectedEntities.Count > 0 && _panelEditor is { }) {
-    //                 var content = await DynamicTilePropertyPage.CreatePropertyPage(SelectedEntities, _panelView.Width, _panelView.Height);
-    //                 var page = new ContentPage() { Content = content };
-    //                 await _panelEditorContainer.Navigation.PushAsync(page);
-    //             }
-    //             OnBeginPopModal?.Invoke();
-    //
-    //             // Redraw if we changed any Layers
-    //             // --------------------------------------------------------------------
-    //             var newLayers = SelectedEntities.Select(entity => entity.Layer).ToList();
-    //             if (newLayers.Count != originalLayers?.Count ||
-    //                 newLayers.Except(originalLayers).Any() ||
-    //                 originalLayers.Except(newLayers).Any()) {
-    //                 Console.WriteLine("Layer(s) were changed, so forcing a Panel redraw");
-    //                 ForcePanelRefresh?.Invoke();
-    //             }
-    //
-    //             _panelView.ClearAllSelectedTiles(); // Reset all selected tiles for clarity
-    //         }
-    //     } catch (Exception ex) {
-    //         _logger.LogCritical("Error Launching Tile Properties Page: " + ex.Message);
-    //     } finally {
-    //         IsProcessing = false;
-    //     }
-    // }
     
     private async Task EditTilePropertiesPopupAsync() {
         try {
@@ -309,7 +275,6 @@ public partial class PanelEditorViewModel : ObservableObject {
                     await DynamicTilePropertyPage.CreatePropertyPagePopup(page);
                 }
             }
-
         } catch (Exception ex) {
             _logger.LogCritical("Error Launching Tile Properties Page: " + ex.Message);
         } finally {
@@ -319,7 +284,6 @@ public partial class PanelEditorViewModel : ObservableObject {
     }
 
     private void PageOnApplied(object? sender, DynamicTilePropertyPageEventArgs e) {
-        Console.WriteLine("Property Page Changed applied.");
         e.Page.Applied -= PageOnApplied;
         _panelView.ClearAllSelectedTiles(); // Reset all selected tiles for clarity
     }
@@ -378,8 +342,8 @@ public partial class PanelEditorViewModel : ObservableObject {
         }
     }
 
-    private async Task LetUICatchUpAsync() {
+    private static async Task LetUICatchUpAsync(int ms = 10) {
         await Task.Yield();
-        await Task.Delay(10);
+        await Task.Delay(ms);
     }
 }

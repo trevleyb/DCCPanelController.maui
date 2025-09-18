@@ -154,7 +154,7 @@ public partial class PanelEditor : ContentPage {
                     var selectedEntity = _viewModel.SelectedTiles[0].Entity;
                     SelectionText.Text = $"Selected Tile: {selectedEntity.EntityName} @ Layer:{selectedEntity.Layer} ";
                     if (selectedEntity is TurnoutEntity turnout) {
-                        SelectionText.Text += $" ({turnout.Turnout?.Name ?? "Undefined"} [{turnout.Turnout?.Id ?? "000"}])";
+                        SelectionText.Text += $" ({turnout.Id ?? "Undefined"} [DCC={turnout.Turnout?.Id ?? "000"}])";
                     } else if (selectedEntity is IEntityID entityID) {
                         SelectionText.Text += $" ({entityID.Id})";
                     }
@@ -180,7 +180,6 @@ public partial class PanelEditor : ContentPage {
     private void ViewModelOnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
         switch (e.PropertyName) {
             case nameof(PanelEditorViewModel.HavePropertiesChanged):
-                Console.WriteLine("Properties Have Changed? " + _viewModel.HavePropertiesChanged);
             break;
 
             case nameof(PanelEditorViewModel.GridVisible):

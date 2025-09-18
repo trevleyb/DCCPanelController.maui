@@ -6,6 +6,8 @@ public enum SwitchStyleEnum { Switch, Light, Button }
 
 public enum ButtonStateEnum { Unknown, On, Off }
 
+public enum ButtonStyleEnum { Round, Square }
+
 public enum TurnoutStateEnum { Unknown, Closed, Thrown }
 
 public enum RouteStateEnum { Unknown, Active, Inactive }

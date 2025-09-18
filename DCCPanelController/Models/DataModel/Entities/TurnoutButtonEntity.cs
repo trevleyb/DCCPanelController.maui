@@ -13,9 +13,9 @@ public partial class TurnoutButtonEntity : ButtonEntity, IInteractiveEntity {
     [ObservableProperty] [property: Editable("Indicator Color", "Default color of the Indicator.", 11, "Colors")]
     private Color? _colorIndicator;
 
-    // [ObservableProperty] [property: Editable("Button Name", "Unique Name for this Button so it can be referenced by actions.", 0)]
-    // private string _id = string.Empty;
-    
+    [ObservableProperty] [property: Editable("Button Type", Order = 2)]
+    private ButtonStyleEnum _buttonStyle = ButtonStyleEnum.Round;
+
     [ObservableProperty]
     [property: Editable("Show Indicator", "Show the Button Indicator?", 10, "Colors")]
     private bool _showIndicator = true;

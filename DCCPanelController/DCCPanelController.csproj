@@ -15,7 +15,7 @@
         <!-- For example: <RuntimeIdentifiers>maccatalyst-x64;maccatalyst-arm64</RuntimeIdentifiers> -->
 
         <OutputType>Exe</OutputType>
-        <RootNamespace>Panel Controller</RootNamespace>
+        <RootNamespace>DCCPanelController</RootNamespace>
         <UseMaui>true</UseMaui>
         <SingleProject>true</SingleProject>
         <ImplicitUsings>enable</ImplicitUsings>
@@ -102,10 +102,12 @@
         <!-- Raw Assets (also remove the "Resources\Raw" prefix) -->
         <EmbeddedResource Include="Models\TileImages\button_light_large.svg"/>
         <EmbeddedResource Include="Models\TileImages\button_light_small.svg" />
-        <EmbeddedResource Include="Models\TileImages\button_push_small.svg" />
+        <EmbeddedResource Include="Models\TileImages\button_round_push_small.svg" />
         <EmbeddedResource Include="Models\TileImages\button_route_small.svg" />
-        <EmbeddedResource Include="Models\TileImages\button_turnout_large.svg"/>
-        <EmbeddedResource Include="Models\TileImages\button_turnout.svg"/>
+        <EmbeddedResource Include="Models\TileImages\button_square_push.svg" />
+        <EmbeddedResource Include="Models\TileImages\button_square_push_corner.svg" />
+        <EmbeddedResource Include="Models\TileImages\button_square_push_large.svg" />
+        <EmbeddedResource Include="Models\TileImages\button_square_push_small.svg" />
         <MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)"/>
 
         <MauiIcon Include="Resources\AppIcon\appiconfg.svg"/>
@@ -116,7 +118,6 @@
 
         <!-- Splash Screen -->
         <MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#7CC504" BaseSize="172,220"/>
-        <EmbeddedResource Include="Models\TileImages\button_turnout_small.svg" />
         <EmbeddedResource Include="Models\TileImages\draw_circle.svg"/>
         <EmbeddedResource Include="Models\TileImages\draw_line.svg"/>
         <EmbeddedResource Include="Models\TileImages\draw_rectangle.svg"/>
@@ -158,9 +159,9 @@
         <EmbeddedResource Include="Models\TileImages\track_points.svg"/>
         
         <EmbeddedResource Include="Models\TileImages\button_light.svg"/>
-        <EmbeddedResource Include="Models\TileImages\button_push.svg"/>
-        <EmbeddedResource Include="Models\TileImages\button_push_corner.svg"/>
-        <EmbeddedResource Include="Models\TileImages\button_push_large.svg"/>
+        <EmbeddedResource Include="Models\TileImages\button_round_push.svg" />
+        <EmbeddedResource Include="Models\TileImages\button_round_push_corner.svg" />
+        <EmbeddedResource Include="Models\TileImages\button_round_push_large.svg" />
         <EmbeddedResource Include="Models\TileImages\button_route_large.svg"/>
         <EmbeddedResource Include="Models\TileImages\button_route.svg"/>
         <EmbeddedResource Include="Models\TileImages\switch_off.svg"/>

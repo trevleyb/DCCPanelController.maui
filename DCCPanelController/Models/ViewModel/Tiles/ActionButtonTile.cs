@@ -11,8 +11,8 @@ namespace DCCPanelController.Models.ViewModel.Tiles;
 public class ActionButtonTile : Tile, ITileInteractive {
     public ActionButtonTile(ActionButtonEntity entity, double gridSize) : base(entity, gridSize) {
         VisualProperties.Add(nameof(ActionButtonEntity.State));
+        VisualProperties.Add(nameof(ActionButtonEntity.ButtonStyle));
         VisualProperties.Add(nameof(ActionButtonEntity.ButtonSize));
-        if (Entity is ActionButtonEntity button) button.State = ButtonStateEnum.Unknown;
     }
 
     public SvgImage? SvgImage { get; protected set; }
@@ -38,10 +38,11 @@ public class ActionButtonTile : Tile, ITileInteractive {
 
     protected override Microsoft.Maui.Controls.View? CreateTile() {
         if (Entity is ActionButtonEntity button) {
+            var size = button.ButtonStyle == ButtonStyleEnum.Round ? "Round" : "Square";
             SvgImage = button.ButtonSize switch {
-                ButtonSizeEnum.Large => SvgImages.GetImage("ButtonLarge", Entity.Rotation),
-                ButtonSizeEnum.Small => SvgImages.GetImage("ButtonSmall", Entity.Rotation),
-                _                    => SvgImages.GetImage("button", Entity.Rotation),
+                ButtonSizeEnum.Large => SvgImages.GetImage($"Button{size}Large", Entity.Rotation),
+                ButtonSizeEnum.Small => SvgImages.GetImage($"Button{size}Small", Entity.Rotation),
+                _                    => SvgImages.GetImage($"Button{size}", Entity.Rotation),
             };
 
             var buttonColor = button.State switch {

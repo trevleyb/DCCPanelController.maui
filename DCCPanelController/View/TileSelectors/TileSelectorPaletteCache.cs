@@ -1,46 +1,59 @@
-// TileSelectorPaletteCache.cs
-
 using System.Collections.Concurrent;
+using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.ViewModel.Helpers;
 using DCCPanelController.Models.ViewModel.Interfaces;
-using DCCPanelController.Models.ViewModel.Tiles;
 
-namespace DCCPanelController.View.TileSelectors;
+public static class TileSelectorPaletteCache {
+    private const string DefaultPalette = "Default";
 
-public class TileSelectorPaletteCache {
-    // Use a unique key for each unique Panel/Palette
-    private static readonly ConcurrentDictionary<string, PaletteResult> Cache = new();
+    // Store Lazy<PaletteResult> to guarantee single-construction per key
+    private static readonly ConcurrentDictionary<string, Lazy<PaletteResult>> Cache = new();
 
-    public static PaletteResult GetOrBuild(Panel panel) {
-        var key = panel.Guid.ToString();
-        if (Cache.TryGetValue(key, out var cachedResult)) return cachedResult;
-        var result = BuildTilesForPanel(panel);
-        if (result is null) throw new InvalidOperationException("Unable to build palette");
-        Cache.TryAdd(key, result);
-        return result;
-    }
+    // Prebuild (or return existing) without allocating a Panel unless needed
+    public static PaletteResult PrebuildDefaultPalette() => GetPalette(DefaultPalette, CreateDefaultPanel);
 
-    public static void Prebuild(Panel panel) => GetOrBuild(panel);
+    public static PaletteResult GetDefaultPalette() => GetPalette(DefaultPalette, CreateDefaultPanel);
+    
+    public static PaletteResult GetPalette(Panel panel) => GetPalette(panel.Guid.ToString(), () => panel.CloneEmptyPanel("Selector"));
+
+    public static PaletteResult GetPalette(string key, Panel panel) => GetPalette(key, () => panel.CloneEmptyPanel("Selector"));
+
     public static void Clear(string key) => Cache.TryRemove(key, out _);
+
     public static void Clear() => Cache.Clear();
 
-    public static PaletteResult? BuildTilesForPanel(Panel editPanel) {
+    // --- Core (thread-safe) lookup/build -------------------------------------
+
+    private static PaletteResult GetPalette(string key, Func<Panel> panelFactory) {
+        using (new CodeTimer($"Getting Tile Palette: {key}")) {
+            var lazy = Cache.GetOrAdd(
+                key,
+                _ => new Lazy<PaletteResult>(
+                    () => {
+                        var panel = panelFactory();
+                        var result = BuildTilesForPanel(panel);
+                        return result ?? throw new InvalidOperationException("Unable to build palette.");
+                    },
+                    LazyThreadSafetyMode.ExecutionAndPublication));
+
+            return lazy.Value;
+        }
+    }
+
+    // --- Implementation details ----------------------------------------------
+
+    private static Panel CreateDefaultPanel() {
+        var panels = new Panels();
+        return panels.CreatePanel("Palette");
+    }
+
+    private static PaletteResult BuildTilesForPanel(Panel panel) {
         try {
-            var byCategory = new Dictionary<string, List<ITile>>();
+            var byCategory = new Dictionary<string, List<ITile>>(StringComparer.Ordinal);
             var categories = new List<string>();
 
-            void Add(string category, IEnumerable<Entity> entities) {
-                categories.Add(category);
-                byCategory[category] = new List<ITile>();
-                foreach (var e in entities) {
-                    var tile = TileFactory.CreateTile(e, 32);
-                    if (tile is { }) byCategory[category].Add(tile);
-                }
-            }
-
-            var panel = editPanel.CloneEmptyPanel("Selector");
             Add("Actions", [
                 new TurnoutButtonEntity(panel) { State = ButtonStateEnum.On },
                 new ActionButtonEntity(panel) { State = ButtonStateEnum.On },
@@ -49,14 +62,14 @@ public class TileSelectorPaletteCache {
             ]);
 
             Add("Mainline", [
-                new StraightEntity(panel) { TrackType = TrackTypeEnum.MainLine, TrackStyle = TrackStyleEnum.Normal},
-                new StraightEntity(panel) { TrackType = TrackTypeEnum.MainLine, TrackStyle = TrackStyleEnum.Terminator},
-                new StraightEntity(panel) { TrackType = TrackTypeEnum.MainLine, TrackStyle = TrackStyleEnum.Arrow},
-                new StraightEntity(panel) { TrackType = TrackTypeEnum.MainLine, TrackStyle = TrackStyleEnum.Lines},
-                new StraightEntity(panel) { TrackType = TrackTypeEnum.MainLine, TrackStyle = TrackStyleEnum.Bridge},
-                new StraightEntity(panel) { TrackType = TrackTypeEnum.MainLine, TrackStyle = TrackStyleEnum.Platform},
-                new StraightEntity(panel) { TrackType = TrackTypeEnum.MainLine, TrackStyle = TrackStyleEnum.Rounded},
-                new StraightEntity(panel) { TrackType = TrackTypeEnum.MainLine, TrackStyle = TrackStyleEnum.Tunnel},
+                new StraightEntity(panel) { TrackType = TrackTypeEnum.MainLine, TrackStyle = TrackStyleEnum.Normal },
+                new StraightEntity(panel) { TrackType = TrackTypeEnum.MainLine, TrackStyle = TrackStyleEnum.Terminator },
+                new StraightEntity(panel) { TrackType = TrackTypeEnum.MainLine, TrackStyle = TrackStyleEnum.Arrow },
+                new StraightEntity(panel) { TrackType = TrackTypeEnum.MainLine, TrackStyle = TrackStyleEnum.Lines },
+                new StraightEntity(panel) { TrackType = TrackTypeEnum.MainLine, TrackStyle = TrackStyleEnum.Bridge },
+                new StraightEntity(panel) { TrackType = TrackTypeEnum.MainLine, TrackStyle = TrackStyleEnum.Platform },
+                new StraightEntity(panel) { TrackType = TrackTypeEnum.MainLine, TrackStyle = TrackStyleEnum.Rounded },
+                new StraightEntity(panel) { TrackType = TrackTypeEnum.MainLine, TrackStyle = TrackStyleEnum.Tunnel },
                 new LeftTurnoutEntity(panel) { TrackType = TrackTypeEnum.MainLine },
                 new RightTurnoutEntity(panel) { TrackType = TrackTypeEnum.MainLine },
                 new CrossingEntity(panel) { TrackType = TrackTypeEnum.MainLine },
@@ -65,15 +78,14 @@ public class TileSelectorPaletteCache {
             ]);
 
             Add("Branch", [
-                new StraightEntity(panel) { TrackType = TrackTypeEnum.BranchLine, TrackStyle = TrackStyleEnum.Normal},
-                new StraightEntity(panel) { TrackType = TrackTypeEnum.BranchLine, TrackStyle = TrackStyleEnum.Terminator},
-                new StraightEntity(panel) { TrackType = TrackTypeEnum.BranchLine, TrackStyle = TrackStyleEnum.Arrow},
-                new StraightEntity(panel) { TrackType = TrackTypeEnum.BranchLine, TrackStyle = TrackStyleEnum.Lines},
-                new StraightEntity(panel) { TrackType = TrackTypeEnum.BranchLine, TrackStyle = TrackStyleEnum.Bridge},
-                new StraightEntity(panel) { TrackType = TrackTypeEnum.BranchLine, TrackStyle = TrackStyleEnum.Platform},
-                new StraightEntity(panel) { TrackType = TrackTypeEnum.BranchLine, TrackStyle = TrackStyleEnum.Rounded},
-                new StraightEntity(panel) { TrackType = TrackTypeEnum.BranchLine, TrackStyle = TrackStyleEnum.Tunnel},
-
+                new StraightEntity(panel) { TrackType = TrackTypeEnum.BranchLine, TrackStyle = TrackStyleEnum.Normal },
+                new StraightEntity(panel) { TrackType = TrackTypeEnum.BranchLine, TrackStyle = TrackStyleEnum.Terminator },
+                new StraightEntity(panel) { TrackType = TrackTypeEnum.BranchLine, TrackStyle = TrackStyleEnum.Arrow },
+                new StraightEntity(panel) { TrackType = TrackTypeEnum.BranchLine, TrackStyle = TrackStyleEnum.Lines },
+                new StraightEntity(panel) { TrackType = TrackTypeEnum.BranchLine, TrackStyle = TrackStyleEnum.Bridge },
+                new StraightEntity(panel) { TrackType = TrackTypeEnum.BranchLine, TrackStyle = TrackStyleEnum.Platform },
+                new StraightEntity(panel) { TrackType = TrackTypeEnum.BranchLine, TrackStyle = TrackStyleEnum.Rounded },
+                new StraightEntity(panel) { TrackType = TrackTypeEnum.BranchLine, TrackStyle = TrackStyleEnum.Tunnel },
                 new LeftTurnoutEntity(panel) { TrackType = TrackTypeEnum.BranchLine },
                 new RightTurnoutEntity(panel) { TrackType = TrackTypeEnum.BranchLine },
                 new CrossingEntity(panel) { TrackType = TrackTypeEnum.BranchLine },
@@ -89,12 +101,34 @@ public class TileSelectorPaletteCache {
                 new CircleEntity(panel) { BackgroundColor = Colors.Silver, BorderColor = Colors.Black },
                 new ImageEntity(panel),
             ]);
-            return new PaletteResult(byCategory, categories);
+
+            // Return read-only views to prevent accidental mutation of the cache
+            var roByCategory = byCategory.ToDictionary(
+                kvp => kvp.Key, IReadOnlyList<ITile> (kvp) => kvp.Value.AsReadOnly(),
+                StringComparer.Ordinal);
+
+            var roCategories = (IReadOnlyList<string>)categories.AsReadOnly();
+
+            return new PaletteResult(roByCategory, roCategories);
+
+            // Add function to add to the collection
+            // -----------------------------------------------------
+            void Add(string category, IEnumerable<Entity> entities) {
+                categories.Add(category);
+                var list = new List<ITile>();
+                foreach (var e in entities) {
+                    var tile = TileFactory.CreateTile(e, 32);
+                    if (tile is { }) list.Add(tile);
+                }
+                byCategory[category] = list;
+            }
         } catch (Exception ex) {
-            Console.WriteLine($"Error building palette: {ex.Message}");
-            return null;
+            throw new ApplicationException($"Error building palette: {ex.Message}", ex);
         }
     }
 
-    public record PaletteResult(Dictionary<string, List<ITile>> ByCategory, List<string> Categories);
+    // Immutable-ish result (lists are read-only)
+    public sealed record PaletteResult(
+        IReadOnlyDictionary<string, IReadOnlyList<ITile>> ByCategory,
+        IReadOnlyList<string> Categories);
 }

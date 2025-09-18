@@ -42,4 +42,5 @@ public partial class RouteEntity : ButtonEntity, IInteractiveEntity {
     public override Entity Clone() => new RouteEntity(this);
 
     public override string ToString() => Id;
+    
 }

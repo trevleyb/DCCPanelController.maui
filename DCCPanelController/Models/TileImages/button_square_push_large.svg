@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <g>
+        <g id="Track_Button">
+            <rect id="ButtonOutline" width="24" height="24" x="12" y="12" stroke-width="4" stroke="#000000"/>
+            <rect id="Button" width="24" height="24" x="12" y="12" stroke-width="2" fill="#90C418"/>
+        </g>
+    </g>
+</svg>

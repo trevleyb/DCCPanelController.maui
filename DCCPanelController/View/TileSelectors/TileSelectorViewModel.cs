@@ -22,8 +22,7 @@ public abstract partial class TileSelectorViewModel : BaseViewModel {
 
             MainThread.BeginInvokeOnMainThread(() => {
                 // For some reason, caching sometimes doesn't work due to UI timing issues
-                var palette = TileSelectorPaletteCache.BuildTilesForPanel(value); // e.GetOrBuild(value);
-                if (palette is null) throw new InvalidOperationException("Unable to build palette");
+                var palette = TileSelectorPaletteCache.GetDefaultPalette(); // e.GetOrBuild(value);
 
                 // Create a new dictionary and observable collections to avoid sharing the cached instances
                 // -----------------------------------------------------------------------------------------

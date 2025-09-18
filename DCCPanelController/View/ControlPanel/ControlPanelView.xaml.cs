@@ -359,9 +359,9 @@ public partial class ControlPanelView {
                         case EditModeEnum.Size:
                             ResizeTile(tile, e.AbsStartCol, e.AbsStartRow, e.AbsEndCol, e.AbsEndRow);
                             MarkTileSelected(tile);
-                            OnTileChanged(tile);
                         break;
                     }
+                    OnTileChanged(tile);
                 }
             }
         } catch (Exception ex) {
