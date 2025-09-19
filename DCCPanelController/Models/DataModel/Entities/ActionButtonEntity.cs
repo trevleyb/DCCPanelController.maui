@@ -20,6 +20,9 @@ public partial class ActionButtonEntity : ButtonEntity, IEntityGeneratingID, IIn
     [ObservableProperty] [property: Editable("Button Name", "Unique Name for this Button so it can be referenced by actions.", Order = 1)]
     private string _id = string.Empty;
 
+    [ObservableProperty] [property: Editable("Non-Toggle", "Only available if set to Off.", Order = 5)]
+    private bool _singlePress = false;
+
     [ObservableProperty]
     private ButtonStateEnum _state = ButtonStateEnum.Unknown;
 

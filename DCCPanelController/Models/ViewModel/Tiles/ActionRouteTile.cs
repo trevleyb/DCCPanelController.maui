@@ -10,8 +10,10 @@ namespace DCCPanelController.Models.ViewModel.Tiles;
 
 public class ActionRouteTile : Tile, ITileInteractive {
     public ActionRouteTile(RouteEntity entity, double gridSize) : base(entity, gridSize) {
-        VisualProperties.Add(nameof(ActionButtonEntity.State));
-        VisualProperties.Add(nameof(ActionButtonEntity.ButtonSize));
+        Watch
+           .Track(nameof(RouteEntity.State), () => entity.State)
+           .Track(nameof(RouteEntity.ButtonSize), () => entity.ButtonSize);
+
         if (Entity is RouteEntity { Route: { } route } routeEntity) {
             routeEntity.State = RouteStateEnum.Unknown;
             route.PropertyChanged += (sender, args) => { routeEntity.State = route.State; };

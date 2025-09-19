@@ -11,9 +11,10 @@ namespace DCCPanelController.Models.ViewModel.Tiles;
 
 public class ActionTurnoutTile : Tile, ITileInteractive {
     public ActionTurnoutTile(TurnoutButtonEntity entity, double gridSize) : base(entity, gridSize) {
-        VisualProperties.Add(nameof(ActionButtonEntity.State));
-        VisualProperties.Add(nameof(ActionButtonEntity.ButtonSize));
-        VisualProperties.Add(nameof(ActionButtonEntity.ButtonStyle));
+        Watch
+           .Track(nameof(TurnoutButtonEntity.State), () => entity.State)
+           .Track(nameof(TurnoutButtonEntity.ButtonSize), () => entity.ButtonSize)
+           .Track(nameof(TurnoutButtonEntity.ButtonStyle), () => entity.ButtonStyle);
 
         if (Entity is TurnoutButtonEntity button) {
             if (button.Turnout is { } turnout) {

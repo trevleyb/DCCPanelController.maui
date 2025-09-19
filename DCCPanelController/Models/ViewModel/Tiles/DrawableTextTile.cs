@@ -11,8 +11,14 @@ namespace DCCPanelController.Models.ViewModel.Tiles;
 
 public class DrawableTextTile : Tile, ITileDrawable {
     public DrawableTextTile(TextEntity entity, double gridSize) : base(entity, gridSize) {
-        VisualProperties.Add(nameof(entity.HorizontalJustification));
-        VisualProperties.Add(nameof(entity.VerticalJustification));
+        Watch
+           .Track(nameof(TextEntity.HorizontalJustification), () => entity.HorizontalJustification)
+           .Track(nameof(TextEntity.VerticalJustification), () => entity.VerticalJustification)
+           .Track(nameof(TextEntity.BackgroundColor), () => entity.BackgroundColor)
+           .Track(nameof(TextEntity.FontSize), () => entity.FontSize)
+           .Track(nameof(TextEntity.FontStyle), () => entity.FontStyle)
+           .Track(nameof(TextEntity.Label), () => entity.Label)
+           .Track(nameof(TextEntity.TextColor), () => entity.TextColor);
     }
 
     protected override Microsoft.Maui.Controls.View? CreateTile() {

@@ -246,7 +246,7 @@ public partial class PanelEditorViewModel : ObservableObject {
             if (Panel is { } panel && _panelEditor is { }) {
                 IsProcessing = true;
                 await LetUiCatchUpAsync();
-                var propertiesViewModel = new PanelPropertyViewModel(panel);
+                var propertiesViewModel = new PanelPropertyViewModel(panel, _original);
                 var propertiesPage = new PanelPropertyPage(propertiesViewModel);
                 ShowPropertyPopup("Panel Properties", propertiesViewModel, propertiesPage, AcceptPanelPropertiesPopupCommand);
             }

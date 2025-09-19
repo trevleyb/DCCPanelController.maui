@@ -12,7 +12,8 @@ namespace DCCPanelController.Models.ViewModel.Tiles;
 
 public class DrawableImageTile : Tile, ITileDrawable {
     public DrawableImageTile(ImageEntity entity, double gridSize) : base(entity, gridSize) {
-        VisualProperties.Add(nameof(ImageEntity.Image));
+        Watch
+           .Track(nameof(ImageEntity.Image), () => entity.Image);
     }
 
     protected override Microsoft.Maui.Controls.View? CreateTile() {

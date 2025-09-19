@@ -10,15 +10,8 @@ public partial class TurnoutButtonEntity : ButtonEntity, IInteractiveEntity {
     [ObservableProperty] [property: Editable("Button Size", "", 1)]
     private ButtonSizeEnum _buttonSize = ButtonSizeEnum.Normal;
 
-    [ObservableProperty] [property: Editable("Indicator Color", "Default color of the Indicator.", 11, "Colors")]
-    private Color? _colorIndicator;
-
     [ObservableProperty] [property: Editable("Button Type", Order = 2)]
     private ButtonStyleEnum _buttonStyle = ButtonStyleEnum.Round;
-
-    [ObservableProperty]
-    [property: Editable("Show Indicator", "Show the Button Indicator?", 10, "Colors")]
-    private bool _showIndicator = true;
 
     [ObservableProperty]
     [property: Editable("Is Enabled?", "Does this button perform an action", 10, "Colors")]

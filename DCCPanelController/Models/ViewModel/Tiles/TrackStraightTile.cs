@@ -4,8 +4,9 @@ namespace DCCPanelController.Models.ViewModel.Tiles;
 
 public class TrackStraightTile : TrackTile {
     public TrackStraightTile(StraightEntity entity, double gridSize) : base(entity, gridSize) {
-        VisualProperties.Add(nameof(StraightEntity.TerminatorColor));
-        VisualProperties.Add(nameof(StraightEntity.TrackStyle));
+        Watch
+           .Track(nameof(StraightEntity.TrackStyle), () => entity.TrackStyle)
+           .Track(nameof(StraightEntity.TerminatorColor), () => entity.TerminatorColor);
     }
 
     protected override Microsoft.Maui.Controls.View? CreateTile() =>

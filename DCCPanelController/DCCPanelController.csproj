@@ -65,6 +65,7 @@
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
         <NoWarn>1701;1702;CS1998;XC0103</NoWarn>
+        <DefineConstants>TRACE;DEBUG;PERF_TIMING</DefineConstants>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
@@ -72,8 +73,12 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="Fody" Version="6.9.3" PrivateAssets="All">
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
         <PackageReference Include="Indiko.Maui.Controls.Markdown" Version="1.3.13" />
         <PackageReference Include="Markdig" Version="0.42.0" />
+        <PackageReference Include="MethodTimer.Fody" Version="3.2.3" PrivateAssets="All"/>
         <PackageReference Include="Microsoft.Maui.Core" Version="9.0.110" />
         <PackageReference Include="Microsoft.Maui.Graphics.Text.Markdig" Version="9.0.110" />
         <PackageReference Include="Nerdbank.GitVersioning"

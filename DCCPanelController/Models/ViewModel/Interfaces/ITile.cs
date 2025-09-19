@@ -11,6 +11,6 @@ public interface ITile {
     public double GridSize { get; set; }
 
     bool IsSelected { get; set; }
-    void ForceRedraw();
+    void ForceRedraw(string memberName = "", int sourceLineNumber = 0);
     public event EventHandler<TileChangedEventArgs>? TileChanged;
 }

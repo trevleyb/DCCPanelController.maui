@@ -16,9 +16,8 @@ public partial class LoadingPage : ContentPage {
         OnPropertyChanged(nameof(Progress));
         await Task.Yield();
         await Task.Delay(10);
-
     }
-    
+
     public LoadingPage() {
         InitializeComponent();
         BindingContext = this;
@@ -36,6 +35,9 @@ public partial class LoadingPage : ContentPage {
                 var profileService = services.GetRequiredService<ProfileService>();
 
                 try {
+                    DCCPanelController.Helpers.MethodTimeLogger.LogDirectory = Path.Combine(FileSystem.AppDataDirectory, "PerfLogs");
+                    DCCPanelController.Helpers.MethodTimeLogger.MaxBytesBeforeRotate = 20 * 1024 * 1024; // 20 MB
+
                     // 1) Initialize domain state
                     IncrementProgress();
                     await profileService.InitializeAsync();
@@ -56,13 +58,13 @@ public partial class LoadingPage : ContentPage {
                     // 3) Prebuild the Palette Cache
                     IncrementProgress();
                     TileSelectorPaletteCache.PrebuildDefaultPalette();
-                    
+
                     // Important: swap the root page instead of navigating
                     IncrementProgress();
                     var window = Application.Current?.Windows[0];
                     Progress = Steps;
                     window?.Page = shell; // Avoid Application.Current.MainPage (obsolete)
-                    } catch (Exception ex) {
+                } catch (Exception ex) {
                     await DisplayAlert("Startup error", ex.Message, "Quit");
                 }
             }

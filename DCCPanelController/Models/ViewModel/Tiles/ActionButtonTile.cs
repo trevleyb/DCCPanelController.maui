@@ -10,15 +10,16 @@ namespace DCCPanelController.Models.ViewModel.Tiles;
 
 public class ActionButtonTile : Tile, ITileInteractive {
     public ActionButtonTile(ActionButtonEntity entity, double gridSize) : base(entity, gridSize) {
-        VisualProperties.Add(nameof(ActionButtonEntity.State));
-        VisualProperties.Add(nameof(ActionButtonEntity.ButtonStyle));
-        VisualProperties.Add(nameof(ActionButtonEntity.ButtonSize));
+        Watch
+           .Track(nameof(ActionButtonEntity.State), () => entity.State)
+           .Track(nameof(ActionButtonEntity.ButtonStyle), () => entity.ButtonStyle)
+           .Track(nameof(ActionButtonEntity.ButtonSize), () => entity.ButtonSize);
     }
 
     public SvgImage? SvgImage { get; protected set; }
 
     public async Task<bool> Interact(ConnectionService? connectionService) {
-        if (Entity is ActionButtonEntity button) {
+        if (Entity is ActionButtonEntity button && (!button.SinglePress || (button.SinglePress && button.State != ButtonStateEnum.On))) {
             if (connectionService?.Client is { } client) {
                 if (UseClickSounds) await ClickSounds.PlayButtonClickSoundAsync();
                 var newState = button.State switch {

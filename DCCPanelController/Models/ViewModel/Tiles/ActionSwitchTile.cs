@@ -9,8 +9,10 @@ namespace DCCPanelController.Models.ViewModel.Tiles;
 
 public class ActionSwitchTile : Tile, ITileInteractive {
     public ActionSwitchTile(SwitchEntity entity, double gridSize) : base(entity, gridSize) {
-        VisualProperties.Add(nameof(SwitchEntity.State));
-        VisualProperties.Add(nameof(SwitchEntity.SwitchStyle));
+        Watch
+           .Track(nameof(SwitchEntity.State), () => entity.State)
+           .Track(nameof(SwitchEntity.ButtonSize), () => entity.ButtonSize)
+           .Track(nameof(SwitchEntity.SwitchStyle), () => entity.SwitchStyle);
 
         if (Entity is SwitchEntity { Light: { } light } switchEntity) {
             switchEntity.State = ButtonStateEnum.Unknown;

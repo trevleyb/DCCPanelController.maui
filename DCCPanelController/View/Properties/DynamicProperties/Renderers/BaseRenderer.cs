@@ -127,25 +127,23 @@ public abstract class BaseRenderer {
             HorizontalOptions = LayoutOptions.Fill,
         };
 
-        // Remove the Description Support as not currently in use
-        // var descriptionKey = row?.Field?.Meta?.Description ?? string.Empty;
-        // var description = string.IsNullOrWhiteSpace(descriptionKey)
-        //     ? null
-        //     : new MarkdownLabel {
-        //         Text = descriptionKey,
-        //         Opacity = 0.7,
-        //         FontSize = DescFontSize,
-        //         FontColor = DescColor,
-        //         HorizontalOptions = LayoutOptions.Fill,
-        //         VerticalOptions = LayoutOptions.Center,
-        //     };
+        var descriptionKey = row?.Field?.Meta?.Description ?? string.Empty;
+        var description = string.IsNullOrWhiteSpace(descriptionKey)
+            ? null
+            : new MarkdownLabel {
+                Text = descriptionKey,
+                Opacity = 0.7,
+                FontSize = DescFontSize,
+                FontColor = DescColor,
+                HorizontalOptions = LayoutOptions.Fill,
+                VerticalOptions = LayoutOptions.Center,
+            };
 
-        // Remove the Error Support as not currently in use
-        // var errorLabel = new Label {
-        //     FontSize = ErrorFontSize,
-        //     TextColor = ErrorColor,
-        //     IsVisible = false,
-        // };
+        var errorLabel = new Label {
+            FontSize = ErrorFontSize,
+            TextColor = ErrorColor,
+            IsVisible = false,
+        };
 
         // Create a 2 Column grid, first fixed to 150 and second Auto
         // -----------------------------------------------------------------
@@ -153,11 +151,11 @@ public abstract class BaseRenderer {
             ColumnDefinitions = {
                 new ColumnDefinition(labelWidth >= 0 ? labelWidth : 0),
                 new ColumnDefinition(fieldWidth >= 0 ? GetFieldWidth(ctx) : GridLength.Star),
-                // new ColumnDefinition(GridLength.Star),
+                new ColumnDefinition(GridLength.Star),
             },
             RowDefinitions = {
                 new RowDefinition(fieldHeight >= 0 ? fieldHeight : GridLength.Auto), // label + control
-                new RowDefinition(5),
+                new RowDefinition(GridLength.Auto),
             },
             ColumnSpacing = ColumnSpacing,
             RowSpacing = RowSpacing,
@@ -173,14 +171,13 @@ public abstract class BaseRenderer {
             grid.SetColumnSpan(control, 2);
         }
 
-        // Remove the Error Support as not currently in use
         // Row 1: description/error, indented under the control (col 1)
         // -----------------------------------------------------------------
-        // var infoStack = new VerticalStackLayout { Spacing = 2 };
-        // if (description != null) infoStack.Add(description);
-        // infoStack.Add(errorLabel);
-        // grid.Add(infoStack, 1, 1);
-        // grid.SetColumnSpan(infoStack, 2);
+        var infoStack = new VerticalStackLayout { Spacing = 2 };
+        if (description != null) infoStack.Add(description);
+        infoStack.Add(errorLabel);
+        grid.Add(infoStack, 1, 1);
+        grid.SetColumnSpan(infoStack, 2);
 
         RowValueChanged += OnRowValueChanged;
         grid.Unloaded += (_, __) => RowValueChanged -= OnRowValueChanged;
@@ -199,10 +196,9 @@ public abstract class BaseRenderer {
             label.TextColor = modified ? ModifiedColor
                 : row.HasMixedValues   ? MixedValueColor : LabelColor;
 
-            // Remove the Error Support as not currently in use
-            // var err = row.Issues.FirstOrDefault(i => i.Severity == Severity.Error);
-            // errorLabel.IsVisible = err != null;
-            // errorLabel.Text = err?.Message ?? string.Empty;
+            var err = row.Issues.FirstOrDefault(i => i.Severity == Severity.Error);
+            errorLabel.IsVisible = err != null;
+            errorLabel.Text = err?.Message ?? string.Empty;
         }
     }
 }

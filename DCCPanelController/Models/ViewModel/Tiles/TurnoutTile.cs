@@ -11,9 +11,11 @@ namespace DCCPanelController.Models.ViewModel.Tiles;
 public abstract class TurnoutTile : TrackTile, ITileInteractive {
 
     protected TurnoutTile(TurnoutEntity entity, double gridSize) : base(entity, gridSize) {
-        VisualProperties.Add(nameof(TurnoutEntity.State));
-        VisualProperties.Add(nameof(TurnoutEntity.TrackNotSelectedColor));
-        VisualProperties.Add(nameof(TurnoutEntity.TurnoutStyle));
+        Watch
+           .Track(nameof(TurnoutEntity.State), () => entity.State)
+           .Track(nameof(TurnoutEntity.TurnoutStyle), () => entity.TurnoutStyle)
+           .Track(nameof(TurnoutEntity.TrackNotSelectedColor), () => entity.TrackNotSelectedColor);
+
         if (Entity is TurnoutEntity turnoutEntity) {
             if (turnoutEntity.Turnout is { } turnout) {
                 turnoutEntity.State = turnout.State;

@@ -432,7 +432,8 @@ public partial class ControlPanelView {
     /// <summary>
     ///     Renders or refreshes the panel's grid based on the current state, dimensions, and the specified parameters.
     /// </summary>
-    private async Task DrawPanel([CallerMemberName] string memberName = "",
+    private async Task DrawPanel(
+        [CallerMemberName] string memberName = "",
         [CallerLineNumber] int sourceLineNumber = 0) {
         // Only redraw the grid if we absolutely need to. Events may mean that this 
         // is called multiple times, but if we really have not changed, then do not 
@@ -555,7 +556,7 @@ public partial class ControlPanelView {
             switch (e.ChangeType) {
                 case TileChangeType.Dimensions:
                     SetTileGridPosition(tile);
-                    tile.ForceRedraw();
+                    //tile.ForceRedraw();
                     break;
 
                 case TileChangeType.Visual:
@@ -792,7 +793,7 @@ public partial class ControlPanelView {
                 e.Col = anchorCol + (e.Col - minCol);
                 e.Row = anchorRow + (e.Row - minRow);
                 SetTileGridPosition(tile);
-                tile.ForceRedraw();
+                // TGL: tile.ForceRedraw();
                 OnTileChanged(tile);
             }
         }

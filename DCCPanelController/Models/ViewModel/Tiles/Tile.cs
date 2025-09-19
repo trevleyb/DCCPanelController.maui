@@ -5,12 +5,12 @@ using System.Text;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.ViewModel.Helpers;
 using DCCPanelController.Models.ViewModel.Interfaces;
+using MethodTimer;
 
 namespace DCCPanelController.Models.ViewModel.Tiles;
 
 [DebuggerDisplay("{Entity.EntityName} @ {Entity.Col},{Entity.Row}")]
 public abstract class Tile : ContentView, ITile, IDisposable {
-    
     // @formatter:off
     public Entity   Entity      { get; init; }
     public bool     IsSelected  { get; set => SetField(ref field, value); }
@@ -23,9 +23,11 @@ public abstract class Tile : ContentView, ITile, IDisposable {
     protected const float SymbolScaleFactor  = 0.75f;
     private const   int   DebounceDelay      = 75;
 
+    private int                      _calls = 0;
+    private int                      _rebuildGuard; // >0 means "we're rebuilding, ignore change events"
     private CancellationTokenSource? _debounceRebuildCts;
 
-    protected HashSet<string> VisualProperties { get; } = [];
+    protected readonly PropertyChangeTracker Watch = new();
     protected bool UseClickSounds => Entity?.Parent?.Panels?.Profile?.Settings?.UseClickSounds ?? true;
 
     protected bool Disposed;
@@ -44,20 +46,22 @@ public abstract class Tile : ContentView, ITile, IDisposable {
         PropertyChanged += OnTilePropertyChanged;
         entity.PropertyChanged += OnTilePropertyChanged;
 
-        VisualProperties.Add(nameof(GridSize));
-        VisualProperties.Add(nameof(Entity.Col));
-        VisualProperties.Add(nameof(Entity.Row));
-        VisualProperties.Add(nameof(Entity.Width));
-        VisualProperties.Add(nameof(Entity.Height));
-        VisualProperties.Add(nameof(Entity.Layer));
-        VisualProperties.Add(nameof(Entity.Opacity));
-        VisualProperties.Add(nameof(Entity.Rotation));
+        // Track only values that impact the visual tree/content
+        Watch
+           .Track(nameof(GridSize),        () => GridSize,            Tolerance.Double(0.01))  // 1% grid change threshold
+           .Track(nameof(Entity.Col),      () => Entity.Col)
+           .Track(nameof(Entity.Row),      () => Entity.Row)
+           .Track(nameof(Entity.Width),    () => Entity.Width)
+           .Track(nameof(Entity.Height),   () => Entity.Height)
+           .Track(nameof(Entity.Rotation), () => Entity.Rotation,      Tolerance.Double(0.1))   // 0.1° tolerance
+           .Track(nameof(Entity.Opacity),  () => Entity.Opacity,       Tolerance.Double(0.01)); // 1% opacity ;
+
         SetContent();
     }
 
     public void Dispose() {
         Dispose(true);
-        GC.SuppressFinalize(this); // Only if you had a finalizer
+        GC.SuppressFinalize(this); 
     }
 
     protected void Dispose(bool disposing) {
@@ -76,31 +80,62 @@ public abstract class Tile : ContentView, ITile, IDisposable {
 
     protected abstract Microsoft.Maui.Controls.View? CreateTile();
 
-    public void ForceRedraw() {
+    public void ForceRedraw([CallerMemberName] string memberName = "",
+        [CallerLineNumber] int sourceLineNumber = 0) {
+        Console.WriteLine($"Force Redraw Called: {memberName}@{sourceLineNumber}");
         HaveDimensionsChanged = false;
         HaveVisualPropertiesChanged = true;
         RebuildIfNecessary();
     }
 
-    private void SetContent() {
-        BindingContext = this;
-        Content = CreateTile();
-        if (Content != null) {
-            Content.ClassId = Entity.Guid.ToString();
-            Content.SetBinding(WidthRequestProperty, new Binding(nameof(TileWidth), BindingMode.OneWay, source: this));
-            Content.SetBinding(HeightRequestProperty, new Binding(nameof(TileHeight), BindingMode.OneWay, source: this));
-            Content.SetBinding(ZIndexProperty, new Binding(nameof(Entity.Layer), BindingMode.OneWay, source: Entity));
-            Content.SetBinding(IsVisibleProperty, new Binding(nameof(Entity.IsEnabled), BindingMode.OneWay, source: Entity));
+    //[Time("{this}")]
+    private void SetContent([CallerMemberName] string memberName = "",
+        [CallerLineNumber] int sourceLineNumber = 0) {
+        try {
+            Interlocked.Increment(ref _rebuildGuard);
+            PropertyChanged -= OnTilePropertyChanged;
+            Entity.PropertyChanged -= OnTilePropertyChanged;
+
+            Console.WriteLine($"SetContent Called: {Entity.EntityName}:{Entity.Guid} ==>[{++_calls}] from {memberName} @ {sourceLineNumber}");
+
+            BindingContext = this;
+            Content = CreateTile();
+            if (Content != null) {
+                Content.ClassId = Entity.Guid.ToString();
+                Content.SetBinding(WidthRequestProperty, new Binding(nameof(TileWidth), BindingMode.OneWay, source: this));
+                Content.SetBinding(HeightRequestProperty, new Binding(nameof(TileHeight), BindingMode.OneWay, source: this));
+                Content.SetBinding(ZIndexProperty, new Binding(nameof(Entity.Layer), BindingMode.OneWay, source: Entity));
+                Content.SetBinding(IsVisibleProperty, new Binding(nameof(Entity.IsEnabled), BindingMode.OneWay, source: Entity));
+            }
+        } finally {
+            PropertyChanged += OnTilePropertyChanged;
+            Entity.PropertyChanged += OnTilePropertyChanged;
+            Interlocked.Decrement(ref _rebuildGuard);
         }
     }
 
     protected void OnTilePropertyChanged(object? sender, PropertyChangedEventArgs e) {
-        if (e.PropertyName is { } property && VisualProperties.Contains(property)) {
-            HaveDimensionsChanged = e.PropertyName is nameof(Entity.Col) or nameof(Entity.Row) or nameof(Entity.Width) or nameof(Entity.Height) or nameof(Entity.Rotation);
-            HaveVisualPropertiesChanged = true;
-        }
+        if (_rebuildGuard > 0) return; // keep this guard you already have
+        
+        var property = e.PropertyName;
+        if (string.IsNullOrEmpty(property)) return;
+
+        // Only consider properties we track AND only if the value truly changed.
+        if (!Watch.IsTracked(property) || !Watch.HasChanged(property)) return;
+
+        // Dimension changes (affects measure) vs. visual-only
+        HaveDimensionsChanged = property is nameof(Entity.Col)
+            or nameof(Entity.Row)
+            or nameof(Entity.Width)
+            or nameof(Entity.Height)
+            or nameof(Entity.Rotation);
+        HaveVisualPropertiesChanged = true;
+
+        Debug.WriteLine($"{Entity.EntityName} => visual change → {e.PropertyName}");
+
         RebuildIfNecessary();
     }
+
 
     /// <summary>
     ///     Rebuilds the tile's content if visual properties have changed,
@@ -127,10 +162,11 @@ public abstract class Tile : ContentView, ITile, IDisposable {
                          if (HaveVisualPropertiesChanged) {
                              SetContent();
                              OnTileChanged(TileChangeType.Visual);
-                             HaveVisualPropertiesChanged = false; // Reset flag
                          }
                      });
                      if (HaveDimensionsChanged) OnTileChanged(TileChangeType.Dimensions);
+                     HaveDimensionsChanged = false;       // Reset flag
+                     HaveVisualPropertiesChanged = false; // Reset flag
                  } catch (Exception ex) {
                      Debug.WriteLine($"Error rebuilding tile: {ex.Message}");
                  }
@@ -147,4 +183,65 @@ public abstract class Tile : ContentView, ITile, IDisposable {
         OnPropertyChanged(propertyName);
         return true;
     }
+
+    protected sealed class PropertyChangeTracker {
+        private readonly Dictionary<string, IWatch> _map = new(StringComparer.Ordinal);
+
+        public PropertyChangeTracker Track<T>(string name, Func<T> getter, IEqualityComparer<T>? cmp = null) {
+            var w = new Watch<T>(getter, cmp ?? EqualityComparer<T>.Default);
+            _map[name] = w;
+            w.Prime(); // take initial snapshot
+            return this;
+        }
+
+        public bool IsTracked(string name) => _map.ContainsKey(name);
+        public bool HasChanged(string name) => _map.TryGetValue(name, out var w) && w.HasChanged();
+
+        private interface IWatch {
+            bool HasChanged();
+            void Prime();
+        }
+
+        private sealed class Watch<T> : IWatch {
+            private readonly Func<T>              _getter;
+            private readonly IEqualityComparer<T> _cmp;
+            private          T?                   _last;
+            private          bool                 _primed;
+
+            public Watch(Func<T> getter, IEqualityComparer<T> cmp) {
+                _getter = getter;
+                _cmp = cmp;
+            }
+
+            public void Prime() {
+                _last = _getter();
+                _primed = true;
+            }
+
+            public bool HasChanged() {
+                var cur = _getter();
+                if (!_primed) {
+                    _last = cur;
+                    _primed = true;
+                    return true;
+                }
+                if (_cmp.Equals(cur!, _last!)) return false;
+                _last = cur;
+                return true;
+            }
+        }
+    }
+
+    protected static class Tolerance {
+        public static IEqualityComparer<double> Double(double epsilon) => new DoubleEq(epsilon);
+
+        private sealed class DoubleEq : IEqualityComparer<double> {
+            private readonly double _eps;
+            public DoubleEq(double eps) => _eps = eps;
+            public bool Equals(double x, double y) => Math.Abs(x - y) <= _eps;
+            public int GetHashCode(double obj) => obj.GetHashCode();
+        }
+    }
+
+    public override string ToString() => $"{Entity?.EntityName},{Entity?.Guid},{Entity?.Parent?.Title}";
 }

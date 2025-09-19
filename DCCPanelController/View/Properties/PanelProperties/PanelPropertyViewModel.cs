@@ -12,12 +12,14 @@ namespace DCCPanelController.View.Properties.PanelProperties;
 public partial class PanelPropertyViewModel : BaseViewModel {
     [ObservableProperty] private int    _colorGridSpan = 2; // Default to 2 columns
     [ObservableProperty] private Panel  _panel;
+    [ObservableProperty] private Panel  _original;
     [ObservableProperty] private string _title;
 
     public ObservableCollection<ColorItemGroup> GroupedColorSettings { get; set; }
     public ObservableCollection<PanelColorItem> ColorSettings { get; }
     
-    public PanelPropertyViewModel(Panel panel) {
+    public PanelPropertyViewModel(Panel panel, Panel original) {
+        Original = original;
         Panel = panel;
         Title = $"{panel.Id} Properties" ?? "Panel Properties";
 
@@ -60,8 +62,16 @@ public partial class PanelPropertyViewModel : BaseViewModel {
         var result = await AskUserToConfirm("Standardize Defaults?", "This will copy these panel colors to all other panels. Do you want to do this?");
         if (!result) return; // Exit if the user cancels the delete operation
 
+        // Worst-mistake! Making a copy means we can't easily reference all panels
+        // as the copy is not linked into the main panel system until it 
+        // is saved. So we need to know about the original also. 
+        // ------------------------------------------------------------------------
         if (Panel.Panels is { } panels) {
             foreach (var panel in panels) panel.CopyColorsTo(panel);
+        }
+        
+        if (Original.Panels is { } original) {
+            foreach (var panel in original) panel.CopyColorsTo(panel);
         }
         OnPropertyChanged(nameof(Panel));
     }

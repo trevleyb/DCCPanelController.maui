@@ -14,15 +14,16 @@ public abstract class TrackTile : Tile, ITileTrack {
     private const float HighlightColorAlpha = 0.25f;
 
     protected TrackTile(TrackEntity entity, double gridSize) : base(entity, gridSize) {
-        VisualProperties.Add(nameof(TrackEntity.Rotation));
-        VisualProperties.Add(nameof(TrackEntity.TrackType));
-        VisualProperties.Add(nameof(TrackEntity.TrackAttribute));
-        VisualProperties.Add(nameof(StraightEntity.TrackStyle));
-        VisualProperties.Add(nameof(StraightEntity.TerminatorColor));
-        VisualProperties.Add(nameof(TrackEntity.TrackColor));
-        VisualProperties.Add(nameof(TrackEntity.TrackBorderColor));
-        VisualProperties.Add(nameof(IsOccupied));
-        VisualProperties.Add(nameof(IsPath));
+        Watch
+           .Track(nameof(TrackEntity.TrackType), () => entity.TrackType)
+           .Track(nameof(TrackEntity.TrackAttribute), () => entity.TrackAttribute)
+           .Track(nameof(TrackEntity.TrackColor), () => entity.TrackColor)
+           .Track(nameof(TrackEntity.TrackBorderColor), () => entity.TrackBorderColor)
+           .Track(nameof(TrackEntity.HiddenColor), () => entity.HiddenColor)
+           .Track(nameof(TrackEntity.Occupancy), () => entity.Occupancy)
+           .Track(nameof(IsOccupied), () => IsOccupied)
+           .Track(nameof(IsPath), () => IsPath);
+
         if (Entity is TrackEntity { Occupancy: { } occupancy }) {
             if (occupancy.Id == entity?.Occupancy?.Id) IsOccupied = occupancy.IsOccupied;
             occupancy.PropertyChanged += (sender, args) => {
