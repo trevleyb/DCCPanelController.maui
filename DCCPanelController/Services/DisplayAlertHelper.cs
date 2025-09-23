@@ -30,16 +30,16 @@ public static class DisplayAlertHelper {
     public static async Task DisplaySnackAlert(string message, double fontSize = 14, double duration = 2.5) {
         var snackbarOptions = new SnackbarOptions {
             BackgroundColor = Colors.LightGray,
-            TextColor = StyleHelper.FromStyle("Primary"),
+            TextColor = Colors.Black,
+            ActionButtonFont = Font.SystemFontOfSize(fontSize),
             ActionButtonTextColor = Colors.Black,
             CornerRadius = new CornerRadius(10),
             Font = Font.SystemFontOfSize(fontSize),
-            ActionButtonFont = Font.SystemFontOfSize(fontSize),
-            CharacterSpacing = 0.5,
+            CharacterSpacing = 0.50, 
         };
 
         var durationInSeconds = TimeSpan.FromSeconds(duration);
-        var snackbar = Snackbar.Make(message, null, "OK", durationInSeconds, snackbarOptions);
+        var snackbar = Snackbar.Make(message, null, "Close", durationInSeconds, snackbarOptions);
         await snackbar.Show(CancellationToken.None);
     }
 }

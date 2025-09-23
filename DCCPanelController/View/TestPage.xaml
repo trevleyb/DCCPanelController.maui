@@ -10,8 +10,13 @@
              x:Class="DCCPanelController.View.TestPage">
 
     <ContentPage.Content>
-        <StackLayout x:Name="TestStack">
+            <StackLayout x:Name="TestStack">
 
+                    <Button Text="Test Toasting" Clicked="Button_OnClicked1"></Button>
+                    <Button Text="Test Snack" Clicked="Button_OnClicked2"></Button>
+
+                    
+                    
                 <Grid RowDefinitions="auto,*,auto" BackgroundColor="Aqua">
                         <Label Grid.Row="0" Text="Block here - start"/>
                         <components:MarkdownLabel Grid.Row="1" Text="This is a line of text that has **BOLD** and *ITALIC* and ~STRIKE~ and `CODE` and # then the [http://sample.org] jumped > over the __dog__"/>

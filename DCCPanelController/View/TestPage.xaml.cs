@@ -1,6 +1,7 @@
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.ViewModel.Tiles;
+using DCCPanelController.Services;
 using DCCPanelController.View.ControlPanel;
 using Markdig;
 using Microsoft.Maui.Layouts;
@@ -83,4 +84,11 @@ public partial class TestPage : ContentPage {
     private void GridGesturesOnDoubleTap(object? sender, GridGestureEventArgs e) => Console.WriteLine($"Double Tap @{e.Col},{e.Row}");
 
     private void GridGesturesOnSingleTap(object? sender, GridGestureEventArgs e) => Console.WriteLine($"Single Tap @{e.Col},{e.Row}");
+
+    private async void Button_OnClicked1(object? sender, EventArgs e) {
+        await DisplayAlertHelper.DisplayToastAlert("Toast Page - this is done.");
+    }
+    private async void Button_OnClicked2(object? sender, EventArgs e) {
+        await DisplayAlertHelper.DisplaySnackAlert("You have just performed an Action");
+    }
 }

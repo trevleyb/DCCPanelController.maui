@@ -11,7 +11,9 @@ public partial class LoadingPage : ContentPage {
     public int Steps => 5;
     public int Progress { get; set; }
 
-    public async void IncrementProgress() {
+    public async Task IncrementProgress() {
+        await Task.Yield();
+        await Task.Delay(10);
         Progress++;
         OnPropertyChanged(nameof(Progress));
         await Task.Yield();
@@ -39,11 +41,11 @@ public partial class LoadingPage : ContentPage {
                     DCCPanelController.Helpers.MethodTimeLogger.MaxBytesBeforeRotate = 20 * 1024 * 1024; // 20 MB
 
                     // 1) Initialize domain state
-                    IncrementProgress();
+                    await IncrementProgress();
                     await profileService.InitializeAsync();
 
                     // Optional: any other one-time startup work here (help assets, migrations, etc.)
-                    IncrementProgress();
+                    await IncrementProgress();
                     await HelpService.Current.InitializeAsync(true);
 
                     #if DEBUG
@@ -52,15 +54,15 @@ public partial class LoadingPage : ContentPage {
                     #endif
 
                     // 2) Only now create Shell and replace the root
-                    IncrementProgress();
+                    await IncrementProgress();
                     var shell = services.GetRequiredService<AppShell>();
 
                     // 3) Prebuild the Palette Cache
-                    IncrementProgress();
+                    await IncrementProgress();
                     TileSelectorPaletteCache.PrebuildDefaultPalette();
 
                     // Important: swap the root page instead of navigating
-                    IncrementProgress();
+                    await IncrementProgress();
                     var window = Application.Current?.Windows[0];
                     Progress = Steps;
                     window?.Page = shell; // Avoid Application.Current.MainPage (obsolete)

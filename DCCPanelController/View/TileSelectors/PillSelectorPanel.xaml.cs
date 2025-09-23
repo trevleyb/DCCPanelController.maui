@@ -18,7 +18,6 @@ public partial class PillSelectorPanel : ContentView {
         InitializeComponent();
         BindingContext = new PillSelectorPanelViewModel();
         SegmentedControl.SelectedIndex = 1;
-        SegmentedControl.
     }
 
     public Panel? Panel {
