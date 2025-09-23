@@ -7,6 +7,7 @@ using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.ViewModel.Interfaces;
 using DCCPanelController.Services;
 using DCCPanelController.Services.ProfileService;
+using DCCPanelController.View.Components;
 using DCCPanelController.View.ControlPanel;
 using DCCPanelController.View.Helpers;
 using DCCPanelController.View.Properties.DynamicProperties;
@@ -32,19 +33,19 @@ public partial class PanelEditorViewModel : ObservableObject {
     [ObservableProperty] private bool         _havePropertiesChanged;
 
     [NotifyPropertyChangedFor(nameof(CanEditProperties))]
+    [NotifyPropertyChangedFor(nameof(CanEditTileProperties))]
     [NotifyPropertyChangedFor(nameof(CanSetModes))]
     [NotifyPropertyChangedFor(nameof(CanRotateTiles))]
     [NotifyPropertyChangedFor(nameof(CanDeleteTiles))]
     [NotifyPropertyChangedFor(nameof(CanToggleGrid))]
     [ObservableProperty] private bool _isNavigationDrawerOpen;
-
-    [ObservableProperty] private bool  _isProcessing;
-    private                      Panel _original;
+    [ObservableProperty] private bool _isProcessing;
 
     [NotifyPropertyChangedFor(nameof(Title))]
     [ObservableProperty] private Panel _panel;
 
     private PanelPropertyViewModel? _propertyPage;
+    private Panel                   _original;
 
     [NotifyPropertyChangedFor(nameof(SelectedEntities))]
     [NotifyPropertyChangedFor(nameof(HasSelectedEntities))]
@@ -53,14 +54,18 @@ public partial class PanelEditorViewModel : ObservableObject {
     [NotifyPropertyChangedFor(nameof(SingleOrNoEntitiesSelected))]
     [NotifyPropertyChangedFor(nameof(SelectedEntity))]
     [NotifyPropertyChangedFor(nameof(CanEditProperties))]
+    [NotifyPropertyChangedFor(nameof(CanEditTileProperties))]
     [NotifyPropertyChangedFor(nameof(CanSetModes))]
     [NotifyPropertyChangedFor(nameof(CanRotateTiles))]
+    [NotifyPropertyChangedFor(nameof(CanChangeLayers))]
     [NotifyPropertyChangedFor(nameof(CanDeleteTiles))]
     [NotifyPropertyChangedFor(nameof(HavePropertiesChanged))]
     [ObservableProperty] private ObservableCollection<ITile> _selectedTiles = [];
 
-    public double ScreenHeight = 100;
-    public double ScreenWidth  = 100;
+    public  double ScreenHeight = 100;
+    public  double ScreenWidth  = 100;
+    private int    _cols;
+    private int    _rows;
 
     public PanelEditorViewModel(ILogger<PanelEditor> logger, Panel panel, ProfileService profileService, PanelEditor panelEditor, ControlPanelView panelView, Microsoft.Maui.Controls.View panelEditorContainer) {
         _profileService = profileService;
@@ -86,12 +91,15 @@ public partial class PanelEditorViewModel : ObservableObject {
     public Entity? SelectedEntity => SelectedEntities.FirstOrDefault();
     public List<Entity> SelectedEntities => SelectedTiles.Select(x => x.Entity).ToList();
 
-    public bool CanEditProperties => SetCanEditProperties() && !IsNavigationDrawerOpen;
-    public bool CanSetModes => !IsNavigationDrawerOpen;
-    public bool CanRotateTiles => HasSelectedEntities && !IsNavigationDrawerOpen;
-    public bool CanDeleteTiles => HasSelectedEntities && !IsNavigationDrawerOpen;
-    public bool CanToggleGrid => !IsNavigationDrawerOpen;
-    public bool CanPressBackButton => !IsNavigationDrawerOpen;
+    public bool CanLinkTiles { get; set; }
+    public bool CanEditProperties => !IsNavigationDrawerOpen && !IsProcessing;
+    public bool CanEditTileProperties => HasSelectedEntities && !IsNavigationDrawerOpen && !IsProcessing;
+    public bool CanSetModes => !IsNavigationDrawerOpen && !IsProcessing;
+    public bool CanRotateTiles => HasSelectedEntities && !IsNavigationDrawerOpen && !IsProcessing;
+    public bool CanChangeLayers => HasSelectedEntities && !IsNavigationDrawerOpen && !IsProcessing;
+    public bool CanDeleteTiles => HasSelectedEntities && !IsNavigationDrawerOpen && !IsProcessing;
+    public bool CanToggleGrid => !IsNavigationDrawerOpen && !IsProcessing;
+    public bool CanPressBackButton => !IsNavigationDrawerOpen && !IsProcessing;
 
     public int SelectedEntitiesCount => SelectedEntities.Count;
     public bool SingleOrNoEntitiesSelected => SelectedEntitiesCount is 1 or 0;
@@ -107,6 +115,7 @@ public partial class PanelEditorViewModel : ObservableObject {
             _                 => "move.png",
         };
 
+    
     public bool SetCanEditProperties() => true;
 
     public void UpdateOriginalFromCopy() {
@@ -129,6 +138,34 @@ public partial class PanelEditorViewModel : ObservableObject {
         HavePropertiesChanged = HavePropertiesChanged || !_original.IsEqualTo(Panel);
     }
 
+    public void CheckIfCanLinkTiles() {
+        CanLinkTiles = false;
+        if (SelectedEntities.Count == 2) {
+            CanLinkTiles = (SelectedEntities[0] is TurnoutButtonEntity && SelectedEntities[1] is TurnoutEntity) ||
+                           (SelectedEntities[1] is TurnoutButtonEntity && SelectedEntities[0] is TurnoutEntity);
+        }
+        OnPropertyChanged(nameof(CanLinkTiles));
+    }
+    
+    [RelayCommand]
+    private async Task LinkTilesAsync() {
+        if (SelectedEntities.Count != 2) return;
+        
+        TurnoutButtonEntity? button = null;
+        TurnoutEntity? turnout = null;
+        
+        if (SelectedEntities[0] is TurnoutButtonEntity && SelectedEntities[1] is TurnoutEntity) {
+            button = (TurnoutButtonEntity)SelectedEntities[0];
+            turnout = (TurnoutEntity)SelectedEntities[1];
+        }
+        if (SelectedEntities[1] is TurnoutButtonEntity && SelectedEntities[0] is TurnoutEntity) {
+            button = (TurnoutButtonEntity)SelectedEntities[1];
+            turnout = (TurnoutEntity)SelectedEntities[0];
+        }
+
+        button?.TurnoutID = turnout?.Id ?? "";
+    }
+
     [RelayCommand]
     private async Task BackButtonPressedAsync() {
         if (HavePropertiesChanged) {
@@ -141,9 +178,11 @@ public partial class PanelEditorViewModel : ObservableObject {
 
     [RelayCommand]
     private async Task SaveButtonPressedAsync() {
+        IsProcessing = true;
         await SaveAsync();
         ExitViaBackButton = true;
         await Shell.Current.GoToAsync("..");
+        IsProcessing = false;
     }
 
     [RelayCommand]
@@ -189,6 +228,15 @@ public partial class PanelEditorViewModel : ObservableObject {
     }
 
     [RelayCommand]
+    private async Task ChangeLayersAsync() {
+        if (HasSelectedEntities) {
+            LayerCyclerByLocation.CycleLayersAtSelectedLocations(SelectedEntities, Panel.Entities);
+        }
+        CheckIfPanelChanged();
+    }
+
+    
+    [RelayCommand]
     private async Task RotateTileAsync() {
         if (HasSelectedEntities) {
             foreach (var entity in SelectedEntities) {
@@ -231,21 +279,13 @@ public partial class PanelEditorViewModel : ObservableObject {
     private async Task ToggleGridAsync() => GridVisible = !GridVisible;
 
     [RelayCommand]
-    public async Task EditPropertiesAsync() {
-        if (SelectedEntities.Count > 0) {
-            await EditTilePropertiesPopupAsync();
-        } else {
-            await EditPanelPropertiesPopupAsync();
-        }
-        EditMode = EditModeEnum.Move; // Reset the edit mode after editing properties
-        CheckIfPanelChanged();
-    }
-
     private async Task EditPanelPropertiesPopupAsync() {
         try {
             if (Panel is { } panel && _panelEditor is { }) {
                 IsProcessing = true;
                 await LetUiCatchUpAsync();
+                _cols = Panel.Cols;
+                _rows = Panel.Rows;
                 var propertiesViewModel = new PanelPropertyViewModel(panel, _original);
                 var propertiesPage = new PanelPropertyPage(propertiesViewModel);
                 ShowPropertyPopup("Panel Properties", propertiesViewModel, propertiesPage, AcceptPanelPropertiesPopupCommand);
@@ -255,8 +295,11 @@ public partial class PanelEditorViewModel : ObservableObject {
         } finally {
             IsProcessing = false;
         }
+        EditMode = EditModeEnum.Move; // Reset the edit mode after editing properties
+        CheckIfPanelChanged();
     }
 
+    [RelayCommand]
     private async Task EditTilePropertiesPopupAsync() {
         try {
             IsProcessing = true;
@@ -274,6 +317,8 @@ public partial class PanelEditorViewModel : ObservableObject {
             IsProcessing = false;
             await LetUiCatchUpAsync();
         }
+        EditMode = EditModeEnum.Move; // Reset the edit mode after editing properties
+        CheckIfPanelChanged();
     }
 
     private void PageOnApplied(object? sender, DynamicTilePropertyPageEventArgs e) {
@@ -328,7 +373,9 @@ public partial class PanelEditorViewModel : ObservableObject {
                 IsProcessing = true;
                 await LetUiCatchUpAsync();
                 await _propertyPage.ApplyChangesAsync();
-                await _panelView.ForceRefreshAsync();
+                if (_cols != Panel.Cols || _rows != Panel.Rows) {
+                    await _panelView.ForceRefreshAsync();
+                }
             } finally {
                 IsProcessing = false;
             }

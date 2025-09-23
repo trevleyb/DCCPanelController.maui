@@ -23,7 +23,7 @@ public partial class SideSelectorPanel {
             BindingMode.TwoWay,
             propertyChanged: OnSelectedTileChanged);
 
-    private double scrollOffset;
+    private double _scrollOffset;
 
     public SideSelectorPanel() {
         InitializeComponent();
@@ -81,12 +81,9 @@ public partial class SideSelectorPanel {
     protected override void OnBindingContextChanged() {
         base.OnBindingContextChanged();
         if (BindingContext is SideSelectorPanelViewModel vm) {
-            // keep control property synced from VM, too
             if (!ReferenceEquals(SelectedTile, vm.SelectedTile)) {
                 SelectedTile = vm.SelectedTile;
             }
-
-            // if you have an event in VM when SelectedTile changes, subscribe and mirror here
             vm.PropertyChanged -= VmOnPropertyChanged;
             vm.PropertyChanged += VmOnPropertyChanged;
         }
@@ -114,8 +111,8 @@ public partial class SideSelectorPanel {
 
             var index = CollectionHitIndex.IndexOf(childView,
                 pointerChild.Value,
-                scrollOffset,
-                scrollOffset,
+                _scrollOffset,
+                _scrollOffset,
                 4,
                 4,
                 40,
@@ -140,7 +137,7 @@ public partial class SideSelectorPanel {
         }
     }
 
-    private void TileCollection_OnScrolled(object? sender, ItemsViewScrolledEventArgs e) => scrollOffset = e.HorizontalOffset;
+    private void TileCollection_OnScrolled(object? sender, ItemsViewScrolledEventArgs e) => _scrollOffset = e.HorizontalOffset;
 
     private void OnTileTapped(object? sender, EventArgs e) {
         if (e is not TappedEventArgs te) return;

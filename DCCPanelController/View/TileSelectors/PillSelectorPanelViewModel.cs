@@ -11,13 +11,9 @@ public partial class PillSelectorPanelViewModel : TileSelectorViewModel {
     [ObservableProperty] private string _selectedCategory = string.Empty;
 
     public PillSelectorPanelViewModel() {
-        SfCategories.Clear();
-        SfCategories.Add(new SfSegmentItem { Text = "Loading" });
         SelectedTile = null;
         AppStateService.Instance.SelectedTileCleared += InstanceOnSelectedTileCleared;
     }
-
-    public ObservableCollection<SfSegmentItem> SfCategories { get; } = [];
 
     public ObservableCollection<ITile> TilesForSelectedCategory {
         get {
@@ -39,13 +35,5 @@ public partial class PillSelectorPanelViewModel : TileSelectorViewModel {
 
     partial void OnSelectedCategoryChanged(string value) => OnPropertyChanged(nameof(TilesForSelectedCategory));
 
-    protected override void AfterBuildAllTiles() {
-        SfCategories.Clear();
-        foreach (var category in Categories) {
-            SfCategories.Add(new SfSegmentItem {
-                Text = category,
-                SelectedSegmentBackground = new SolidColorBrush(StyleHelper.FromStyle("Primary")),
-            });
-        }
-    }
+    protected override void AfterBuildAllTiles() { }
 }

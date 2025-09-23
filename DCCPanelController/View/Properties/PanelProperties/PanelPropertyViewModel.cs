@@ -67,11 +67,10 @@ public partial class PanelPropertyViewModel : BaseViewModel {
         // is saved. So we need to know about the original also. 
         // ------------------------------------------------------------------------
         if (Panel.Panels is { } panels) {
-            foreach (var panel in panels) panel.CopyColorsTo(panel);
+            foreach (var panel in panels) Panel.CopyColorsTo(panel);
         }
-        
         if (Original.Panels is { } original) {
-            foreach (var panel in original) panel.CopyColorsTo(panel);
+            foreach (var panel in original) Panel.CopyColorsTo(panel);
         }
         OnPropertyChanged(nameof(Panel));
     }

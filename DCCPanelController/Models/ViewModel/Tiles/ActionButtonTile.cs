@@ -1,3 +1,4 @@
+using AVFoundation;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.DataModel.Entities.Actions;
 using DCCPanelController.Models.ViewModel.Helpers;
@@ -9,11 +10,41 @@ using DCCPanelController.Services;
 namespace DCCPanelController.Models.ViewModel.Tiles;
 
 public class ActionButtonTile : Tile, ITileInteractive {
+    private bool _isActionRunning = false;
     public ActionButtonTile(ActionButtonEntity entity, double gridSize) : base(entity, gridSize) {
         Watch
            .Track(nameof(ActionButtonEntity.State), () => entity.State)
            .Track(nameof(ActionButtonEntity.ButtonStyle), () => entity.ButtonStyle)
            .Track(nameof(ActionButtonEntity.ButtonSize), () => entity.ButtonSize);
+
+        foreach (var turnout in entity.TurnoutPanelActions) {
+            var turnoutEnt = entity?.Parent?.GetTurnoutEntity(turnout.ActionID);
+            var turnoutRef = turnoutEnt?.Turnout;
+            turnoutRef?.StateChanged += TurnoutRefOnStateChanged;
+        }
+    }
+
+    private void TurnoutRefOnStateChanged(object? sender, TurnoutStateEnum e) {
+        // IsActionRunning is a indicator to stop us updating while we are 
+        // controlling the turnouts as we already set our color. 
+        // ----------------------------------------------------------------------
+        if (Entity is ActionButtonEntity button && !_isActionRunning) {
+            var matchOn = true;
+            var matchOff = true;
+            foreach (var turnout in button.TurnoutPanelActions) {
+                var turnoutEnt = button.Parent?.GetTurnoutEntity(turnout.ActionID);
+                var turnoutRef = turnoutEnt?.Turnout;
+                if (turnoutRef != null) {
+                    if (turnoutRef.State != turnout.WhenClosed) matchOn = false;
+                    if (turnoutRef.State != turnout.WhenThrown) matchOff = false;
+                }
+            }
+            
+            if (matchOn && matchOff) button.State = ButtonStateEnum.Unknown;
+            if (matchOn && !matchOff) button.State = ButtonStateEnum.On;
+            if (!matchOn && matchOff) button.State = ButtonStateEnum.Off;
+            if (!matchOn && !matchOff) button.State = ButtonStateEnum.Unknown;
+        }
     }
 
     public SvgImage? SvgImage { get; protected set; }
@@ -28,7 +59,9 @@ public class ActionButtonTile : Tile, ITileInteractive {
                     ButtonStateEnum.Off     => ButtonStateEnum.On,
                     _                       => ButtonStateEnum.Unknown,
                 };
+                _isActionRunning = true;
                 button.SetState(newState, StateChangeSource.External);
+                _isActionRunning = false;
             }
             return true;
         }

@@ -141,9 +141,7 @@ public partial class PanelEditor : ContentPage {
 
     private void PanelViewOnTileSelected(HashSet<ITile> tiles) {
         _viewModel.SelectedTiles = tiles.ToObservableCollection();
-        _viewModel.SetCanEditProperties();
-        var editIcon = _viewModel.SelectedTiles.Count == 0 ? "settings" : "edit";
-        ToolbarIconHelper.BindIcon(EditToolbar, nameof(_viewModel.CanEditProperties), editIcon);
+        _viewModel.CheckIfCanLinkTiles();
         if (AppStateService.Instance.SelectedTile is { } selectedTile) {
             SelectionText.Text = $"Place Tile: {selectedTile.Entity.EntityName}";
         } else {
@@ -156,7 +154,7 @@ public partial class PanelEditor : ContentPage {
                     var selectedEntity = _viewModel.SelectedTiles[0].Entity;
                     SelectionText.Text = $"Selected Tile: {selectedEntity.EntityName} @ Layer:{selectedEntity.Layer} ";
                     if (selectedEntity is TurnoutEntity turnout) {
-                        SelectionText.Text += $" ({turnout.Id ?? "Undefined"} [DCC={turnout.Turnout?.Id ?? "000"}])";
+                        SelectionText.Text += $" ({turnout.Id ?? "Undefined"} [DCC={turnout.Turnout?.Name}@{turnout.Turnout?.Id ?? "000"}])";
                     } else if (selectedEntity is IEntityID entityID) {
                         SelectionText.Text += $" ({entityID.Id})";
                     }

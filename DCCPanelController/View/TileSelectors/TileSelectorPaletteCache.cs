@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using System.Collections.ObjectModel;
 using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
@@ -49,8 +50,8 @@ public static class TileSelectorPaletteCache {
 
     private static PaletteResult BuildTilesForPanel(Panel panel) {
         try {
-            var byCategory = new Dictionary<string, List<ITile>>(StringComparer.Ordinal);
-            var categories = new List<string>();
+            var byCategory = new Dictionary<string, ObservableCollection<ITile>>(StringComparer.Ordinal);
+            var categories = new ObservableCollection<string>();
 
             Add("Actions", [
                 new TurnoutButtonEntity(panel) { State = ButtonStateEnum.On },
@@ -102,18 +103,16 @@ public static class TileSelectorPaletteCache {
 
             // Return read-only views to prevent accidental mutation of the cache
             var roByCategory = byCategory.ToDictionary(
-                kvp => kvp.Key, IReadOnlyList<ITile> (kvp) => kvp.Value.AsReadOnly(),
+                kvp => kvp.Key, ObservableCollection<ITile> (kvp) => kvp.Value,
                 StringComparer.Ordinal);
 
-            var roCategories = (IReadOnlyList<string>)categories.AsReadOnly();
-
-            return new PaletteResult(roByCategory, roCategories);
+            return new PaletteResult(roByCategory, categories);
 
             // Add function to add to the collection
             // -----------------------------------------------------
             void Add(string category, IEnumerable<Entity> entities) {
                 categories.Add(category);
-                var list = new List<ITile>();
+                var list = new ObservableCollection<ITile>();
                 foreach (var e in entities) {
                     var tile = TileFactory.CreateTile(e, 32);
                     if (tile is { }) list.Add(tile);
@@ -127,6 +126,6 @@ public static class TileSelectorPaletteCache {
 
     // Immutable-ish result (lists are read-only)
     public sealed record PaletteResult(
-        IReadOnlyDictionary<string, IReadOnlyList<ITile>> ByCategory,
-        IReadOnlyList<string> Categories);
+        Dictionary<string, ObservableCollection<ITile>> ByCategory,
+        ObservableCollection<string> Categories);
 }

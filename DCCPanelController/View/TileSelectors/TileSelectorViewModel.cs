@@ -7,36 +7,26 @@ using DCCPanelController.View.Base;
 namespace DCCPanelController.View.TileSelectors;
 
 public abstract partial class TileSelectorViewModel : BaseViewModel {
+    //[ObservableProperty] private Dictionary<string, ObservableCollection<ITile>> _byCategory = [];
+    //[ObservableProperty] private ObservableCollection<string>                    _categories = [];
+
     [ObservableProperty] private Dictionary<string, ObservableCollection<ITile>> _byCategory = [];
     [ObservableProperty] private ObservableCollection<string>                    _categories = [];
 
+    
     public Panel? Panel {
         // We add the Selector Panel to the Parent Panel collection so that when 
         // we reference things like Color, it comes from the Globally set values
         set {
-            if (value is null) {
-                Categories = new ObservableCollection<string>();
-                ByCategory = new Dictionary<string, ObservableCollection<ITile>>();
-                return;
-            }
-
+            if (value is null) return;
+            
             MainThread.BeginInvokeOnMainThread(() => {
                 // For some reason, caching sometimes doesn't work due to UI timing issues
                 var palette = TileSelectorPaletteCache.GetDefaultPalette(); // e.GetOrBuild(value);
 
-                // Create a new dictionary and observable collections to avoid sharing the cached instances
-                // -----------------------------------------------------------------------------------------
-                Categories.Clear();
-                foreach (var c in palette.Categories) Categories.Add(c);
-
-                ByCategory.Clear();
-                foreach (var kv in palette.ByCategory) {
-                    ByCategory[kv.Key] = [];
-                    foreach (var tile in kv.Value) {
-                        ByCategory[kv.Key].Add(tile);
-                    }
-                }
-
+                Categories = palette.Categories;
+                ByCategory = palette.ByCategory;
+                
                 AfterBuildAllTiles();
 
                 OnPropertyChanged(nameof(Categories));

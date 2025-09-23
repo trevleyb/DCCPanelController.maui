@@ -11,14 +11,14 @@ public partial class PillSelectorPanel : ContentView {
     public static readonly BindableProperty PanelProperty =
         BindableProperty.Create(nameof(Panel), typeof(Panel), typeof(PillSelectorPanel), propertyChanged: OnPanelChanged);
 
-    private double pillWidth = 600;
-    private double scrollOffset;
+    private double _pillWidth = 600;
+    private double _scrollOffset;
 
     public PillSelectorPanel() {
         InitializeComponent();
-        var viewModel = new PillSelectorPanelViewModel();
-        BindingContext = viewModel;
+        BindingContext = new PillSelectorPanelViewModel();
         SegmentedControl.SelectedIndex = 1;
+        SegmentedControl.
     }
 
     public Panel? Panel {
@@ -39,14 +39,14 @@ public partial class PillSelectorPanel : ContentView {
     }
 
     private void SizePill() {
-        if (BindingContext is PillSelectorPanelViewModel vm && pillWidth > 0 && vm.Categories.Count > 0) {
-            PillSelectorGrid.WidthRequest = pillWidth;
-            SegmentedControl.SegmentWidth = pillWidth / vm.Categories.Count;
+        if (BindingContext is PillSelectorPanelViewModel vm && _pillWidth > 0 && vm.Categories.Count > 0) {
+            PillSelectorGrid.WidthRequest = _pillWidth;
+            SegmentedControl.SegmentWidth = _pillWidth / vm.Categories.Count;
         }
     }
 
     protected override Size MeasureOverride(double widthConstraint, double heightConstraint) {
-        pillWidth = widthConstraint switch {
+        _pillWidth = widthConstraint switch {
             < 400 => 320,
             < 600 => 400,
             _     => 500,
@@ -59,7 +59,8 @@ public partial class PillSelectorPanel : ContentView {
         if (bindable is PillSelectorPanel { BindingContext: PillSelectorPanelViewModel vm } selector) {
             if (newValue != oldValue && newValue is Panel panel) {
                 vm.Panel = panel ?? throw new NullReferenceException("Panels cannot be null");
-                selector.SizePill();
+                vm.SelectedCategory = vm.Categories[1];
+                selector.SegmentedControl.SelectedIndex = 1;
             }
         }
     }
@@ -75,8 +76,8 @@ public partial class PillSelectorPanel : ContentView {
 
         var index = CollectionHitIndex.IndexOf(TileCollection,
             pointerRoot.Value,
-            scrollOffset,
-            scrollOffset,
+            _scrollOffset,
+            _scrollOffset,
             4,
             4,
             40,
@@ -93,5 +94,5 @@ public partial class PillSelectorPanel : ContentView {
         e.Cancel = true;
     }
 
-    private void TileCollection_OnScrolled(object? sender, ItemsViewScrolledEventArgs e) => scrollOffset = e.HorizontalOffset;
+    private void TileCollection_OnScrolled(object? sender, ItemsViewScrolledEventArgs e) => _scrollOffset = e.HorizontalOffset;
 }

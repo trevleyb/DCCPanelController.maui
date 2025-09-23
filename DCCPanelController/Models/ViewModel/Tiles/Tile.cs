@@ -53,6 +53,7 @@ public abstract class Tile : ContentView, ITile, IDisposable {
            .Track(nameof(Entity.Row),      () => Entity.Row)
            .Track(nameof(Entity.Width),    () => Entity.Width)
            .Track(nameof(Entity.Height),   () => Entity.Height)
+           .Track(nameof(Entity.Layer),    () => Entity.Layer)
            .Track(nameof(Entity.Rotation), () => Entity.Rotation,      Tolerance.Double(0.1))   // 0.1° tolerance
            .Track(nameof(Entity.Opacity),  () => Entity.Opacity,       Tolerance.Double(0.01)); // 1% opacity ;
 
