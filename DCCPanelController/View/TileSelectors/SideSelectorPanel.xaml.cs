@@ -66,16 +66,11 @@ public partial class SideSelectorPanel {
 
     private static void OnSelectedTileChanged(BindableObject bindable, object oldValue, object newValue) {
         var view = (SideSelectorPanel)bindable;
-
-        // keep VM in sync if you’re using one
         if (view.BindingContext is SideSelectorPanelViewModel vm) {
             if (!ReferenceEquals(vm.SelectedTile, newValue)) {
                 vm.SelectedTile = (ITile?)newValue;
             }
         }
-
-        // (optional) if your VM can also change SelectedTile, you might already
-        // mirror that back to the control in OnBindingContextChanged or via VM event handlers.
     }
 
     protected override void OnBindingContextChanged() {

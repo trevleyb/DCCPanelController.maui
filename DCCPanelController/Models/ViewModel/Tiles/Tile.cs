@@ -97,8 +97,6 @@ public abstract class Tile : ContentView, ITile, IDisposable {
             PropertyChanged -= OnTilePropertyChanged;
             Entity.PropertyChanged -= OnTilePropertyChanged;
 
-            Console.WriteLine($"SetContent Called: {Entity.EntityName}:{Entity.Guid} ==>[{++_calls}] from {memberName} @ {sourceLineNumber}");
-
             BindingContext = this;
             Content = CreateTile();
             if (Content != null) {
