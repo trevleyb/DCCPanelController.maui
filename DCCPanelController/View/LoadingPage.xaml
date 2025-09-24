@@ -15,9 +15,6 @@
                     <progressBar:SfLinearProgressBar
                         IsIndeterminate="True"
                         x:DataType="view:LoadingPage"
-                        Minimum="0"
-                        Maximum="{Binding Steps}"
-                        Progress="{Binding Progress}"
                         Margin="0,300,0,0"
                         TrackHeight="10"
                         TrackFill="{StaticResource White}"
