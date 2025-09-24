@@ -17,7 +17,7 @@ public partial class PillSelectorPanel : ContentView {
     public PillSelectorPanel() {
         InitializeComponent();
         BindingContext = new PillSelectorPanelViewModel();
-        SegmentedControl.SelectedIndex = 1;
+        SegmentedControl.SelectedIndex = -1;
     }
 
     public Panel? Panel {
@@ -41,6 +41,11 @@ public partial class PillSelectorPanel : ContentView {
         if (BindingContext is PillSelectorPanelViewModel vm && _pillWidth > 0 && vm.Categories.Count > 0) {
             PillSelectorGrid.WidthRequest = _pillWidth;
             SegmentedControl.SegmentWidth = _pillWidth / vm.Categories.Count;
+
+            // Fix to make sure the segment is correctly shown
+            var index = SegmentedControl.SelectedIndex;
+            SegmentedControl.SelectedIndex = -1;
+            SegmentedControl.SelectedIndex = index;
         }
     }
 

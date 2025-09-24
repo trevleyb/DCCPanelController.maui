@@ -59,7 +59,7 @@
                                      Margin="4,0,4,0"
                                      BackgroundColor="Transparent"
                                      AutoScrollToSelectedSegment="True"
-                                     ItemsSource="{Binding Categories}"
+                                     ItemsSource="{Binding SfCategories}"
                                      SelectionChanged="OnSelectionChanged">
 
                 <sfac:SfSegmentedControl.TextStyle>
