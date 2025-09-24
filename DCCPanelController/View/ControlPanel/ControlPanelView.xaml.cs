@@ -26,11 +26,48 @@ namespace DCCPanelController.View.ControlPanel;
 public partial class ControlPanelView {
     private const                bool ShowCodeTimer = true;
     [ObservableProperty] private bool _isPanelDrawing;
+    
+    #region Instance Variables and Properties
+    private int    _lastDragCol;
+    private int    _lastDragRow;
+    private double _gridSize;
+    private double _viewHeight;
+    private double _viewWidth;
+
+    private          GridGestureHelper? _gridGestures;
+    private readonly AbsoluteLayout     _panelSurface          = new();
+    private readonly Grid               _dynamicGrid           = new();
+    private readonly DrawGridLines      _overlayGridLines      = new();
+    private readonly DrawGridSelection  _overlayGridSelection  = new();
+    private readonly DrawGridHighlights _overlayGridHighlights = new();
+
+    private       Size                     _lastCommittedSize;
+    private       CancellationTokenSource? _sizeChangedDebounceCts;
+    private const int                      SizeChangedDebounceMs = 80; // try 50–100
+
+    private readonly ILogger<ControlPanelView> _logger;
+    private readonly PathTracingService        _pathTracer    = new();
+    private readonly HashSet<ITile>            _selectedTiles = [];
+
+    public int Rows => Panel?.Rows ?? 27;
+    public int Cols => Panel?.Cols ?? 18;
+    public bool HasDrawnSelector { get; init; }
+
+    public ControlPanelView() {
+        _logger = MauiProgram.ServiceHelper.GetService<ILogger<ControlPanelView>>();
+        InitializeComponent();
+        SetupDynamicGridGestures(_dynamicGrid);
+        SetupGridOverlays();
+        SizeChanged += OnSizeChangedDebounced;
+    }
+    #endregion
 
     #region Setup the Grid Overlays
     private void SetupGridOverlays() {
         // Create the Surface of the Panel
         // -------------------------------------------------------------
+        _panelSurface.HorizontalOptions = LayoutOptions.Fill;
+        _panelSurface.VerticalOptions = LayoutOptions.Fill;
         AbsoluteLayout.SetLayoutFlags(_panelSurface, AbsoluteLayoutFlags.All);
         AbsoluteLayout.SetLayoutBounds(_panelSurface, new Rect(0, 0, 1, 1));
 
@@ -40,6 +77,7 @@ public partial class ControlPanelView {
         _dynamicGrid.VerticalOptions = LayoutOptions.Fill;
         AbsoluteLayout.SetLayoutFlags(_dynamicGrid, AbsoluteLayoutFlags.All);
         AbsoluteLayout.SetLayoutBounds(_dynamicGrid, new Rect(0, 0, 1, 1));
+
         _panelSurface.Children.Add(_dynamicGrid);
 
         // Add overlays (also fill the surface)
@@ -67,42 +105,7 @@ public partial class ControlPanelView {
         };
     }
     #endregion
-
-    #region Instance Variables and Properties
-    private int    _lastDragCol;
-    private int    _lastDragRow;
-    private double _gridSize;
-    private double _viewHeight;
-    private double _viewWidth;
-
-    private          GridGestureHelper? _gridGestures;
-    private readonly AbsoluteLayout     _panelSurface          = new();
-    private readonly Grid               _dynamicGrid           = new();
-    private readonly DrawGridLines      _overlayGridLines      = new();
-    private readonly DrawGridSelection  _overlayGridSelection  = new();
-    private readonly DrawGridHighlights _overlayGridHighlights = new();
-
-    private       CancellationTokenSource? _sizeChangedDebounceCts;
-    private const int                      SizeChangedDebounceMs = 80; // try 50–100
-    private       Size                     _lastCommittedSize;
-
-    private readonly ILogger<ControlPanelView> _logger;
-    private readonly PathTracingService        _pathTracer    = new();
-    private readonly HashSet<ITile>            _selectedTiles = [];
-
-    public int Rows => Panel?.Rows ?? 27;
-    public int Cols => Panel?.Cols ?? 18;
-    public bool HasDrawnSelector { get; init; }
-
-    public ControlPanelView() {
-        _logger = MauiProgram.ServiceHelper.GetService<ILogger<ControlPanelView>>();
-        InitializeComponent();
-        SetupDynamicGridGestures(_dynamicGrid);
-        SetupGridOverlays();
-        SizeChanged += OnSizeChangedDebounced;
-    }
-    #endregion
-
+    
     #region Manage the Layout changing in size
     private void OnSizeChangedDebounced(object? sender, EventArgs e) {
         if (Width <= 1 || Height <= 1) return;
@@ -131,7 +134,7 @@ public partial class ControlPanelView {
     }
 
     private static bool HasMeaningfulSizeChange(Size a, Size b) {
-        const double minPixelDelta = 1.0; // or use 2–3 px if needed
+        const double minPixelDelta = 10.0; // or use 2–3 px if needed
         var result = Math.Abs(a.Width - b.Width) >= minPixelDelta
                   || Math.Abs(a.Height - b.Height) >= minPixelDelta;
         return result;
@@ -447,7 +450,6 @@ public partial class ControlPanelView {
         MainThread.BeginInvokeOnMainThread(async void () => {
             using (new CodeTimer($"Draw Panel: {Panel?.Id} called from {memberName}@{sourceLineNumber}", ShowCodeTimer)) {
                 try {
-                    ControlPanelLayout.IsVisible = false;
                     IsPanelDrawing = true;
 
                     await Task.Yield();
@@ -494,7 +496,6 @@ public partial class ControlPanelView {
                     _logger.LogError($"Error in DrawPanel: {ex.Message}");
                 } finally {
                     IsPanelDrawing = false;
-                    ControlPanelLayout.IsVisible = true;
                 }
             }
         });

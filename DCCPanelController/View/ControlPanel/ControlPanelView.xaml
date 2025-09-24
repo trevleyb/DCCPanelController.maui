@@ -15,10 +15,9 @@
         HorizontalOptions="Fill"
         VerticalOptions="Fill">
         <AbsoluteLayout
-            IsVisible="False"
+            x:Name="ControlPanelLayout"
             HorizontalOptions="Fill"
-            VerticalOptions="Fill"
-            x:Name="ControlPanelLayout"/>
+            VerticalOptions="Fill"/>
 
         <ActivityIndicator
             HorizontalOptions="Center"
