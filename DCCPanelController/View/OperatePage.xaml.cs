@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.Diagnostics;
+using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.ViewModel.Interfaces;
 using DCCPanelController.Services;
 using DCCPanelController.Services.ProfileService;
@@ -35,7 +36,12 @@ public partial class OperatePage : ContentPage, INotifyPropertyChanged {
     private void ViewModelOnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
         if (e.PropertyName == nameof(OperateViewModel.ActivePanel)) {
             if (_viewModel is { ActivePanel: { } } viewModel) {
-                Title = $"{viewModel.ActivePanel.Title}";
+                Title = _profileService?.ActiveProfile?.Settings.TitleBarDisplay switch {
+                    TitleBarTextDisplayEnum.Blank       => string.Empty,
+                    TitleBarTextDisplayEnum.PanelName   => viewModel.ActivePanel.Title,
+                    TitleBarTextDisplayEnum.ProfileName => _profileService.ActiveProfile.ProfileName,
+                    _ => $"{_profileService?.ActiveProfile?.ProfileName ?? "DCC Panel Controller"}" 
+                };
                 PanelView.BackgroundColor = viewModel.PanelBackgroundColor;
                 BackgroundColor = viewModel.DisplayBackgroundColor;
             } else {

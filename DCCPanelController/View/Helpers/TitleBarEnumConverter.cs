@@ -11,5 +11,5 @@ public class TitleBarEnumConverter : IValueConverter {
         => value != null && parameter != null && value.Equals(parameter);
 
     public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
-        => (bool)value ? parameter! : Binding.DoNothing;
+        => (bool)(value ?? Binding.DoNothing) ? parameter! : Binding.DoNothing;
 }

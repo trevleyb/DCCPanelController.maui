@@ -173,20 +173,20 @@
                                                VerticalOptions="Center"/>
                                         
                                         <HorizontalStackLayout Grid.Column="1">
-                                            <RadioButton Content="Blank"
-                                                         IsChecked="{Binding Settings.TitleBarDisplay, 
-                                                         Converter={StaticResource TitleBarEnumConverter}, 
-                                                         ConverterParameter={x:Static entities:TitleBarTextDisplayEnum.Blank}}" 
-                                                         GroupName="TitleBarType"/>
-                                            <RadioButton Content="Profile"
+                                            <RadioButton Content="Panel"
                                                          IsChecked="{Binding Settings.TitleBarDisplay, 
                                                          Converter={StaticResource TitleBarEnumConverter}, 
                                                          ConverterParameter={x:Static entities:TitleBarTextDisplayEnum.PanelName}}" 
                                                          GroupName="TitleBarType"/>
-                                            <RadioButton Content="Panel"
+                                            <RadioButton Content="Profile"
                                                          IsChecked="{Binding Settings.TitleBarDisplay, 
                                                          Converter={StaticResource TitleBarEnumConverter}, 
                                                          ConverterParameter={x:Static entities:TitleBarTextDisplayEnum.ProfileName}}" 
+                                                         GroupName="TitleBarType"/>
+                                            <RadioButton Content="Blank"
+                                                         IsChecked="{Binding Settings.TitleBarDisplay, 
+                                                         Converter={StaticResource TitleBarEnumConverter}, 
+                                                         ConverterParameter={x:Static entities:TitleBarTextDisplayEnum.Blank}}" 
                                                          GroupName="TitleBarType"/>
                                         </HorizontalStackLayout>
                                     </Grid>
