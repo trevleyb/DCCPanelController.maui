@@ -55,56 +55,90 @@
                 <ColumnDefinition Width="Auto" x:Name="SidePalette"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="30" x:Name="ToolbarRow"/>
+                <RowDefinition Height="34" x:Name="ToolbarRow"/>
                 <RowDefinition Height="*" x:Name="PanelRow"/>
                 <RowDefinition Height="Auto" x:Name="BottomPalette"/>
                 <RowDefinition Height="30" x:Name="StatusRow"/>
             </Grid.RowDefinitions>
 
             <Grid Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" x:DataType="services:AppStateService"
-                  VerticalOptions="Fill" HorizontalOptions="Fill" x:Name="SecondaryToolbar"
+                  VerticalOptions="Fill" HorizontalOptions="Fill" Margin="0"
                   BackgroundColor="{Binding Source={x:Static services:AppStateService.Instance}, Path=ShellBackgroundColor}">
                 
-                <components:InlineToolbar x:DataType="view:PanelEditorViewModel" Margin="5">
-
-                    <components:InlineToolbarItem
-                        Text="Link" x:Name="LinkToolbar"
+                <HorizontalStackLayout HorizontalOptions="End" x:DataType="view:PanelEditorViewModel" Margin="0,0,5,0" Spacing="10" Padding="5">
+                    <ImageButton
                         IsEnabled="{Binding CanLinkTiles}"
                         Command="{Binding Path=LinkTilesCommand}"
-                        IconImageSource="{Binding CanLinkTiles, Converter={StaticResource BoolToIcon}, ConverterParameter=link}"/>
+                        Source="{Binding CanLinkTiles, Converter={StaticResource BoolToIcon}, ConverterParameter=link}"/>
 
-                    <components:InlineToolbarItem
-                        Text="Rotate" x:Name="RotateToolbarLeft"
+                    <ImageButton
                         IsEnabled="{Binding CanRotateTiles}"
                         Command="{Binding Path=RotateTileLeftCommand}"
-                        IconImageSource="{Binding CanRotateTiles, Converter={StaticResource BoolToIcon}, ConverterParameter=rotate_ccw}"/>
-
-                    <components:InlineToolbarItem
-                        Text="Rotate" x:Name="RotateToolbarRight"
+                        Source="{Binding CanRotateTiles, Converter={StaticResource BoolToIcon}, ConverterParameter=rotate_ccw}"/>
+                
+                    <ImageButton
                         IsEnabled="{Binding CanRotateTiles}"
                         Command="{Binding Path=RotateTileRightCommand}"
-                        IconImageSource="{Binding CanRotateTiles, Converter={StaticResource BoolToIcon}, ConverterParameter=rotate_cw}"/>
-
-                    <components:InlineToolbarItem
-                        Text="Layers" x:Name="LayersToolbar"
+                        Source="{Binding CanRotateTiles, Converter={StaticResource BoolToIcon}, ConverterParameter=rotate_cw}"/>
+                
+                    <ImageButton
                         IsEnabled="{Binding CanChangeLayers}"
                         Command="{Binding Path=ChangeLayersCommand}"
-                        IconImageSource="{Binding CanChangeLayers, Converter={StaticResource BoolToIcon}, ConverterParameter=layers}"/>
-
-                    <components:InlineToolbarItem
-                        IconImageSource="{Binding CanDeleteTiles, Converter={StaticResource BoolToIcon}, ConverterParameter=trash_2}"
-                        Text="Delete" x:Name="DeleteToolbar"
+                        Source="{Binding CanChangeLayers, Converter={StaticResource BoolToIcon}, ConverterParameter=layers}"/>
+                
+                    <ImageButton
+                        Source="{Binding CanDeleteTiles, Converter={StaticResource BoolToIcon}, ConverterParameter=trash_2}"
                         IsEnabled="{Binding CanDeleteTiles}"
                         Command="{Binding Path=DeleteTileCommand}"/>
-
-                    <components:InlineToolbarItem
-                        IconImageSource="{Binding CanEditTileProperties, Converter={StaticResource BoolToIcon}, ConverterParameter=edit}"
-                        Text="Edit" x:Name="EditTileToolbar"
+                
+                    <ImageButton
+                        Source="{Binding CanEditTileProperties, Converter={StaticResource BoolToIcon}, ConverterParameter=edit}"
                         Command="{Binding Path=EditTilePropertiesPopupCommand}"
                         IsEnabled="{Binding CanEditTileProperties}"/>
+                        
                     
-                </components:InlineToolbar>
-                    
+                </HorizontalStackLayout>
+                
+                <!-- <components:InlineToolbar HorizontalOptions="End" x:DataType="view:PanelEditorViewModel" Margin="5,5,10,5" Spacing="30" Padding="10" IconSize="24" BackgroundColor="Aqua"> -->
+                <!-- -->
+                <!--     <components:InlineToolbarItem -->
+                <!--         Text="Link" x:Name="LinkToolbar" -->
+                <!--         IsEnabled="{Binding CanLinkTiles}" -->
+                <!--         Command="{Binding Path=LinkTilesCommand}" -->
+                <!--         IconImageSource="{Binding CanLinkTiles, Converter={StaticResource BoolToIcon}, ConverterParameter=link}"/> -->
+                <!-- -->
+                <!--     <components:InlineToolbarItem -->
+                <!--         Text="Rotate" x:Name="RotateToolbarLeft" -->
+                <!--         IsEnabled="{Binding CanRotateTiles}" -->
+                <!--         Command="{Binding Path=RotateTileLeftCommand}" -->
+                <!--         IconImageSource="{Binding CanRotateTiles, Converter={StaticResource BoolToIcon}, ConverterParameter=rotate_ccw}"/> -->
+                <!-- -->
+                <!--     <components:InlineToolbarItem -->
+                <!--         Text="Rotate" x:Name="RotateToolbarRight" -->
+                <!--         IsEnabled="{Binding CanRotateTiles}" -->
+                <!--         Command="{Binding Path=RotateTileRightCommand}" -->
+                <!--         IconImageSource="{Binding CanRotateTiles, Converter={StaticResource BoolToIcon}, ConverterParameter=rotate_cw}"/> -->
+                <!-- -->
+                <!--     <components:InlineToolbarItem -->
+                <!--         Text="Layers" x:Name="LayersToolbar" -->
+                <!--         IsEnabled="{Binding CanChangeLayers}" -->
+                <!--         Command="{Binding Path=ChangeLayersCommand}" -->
+                <!--         IconImageSource="{Binding CanChangeLayers, Converter={StaticResource BoolToIcon}, ConverterParameter=layers}"/> -->
+                <!-- -->
+                <!--     <components:InlineToolbarItem -->
+                <!--         IconImageSource="{Binding CanDeleteTiles, Converter={StaticResource BoolToIcon}, ConverterParameter=trash_2}" -->
+                <!--         Text="Delete" x:Name="DeleteToolbar" -->
+                <!--         IsEnabled="{Binding CanDeleteTiles}" -->
+                <!--         Command="{Binding Path=DeleteTileCommand}"/> -->
+                <!-- -->
+                <!--     <components:InlineToolbarItem -->
+                <!--         IconImageSource="{Binding CanEditTileProperties, Converter={StaticResource BoolToIcon}, ConverterParameter=edit}" -->
+                <!--         Text="Edit" x:Name="EditTileToolbar" -->
+                <!--         Command="{Binding Path=EditTilePropertiesPopupCommand}" -->
+                <!--         IsEnabled="{Binding CanEditTileProperties}"/> -->
+                <!-- -->
+                <!-- </components:InlineToolbar> -->
+                
             </Grid>
             
                 <!-- Row 0: Panel Editor -->

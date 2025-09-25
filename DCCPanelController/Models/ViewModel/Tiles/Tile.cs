@@ -88,7 +88,7 @@ public abstract class Tile : ContentView, ITile, IDisposable {
         RebuildIfNecessary();
     }
 
-    //[Time("{this}")]
+    [Time("{this}")]
     private void SetContent([CallerMemberName] string memberName = "",
         [CallerLineNumber] int sourceLineNumber = 0) {
         try {
@@ -112,6 +112,7 @@ public abstract class Tile : ContentView, ITile, IDisposable {
         }
     }
 
+    [Time("{this}")]
     protected void OnTilePropertyChanged(object? sender, PropertyChangedEventArgs e) {
         if (_rebuildGuard > 0) return; // keep this guard you already have
         

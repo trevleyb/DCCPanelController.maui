@@ -12,6 +12,7 @@ using DCCPanelController.View.ControlPanel;
 using DCCPanelController.View.Helpers;
 using DCCPanelController.View.Properties.DynamicProperties;
 using DCCPanelController.View.Properties.PanelProperties;
+using MethodTimer;
 using Microsoft.Extensions.Logging;
 using Syncfusion.Maui.Toolkit.Popup;
 using PanelPropertyViewModel = DCCPanelController.View.Properties.PanelProperties.PanelPropertyViewModel;
@@ -236,7 +237,7 @@ public partial class PanelEditorViewModel : ObservableObject {
     }
 
     
-    [RelayCommand]
+    [RelayCommand][Time]
     private async Task RotateTileLeftAsync() {
         if (HasSelectedEntities) {
             foreach (var entity in SelectedEntities) {
@@ -247,7 +248,7 @@ public partial class PanelEditorViewModel : ObservableObject {
         CheckIfPanelChanged();
     }
 
-    [RelayCommand]
+    [RelayCommand][Time]
     private async Task RotateTileRightAsync() {
         if (HasSelectedEntities) {
             foreach (var entity in SelectedEntities) {

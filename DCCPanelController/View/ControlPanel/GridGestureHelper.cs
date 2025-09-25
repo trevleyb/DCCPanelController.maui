@@ -16,7 +16,7 @@ public class GridGestureHelper : IDisposable {
     public bool EnableDoubleTap { get; set; } = true;
 
     private       DateTime _lastTapUtc        = DateTime.MinValue;
-    private const int      DoubleTapThreshold = 225;
+    private const int      DoubleTapThreshold = 250;
     private const double   DragSlopPx         = 3.5;
 
     // Debouce Support

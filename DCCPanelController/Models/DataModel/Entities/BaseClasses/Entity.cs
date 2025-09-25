@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel.Entities.Interfaces;
 using DCCPanelController.View.Properties.DynamicProperties;
+using MethodTimer;
 
 // ReSharper disable once CheckNamespace
 namespace DCCPanelController.Models.DataModel.Entities;
@@ -56,6 +57,7 @@ public abstract partial class Entity() : ObservableObject, IEntity {
 
     public virtual void RotateRight() => Rotation = (Rotation + RotationFactor) % 360;
 
+    [Time]
     protected void HandleRotation() {
         // Calculate the current center point before swapping
         var centerX = Col + (Width - 1) / 2.0;
