@@ -10,7 +10,8 @@
     xmlns:view="clr-namespace:DCCPanelController.View"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:converters="clr-namespace:DCCPanelController.View.Converters"
-    xmlns:controlPanel="clr-namespace:DCCPanelController.View.ControlPanel">
+    xmlns:controlPanel="clr-namespace:DCCPanelController.View.ControlPanel"
+    xmlns:services="clr-namespace:DCCPanelController.Services">
 
     <ContentPage.Resources>
         <ResourceDictionary>
@@ -19,6 +20,10 @@
     </ContentPage.Resources>
 
     <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Lock" 
+                     Command="{Binding UnlockEditModeCommand}"
+                     IconImageSource="{Binding Source={x:Static services:AppStateService.Instance}, x:DataType='services:AppStateService', Path=HideEditOptions, Converter={StaticResource BoolToIcon}, ConverterParameter=key}"/>
+        
         <ToolbarItem Text="Left" Command="{Binding SwipeLeftCommand}" IsEnabled="{Binding HasPanels}"
                      IconImageSource="{Binding HasPanels, Converter={StaticResource BoolToIcon}, ConverterParameter=chevron_left}"/>
         <ToolbarItem Text="Right" Command="{Binding SwipeRightCommand}" IsEnabled="{Binding HasPanels}"

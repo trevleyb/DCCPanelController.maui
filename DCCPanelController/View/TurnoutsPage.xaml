@@ -17,9 +17,7 @@
 
     <ContentPage.ToolbarItems>
         <ToolbarItem
-            Command="{Binding AddTurnoutCommand}"
-            IsEnabled="{Binding CanAddTurnout}"
-            IconImageSource="{Binding CanAddTurnout, Converter={StaticResource BoolToIcon}, ConverterParameter=plus_circle}"/>
+            Command="{Binding AddTurnoutCommand}" IsEnabled="{Binding CanAddTurnout}" IconImageSource="{Binding CanAddTurnout, Converter={StaticResource BoolToIcon}, ConverterParameter=plus_circle}"/>
 
         <ToolbarItem
             Command="{Binding DeleteTurnoutCommand}" IsEnabled="{Binding IsTurnoutSelected}"

@@ -4,11 +4,11 @@ using DCCPanelController.Models.DataModel.Entities;
 
 namespace DCCPanelController.Models.DataModel;
 
-public partial class Route : ObservableObject {
+public partial class Route : ObservableObject, ITable {
     [ObservableProperty] private string?        _id;
+    [ObservableProperty] private string?        _name;
     [ObservableProperty] private bool           _isEditable;
     [ObservableProperty] private bool           _isModified;
-    [ObservableProperty] private string?        _name;
     [ObservableProperty] private RouteStateEnum _state = RouteStateEnum.Unknown;
 
     /// <summary>

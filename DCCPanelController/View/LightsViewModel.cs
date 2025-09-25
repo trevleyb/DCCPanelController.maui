@@ -8,6 +8,7 @@ using DCCPanelController.Services;
 using DCCPanelController.Services.ProfileService;
 using DCCPanelController.View.Base;
 using Microsoft.Extensions.Logging;
+using Syncfusion.Maui.Toolkit.BottomSheet;
 
 namespace DCCPanelController.View;
 
@@ -15,15 +16,20 @@ public partial class LightsViewModel : ConnectionViewModel {
     private const                string         _labelID    = "ID";
     private const                string         _labelName  = "Light";
     private const                string         _labelState = "Lit?";
+    
     private readonly             ProfileService _profileService;
     [ObservableProperty] private string         _columnLabelID    = _labelID;
     [ObservableProperty] private string         _columnLabelName  = _labelName;
     [ObservableProperty] private string         _columnLabelState = _labelState;
     private                      bool           _isAscending;
 
+    [ObservableProperty] private Light?                      _selectedLight;
     [ObservableProperty] private ObservableCollection<Light> _lights;
     private                      ILogger<LightsViewModel>    _logger;
     private                      string                      _sortColumn = "";
+
+    [ObservableProperty] private bool _isLightSelected;
+    [ObservableProperty] private bool _canAddLight;
 
     public LightsViewModel(ILogger<LightsViewModel> logger, ProfileService profileService, ConnectionService connectionService) : base(profileService, connectionService) {
         _logger = logger;
@@ -33,6 +39,12 @@ public partial class LightsViewModel : ConnectionViewModel {
             IsSupported = _profileService.ActiveProfile?.Settings?.ClientSettings?.Capabilities.Contains(DccClientCapability.Lights) ?? false;
             SetLabels();
         };
+        PropertyChanged += (sender, args) => {
+            if (args.PropertyName == nameof(SelectedLight)) {
+                IsLightSelected = SelectedLight != null;
+            }
+        };
+
         Lights = _profileService?.ActiveProfile?.Lights ?? throw new ArgumentNullException(nameof(profileService), "LightsViewModel: Active profile is not defined.");
         IsSupported = _profileService.ActiveProfile?.Settings?.ClientSettings?.Capabilities.Contains(DccClientCapability.Lights) ?? false;
         SetLabels();
@@ -45,6 +57,14 @@ public partial class LightsViewModel : ConnectionViewModel {
     public bool IsSupported { get; private set; }
     public bool IsNotSupported => !IsSupported;
 
+    private SfBottomSheet? _bottomSheet;
+    public void SetNavigationReferences(SfBottomSheet bottomSheet) => _bottomSheet = bottomSheet;
+
+    public void SetToolbarItems() {
+        IsSupported = _profileService.ActiveProfile?.Settings?.ClientSettings?.Capabilities.Contains(DccClientCapability.Turnouts) ?? false;
+        CanAddLight = _profileService.ActiveProfile?.Settings?.ClientSettings?.SupportsManualEntries == true && IsSupported;
+    }
+    
     [RelayCommand]
     private async Task SortByColumnAsync(string columnName) {
         List<Light> sorted;
@@ -97,5 +117,70 @@ public partial class LightsViewModel : ConnectionViewModel {
         } finally {
             IsBusy = false;
         }
+    }
+    
+        [RelayCommand]
+    private async Task DeleteLightAsync(Light? light) {
+        light ??= SelectedLight;
+        if (light is { }) {
+            Lights.Remove(light);
+            OnPropertyChanged(nameof(Lights));
+            await _profileService.SaveAsync();
+            SelectedLight = null;
+            IsLightSelected = false;
+        }
+    }
+
+    [RelayCommand]
+    private async Task AddLightAsync() {
+        var light = new Light {
+            Id = TableAnalyser<Light>.GetUniqueID(Lights.ToList<Light>()),
+            Name = "New Light",
+            IsEditable = true,
+        };
+        Lights.Add(light);
+        await _profileService.SaveAsync();
+        OnPropertyChanged(nameof(Lights));
+        SelectedLight = null;
+        IsLightSelected = false;
+    }
+
+    [RelayCommand]
+    private async Task SendLightStateAsync(Turnout? turnout) {
+        // if (turnout is { }) {
+        //     if (IsConnected) {
+        //         if (ConnectionService.Client is { } client) await client.SendTurnoutCmdAsync(turnout, turnout.State == TurnoutStateEnum.Thrown)!;
+        //     }
+        //     OnPropertyChanged(nameof(Turnouts));
+        // }
+    }
+
+    [RelayCommand]
+    public async Task EditLightAsync(Light? light) {
+        light ??= SelectedLight;
+        try {
+            if (light is { } && _bottomSheet is { } sfBottomSheet) {
+                var lightssEditViewModel = new LightsEditViewModel(LogHelper.CreateLogger<LightsEditViewModel>(), light, ConnectionService);
+        
+                if (DeviceInfo.Platform == DevicePlatform.iOS && DeviceInfo.Current.Idiom == DeviceIdiom.Phone) {
+                    _bottomSheet.ContentWidthMode = BottomSheetContentWidthMode.Full;
+                } else {
+                    _bottomSheet.ContentWidthMode = BottomSheetContentWidthMode.Custom;
+                    _bottomSheet.BottomSheetContentWidth = 400;
+                }
+        
+                _bottomSheet.BottomSheetContent = new LightsEditView(LogHelper.CreateLogger<LightsEditView>(), lightssEditViewModel);
+                _bottomSheet.ShowGrabber = true;
+                _bottomSheet.EnableSwiping = true;
+                _bottomSheet.CollapsedHeight = 0;
+                _bottomSheet.CollapseOnOverlayTap = true;
+                _bottomSheet.State = BottomSheetState.HalfExpanded;
+                _bottomSheet.IsModal = true;
+                _bottomSheet.Show();
+            }
+        } catch (Exception ex) {
+            _logger.LogCritical("Error Launching Light Properties Page: " + ex.Message);
+        }
+        OnPropertyChanged(nameof(Lights));
     }
 }

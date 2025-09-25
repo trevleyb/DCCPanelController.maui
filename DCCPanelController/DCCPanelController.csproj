@@ -290,6 +290,15 @@
         <MauiXaml Update="View\ControlPanel\ControlPanelView.xaml">
             <SubType>Designer</SubType>
         </MauiXaml>
+        <MauiXaml Update="View\LightsEditView.xaml">
+          <SubType>Designer</SubType>
+        </MauiXaml>
+        <MauiXaml Update="View\BlocksEditView.xaml">
+          <SubType>Designer</SubType>
+        </MauiXaml>
+        <MauiXaml Update="View\SensorsEditView.xaml">
+          <SubType>Designer</SubType>
+        </MauiXaml>
     </ItemGroup>
 
     <ItemGroup>
@@ -422,6 +431,27 @@
             <DesignTime>True</DesignTime>
             <AutoGen>True</AutoGen>
             <DependentUpon>AppResources.resx</DependentUpon>
+        </Compile>
+        <Compile Update="View\LightsEditView.xaml.cs">
+          <DependentUpon>LightsEditView.xaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="View\BlocksEditView.xaml.cs">
+          <DependentUpon>BlocksEditView.xaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="View\SensorsEditView.xaml.cs">
+          <DependentUpon>SensorsEditView.xaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="View\SensorsEditViewModel.cs">
+          <DependentUpon>SensorsEditView.xaml</DependentUpon>
+        </Compile>
+        <Compile Update="View\LightsEditViewModel.cs">
+          <DependentUpon>LightsEditView.xaml</DependentUpon>
+        </Compile>
+        <Compile Update="View\BlocksEditViewModel.cs">
+          <DependentUpon>BlocksEditView.xaml</DependentUpon>
         </Compile>
     </ItemGroup>
 

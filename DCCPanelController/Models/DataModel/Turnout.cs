@@ -10,14 +10,14 @@ namespace DCCPanelController.Models.DataModel;
 ///     This is controlled by data that comes in via the Withrottle Interface
 /// </summary>
 [DebuggerDisplay("UniqueId: {Id}, SystemName: {Name}, State: {State}")]
-public partial class Turnout : ObservableObject {
-    [ObservableProperty] private int              _dccAddress;
-    [ObservableProperty] private TurnoutStateEnum _default = TurnoutStateEnum.Unknown;
+public partial class Turnout : ObservableObject, ITable {
     [ObservableProperty] private string?          _id;
+    [ObservableProperty] private string?          _name;
     [ObservableProperty] private bool             _isEditable;
     [ObservableProperty] private bool             _isModified;
-    [ObservableProperty] private string?          _name;
-    [ObservableProperty] private TurnoutStateEnum _state = TurnoutStateEnum.Unknown;
+    [ObservableProperty] private int              _dccAddress;
+    [ObservableProperty] private TurnoutStateEnum _state   = TurnoutStateEnum.Unknown;
+    [ObservableProperty] private TurnoutStateEnum _default = TurnoutStateEnum.Unknown;
 
     [JsonIgnore]
     public string DisplayFormat => $"{Name} ({Id})";

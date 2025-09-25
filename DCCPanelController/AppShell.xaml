@@ -59,11 +59,13 @@
         <Tab
             Icon="panels.png"
             Title="Panel Editor"
+            IsVisible="{Binding Source={x:Static services:AppStateService.Instance}, Path=ShowEditOptions}"
             IsEnabled="{Binding Source={x:Static services:AppStateService.Instance}, Path=IsNavigationAllowed}">
             <ShellContent ContentTemplate="{DataTemplate view:PanelViewer}"/>
         </Tab>
 
         <Tab Title="Tables" Icon="tables.png"
+             IsVisible="{Binding Source={x:Static services:AppStateService.Instance}, Path=ShowEditOptions}"
              IsEnabled="{Binding Source={x:Static services:AppStateService.Instance},Path=IsNavigationAllowed}">
             <ShellContent
                 ContentTemplate="{DataTemplate view:TurnoutsPage}"
@@ -83,6 +85,7 @@
         </Tab>
 
         <Tab Title="Settings" Icon="settings.png"
+             IsVisible="{Binding Source={x:Static services:AppStateService.Instance}, Path=ShowEditOptions}"
              IsEnabled="{Binding Source={x:Static services:AppStateService.Instance},Path=IsNavigationAllowed}">
             <ShellContent
                 ContentTemplate="{DataTemplate view:SettingsPage}"

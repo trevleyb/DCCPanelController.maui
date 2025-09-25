@@ -8,6 +8,7 @@ using DCCPanelController.Services;
 using DCCPanelController.Services.ProfileService;
 using DCCPanelController.View.Base;
 using Microsoft.Extensions.Logging;
+using Syncfusion.Maui.Toolkit.BottomSheet;
 
 namespace DCCPanelController.View;
 
@@ -18,6 +19,7 @@ public partial class BlocksViewModel : ConnectionViewModel {
 
     private readonly ProfileService _profileService;
 
+    [ObservableProperty] private Block?                      _selectedBlock;
     [ObservableProperty] private ObservableCollection<Block> _blocks;
     [ObservableProperty] private string                      _columnLabelID    = _labelID;
     [ObservableProperty] private string                      _columnLabelName  = _labelName;
@@ -25,6 +27,10 @@ public partial class BlocksViewModel : ConnectionViewModel {
     private                      bool                        _isAscending;
     private                      ILogger<BlocksViewModel>    _logger;
     private                      string                      _sortColumn = "";
+
+    [ObservableProperty] private bool _isBlockSelected;
+    [ObservableProperty] private bool _canAddBlock;
+
 
     public BlocksViewModel(ILogger<BlocksViewModel> logger, ProfileService profileService, ConnectionService connectionService) : base(profileService, connectionService) {
         _logger = logger;
@@ -34,6 +40,13 @@ public partial class BlocksViewModel : ConnectionViewModel {
             IsSupported = _profileService.ActiveProfile?.Settings?.ClientSettings?.Capabilities.Contains(DccClientCapability.Blocks) ?? false;
             SetLabels();
         };
+        
+        PropertyChanged += (sender, args) => {
+            if (args.PropertyName == nameof(SelectedBlock)) {
+                IsBlockSelected = SelectedBlock != null;
+            }
+        };
+
         Blocks = profileService?.ActiveProfile?.Blocks ?? throw new ArgumentNullException(nameof(profileService), "BlocksViewModel: Active profile is not defined.");
         IsSupported = _profileService.ActiveProfile?.Settings?.ClientSettings?.Capabilities.Contains(DccClientCapability.Blocks) ?? false;
         SetLabels();
@@ -45,6 +58,14 @@ public partial class BlocksViewModel : ConnectionViewModel {
 
     public bool IsSupported { get; private set; }
     public bool IsNotSupported => !IsSupported;
+
+    private SfBottomSheet? _bottomSheet;
+    public void SetNavigationReferences(SfBottomSheet bottomSheet) => _bottomSheet = bottomSheet;
+
+    public void SetToolbarItems() {
+        IsSupported = _profileService.ActiveProfile?.Settings?.ClientSettings?.Capabilities.Contains(DccClientCapability.Turnouts) ?? false;
+        CanAddBlock = _profileService.ActiveProfile?.Settings?.ClientSettings?.SupportsManualEntries == true && IsSupported;
+    }
 
     [RelayCommand]
     private async Task SortByColumnAsync(string columnName) {
@@ -98,5 +119,70 @@ public partial class BlocksViewModel : ConnectionViewModel {
         } finally {
             IsBusy = false;
         }
+    }
+    
+        [RelayCommand]
+    private async Task DeleteBlockAsync(Block? block) {
+        block ??= SelectedBlock;
+        if (block is { }) {
+            Blocks.Remove(block);
+            OnPropertyChanged(nameof(Blocks));
+            await _profileService.SaveAsync();
+            SelectedBlock = null;
+            IsBlockSelected = false;
+        }
+    }
+
+    [RelayCommand]
+    private async Task AddBlockAsync() {
+        var block = new Block() {
+            Id = TableAnalyser<Block>.GetUniqueID(Blocks.ToList<Block>()),
+            Name = "New Block",
+            IsEditable = true,
+        };
+        Blocks.Add(block);
+        await _profileService.SaveAsync();
+        OnPropertyChanged(nameof(Blocks));
+        SelectedBlock = null;
+        IsBlockSelected = false;
+    }
+
+    [RelayCommand]
+    private async Task SendBlockStateAsync(Turnout? turnout) {
+        // if (turnout is { }) {
+        //     if (IsConnected) {
+        //         if (ConnectionService.Client is { } client) await client.SendTurnoutCmdAsync(turnout, turnout.State == TurnoutStateEnum.Thrown)!;
+        //     }
+        //     OnPropertyChanged(nameof(Turnouts));
+        // }
+    }
+
+    [RelayCommand]
+    public async Task EditBlockAsync(Block? block) {
+        block ??= SelectedBlock;
+        try {
+            if (block is { } && _bottomSheet is { } sfBottomSheet) {
+                var blocksEditViewModel = new BlocksEditViewModel(LogHelper.CreateLogger<BlocksEditViewModel>(), block, ConnectionService);
+        
+                if (DeviceInfo.Platform == DevicePlatform.iOS && DeviceInfo.Current.Idiom == DeviceIdiom.Phone) {
+                    _bottomSheet.ContentWidthMode = BottomSheetContentWidthMode.Full;
+                } else {
+                    _bottomSheet.ContentWidthMode = BottomSheetContentWidthMode.Custom;
+                    _bottomSheet.BottomSheetContentWidth = 400;
+                }
+        
+                _bottomSheet.BottomSheetContent = new BlocksEditView(LogHelper.CreateLogger<BlocksEditView>(), blocksEditViewModel);
+                _bottomSheet.ShowGrabber = true;
+                _bottomSheet.EnableSwiping = true;
+                _bottomSheet.CollapsedHeight = 0;
+                _bottomSheet.CollapseOnOverlayTap = true;
+                _bottomSheet.State = BottomSheetState.HalfExpanded;
+                _bottomSheet.IsModal = true;
+                _bottomSheet.Show();
+            }
+        } catch (Exception ex) {
+            _logger.LogCritical("Error Launching Blocks Properties Page: " + ex.Message);
+        }
+        OnPropertyChanged(nameof(Blocks));
     }
 }

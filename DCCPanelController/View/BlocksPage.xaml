@@ -10,9 +10,20 @@
     xmlns:dataModel="clr-namespace:DCCPanelController.Models.DataModel"
     xmlns:ios="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
     xmlns:view="clr-namespace:DCCPanelController.View"
-    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:bottomSheet="http://schemas.syncfusion.com/maui/toolkit">
 
     <ContentPage.ToolbarItems>
+        <ToolbarItem
+            Command="{Binding AddBlockCommand}" IsEnabled="{Binding CanAddBlock}" IconImageSource="{Binding CanAddBlock, Converter={StaticResource BoolToIcon}, ConverterParameter=plus_circle}"/>
+
+        <ToolbarItem
+            Command="{Binding DeleteBlockCommand}" IsEnabled="{Binding IsBlockSelected}"
+            IconImageSource="{Binding IsBlockSelected, Converter={StaticResource BoolToIcon}, ConverterParameter=minus_circle}"/>
+
+        <ToolbarItem Command="{Binding EditBlockCommand}" IsEnabled="{Binding IsBlockSelected}"
+                     IconImageSource="{Binding IsBlockSelected, Converter={StaticResource BoolToIcon}, ConverterParameter=edit}"/>
+        
         <ToolbarItem
             Command="{Binding RefreshBlocksCommand}" IsEnabled="{Binding IsConnected}"
             IconImageSource="{Binding IsConnected, Converter={StaticResource BoolToIcon}, ConverterParameter=refresh_cw}"/>
@@ -64,7 +75,7 @@
 
             <Grid Padding="5" VerticalOptions="FillAndExpand"
                   IsEnabled="{Binding Source={RelativeSource AncestorType={x:Type view:BlocksViewModel}}, x:DataType=view:BlocksViewModel, Path=IsConnected}">
-                <CollectionView ItemsSource="{Binding Blocks}" SelectionMode="None">
+                <CollectionView ItemsSource="{Binding Blocks}" SelectionMode="Single" SelectedItem="{Binding SelectedBlock}">
                     <CollectionView.EmptyView>
                         <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
                             <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
@@ -155,6 +166,15 @@
                 </CollectionView>
             </Grid>
         </RefreshView>
+        
+        <!-- Bottom Sheet for editing the Connection Details -->
+        <bottomSheet:SfBottomSheet
+            x:Name="BottomSheet"
+            CornerRadius="15, 15, 0, 0"
+            HalfExpandedRatio="0.50" ContentPadding="10">
+            <bottomSheet:SfBottomSheet.BottomSheetContent/>
+        </bottomSheet:SfBottomSheet>
+
         <BoxView
             BackgroundColor="{StaticResource Primary}"
             HeightRequest="1"

@@ -18,6 +18,8 @@ public partial class AppStateService : ObservableObject, INotifyPropertyChanged 
     [ObservableProperty] private Color _tabBarForegroundColor = Colors.White;
     [ObservableProperty] private Color _tabBarTitleColor      = Colors.White;
     [ObservableProperty] private Color _tabBarUnselectedColor = Colors.DarkGray;
+    [ObservableProperty] private bool  _showEditOptions       = true;
+    [ObservableProperty] private bool  _hideEditOptions       = false;
 
     public AppStateService(ProfileService.ProfileService profileService) {
         _profileService = profileService;
@@ -63,10 +65,11 @@ public partial class AppStateService : ObservableObject, INotifyPropertyChanged 
     private void SetShellDefault(Profile? profile) {
         if (_profileService.ActiveProfile == profile) {
             if (profile is { }) {
-                Console.WriteLine("Profile Set - Setting Colors");
+                ShowEditOptions = !profile.Settings.HideEditingFunctions;
+                HideEditOptions = profile.Settings.HideEditingFunctions;
+                
                 ShellBackgroundColor = profile.Settings.BackgroundColor ?? StyleHelper.FromStyle("Primary");
                 ShellForegroundColor = profile.Settings.ForegroundColor ?? StyleHelper.FromStyle("White");
-                ;
 
                 // Set up the other colors based on what the background color is
                 // If it is dark, set the foreground colors light, otherwise set them to be dark. 

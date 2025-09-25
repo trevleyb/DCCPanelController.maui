@@ -21,7 +21,6 @@ public partial class TurnoutsViewModel : ConnectionViewModel {
     private readonly ILogger<TurnoutsViewModel> _logger;
 
     private readonly             ProfileService _profileService;
-    private                      SfBottomSheet? _bottomSheet;
     [ObservableProperty] private bool           _canAddTurnout;
 
     [ObservableProperty] private string _columnLabelAddress = _labelAddress;
@@ -66,6 +65,7 @@ public partial class TurnoutsViewModel : ConnectionViewModel {
     public bool IsSupported { get; set; }
     public bool IsNotSupported => !IsSupported;
 
+    private SfBottomSheet? _bottomSheet;
     public void SetNavigationReferences(SfBottomSheet bottomSheet) => _bottomSheet = bottomSheet;
 
     public void SetToolbarItems() {
@@ -139,7 +139,7 @@ public partial class TurnoutsViewModel : ConnectionViewModel {
     [RelayCommand]
     private async Task AddTurnoutAsync() {
         var turnout = new Turnout {
-            Id = TurnoutAnalyzer.GetUniqueID(Turnouts.ToList<Turnout>()),
+            Id = TableAnalyser<Turnout>.GetUniqueID(Turnouts.ToList<Turnout>()),
             Name = "New Turnout",
             State = TurnoutStateEnum.Closed,
             Default = TurnoutStateEnum.Closed,

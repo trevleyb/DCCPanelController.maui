@@ -8,6 +8,7 @@ using DCCPanelController.Services;
 using DCCPanelController.Services.ProfileService;
 using DCCPanelController.View.Base;
 using Microsoft.Extensions.Logging;
+using Syncfusion.Maui.Toolkit.BottomSheet;
 
 namespace DCCPanelController.View;
 
@@ -20,10 +21,13 @@ public partial class SensorsViewModel : ConnectionViewModel {
     [ObservableProperty] private string         _columnLabelName  = _labelName;
     [ObservableProperty] private string         _columnLabelState = _labelState;
 
-    private bool _isAscending;
+    [ObservableProperty] private bool _isSensorSelected;
+    [ObservableProperty] private bool _canAddSensor;
+    private                      bool _isAscending;
 
     private ILogger<SensorsViewModel> _logger;
 
+    [ObservableProperty] private Sensor?                      _selectedSensor;
     [ObservableProperty] private ObservableCollection<Sensor> _sensors;
     private                      string                       _sortColumn = "";
 
@@ -36,6 +40,12 @@ public partial class SensorsViewModel : ConnectionViewModel {
             SetLabels();
         };
 
+        PropertyChanged += (sender, args) => {
+            if (args.PropertyName == nameof(SelectedSensor)) {
+                IsSensorSelected = SelectedSensor != null;
+            }
+        };
+        
         Sensors = _profileService?.ActiveProfile?.Sensors ?? throw new ArgumentNullException(nameof(profileService), "SensorsViewModel: Active profile is not defined.");
         IsSupported = _profileService.ActiveProfile?.Settings?.ClientSettings?.Capabilities.Contains(DccClientCapability.Sensors) ?? false;
         SetLabels();
@@ -48,6 +58,14 @@ public partial class SensorsViewModel : ConnectionViewModel {
     public bool IsSupported { get; private set; }
     public bool IsNotSupported => !IsSupported;
 
+    private SfBottomSheet? _bottomSheet;
+    public void SetNavigationReferences(SfBottomSheet bottomSheet) => _bottomSheet = bottomSheet;
+
+    public void SetToolbarItems() {
+        IsSupported = _profileService.ActiveProfile?.Settings?.ClientSettings?.Capabilities.Contains(DccClientCapability.Turnouts) ?? false;
+        CanAddSensor = _profileService.ActiveProfile?.Settings?.ClientSettings?.SupportsManualEntries == true && IsSupported;
+    }
+    
     [RelayCommand]
     private async Task SortByColumnAsync(string columnName) {
         List<Sensor> sorted;
@@ -100,5 +118,70 @@ public partial class SensorsViewModel : ConnectionViewModel {
         } finally {
             IsBusy = false;
         }
+    }
+
+    [RelayCommand]
+    private async Task DeleteSensorAsync(Sensor? sensor) {
+        sensor ??= SelectedSensor;
+        if (sensor is { }) {
+            Sensors.Remove(sensor);
+            OnPropertyChanged(nameof(Sensors));
+            await _profileService.SaveAsync();
+            SelectedSensor = null;
+            IsSensorSelected = false;
+        }
+    }
+
+    [RelayCommand]
+    private async Task AddSensorAsync() {
+        var sensor = new Sensor {
+            Id = TableAnalyser<Sensor>.GetUniqueID(Sensors.ToList<Sensor>()),
+            Name = "New Sensor",
+            IsEditable = true,
+        };
+        Sensors.Add(sensor);
+        await _profileService.SaveAsync();
+        OnPropertyChanged(nameof(Sensors));
+        SelectedSensor = null;
+        IsSensorSelected = false;
+    }
+
+    [RelayCommand]
+    private async Task SendSensorStateAsync(Sensor? sensor) {
+        // if (turnout is { }) {
+        //     if (IsConnected) {
+        //         if (ConnectionService.Client is { } client) await client.SendTurnoutCmdAsync(turnout, turnout.State == TurnoutStateEnum.Thrown)!;
+        //     }
+        //     OnPropertyChanged(nameof(Turnouts));
+        // }
+    }
+
+    [RelayCommand]
+    public async Task EditSensorAsync(Sensor? sensor) {
+        sensor ??= SelectedSensor;
+        try {
+            if (sensor is { } && _bottomSheet is { } sfBottomSheet) {
+                var sensorsEditViewModel = new SensorsEditViewModel(LogHelper.CreateLogger<SensorsEditViewModel>(), sensor, ConnectionService);
+        
+                if (DeviceInfo.Platform == DevicePlatform.iOS && DeviceInfo.Current.Idiom == DeviceIdiom.Phone) {
+                    _bottomSheet.ContentWidthMode = BottomSheetContentWidthMode.Full;
+                } else {
+                    _bottomSheet.ContentWidthMode = BottomSheetContentWidthMode.Custom;
+                    _bottomSheet.BottomSheetContentWidth = 400;
+                }
+        
+                _bottomSheet.BottomSheetContent = new SensorsEditView(LogHelper.CreateLogger<SensorsEditView>(), sensorsEditViewModel);
+                _bottomSheet.ShowGrabber = true;
+                _bottomSheet.EnableSwiping = true;
+                _bottomSheet.CollapsedHeight = 0;
+                _bottomSheet.CollapseOnOverlayTap = true;
+                _bottomSheet.State = BottomSheetState.HalfExpanded;
+                _bottomSheet.IsModal = true;
+                _bottomSheet.Show();
+            }
+        } catch (Exception ex) {
+            _logger.LogCritical("Error Launching Sensor Properties Page: " + ex.Message);
+        }
+        OnPropertyChanged(nameof(Sensors));
     }
 }

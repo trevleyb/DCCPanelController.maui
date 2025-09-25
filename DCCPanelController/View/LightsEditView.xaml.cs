@@ -1,0 +1,23 @@
+using System.ComponentModel;
+using Microsoft.Extensions.Logging;
+
+namespace DCCPanelController.View;
+
+public partial class LightsEditView : ContentView {
+    private readonly ILogger<LightsEditView> _logger;
+    private readonly LightsEditViewModel     _viewModel;
+
+    public LightsEditView(ILogger<LightsEditView> logger, LightsEditViewModel viewModel) {
+        InitializeComponent();
+        _logger = logger;
+        _viewModel = viewModel;
+        _viewModel.Light.PropertyChanged += ViewModelOnPropertyChanged;
+        BindingContext = _viewModel;
+    }
+
+    private void ViewModelOnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
+        if (e is { PropertyName: nameof(LightsEditViewModel.Light.Name) }) {
+            _viewModel.Title = string.IsNullOrEmpty(_viewModel.Light.Name) ? "Light Properties" : _viewModel.Light.Name;
+        }
+    }
+}

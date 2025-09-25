@@ -3,15 +3,15 @@ using DCCPanelController.Models.DataModel;
 
 namespace DCCPanelController.Helpers;
 
-public static class TurnoutAnalyzer {
-    public static string GetUniqueID(List<Turnout> turnouts) => AnalyzeTurnouts(turnouts).NewUniqueId;
+public class TableAnalyser<T>  where T : ITable {
+    public static string GetUniqueID(List<T> collection) => AnalyzeCollection(collection).NewUniqueId;
 
-    public static (string MostCommonPrefix, string NewUniqueId) AnalyzeTurnouts(List<Turnout> turnouts) {
+    public static (string MostCommonPrefix, string NewUniqueId) AnalyzeCollection(List<T> collection) {
         var patternCount = new Dictionary<string, int>();
         var patternNumbers = new Dictionary<string, List<(int number, string originalFormat)>>();
 
-        foreach (var turnout in turnouts) {
-            var id = turnout.Id ?? "1";
+        foreach (var item in collection) {
+            var id = item.Id ?? "1";
 
             // Extract prefix, number, and suffix
             var (prefix, number, suffix, originalFormat) = ExtractPrefixNumberSuffix(id);

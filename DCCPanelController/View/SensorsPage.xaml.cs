@@ -12,8 +12,16 @@ public partial class SensorsPage : ContentPage {
         InitializeComponent();
         BindingContext = viewModel;
 
+        viewModel.SetNavigationReferences(BottomSheet);
+
         On<iOS>().SetUseSafeArea(false);
         var safeInsets = On<iOS>().SafeAreaInsets();
         MainStackLayout.Padding = new Thickness(safeInsets.Left, safeInsets.Top, safeInsets.Right, 0);
     }
+    
+    protected override void OnAppearing() {
+        base.OnAppearing();
+        if (BindingContext is SensorsViewModel viewModel) viewModel.SetToolbarItems();
+    }
+
 }
