@@ -65,9 +65,6 @@ public partial class AppStateService : ObservableObject, INotifyPropertyChanged 
     private void SetShellDefault(Profile? profile) {
         if (_profileService.ActiveProfile == profile) {
             if (profile is { }) {
-                ShowEditOptions = !profile.Settings.HideEditingFunctions;
-                HideEditOptions = profile.Settings.HideEditingFunctions;
-                
                 ShellBackgroundColor = profile.Settings.BackgroundColor ?? StyleHelper.FromStyle("Primary");
                 ShellForegroundColor = profile.Settings.ForegroundColor ?? StyleHelper.FromStyle("White");
 

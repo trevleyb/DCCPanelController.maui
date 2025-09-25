@@ -163,7 +163,7 @@ public partial class PanelEditorViewModel : ObservableObject {
             turnout = (TurnoutEntity)SelectedEntities[0];
         }
 
-        button?.TurnoutID = turnout?.Id ?? "";
+        button?.TurnoutID = turnout?.Turnout?.Id?? "";
     }
 
     [RelayCommand]

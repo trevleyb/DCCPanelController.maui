@@ -20,10 +20,6 @@
     </ContentPage.Resources>
 
     <ContentPage.ToolbarItems>
-        <ToolbarItem Text="Lock" 
-                     Command="{Binding UnlockEditModeCommand}"
-                     IconImageSource="{Binding Source={x:Static services:AppStateService.Instance}, x:DataType='services:AppStateService', Path=HideEditOptions, Converter={StaticResource BoolToIcon}, ConverterParameter=key}"/>
-        
         <ToolbarItem Text="Left" Command="{Binding SwipeLeftCommand}" IsEnabled="{Binding HasPanels}"
                      IconImageSource="{Binding HasPanels, Converter={StaticResource BoolToIcon}, ConverterParameter=chevron_left}"/>
         <ToolbarItem Text="Right" Command="{Binding SwipeRightCommand}" IsEnabled="{Binding HasPanels}"
@@ -48,10 +44,8 @@
     </ContentPage.ToolbarItems>
 
     <ContentPage.Content>
-        <Grid RowDefinitions="*,auto">
-
-            <!-- Main Panel Content with Swipe Gesture -->
-            <Grid Grid.Row="0">
+        <Grid RowDefinitions="*,auto" HorizontalOptions="Fill" VerticalOptions="Fill">
+            <Grid Grid.Row="0" x:Name="MainGrid" HorizontalOptions="Fill" VerticalOptions="Fill">
                 <Grid
                     BackgroundColor="{Binding PanelBackgroundColor, Converter={StaticResource ColorFallbackConverter}}">
                     <Grid.GestureRecognizers>

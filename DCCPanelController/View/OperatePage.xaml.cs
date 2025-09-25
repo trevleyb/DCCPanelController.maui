@@ -25,7 +25,7 @@ public partial class OperatePage : ContentPage, INotifyPropertyChanged {
 
         BindingContext = _viewModel;
         InitializeComponent();
-        SetTabBarState(true);
+        SetTabBarState(!(_profileService?.ActiveProfile?.Settings?.StartFullScreen ?? true));
     }
 
     protected override async void OnAppearing() {
@@ -105,5 +105,6 @@ public partial class OperatePage : ContentPage, INotifyPropertyChanged {
             HideUnHide.IconImageSource = "minimize_2_active";
         }
         if (_viewModel is { } viewModel) viewModel.IsMaximized = state;
+        InvalidateMeasure();
     }
 }

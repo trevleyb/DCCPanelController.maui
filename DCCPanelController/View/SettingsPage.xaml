@@ -168,11 +168,11 @@
 
                                     <!-- Enable Click Sounds -->
                                     <Grid ColumnDefinitions="200,*" Margin="0,10,0,0">
-                                        <Label Text="Hide Edit Options?"
+                                        <Label Text="Start Full Screen?"
                                                Style="{StaticResource MediumLabel}"
                                                VerticalOptions="Center"/>
                                         <Switch Grid.Column="1"
-                                                IsToggled="{Binding Settings.HideEditingFunctions}"
+                                                IsToggled="{Binding Settings.StartFullScreen}"
                                                 OnColor="{StaticResource Primary}"
                                                 ThumbColor="{StaticResource Gray200}"/>
                                     </Grid>

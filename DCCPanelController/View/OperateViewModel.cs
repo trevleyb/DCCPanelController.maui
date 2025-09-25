@@ -16,7 +16,6 @@ namespace DCCPanelController.View;
 public partial class OperateViewModel : ConnectionViewModel {
     private readonly ProfileService    _profileService;
     private readonly ConnectionService _connectionService;
-    private          int               _unlockclicks = 0;
     
     [ObservableProperty] private Panel? _activePanel;
     [ObservableProperty] private int    _currentPanelIndex;
@@ -46,7 +45,6 @@ public partial class OperateViewModel : ConnectionViewModel {
         PropertyChanged += OnPropertyChanged;
         OnProfileChanged();
         OnConnectStateChanged(this, _connectionService.IsConnected);
-        _unlockclicks = 0;
     }
 
     private void OnConnectStateChanged(object? sender, bool e) {
@@ -91,23 +89,6 @@ public partial class OperateViewModel : ConnectionViewModel {
         } catch (Exception e) {
             Debug.WriteLine("Error loading profile: " + e.Message);
         }
-    }
-
-    [RelayCommand]
-    private async Task UnlockEditModeAsync() {
-        if (AppStateService.Instance.HideEditOptions == false) {
-            AppStateService.Instance.HideEditOptions = true;
-            AppStateService.Instance.ShowEditOptions = false;
-            _unlockclicks = 0;
-        } else {
-            _unlockclicks++;
-            if (_unlockclicks > 3) {
-                AppStateService.Instance.HideEditOptions = false;
-                AppStateService.Instance.ShowEditOptions = true;
-            }
-        }
-        OnPropertyChanged(nameof(AppStateService.Instance.HideEditOptions));
-        OnPropertyChanged(nameof(AppStateService.Instance.ShowEditOptions));
     }
 
     [RelayCommand]
