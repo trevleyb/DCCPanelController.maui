@@ -23,7 +23,6 @@ public abstract class Tile : ContentView, ITile, IDisposable {
     protected const float SymbolScaleFactor  = 0.75f;
     private const   int   DebounceDelay      = 75;
 
-    private int                      _calls = 0;
     private int                      _rebuildGuard; // >0 means "we're rebuilding, ignore change events"
     private CancellationTokenSource? _debounceRebuildCts;
 

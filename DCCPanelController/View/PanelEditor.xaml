@@ -74,9 +74,15 @@
                         IconImageSource="{Binding CanLinkTiles, Converter={StaticResource BoolToIcon}, ConverterParameter=link}"/>
 
                     <components:InlineToolbarItem
-                        Text="Rotate" x:Name="RotateToolbar"
+                        Text="Rotate" x:Name="RotateToolbarLeft"
                         IsEnabled="{Binding CanRotateTiles}"
-                        Command="{Binding Path=RotateTileCommand}"
+                        Command="{Binding Path=RotateTileLeftCommand}"
+                        IconImageSource="{Binding CanRotateTiles, Converter={StaticResource BoolToIcon}, ConverterParameter=rotate_ccw}"/>
+
+                    <components:InlineToolbarItem
+                        Text="Rotate" x:Name="RotateToolbarRight"
+                        IsEnabled="{Binding CanRotateTiles}"
+                        Command="{Binding Path=RotateTileRightCommand}"
                         IconImageSource="{Binding CanRotateTiles, Converter={StaticResource BoolToIcon}, ConverterParameter=rotate_cw}"/>
 
                     <components:InlineToolbarItem

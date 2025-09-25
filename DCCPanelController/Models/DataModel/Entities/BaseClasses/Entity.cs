@@ -39,6 +39,7 @@ public abstract partial class Entity() : ObservableObject, IEntity {
         Guid = Guid.NewGuid();
     }
 
+    public override string ToString() => $"{EntityName} is {Type}";
     public virtual string Type => GetType().Name;
 
     [JsonIgnore] public abstract string EntityName { get; }

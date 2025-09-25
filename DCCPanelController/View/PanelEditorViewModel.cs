@@ -237,7 +237,18 @@ public partial class PanelEditorViewModel : ObservableObject {
 
     
     [RelayCommand]
-    private async Task RotateTileAsync() {
+    private async Task RotateTileLeftAsync() {
+        if (HasSelectedEntities) {
+            foreach (var entity in SelectedEntities) {
+                entity.RotateLeft();
+            }
+            _panelView.MarkAllSelectedTiles();
+        }
+        CheckIfPanelChanged();
+    }
+
+    [RelayCommand]
+    private async Task RotateTileRightAsync() {
         if (HasSelectedEntities) {
             foreach (var entity in SelectedEntities) {
                 entity.RotateRight();
@@ -246,7 +257,7 @@ public partial class PanelEditorViewModel : ObservableObject {
         }
         CheckIfPanelChanged();
     }
-
+    
     [RelayCommand]
     private async Task SwitchModeAsync() {
         if (SingleOrNoEntitiesSelected) {
