@@ -7,15 +7,15 @@ public partial class Profile : ObservableObject {
     [ObservableProperty] private ObservableCollection<Block> _blocks;
 
     [ObservableProperty] private string _filename;
+    [ObservableProperty] private string _profileName;
 
-    [ObservableProperty] private ObservableCollection<Light>   _lights;
     [ObservableProperty] private Panels                        _panels;
-    [ObservableProperty] private string                        _profileName;
+    [ObservableProperty] private ObservableCollection<Light>   _lights;
     [ObservableProperty] private ObservableCollection<Route>   _routes;
     [ObservableProperty] private ObservableCollection<Sensor>  _sensors;
-    [ObservableProperty] private Settings                      _settings;
     [ObservableProperty] private ObservableCollection<Signal>  _signals;
     [ObservableProperty] private ObservableCollection<Turnout> _turnouts;
+    [ObservableProperty] private Settings                      _settings;
 
     public Profile(string profileName, string? fileName = null) {
         _filename = string.IsNullOrWhiteSpace(fileName) ? Guid.NewGuid().ToString() : fileName;

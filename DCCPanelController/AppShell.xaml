@@ -88,6 +88,9 @@
                 ContentTemplate="{DataTemplate view:SettingsPage}"
                 Title="Settings"/>
             <ShellContent
+                ContentTemplate="{DataTemplate view:HelpPage}"
+                Title="Connection Details"/>
+            <ShellContent
                 ContentTemplate="{DataTemplate view:ServerMessagesPage}"
                 Title="Server Messages"/>
             <ShellContent

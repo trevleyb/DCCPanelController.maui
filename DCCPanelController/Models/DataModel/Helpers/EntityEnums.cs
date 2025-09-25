@@ -28,6 +28,8 @@ public enum TextAlignmentVerticalEnum { Top, Bottom, Center }
 
 public enum TextAttributeEnum { Regular, Bold, Italic, BoldItalic, Light, LightItalic, Medium, MediumItalic, SemiBold, SemiBoldItalic, ExtraBold, ExtraBoldItalic }
 
+public enum TitleBarTextDisplayEnum { Blank, ProfileName, PanelName }
+
 public static class EnumHelpers {
     public static string ConvertFontStyle(TextAttributeEnum style) => style switch {
         TextAttributeEnum.Regular         => "OpenSansRegular",
