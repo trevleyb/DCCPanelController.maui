@@ -57,7 +57,6 @@ public abstract partial class Entity() : ObservableObject, IEntity {
 
     public virtual void RotateRight() => Rotation = (Rotation + RotationFactor) % 360;
 
-    [Time]
     protected void HandleRotation() {
         // Calculate the current center point before swapping
         var centerX = Col + (Width - 1) / 2.0;

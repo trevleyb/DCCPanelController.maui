@@ -240,7 +240,7 @@ public partial class PanelEditorViewModel : ObservableObject {
     }
 
     
-    [RelayCommand][Time]
+    [RelayCommand]
     private async Task RotateTileLeftAsync() {
         if (HasSelectedEntities) {
             foreach (var entity in SelectedEntities) {
@@ -251,7 +251,7 @@ public partial class PanelEditorViewModel : ObservableObject {
         CheckIfPanelChanged();
     }
 
-    [RelayCommand][Time]
+    [RelayCommand]
     private async Task RotateTileRightAsync() {
         if (HasSelectedEntities) {
             foreach (var entity in SelectedEntities) {

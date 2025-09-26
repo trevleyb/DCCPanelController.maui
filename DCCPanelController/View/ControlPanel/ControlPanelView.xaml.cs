@@ -523,7 +523,6 @@ public partial class ControlPanelView {
     /// <summary>
     ///     Given an Entity, create a tile and add it to the panel grid.
     /// </summary>
-    [Time ("{entity}")]
     private ITile? AddEntityToGrid(Entity entity) {
         var tile = TileFactory.CreateTile(entity, _gridSize);
         if (tile is { }) {
@@ -541,7 +540,6 @@ public partial class ControlPanelView {
         return null;
     }
 
-    [Time]
     private Microsoft.Maui.Controls.View? GetTileViewInGrid(Tile tile) {
         var id = tile.Entity.Guid.ToString();
         return _dynamicGrid.Children.OfType<Tile>().FirstOrDefault(x => x.ClassId == id);

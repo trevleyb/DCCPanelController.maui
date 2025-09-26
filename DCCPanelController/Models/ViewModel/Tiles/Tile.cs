@@ -87,8 +87,7 @@ public abstract class Tile : ContentView, ITile, IDisposable {
         HaveVisualPropertiesChanged = true;
         RebuildIfNecessary();
     }
-
-    [Time("{this}")]
+    
     private void SetContent([CallerMemberName] string memberName = "",
         [CallerLineNumber] int sourceLineNumber = 0) {
         try {

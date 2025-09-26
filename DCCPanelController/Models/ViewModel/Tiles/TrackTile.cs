@@ -46,21 +46,15 @@ public abstract class TrackTile : Tile, ITileTrack {
 
     protected Microsoft.Maui.Controls.View? CreateTrackTile(string trackName, int trackRotation, SvgStyle addStyle) => CreateTrackTileAsCanvas(trackName, trackRotation, DefaultScaleFactor, addStyle);
 
-    [Time]
     protected Microsoft.Maui.Controls.View? CreateTrackTileAsCanvas(string trackName, int trackRotation, float scale, SvgStyle? addStyle = null) {
-        string styleHash;
-        SvgStyleBuilder style;
-
         SvgImage = SvgImages.GetImage(trackName, trackRotation);
-        style = GetDefaultStyle();
+        var style = GetDefaultStyle();
         if (addStyle is { }) style.AddExisting(addStyle);
 
         // Build a stable descriptor of the style to hash (names+colors+visibility)
         // ---------------------------------------------------------------------------------
         var styleDescriptor = style.ToString();
-        styleHash = TileRenderCache.HashStyle(styleDescriptor);
-
-        SKImage cachedImage;
+        var styleHash = TileRenderCache.HashStyle(styleDescriptor);
 
         // Compute pixel size once (respect your AbsoluteLayout bounds)
         // ---------------------------------------------------------------------------------
@@ -77,7 +71,7 @@ public abstract class TrackTile : Tile, ITileTrack {
             StyleHash: styleHash,
             Flags: IsPath ? "Path" : (IsOccupied ? "Occ" : null)
         );
-        cachedImage = GetOrRender(baseKey, SvgImage, style);
+        var cachedImage = GetOrRender(baseKey, SvgImage, style);
 
         var view = new SKCanvasView();
         view.PaintSurface += (sender, e) => {
@@ -114,7 +108,6 @@ public abstract class TrackTile : Tile, ITileTrack {
         return deg < 0 ? deg + 360 : deg;
     }
 
-    [Time]
     private SKImage GetOrRender(TileRenderKey key, SvgImage svgImage, SvgStyleBuilder style) {
         if (TileRenderCache.Shared.TryGet(key, out var cached)) {
             Debug.WriteLine($"{Entity.EntityName} loaded from Cache");
