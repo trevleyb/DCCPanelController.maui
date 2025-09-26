@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.DataModel.Helpers;
@@ -5,6 +6,7 @@ using DCCPanelController.Models.ViewModel.Helpers;
 using DCCPanelController.Models.ViewModel.ImageManager;
 using DCCPanelController.Models.ViewModel.Interfaces;
 using DCCPanelController.Models.ViewModel.StyleManager;
+using MethodTimer;
 using SkiaSharp;
 using SkiaSharp.Views.Maui.Controls;
 
@@ -44,15 +46,21 @@ public abstract class TrackTile : Tile, ITileTrack {
 
     protected Microsoft.Maui.Controls.View? CreateTrackTile(string trackName, int trackRotation, SvgStyle addStyle) => CreateTrackTileAsCanvas(trackName, trackRotation, DefaultScaleFactor, addStyle);
 
+    [Time]
     protected Microsoft.Maui.Controls.View? CreateTrackTileAsCanvas(string trackName, int trackRotation, float scale, SvgStyle? addStyle = null) {
+        string styleHash;
+        SvgStyleBuilder style;
+
         SvgImage = SvgImages.GetImage(trackName, trackRotation);
-        var style = GetDefaultStyle();
+        style = GetDefaultStyle();
         if (addStyle is { }) style.AddExisting(addStyle);
 
         // Build a stable descriptor of the style to hash (names+colors+visibility)
         // ---------------------------------------------------------------------------------
         var styleDescriptor = style.ToString();
-        var styleHash = TileRenderCache.HashStyle(styleDescriptor);
+        styleHash = TileRenderCache.HashStyle(styleDescriptor);
+
+        SKImage cachedImage;
 
         // Compute pixel size once (respect your AbsoluteLayout bounds)
         // ---------------------------------------------------------------------------------
@@ -69,14 +77,14 @@ public abstract class TrackTile : Tile, ITileTrack {
             StyleHash: styleHash,
             Flags: IsPath ? "Path" : (IsOccupied ? "Occ" : null)
         );
-
-        var cachedImage = GetOrRender(baseKey, SvgImage, style);
+        cachedImage = GetOrRender(baseKey, SvgImage, style);
 
         var view = new SKCanvasView();
         view.PaintSurface += (sender, e) => {
             var c = e.Surface.Canvas;
             c.Clear(SKColors.Transparent);
-            EnsureImageMatchesSurfaceSize(ref cachedImage, style, baseKey, e.Info.Width, e.Info.Height, SvgImage!);
+
+            //EnsureImageMatchesSurfaceSize(ref cachedImage, style, baseKey, e.Info.Width, e.Info.Height, SvgImage!);
             var dest = SKRect.Create(e.Info.Width, e.Info.Height);
             c.DrawImage(cachedImage, dest); // rotated already
         };
@@ -86,7 +94,6 @@ public abstract class TrackTile : Tile, ITileTrack {
         view.SetBinding(OpacityProperty, new Binding(nameof(Opacity), source: Entity));
         view.SetBinding(ZIndexProperty, new Binding(nameof(TrackEntity.Layer), source: Entity));
 
-        // Reuse your AbsoluteLayout container as is:
         var absoluteLayout = new AbsoluteLayout();
         AbsoluteLayout.SetLayoutBounds(view, new Rect(-GridSize * 0.25, -GridSize * 0.25, GridSize * 1.5, GridSize * 1.5));
         absoluteLayout.Children.Add(view);
@@ -107,8 +114,10 @@ public abstract class TrackTile : Tile, ITileTrack {
         return deg < 0 ? deg + 360 : deg;
     }
 
+    [Time]
     private SKImage GetOrRender(TileRenderKey key, SvgImage svgImage, SvgStyleBuilder style) {
         if (TileRenderCache.Shared.TryGet(key, out var cached)) {
+            Debug.WriteLine($"{Entity.EntityName} loaded from Cache");
             return cached;
         }
 

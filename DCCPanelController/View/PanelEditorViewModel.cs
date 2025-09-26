@@ -164,7 +164,10 @@ public partial class PanelEditorViewModel : ObservableObject {
             turnout = (TurnoutEntity)SelectedEntities[0];
         }
 
-        button?.TurnoutID = turnout?.Turnout?.Id?? "";
+        button?.TurnoutID = turnout?.Turnout?.Name?? "";
+        button?.WhenNormal = ButtonStateEnum.On;
+        button?.WhenThrown = ButtonStateEnum.Off;
+        _panelView.ClearAllSelectedTiles();
     }
 
     [RelayCommand]
@@ -243,7 +246,7 @@ public partial class PanelEditorViewModel : ObservableObject {
             foreach (var entity in SelectedEntities) {
                 entity.RotateLeft();
             }
-            _panelView.MarkAllSelectedTiles();
+            //_panelView.MarkAllSelectedTiles();
         }
         CheckIfPanelChanged();
     }
@@ -254,7 +257,7 @@ public partial class PanelEditorViewModel : ObservableObject {
             foreach (var entity in SelectedEntities) {
                 entity.RotateRight();
             }
-            _panelView.MarkAllSelectedTiles();
+            //_panelView.MarkAllSelectedTiles();
         }
         CheckIfPanelChanged();
     }

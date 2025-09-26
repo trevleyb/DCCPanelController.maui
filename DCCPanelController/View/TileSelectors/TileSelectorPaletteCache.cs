@@ -1,44 +1,32 @@
 using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
-using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.ViewModel.Helpers;
 using DCCPanelController.Models.ViewModel.Interfaces;
 
+namespace DCCPanelController.View.TileSelectors;
+
 public static class TileSelectorPaletteCache {
     private const string DefaultPalette = "Default";
 
     // Store Lazy<PaletteResult> to guarantee single-construction per key
-    private static readonly ConcurrentDictionary<string, Lazy<PaletteResult>> Cache = new();
+    private static readonly ConcurrentDictionary<string, PaletteResult> Cache = new();
 
     // Prebuild (or return existing) without allocating a Panel unless needed
-    public static PaletteResult PrebuildDefaultPalette() => GetPalette(DefaultPalette, CreateDefaultPanel);
+    public static PaletteResult PrebuildDefaultPalette() => GetPalette(DefaultPalette, CreateDefaultPanel());
 
-    public static PaletteResult GetDefaultPalette() => GetPalette(DefaultPalette, CreateDefaultPanel);
+    public static PaletteResult GetDefaultPalette() => GetPalette(DefaultPalette, CreateDefaultPanel());
 
-    public static PaletteResult GetPalette(Panel panel) => GetPalette(panel.Guid.ToString(), () => panel.CloneEmptyPanel("Selector"));
-
-    public static PaletteResult GetPalette(string key, Panel panel) => GetPalette(key, () => panel.CloneEmptyPanel("Selector"));
-
+    public static PaletteResult GetPalette(Panel panel) => GetPalette(panel.Guid.ToString(), panel.CloneEmptyPanel("Selector"));
+    
     public static void Clear(string key) => Cache.TryRemove(key, out _);
 
     public static void Clear() => Cache.Clear();
 
-    // --- Core (thread-safe) lookup/build -------------------------------------
-
-    private static PaletteResult GetPalette(string key, Func<Panel> panelFactory) {
-        var lazy = Cache.GetOrAdd(
-            key,
-            _ => new Lazy<PaletteResult>(
-                () => {
-                    var panel = panelFactory();
-                    var result = BuildTilesForPanel(panel);
-                    return result ?? throw new InvalidOperationException("Unable to build palette.");
-                },
-                LazyThreadSafetyMode.ExecutionAndPublication));
-
-        return lazy.Value;
+    private static PaletteResult GetPalette(string key, Panel panel) {
+        var result = BuildTilesForPanel(panel);
+        return result ?? throw new InvalidOperationException("Unable to build palette.");
     }
 
     // --- Implementation details ----------------------------------------------

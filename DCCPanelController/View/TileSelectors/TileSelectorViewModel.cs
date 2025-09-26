@@ -7,12 +7,8 @@ using DCCPanelController.View.Base;
 namespace DCCPanelController.View.TileSelectors;
 
 public abstract partial class TileSelectorViewModel : BaseViewModel {
-    //[ObservableProperty] private Dictionary<string, ObservableCollection<ITile>> _byCategory = [];
-    //[ObservableProperty] private ObservableCollection<string>                    _categories = [];
-
     [ObservableProperty] private Dictionary<string, ObservableCollection<ITile>> _byCategory = [];
     [ObservableProperty] private ObservableCollection<string>                    _categories = [];
-
     
     public Panel? Panel {
         // We add the Selector Panel to the Parent Panel collection so that when 

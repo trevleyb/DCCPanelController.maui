@@ -112,18 +112,15 @@ public abstract class Tile : ContentView, ITile, IDisposable {
         }
     }
 
-    [Time("{this}")]
     protected void OnTilePropertyChanged(object? sender, PropertyChangedEventArgs e) {
         if (_rebuildGuard > 0) return; // keep this guard you already have
-        
-        var property = e.PropertyName;
-        if (string.IsNullOrEmpty(property)) return;
+        if (string.IsNullOrEmpty(e.PropertyName)) return;
 
         // Only consider properties we track AND only if the value truly changed.
-        if (!Watch.IsTracked(property) || !Watch.HasChanged(property)) return;
+        if (!Watch.IsTracked(e.PropertyName) || !Watch.HasChanged(e.PropertyName)) return;
 
         // Dimension changes (affects measure) vs. visual-only
-        HaveDimensionsChanged = property is nameof(Entity.Col)
+        HaveDimensionsChanged = e.PropertyName is nameof(Entity.Col)
             or nameof(Entity.Row)
             or nameof(Entity.Width)
             or nameof(Entity.Height)
@@ -131,7 +128,6 @@ public abstract class Tile : ContentView, ITile, IDisposable {
         HaveVisualPropertiesChanged = true;
 
         Debug.WriteLine($"{Entity.EntityName} => visual change → {e.PropertyName}");
-
         RebuildIfNecessary();
     }
 

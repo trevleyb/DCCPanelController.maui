@@ -2,6 +2,7 @@ using System.Diagnostics;
 using System.Text.Json;
 using DCCPanelController.Services;
 using DCCPanelController.Services.ProfileService;
+using DCCPanelController.View.TileSelectors;
 
 namespace DCCPanelController.View;
 
