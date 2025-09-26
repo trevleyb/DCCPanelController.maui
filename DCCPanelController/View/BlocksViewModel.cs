@@ -178,6 +178,7 @@ public partial class BlocksViewModel : ConnectionViewModel {
                 _bottomSheet.CollapseOnOverlayTap = true;
                 _bottomSheet.State = BottomSheetState.HalfExpanded;
                 _bottomSheet.IsModal = true;
+                _bottomSheet.IsVisible = true;
                 _bottomSheet.Show();
             }
         } catch (Exception ex) {

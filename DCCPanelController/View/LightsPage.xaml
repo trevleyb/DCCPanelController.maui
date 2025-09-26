@@ -44,6 +44,27 @@
 
     </ContentPage.ToolbarItems>
 
+    <ContentPage.Resources>
+        <Style x:Key="SelectableItemStyle" TargetType="Grid">
+            <Setter Property="VisualStateManager.VisualStateGroups">
+                <VisualStateGroupList>
+                    <VisualStateGroup x:Name="CommonStates">
+                        <VisualState x:Name="Normal">
+                            <VisualState.Setters>
+                                <Setter Property="BackgroundColor" Value="Transparent"/>
+                            </VisualState.Setters>
+                        </VisualState>
+                        <VisualState x:Name="Selected">
+                            <VisualState.Setters>
+                                <Setter Property="BackgroundColor" Value="LightGrey"/>
+                            </VisualState.Setters>
+                        </VisualState>
+                    </VisualStateGroup>
+                </VisualStateGroupList>
+            </Setter>
+        </Style>
+    </ContentPage.Resources>
+    
     <StackLayout x:Name="MainStackLayout">
         <Grid
             ColumnDefinitions="120,*,90"
@@ -91,7 +112,7 @@
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="dataModel:Light">
                             <StackLayout Padding="0">
-                                <Grid ColumnDefinitions="120,*,70" Padding="5">
+                                <Grid ColumnDefinitions="120,*,70" Padding="5" Style="{StaticResource SelectableItemStyle}">
                                     <Grid.GestureRecognizers>
                                         <TapGestureRecognizer
                                             Command="{Binding Source={RelativeSource AncestorType={x:Type view:LightsViewModel}}, Path=ToggleLightStateCommand}"
@@ -164,7 +185,6 @@
                                     HeightRequest="1"
                                     HorizontalOptions="FillAndExpand"/>
                             </StackLayout>
-
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                 </CollectionView>

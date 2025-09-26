@@ -32,9 +32,6 @@
     TabBarUnselectedColor="{Binding Source={x:Static services:AppStateService.Instance}, Path=TabBarUnselectedColor}"
     TabBarDisabledColor="{Binding Source={x:Static services:AppStateService.Instance},   Path=TabBarDisabledColor}"
 
-    DisabledColor="Goldenrod"
-    FlyoutBackgroundColor="Blue"
-
     PresentationMode="Animated"
     FlyoutBehavior="Disabled"
     iOsSpecific:Page.UseSafeArea="True"

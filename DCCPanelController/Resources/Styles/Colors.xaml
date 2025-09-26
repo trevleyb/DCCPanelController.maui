@@ -7,14 +7,22 @@
 
     <!-- Note: For Android please see also Platforms\Android\Resources\values\colors.xml -->
 
-    <Color x:Key="Primary">#7CC504</Color>
-    <Color x:Key="PrimaryLight">#8ce200</Color>
-    <Color x:Key="PrimaryDark">#639d03</Color>
+    <!-- <Color x:Key="Primary">#7CC504</Color> -->
+    <!-- <Color x:Key="PrimaryLight">#8ce200</Color> -->
+    <!-- <Color x:Key="PrimaryDark">#639d03</Color> -->
+    <!-- -->
+    <!-- <Color x:Key="Secondary">#7CC504</Color> -->
+    <!-- <Color x:Key="SecondaryDarkText">DarkGreen</Color> -->
+    <!-- <Color x:Key="Tertiary">DarkKhaki</Color> -->
 
-    <Color x:Key="Secondary">#7CC504</Color>
+    <Color x:Key="Primary">#4f8f00</Color>
+    <Color x:Key="PrimaryLight">#7cc504</Color>
+    <Color x:Key="PrimaryDark">DarkGreen</Color>
+
+    <Color x:Key="Secondary">#4f8f00</Color>
     <Color x:Key="SecondaryDarkText">DarkGreen</Color>
     <Color x:Key="Tertiary">DarkKhaki</Color>
-
+    
     <Color x:Key="PrimaryDarkText">#FCFCFC</Color>
     <Color x:Key="PrimaryDisabled">#E1E1E1</Color>
 
@@ -26,7 +34,7 @@
 
     <Color x:Key="UnSelectedDark">#95FFFFFF</Color>
     <Color x:Key="UnSelectedLight">#95000000</Color>
-    <Color x:Key="TabSelected">#7CC504</Color>
+    <Color x:Key="TabSelected">#4f8f00</Color>
     <Color x:Key="TabUnSelected">#C8C8C8</Color>
 
     <Color x:Key="DarkBackground">#17171a</Color>

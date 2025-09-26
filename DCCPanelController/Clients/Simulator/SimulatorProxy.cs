@@ -27,7 +27,6 @@ public partial class SimulatorProxy : DccClientBase, IDccClient {
     public async Task<IResult> ConnectAsync() {
         Status = DccClientStatus.Connected;
         _profile?.RefreshAll();
-        AddSimulatedData();
         await Task.CompletedTask;
         return Result.Ok();
     }

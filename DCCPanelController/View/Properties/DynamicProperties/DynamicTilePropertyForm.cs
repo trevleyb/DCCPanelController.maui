@@ -7,6 +7,7 @@ using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.DataModel.Entities.Actions;
 using DCCPanelController.Models.DataModel.Entities.Interfaces;
 using DCCPanelController.View.Properties.DynamicProperties.Renderers;
+using MethodTimer;
 
 namespace DCCPanelController.View.Properties.DynamicProperties;
 
@@ -188,6 +189,7 @@ public sealed class DynamicTilePropertyForm {
         return 0;
     }
 
+    [Time]
     public object GetRendererView(PropertyRow row) {
         var kind = _kindResolver.Resolve(row.Field, _width);
         var ctx = new PropertyContext(kind, row, _width, _height, SelectedEntities);

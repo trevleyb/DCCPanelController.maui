@@ -17,7 +17,8 @@
 
     <ContentPage.ToolbarItems>
         <ToolbarItem
-            Command="{Binding AddTurnoutCommand}" IsEnabled="{Binding CanAddTurnout}" IconImageSource="{Binding CanAddTurnout, Converter={StaticResource BoolToIcon}, ConverterParameter=plus_circle}"/>
+            Command="{Binding AddTurnoutCommand}" IsEnabled="{Binding CanAddTurnout}"
+            IconImageSource="{Binding CanAddTurnout, Converter={StaticResource BoolToIcon}, ConverterParameter=plus_circle}"/>
 
         <ToolbarItem
             Command="{Binding DeleteTurnoutCommand}" IsEnabled="{Binding IsTurnoutSelected}"
@@ -34,8 +35,8 @@
             IsEnabled="{Binding IsConnectionAvailable}">
             <ToolbarItem.IconImageSource>
                 <MultiBinding Converter="{StaticResource MultiBoolToIcon}">
-                    <Binding Path="IsConnectionAvailable"/>    <!-- Parameter 1: bool for _active/_inactive -->
-                    <Binding Path="IsConnected"/>              <!-- Parameter 2: bool for name selection -->
+                    <Binding Path="IsConnectionAvailable"/>
+                    <Binding Path="IsConnected"/>
                     <Binding Path="IconWifiOn"/>
                     <Binding Path="IconWifiOff"/>
                 </MultiBinding>
@@ -117,39 +118,59 @@
 
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="dataModel:Turnout">
-                            <Grid Style="{StaticResource SelectableItemStyle}">
-                                <StackLayout x:DataType="dataModel:Turnout">
-                                    <Grid ColumnDefinitions="120,*,100" Padding="5">
-                                        <Label
-                                            Grid.Column="0"
-                                            HorizontalOptions="Start"
-                                            LineBreakMode="TailTruncation"
-                                            Style="{StaticResource MediumLabel}"
-                                            Text="{Binding Id}"
-                                            VerticalOptions="Center"/>
-                                        <Label
-                                            Grid.Column="1"
-                                            FontAttributes="Bold"
-                                            LineBreakMode="TailTruncation"
-                                            Style="{StaticResource MediumLabel}"
-                                            Text="{Binding Name}"
-                                            VerticalOptions="Center"/>
-                                        <components:TurnoutStateControl
-                                            IsEnabled="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, Path=IsConnected, x:DataType=view:TurnoutsViewModel}"
-                                            CanToggleState="true"
-                                            Grid.Column="2"
-                                            Margin="0,0,10,0"
-                                            State="{Binding State}"
-                                            StateChangedCommand="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, Path=SendTurnoutStateCommand, x:DataType=view:TurnoutsViewModel}"
-                                            Turnout="{Binding .}"/>
-                                    </Grid>
+                            <!-- <SwipeView> -->
+                                    <StackLayout >
+                                        <Grid ColumnDefinitions="120,*,100" Padding="5" Style="{StaticResource SelectableItemStyle}">
+                                            <Label
+                                                Grid.Column="0"
+                                                HorizontalOptions="Start"
+                                                LineBreakMode="TailTruncation"
+                                                Style="{StaticResource MediumLabel}"
+                                                Text="{Binding Id}"
+                                                VerticalOptions="Center"/>
+                                            <Label
+                                                Grid.Column="1"
+                                                FontAttributes="Bold"
+                                                LineBreakMode="TailTruncation"
+                                                Style="{StaticResource MediumLabel}"
+                                                Text="{Binding Name}"
+                                                VerticalOptions="Center"/>
+                                            <components:TurnoutStateControl
+                                                IsEnabled="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, Path=IsConnected, x:DataType=view:TurnoutsViewModel}"
+                                                CanToggleState="true"
+                                                Grid.Column="2"
+                                                Margin="0,0,10,0"
+                                                State="{Binding State}"
+                                                StateChangedCommand="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, Path=SendTurnoutStateCommand, x:DataType=view:TurnoutsViewModel}"
+                                                Turnout="{Binding .}"/>
+                                        </Grid>
 
-                                    <BoxView
-                                        BackgroundColor="{StaticResource Primary}"
-                                        HeightRequest="1"
-                                        HorizontalOptions="FillAndExpand"/>
-                                </StackLayout>
-                            </Grid>
+                                        <BoxView
+                                            BackgroundColor="{StaticResource Primary}"
+                                            HeightRequest="1"
+                                            HorizontalOptions="FillAndExpand"/>
+                                    </StackLayout>
+                                
+                                <!-- <SwipeView.RightItems> -->
+                                <!--     <SwipeItems Mode="Reveal" SwipeBehaviorOnInvoked="Close"> -->
+                                <!--         <SwipeItem -->
+                                <!--             BackgroundColor="Red" -->
+                                <!--             Command="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, x:DataType='view:TurnoutsViewModel', Path=DeleteTurnoutCommand}" -->
+                                <!--             CommandParameter="{Binding .}" -->
+                                <!--             IsEnabled="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, x:DataType='view:TurnoutsViewModel',Path=IsTurnoutSelected}" -->
+                                <!--             IconImageSource="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, x:DataType='view:TurnoutsViewModel',Path=IsTurnoutSelected, Converter={StaticResource BoolToIcon}, ConverterParameter=minus_circle}"/> -->
+                                <!-- -->
+                                <!--         <SwipeItem -->
+                                <!--             BackgroundColor="Green" -->
+                                <!--             Command="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, x:DataType='view:TurnoutsViewModel',Path=EditTurnoutCommand}" -->
+                                <!--             CommandParameter="{Binding .}" -->
+                                <!--             IsEnabled="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, x:DataType='view:TurnoutsViewModel',Path=IsTurnoutSelected}" -->
+                                <!--             IconImageSource="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, x:DataType='view:TurnoutsViewModel',Path=IsTurnoutSelected, Converter={StaticResource BoolToIcon}, ConverterParameter=edit}"/> -->
+                                <!-- -->
+                                <!--     </SwipeItems> -->
+                                <!-- </SwipeView.RightItems> -->
+
+                            <!-- </SwipeView> -->
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                 </CollectionView>
@@ -160,9 +181,8 @@
         <navigationDrawer:SfBottomSheet
             x:Name="BottomSheet"
             CornerRadius="15, 15, 0, 0"
-            HalfExpandedRatio="0.50" ContentPadding="10">
-            <navigationDrawer:SfBottomSheet.BottomSheetContent/>
-        </navigationDrawer:SfBottomSheet>
+            HalfExpandedRatio="0.50" 
+            ContentPadding="10"/>
 
     </Grid>
 </ContentPage>
