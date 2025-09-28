@@ -160,7 +160,7 @@ public partial class LightsViewModel : ConnectionViewModel {
         light ??= SelectedLight;
         try {
             if (light is { } && _bottomSheet is { } sfBottomSheet) {
-                var lightssEditViewModel = new LightsEditViewModel(LogHelper.CreateLogger<LightsEditViewModel>(), light, ConnectionService);
+                var lightsEditViewModel = new LightsEditViewModel(LogHelper.CreateLogger<LightsEditViewModel>(), light, ConnectionService);
         
                 if (DeviceInfo.Platform == DevicePlatform.iOS && DeviceInfo.Current.Idiom == DeviceIdiom.Phone) {
                     _bottomSheet.ContentWidthMode = BottomSheetContentWidthMode.Full;
@@ -168,8 +168,8 @@ public partial class LightsViewModel : ConnectionViewModel {
                     _bottomSheet.ContentWidthMode = BottomSheetContentWidthMode.Custom;
                     _bottomSheet.BottomSheetContentWidth = 400;
                 }
-        
-                _bottomSheet.BottomSheetContent = new LightsEditView(LogHelper.CreateLogger<LightsEditView>(), lightssEditViewModel);
+
+                _bottomSheet.BottomSheetContent = lightsEditViewModel.CreatePropertiesView();
                 _bottomSheet.ShowGrabber = true;
                 _bottomSheet.EnableSwiping = true;
                 _bottomSheet.CollapsedHeight = 0;

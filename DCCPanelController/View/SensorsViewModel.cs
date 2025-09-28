@@ -170,7 +170,7 @@ public partial class SensorsViewModel : ConnectionViewModel {
                     _bottomSheet.BottomSheetContentWidth = 400;
                 }
         
-                _bottomSheet.BottomSheetContent = new SensorsEditView(LogHelper.CreateLogger<SensorsEditView>(), sensorsEditViewModel);
+                _bottomSheet.BottomSheetContent = sensorsEditViewModel.CreatePropertiesView();
                 _bottomSheet.ShowGrabber = true;
                 _bottomSheet.EnableSwiping = true;
                 _bottomSheet.CollapsedHeight = 0;

@@ -28,7 +28,7 @@ public partial class BlocksEditViewModel : BaseViewModel {
     public static Task ApplyChangesAsync() => Task.CompletedTask;
 
     public ContentView CreatePropertiesView() {
-        var propPage = new BlocksEditView((ILogger<BlocksEditView>)_logger, this);
+        var propPage = new BlocksEditView(_logger, this);
         return propPage;
     }
 

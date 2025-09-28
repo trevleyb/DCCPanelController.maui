@@ -116,7 +116,7 @@
                         <DataTemplate x:DataType="dataModel:Block">
                             <Grid Style="{StaticResource SelectableItemStyle}">
                             <StackLayout Padding="0">
-                                <Grid ColumnDefinitions="150,2*,*,120" Margin="0,5,0,5" Padding="0">
+                                <Grid ColumnDefinitions="150,2*,*,120" Margin="10,5,0,5" Padding="0">
                                     <Label
                                         Grid.Column="0"
                                         HorizontalOptions="Start"
@@ -205,9 +205,8 @@
         <bottomSheet:SfBottomSheet
             x:Name="BottomSheet"
             CornerRadius="15, 15, 0, 0"
-            HalfExpandedRatio="0.50" ContentPadding="10">
-            <bottomSheet:SfBottomSheet.BottomSheetContent/>
-        </bottomSheet:SfBottomSheet>
+            HalfExpandedRatio="0.50" 
+            ContentPadding="10"/>
 
         <BoxView
             BackgroundColor="{StaticResource Primary}"

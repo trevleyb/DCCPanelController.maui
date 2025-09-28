@@ -112,7 +112,7 @@
                         <DataTemplate x:DataType="dataModel:Sensor">
                             <Grid Style="{StaticResource SelectableItemStyle}">
                             <StackLayout Padding="0">
-                                <Grid ColumnDefinitions="150,*,120" Margin="0,5,0,5" Padding="0" 
+                                <Grid ColumnDefinitions="150,*,120" Margin="10,5,0,5" Padding="0" 
                                       IsEnabled="{Binding Source={RelativeSource AncestorType={x:Type view:SensorsViewModel}}, x:DataType=view:SensorsViewModel, Path=IsConnected}">
                                     <Label
                                         Grid.Column="0"
@@ -196,10 +196,9 @@
         <bottomSheet:SfBottomSheet
             x:Name="BottomSheet"
             CornerRadius="15, 15, 0, 0"
-            HalfExpandedRatio="0.50" ContentPadding="10">
-            <bottomSheet:SfBottomSheet.BottomSheetContent/>
-        </bottomSheet:SfBottomSheet>
-
+            HalfExpandedRatio="0.50" 
+            ContentPadding="10"/>
+        
         <BoxView
             BackgroundColor="{StaticResource Primary}"
             HeightRequest="1"

@@ -30,7 +30,7 @@ public partial class SensorsEditViewModel : BaseViewModel {
     public static Task ApplyChangesAsync() => Task.CompletedTask;
 
     public ContentView CreatePropertiesView() {
-        var propPage = new SensorsEditView((ILogger<SensorsEditView>)_logger, this);
+        var propPage = new SensorsEditView(_logger, this);
         return propPage;
     }
 

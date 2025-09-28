@@ -178,8 +178,8 @@ public partial class BlocksViewModel : ConnectionViewModel {
                     _bottomSheet.ContentWidthMode = BottomSheetContentWidthMode.Custom;
                     _bottomSheet.BottomSheetContentWidth = 400;
                 }
-        
-                _bottomSheet.BottomSheetContent = new BlocksEditView(LogHelper.CreateLogger<BlocksEditView>(), blocksEditViewModel);
+
+                _bottomSheet.BottomSheetContent = blocksEditViewModel.CreatePropertiesView(); 
                 _bottomSheet.ShowGrabber = true;
                 _bottomSheet.EnableSwiping = true;
                 _bottomSheet.CollapsedHeight = 0;

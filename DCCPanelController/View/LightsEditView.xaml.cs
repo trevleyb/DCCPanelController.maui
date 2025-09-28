@@ -4,10 +4,10 @@ using Microsoft.Extensions.Logging;
 namespace DCCPanelController.View;
 
 public partial class LightsEditView : ContentView {
-    private readonly ILogger<LightsEditView> _logger;
+    private readonly ILogger<LightsEditViewModel> _logger;
     private readonly LightsEditViewModel     _viewModel;
 
-    public LightsEditView(ILogger<LightsEditView> logger, LightsEditViewModel viewModel) {
+    public LightsEditView(ILogger<LightsEditViewModel> logger, LightsEditViewModel viewModel) {
         InitializeComponent();
         _logger = logger;
         _viewModel = viewModel;

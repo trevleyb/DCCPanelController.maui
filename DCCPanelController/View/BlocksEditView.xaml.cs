@@ -4,10 +4,10 @@ using Microsoft.Extensions.Logging;
 namespace DCCPanelController.View;
 
 public partial class BlocksEditView : ContentView {
-    private readonly ILogger<BlocksEditView> _logger;
+    private readonly ILogger<BlocksEditViewModel> _logger;
     private readonly BlocksEditViewModel     _viewModel;
 
-    public BlocksEditView(ILogger<BlocksEditView> logger, BlocksEditViewModel viewModel) {
+    public BlocksEditView(ILogger<BlocksEditViewModel> logger, BlocksEditViewModel viewModel) {
         InitializeComponent();
         _logger = logger;
         _viewModel = viewModel;

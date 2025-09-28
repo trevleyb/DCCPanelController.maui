@@ -28,7 +28,7 @@ public partial class LightsEditViewModel : BaseViewModel {
     public static Task ApplyChangesAsync() => Task.CompletedTask;
 
     public ContentView CreatePropertiesView() {
-        var propPage = new LightsEditView((ILogger<LightsEditView>)_logger, this);
+        var propPage = new LightsEditView(_logger, this);
         return propPage;
     }
 

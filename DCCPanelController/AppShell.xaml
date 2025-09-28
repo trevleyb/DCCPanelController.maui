@@ -57,7 +57,7 @@
             Icon="panels.png"
             Title="Panel Editor"
             IsEnabled="{Binding Source={x:Static services:AppStateService.Instance}, Path=IsNavigationAllowed}">
-            <ShellContent ContentTemplate="{DataTemplate view:PanelViewer}" Title="Editor"/>
+            <ShellContent ContentTemplate="{DataTemplate view:PanelViewer}" Title="Panels"/>
             <ShellContent ContentTemplate="{DataTemplate view:TurnoutsPage}" Title="Turnouts"/>
             <ShellContent ContentTemplate="{DataTemplate view:RoutesPage}" Title="Routes"/>
             <ShellContent ContentTemplate="{DataTemplate view:BlocksPage}" Title="Blocks"/>
