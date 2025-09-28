@@ -95,7 +95,7 @@
             HorizontalOptions="FillAndExpand"/>
         <RefreshView IsRefreshing="{Binding IsBusy}" Command="{Binding RefreshSensorsCommand}">
 
-            <Grid Padding="5" VerticalOptions="FillAndExpand"
+            <Grid VerticalOptions="FillAndExpand"
                   IsEnabled="{Binding Source={RelativeSource AncestorType={x:Type view:SensorsViewModel}}, x:DataType=view:SensorsViewModel, Path=IsConnected}">
                 <CollectionView ItemsSource="{Binding Sensors}" SelectionMode="Single" SelectedItem="{Binding SelectedSensor}">
                     <CollectionView.EmptyView>
@@ -110,16 +110,10 @@
 
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="dataModel:Sensor">
+                            <Grid Style="{StaticResource SelectableItemStyle}">
                             <StackLayout Padding="0">
-                                <Grid ColumnDefinitions="150,*,120" Padding="5" Style="{StaticResource SelectableItemStyle}"
+                                <Grid ColumnDefinitions="150,*,120" Margin="0,5,0,5" Padding="0" 
                                       IsEnabled="{Binding Source={RelativeSource AncestorType={x:Type view:SensorsViewModel}}, x:DataType=view:SensorsViewModel, Path=IsConnected}">
-                                    <Grid.GestureRecognizers>
-                                        <TapGestureRecognizer
-                                            Command="{Binding Source={RelativeSource AncestorType={x:Type view:SensorsViewModel}}, Path=ToggleSensorStateCommand}"
-                                            CommandParameter="{Binding .}"
-                                            x:DataType="{x:Type view:SensorsViewModel}"/>
-                                    </Grid.GestureRecognizers>
-
                                     <Label
                                         Grid.Column="0"
                                         HorizontalOptions="Start"
@@ -178,6 +172,12 @@
                                                 <Setter Property="Text" Value="Free"/>
                                             </DataTrigger>
                                         </Label.Triggers>
+                                        <Label.GestureRecognizers>
+                                            <TapGestureRecognizer
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type view:SensorsViewModel}}, Path=ToggleSensorStateCommand}"
+                                                CommandParameter="{Binding .}"
+                                                x:DataType="{x:Type view:SensorsViewModel}"/>
+                                        </Label.GestureRecognizers>
                                     </Label>
                                 </Grid>
                                 <BoxView
@@ -185,7 +185,7 @@
                                     HeightRequest="1"
                                     HorizontalOptions="FillAndExpand"/>
                             </StackLayout>
-                                
+                            </Grid>    
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                 </CollectionView>

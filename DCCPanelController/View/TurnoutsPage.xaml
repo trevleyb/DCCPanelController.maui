@@ -57,7 +57,7 @@
                         </VisualState>
                         <VisualState x:Name="Selected">
                             <VisualState.Setters>
-                                <Setter Property="BackgroundColor" Value="LightGrey"/>
+                                <Setter Property="BackgroundColor" Value="LightGray"/>
                             </VisualState.Setters>
                         </VisualState>
                     </VisualStateGroup>
@@ -119,8 +119,9 @@
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="dataModel:Turnout">
                             <!-- <SwipeView> -->
+                            <Grid Style="{StaticResource SelectableItemStyle}">
                                     <StackLayout >
-                                        <Grid ColumnDefinitions="120,*,100" Padding="5" Style="{StaticResource SelectableItemStyle}">
+                                        <Grid ColumnDefinitions="120,*,100" Margin="0,5,0,5" Padding="0">
                                             <Label
                                                 Grid.Column="0"
                                                 HorizontalOptions="Start"
@@ -150,7 +151,7 @@
                                             HeightRequest="1"
                                             HorizontalOptions="FillAndExpand"/>
                                     </StackLayout>
-                                
+                            </Grid>    
                                 <!-- <SwipeView.RightItems> -->
                                 <!--     <SwipeItems Mode="Reveal" SwipeBehaviorOnInvoked="Close"> -->
                                 <!--         <SwipeItem -->

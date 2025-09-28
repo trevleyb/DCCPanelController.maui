@@ -96,7 +96,7 @@
             HorizontalOptions="FillAndExpand"/>
         <RefreshView IsRefreshing="{Binding IsBusy}" Command="{Binding RefreshLightsCommand}">
 
-            <Grid Padding="5" VerticalOptions="FillAndExpand"
+            <Grid VerticalOptions="FillAndExpand"
                   IsEnabled="{Binding Source={RelativeSource AncestorType={x:Type view:LightsViewModel}}, x:DataType=view:LightsViewModel, Path=IsConnected}">
                 <CollectionView ItemsSource="{Binding Lights}" SelectionMode="Single" SelectedItem="{Binding SelectedLight}">
                     <CollectionView.EmptyView>
@@ -111,15 +111,9 @@
 
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="dataModel:Light">
+                            <Grid Style="{StaticResource SelectableItemStyle}">
                             <StackLayout Padding="0">
-                                <Grid ColumnDefinitions="120,*,70" Padding="5" Style="{StaticResource SelectableItemStyle}">
-                                    <Grid.GestureRecognizers>
-                                        <TapGestureRecognizer
-                                            Command="{Binding Source={RelativeSource AncestorType={x:Type view:LightsViewModel}}, Path=ToggleLightStateCommand}"
-                                            CommandParameter="{Binding .}"
-                                            x:DataType="{x:Type view:LightsViewModel}"/>
-                                    </Grid.GestureRecognizers>
-
+                                <Grid ColumnDefinitions="120,*,70" Margin="0,5,0,5" Padding="0">
                                     <Label
                                         Grid.Column="0"
                                         HorizontalOptions="Start"
@@ -178,6 +172,12 @@
                                                 <Setter Property="Text" Value="Off"/>
                                             </DataTrigger>
                                         </Label.Triggers>
+                                        <Label.GestureRecognizers>
+                                            <TapGestureRecognizer
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type view:LightsViewModel}}, Path=ToggleLightStateCommand}"
+                                                CommandParameter="{Binding .}"
+                                                x:DataType="{x:Type view:LightsViewModel}"/>
+                                        </Label.GestureRecognizers>
                                     </Label>
                                 </Grid>
                                 <BoxView
@@ -185,6 +185,7 @@
                                     HeightRequest="1"
                                     HorizontalOptions="FillAndExpand"/>
                             </StackLayout>
+                                </Grid>
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                 </CollectionView>

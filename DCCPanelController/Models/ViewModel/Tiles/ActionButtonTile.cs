@@ -1,4 +1,3 @@
-using AVFoundation;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.DataModel.Entities.Actions;
 using DCCPanelController.Models.ViewModel.Helpers;

@@ -1,5 +1,4 @@
 using System.Net.Mime;
-using AVFoundation;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.ViewModel.Helpers;
 using DCCPanelController.Models.ViewModel.ImageManager;

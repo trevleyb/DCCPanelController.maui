@@ -81,7 +81,7 @@
             HeightRequest="1"
             HorizontalOptions="FillAndExpand"/>
         <RefreshView IsRefreshing="{Binding IsBusy}" Command="{Binding RefreshRoutesCommand}">
-            <Grid Padding="5" VerticalOptions="FillAndExpand"
+            <Grid VerticalOptions="FillAndExpand"
                   IsEnabled="{Binding Source={RelativeSource AncestorType={x:Type view:RoutesViewModel}}, x:DataType=view:RoutesViewModel, Path=IsConnected}">
                 <CollectionView ItemsSource="{Binding Routes}" SelectionMode="None">
                     <CollectionView.EmptyView>
@@ -96,14 +96,9 @@
 
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="dataModel:Route">
+                            <Grid  Style="{StaticResource SelectableItemStyle}">
                             <StackLayout Padding="0">
-                                <Grid ColumnDefinitions="120,*,100" Padding="5" Style="{StaticResource SelectableItemStyle}">
-                                    <Grid.GestureRecognizers>
-                                        <TapGestureRecognizer
-                                            Command="{Binding Source={RelativeSource AncestorType={x:Type view:RoutesViewModel}}, Path=ToggleRoutesStateCommand}"
-                                            CommandParameter="{Binding .}"
-                                            x:DataType="{x:Type view:RoutesViewModel}"/>
-                                    </Grid.GestureRecognizers>
+                                <Grid ColumnDefinitions="120,*,100" Margin="0,5,0,5" Padding="0">
                                     <Label
                                         Grid.Column="0"
                                         HorizontalOptions="Start"
@@ -172,6 +167,12 @@
                                                 <Setter Property="TextColor" Value="Grey"/>
                                             </DataTrigger>
                                         </Label.Triggers>
+                                        <Lab.GestureRecognizers>
+                                            <TapGestureRecognizer
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type view:RoutesViewModel}}, Path=ToggleRoutesStateCommand}"
+                                                CommandParameter="{Binding .}"
+                                                x:DataType="{x:Type view:RoutesViewModel}"/>
+                                        </Lab.GestureRecognizers>
                                     </Label>
                                 </Grid>
                                 <BoxView
@@ -179,7 +180,7 @@
                                     HeightRequest="1"
                                     HorizontalOptions="FillAndExpand"/>
                             </StackLayout>
-                            
+                            </Grid>
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                 </CollectionView>

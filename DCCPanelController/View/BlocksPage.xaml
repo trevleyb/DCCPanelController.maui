@@ -65,7 +65,7 @@
     </ContentPage.Resources>
     <StackLayout x:Name="MainStackLayout">
         <Grid
-            ColumnDefinitions="150,*,120"
+            ColumnDefinitions="150,2*,*,120"
             HorizontalOptions="Fill">
             <Button
                 Command="{Binding SortByColumnCommand}"
@@ -82,8 +82,14 @@
                 Text="{Binding ColumnLabelName}"/>
             <Button
                 Command="{Binding SortByColumnCommand}"
-                CommandParameter="{Binding LabelState}"
+                CommandParameter="{Binding LabelSensor}"
                 Grid.Column="2"
+                Style="{StaticResource ColumnLabel}"
+                Text="{Binding ColumnLabelSensor}"/>
+            <Button
+                Command="{Binding SortByColumnCommand}"
+                CommandParameter="{Binding LabelState}"
+                Grid.Column="3"
                 Style="{StaticResource ColumnLabel}"
                 Text="{Binding ColumnLabelState}"/>
         </Grid>
@@ -93,7 +99,7 @@
             HorizontalOptions="FillAndExpand"/>
         <RefreshView IsRefreshing="{Binding IsBusy}" Command="{Binding RefreshBlocksCommand}">
 
-            <Grid Padding="5" VerticalOptions="FillAndExpand"
+            <Grid VerticalOptions="FillAndExpand"
                   IsEnabled="{Binding Source={RelativeSource AncestorType={x:Type view:BlocksViewModel}}, x:DataType=view:BlocksViewModel, Path=IsConnected}">
                 <CollectionView ItemsSource="{Binding Blocks}" SelectionMode="Single" SelectedItem="{Binding SelectedBlock}">
                     <CollectionView.EmptyView>
@@ -108,15 +114,9 @@
 
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="dataModel:Block">
+                            <Grid Style="{StaticResource SelectableItemStyle}">
                             <StackLayout Padding="0">
-                                <Grid ColumnDefinitions="150,*,120" Padding="5" Style="{StaticResource SelectableItemStyle}">
-                                    <Grid.GestureRecognizers>
-                                        <TapGestureRecognizer
-                                            Command="{Binding Source={RelativeSource AncestorType={x:Type view:BlocksViewModel}}, Path=ToggleBlockStateCommand}"
-                                            CommandParameter="{Binding .}"
-                                            x:DataType="{x:Type view:BlocksViewModel}"/>
-                                    </Grid.GestureRecognizers>
-
+                                <Grid ColumnDefinitions="150,2*,*,120" Margin="0,5,0,5" Padding="0">
                                     <Label
                                         Grid.Column="0"
                                         HorizontalOptions="Start"
@@ -132,8 +132,16 @@
                                         Style="{StaticResource MediumLabel}"
                                         Text="{Binding Name}"
                                         VerticalOptions="Center"/>
+                                    <Label
+                                        FontAttributes="Bold"
+                                        Grid.Column="2"
+                                        HorizontalOptions="FillAndExpand"
+                                        LineBreakMode="WordWrap"
+                                        Style="{StaticResource MediumLabel}"
+                                        Text="{Binding Sensor}"
+                                        VerticalOptions="Center"/>
                                     <Image
-                                        Grid.Column="3"
+                                        Grid.Column="4"
                                         HeightRequest="32"
                                         HorizontalOptions="End"
                                         VerticalOptions="Center"
@@ -154,7 +162,7 @@
                                         </Image.Triggers>
                                     </Image>
                                     <Label
-                                        Grid.Column="2"
+                                        Grid.Column="3"
                                         HorizontalOptions="Fill"
                                         Style="{StaticResource MediumLabel}"
                                         Text="{Binding State}"
@@ -173,6 +181,12 @@
                                                 <Setter Property="TextColor" Value="Green"/>
                                             </DataTrigger>
                                         </Label.Triggers>
+                                        <Label.GestureRecognizers>
+                                            <TapGestureRecognizer
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type view:BlocksViewModel}}, Path=ToggleBlockStateCommand}"
+                                                CommandParameter="{Binding .}"
+                                                x:DataType="{x:Type view:BlocksViewModel}"/>
+                                        </Label.GestureRecognizers>
                                     </Label>
                                 </Grid>
                                 <BoxView
@@ -180,7 +194,7 @@
                                     HeightRequest="1"
                                     HorizontalOptions="FillAndExpand"/>
                             </StackLayout>
-
+                            </Grid>
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                 </CollectionView>

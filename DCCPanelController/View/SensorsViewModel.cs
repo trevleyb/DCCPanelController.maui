@@ -148,12 +148,12 @@ public partial class SensorsViewModel : ConnectionViewModel {
 
     [RelayCommand]
     private async Task SendSensorStateAsync(Sensor? sensor) {
-        // if (turnout is { }) {
-        //     if (IsConnected) {
-        //         if (ConnectionService.Client is { } client) await client.SendTurnoutCmdAsync(turnout, turnout.State == TurnoutStateEnum.Thrown)!;
-        //     }
-        //     OnPropertyChanged(nameof(Turnouts));
-        // }
+        if (sensor is { }) {
+            if (IsConnected) {
+                if (ConnectionService.Client is { } client) await client.SendSensorCmdAsync(sensor, sensor.State)!;
+            }
+            OnPropertyChanged(nameof(Sensors));
+        }
     }
 
     [RelayCommand]

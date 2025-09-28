@@ -146,13 +146,13 @@ public partial class LightsViewModel : ConnectionViewModel {
     }
 
     [RelayCommand]
-    private async Task SendLightStateAsync(Turnout? turnout) {
-        // if (turnout is { }) {
-        //     if (IsConnected) {
-        //         if (ConnectionService.Client is { } client) await client.SendTurnoutCmdAsync(turnout, turnout.State == TurnoutStateEnum.Thrown)!;
-        //     }
-        //     OnPropertyChanged(nameof(Turnouts));
-        // }
+    private async Task SendLightStateAsync(Light? light) {
+        if (light is { }) {
+            if (IsConnected) {
+                if (ConnectionService.Client is { } client) await client.SendLightCmdAsync(light, light.State)!;
+            }
+            OnPropertyChanged(nameof(Lights));
+        }
     }
 
     [RelayCommand]

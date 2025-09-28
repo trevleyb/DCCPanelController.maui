@@ -13,9 +13,10 @@ using Syncfusion.Maui.Toolkit.BottomSheet;
 namespace DCCPanelController.View;
 
 public partial class BlocksViewModel : ConnectionViewModel {
-    private const string _labelID    = "ID";
-    private const string _labelName  = "Block";
-    private const string _labelState = "Occupied?";
+    private const string _labelID     = "ID";
+    private const string _labelName   = "Block";
+    private const string _labelState  = "Occupied?";
+    private const string _labelSensor = "Sensor";
 
     private readonly ProfileService _profileService;
 
@@ -24,13 +25,13 @@ public partial class BlocksViewModel : ConnectionViewModel {
     [ObservableProperty] private string                      _columnLabelID    = _labelID;
     [ObservableProperty] private string                      _columnLabelName  = _labelName;
     [ObservableProperty] private string                      _columnLabelState = _labelState;
+    [ObservableProperty] private string                      _columnLabelSensor = _labelSensor;
     private                      bool                        _isAscending;
     private                      ILogger<BlocksViewModel>    _logger;
     private                      string                      _sortColumn = "";
 
     [ObservableProperty] private bool _isBlockSelected;
     [ObservableProperty] private bool _canAddBlock;
-
 
     public BlocksViewModel(ILogger<BlocksViewModel> logger, ProfileService profileService, ConnectionService connectionService) : base(profileService, connectionService) {
         _logger = logger;
@@ -55,6 +56,7 @@ public partial class BlocksViewModel : ConnectionViewModel {
     public string LabelID => _labelID;
     public string LabelName => _labelName;
     public string LabelState => _labelState;
+    public string LabelSensor => _labelSensor;
 
     public bool IsSupported { get; private set; }
     public bool IsNotSupported => !IsSupported;
@@ -75,6 +77,7 @@ public partial class BlocksViewModel : ConnectionViewModel {
                 _labelName  => Blocks.OrderBy<Block, string>(x => x.Name ?? "").ToList(),
                 _labelID    => Blocks.OrderBy<Block, string>(x => x.Id ?? "").ToList(),
                 _labelState => Blocks.OrderBy<Block, bool>(x => x.IsOccupied).ToList(),
+                _labelSensor => Blocks.OrderBy<Block, string>(x => x.Sensor ?? "").ToList(),
                 _           => Blocks.ToList<Block>(),
             };
         } else {
@@ -82,6 +85,7 @@ public partial class BlocksViewModel : ConnectionViewModel {
                 _labelName  => Blocks.OrderByDescending<Block, string>(x => x.Name ?? "").ToList(),
                 _labelID    => Blocks.OrderByDescending<Block, string>(x => x.Id ?? "").ToList(),
                 _labelState => Blocks.OrderByDescending<Block, bool>(x => x.IsOccupied).ToList(),
+                _labelSensor => Blocks.OrderByDescending<Block, string>(x => x.Sensor ?? "").ToList(),
                 _           => Blocks.ToList<Block>(),
             };
         }
@@ -98,6 +102,7 @@ public partial class BlocksViewModel : ConnectionViewModel {
         ColumnLabelID = LabelID + (_sortColumn.Equals(_labelID) ? _isAscending.GetSortDirection() : "");
         ColumnLabelName = LabelName + (_sortColumn.Equals(_labelName) ? _isAscending.GetSortDirection() : "");
         ColumnLabelState = LabelState + (_sortColumn.Equals(_labelState) ? _isAscending.GetSortDirection() : "");
+        ColumnLabelSensor = LabelSensor + (_sortColumn.Equals(_labelSensor) ? _isAscending.GetSortDirection() : "");
     }
 
     [RelayCommand]
@@ -121,7 +126,7 @@ public partial class BlocksViewModel : ConnectionViewModel {
         }
     }
     
-        [RelayCommand]
+    [RelayCommand]
     private async Task DeleteBlockAsync(Block? block) {
         block ??= SelectedBlock;
         if (block is { }) {
@@ -148,13 +153,16 @@ public partial class BlocksViewModel : ConnectionViewModel {
     }
 
     [RelayCommand]
-    private async Task SendBlockStateAsync(Turnout? turnout) {
-        // if (turnout is { }) {
-        //     if (IsConnected) {
-        //         if (ConnectionService.Client is { } client) await client.SendTurnoutCmdAsync(turnout, turnout.State == TurnoutStateEnum.Thrown)!;
-        //     }
-        //     OnPropertyChanged(nameof(Turnouts));
-        // }
+    private async Task SendBlockStateAsync(Block? block) {
+        if (block is { }) {
+            if (IsConnected) {
+                if (_profileService?.ActiveProfile?.Sensor(block.Sensor ?? "") is { } sensor) {
+                    sensor.State = block.IsOccupied;
+                    if (ConnectionService.Client is { } client) await client.SendSensorCmdAsync(sensor, sensor.State)!;
+                }
+            }
+            OnPropertyChanged(nameof(Block));
+        }
     }
 
     [RelayCommand]
