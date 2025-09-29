@@ -12,9 +12,11 @@ namespace DCCPanelController.Models.ViewModel.Tiles;
 [DebuggerDisplay("{Entity.EntityName} @ {Entity.Col},{Entity.Row}")]
 public abstract class Tile : ContentView, ITile, IDisposable {
     // @formatter:off
-    public Entity   Entity      { get; init; }
-    public bool     IsSelected  { get; set => SetField(ref field, value); }
-    public double   GridSize    { get; set => SetField(ref field, value); }
+    public Entity   Entity          { get; init; }
+    public bool     IsDesignMode    { get; set;} = false;
+    public bool     IsSelected      { get; set => SetField(ref field, value); }
+    public double   GridSize        { get; set => SetField(ref field, value); }
+    
     public double   TileWidth => GridSize * Entity.Width;
     public double   TileHeight => GridSize * Entity.Height;
     // @formatter:on
@@ -82,7 +84,7 @@ public abstract class Tile : ContentView, ITile, IDisposable {
 
     public void ForceRedraw([CallerMemberName] string memberName = "",
         [CallerLineNumber] int sourceLineNumber = 0) {
-        Console.WriteLine($"Force Redraw Called: {memberName}@{sourceLineNumber}");
+        //Console.WriteLine($"Force Redraw Called: {memberName}@{sourceLineNumber}");
         HaveDimensionsChanged = false;
         HaveVisualPropertiesChanged = true;
         RebuildIfNecessary();

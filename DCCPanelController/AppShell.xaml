@@ -65,32 +65,13 @@
             <!-- <ShellContent ContentTemplate="{DataTemplate view:SensorsPage}" Title="Sensors"/> -->
         </Tab>
 
-        <!-- <Tab Title="Tables" Icon="tables.png" -->
-        <!--      IsEnabled="{Binding Source={x:Static services:AppStateService.Instance},Path=IsNavigationAllowed}"> -->
-        <!--     <ShellContent -->
-        <!--         ContentTemplate="{DataTemplate view:TurnoutsPage}" -->
-        <!--         Title="Turnouts"/> -->
-        <!--     <ShellContent -->
-        <!--         ContentTemplate="{DataTemplate view:RoutesPage}" -->
-        <!--         Title="Routes"/> -->
-        <!--     <ShellContent -->
-        <!--         ContentTemplate="{DataTemplate view:BlocksPage}" -->
-        <!--         Title="Blocks"/> -->
-        <!--     <ShellContent -->
-        <!--         ContentTemplate="{DataTemplate view:SensorsPage}" -->
-        <!--         Title="Sensors"/> -->
-        <!--     <ShellContent -->
-        <!--         ContentTemplate="{DataTemplate view:LightsPage}" -->
-        <!--         Title="Lights"/> -->
-        <!-- </Tab> -->
-
         <Tab Title="Settings" Icon="settings.png"
              IsEnabled="{Binding Source={x:Static services:AppStateService.Instance},Path=IsNavigationAllowed}">
             <ShellContent
                 ContentTemplate="{DataTemplate view:SettingsPage}"
                 Title="Settings"/>
             <ShellContent
-                ContentTemplate="{DataTemplate view:HelpPage}"
+                ContentTemplate="{DataTemplate view:SettingsConnectionPage}"
                 Title="Connection Details"/>
             <ShellContent
                 ContentTemplate="{DataTemplate view:ServerMessagesPage}"

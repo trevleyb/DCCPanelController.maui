@@ -29,23 +29,11 @@ public partial class SettingsPageViewModel : ConnectionViewModel {
     [ObservableProperty] private Capabilities                                  _capabilities = new();
     [ObservableProperty] private Microsoft.Maui.Controls.View?                 _currentSettingsView;
 
-    [ObservableProperty] private bool _isJmriServer;
-
     [NotifyPropertyChangedFor(nameof(IsNavigationDrawerClosed))]
     [ObservableProperty] private bool _isNavigationDrawerOpen;
 
-    [ObservableProperty] private bool    _isSimulator;
-    [ObservableProperty] private bool    _isWiThrottle;
     [ObservableProperty] private Profile _profile;
-
-    [ObservableProperty] private int  _selectedSegmentIndex;
-    [ObservableProperty] private bool _supportsBlocks;
-    [ObservableProperty] private bool _supportsLights;
-    [ObservableProperty] private bool _supportsRoutes;
-    [ObservableProperty] private bool _supportsSensors;
-    [ObservableProperty] private bool _supportsSignals;
-    [ObservableProperty] private bool _supportsTurnouts;
-    public                       bool IsDirty;
+    public                       bool    IsDirty;
 
     public SettingsPageViewModel(ILogger<SettingsViewModel> logger, ProfileService profileService, ConnectionService connectionService) : base(profileService, connectionService) {
         _logger = logger;
@@ -55,11 +43,9 @@ public partial class SettingsPageViewModel : ConnectionViewModel {
     }
 
     public bool IsNavigationDrawerClosed => !IsNavigationDrawerOpen;
-
     public bool CanDeleteProfile => ProfileService.NumberOfProfiles > 1;
-    public bool IsProfileDefault => Profile != null && ProfileService.IsDefault(Profile);
+    public bool IsProfileDefault => ProfileService.IsDefault(Profile);
     public bool IsProfileNotDefault => !IsProfileDefault;
-
     public Models.DataModel.Settings? Settings => Profile?.Settings;
 
     private void ProfileOnPropertyChanged(object? sender, PropertyChangedEventArgs e) => IsDirty = true;
@@ -76,7 +62,6 @@ public partial class SettingsPageViewModel : ConnectionViewModel {
         OnPropertyChanged(nameof(Profile));
         OnPropertyChanged(nameof(Settings));
         OnPropertyChanged(nameof(CurrentSettingsView));
-        OnPropertyChanged(nameof(Capabilities));
         OnPropertyChanged(nameof(CanDeleteProfile));
         OnPropertyChanged(nameof(IsNavigationDrawerOpen));
         OnPropertyChanged(nameof(IsProfileNotDefault));
@@ -145,77 +130,8 @@ public partial class SettingsPageViewModel : ConnectionViewModel {
     ///     If this one is not the default, then we will mark it as the default
     /// </summary>
     public async Task MarkActiveProfileDefault() {
-        if (Profile is { } && !ProfileService.IsDefault(Profile)) ProfileService.MarkAsDefault(Profile);
+        if (!ProfileService.IsDefault(Profile)) ProfileService.MarkAsDefault(Profile);
         await SaveSettingsAsync();
-    }
-
-    public void SetCapabilities() => Capabilities = new Capabilities(Settings?.ClientSettings?.Capabilities ?? []);
-
-    public Microsoft.Maui.Controls.View? LoadSettingsPage() {
-        if (Settings is null) return null;
-        ContentView? view = null;
-        if (IsJmriServer) {
-            Settings.ClientSettings = CheckSettingsCache<JmriSettings>(DccClientType.Jmri);
-            view = new JmriSettingsView(Settings.ClientSettings, ConnectionService);
-        } else if (IsWiThrottle) {
-            Settings.ClientSettings = CheckSettingsCache<WiThrottleSettings>(DccClientType.WiThrottle);
-            view = new WiThrottleSettingsView(Settings.ClientSettings, ConnectionService);
-        } else if (IsSimulator) {
-            Settings.ClientSettings = CheckSettingsCache<SimulatorSettings>(DccClientType.Simulator);
-            view = new SimulatorSettingsView(Settings.ClientSettings, ConnectionService);
-        }
-        SetCapabilities();
-        return view;
-    }
-
-    public void SetActiveSettings() => SetActiveSettings(Settings?.ClientSettings?.Type ?? DccClientType.Simulator);
-
-    public void SetActiveSettings(DccClientType type) {
-        switch (type) {
-            case DccClientType.Simulator:
-                CheckSettingsCache<SimulatorSettings>(DccClientType.Simulator, ProfileService.ActiveProfile?.Settings?.ClientSettings);
-                IsSimulator = true;
-                IsJmriServer = false;
-                IsWiThrottle = false;
-            break;
-
-            case DccClientType.Jmri:
-                CheckSettingsCache<JmriSettings>(DccClientType.Jmri, ProfileService.ActiveProfile?.Settings?.ClientSettings);
-                IsSimulator = false;
-                IsJmriServer = true;
-                IsWiThrottle = false;
-            break;
-
-            case DccClientType.WiThrottle:
-                CheckSettingsCache<WiThrottleSettings>(DccClientType.WiThrottle, ProfileService.ActiveProfile?.Settings?.ClientSettings);
-                IsJmriServer = false;
-                IsSimulator = false;
-                IsWiThrottle = true;
-            break;
-
-            default:
-                IsSimulator = true;
-                IsJmriServer = false;
-                IsWiThrottle = false;
-            break;
-        }
-        SetCapabilities();
-    }
-
-    private IDccClientSettings CheckSettingsCache<T>(DccClientType type, IDccClientSettings? settings = null) where T : IDccClientSettings, new() {
-        try {
-            if (_settingsCache.TryGetValue(type, out var cache)) return cache;
-            if (settings is { } && settings.Type == type) {
-                _settingsCache[settings.Type] = settings;
-                return settings;
-            }
-            var newSettings = new T();
-            _settingsCache[type] = newSettings;
-            return newSettings;
-        } catch (Exception ex) {
-            _logger.LogDebug("CheckSettings: {ExMessage}", ex.Message);
-            return new T();
-        }
     }
 
     [RelayCommand]
@@ -240,7 +156,6 @@ public partial class SettingsPageViewModel : ConnectionViewModel {
 
     [RelayCommand]
     private async Task DownloadSettingsAsync() {
-        if (Profile is null) return;
         try {
             var result = await DisplayAlertHelper.DisplayAlertAsync("Download Profile?", "This will replace the active profile with a previously stored profile.", "Continue", "Cancel");
             if (result) {
@@ -287,22 +202,5 @@ public partial class SettingsPageViewModel : ConnectionViewModel {
     private async Task<string> LoadJsonFromFileAsync(string filePath) {
         using var reader = new StreamReader(filePath);
         return await reader.ReadToEndAsync();
-    }
-
-    // React to selection changes from the UI
-    partial void OnSelectedSegmentIndexChanged(int value) {
-        // Map index to type
-        var type = value switch {
-            0 => DccClientType.Simulator,
-            1 => DccClientType.Jmri,
-            2 => DccClientType.WiThrottle,
-            _ => DccClientType.Simulator,
-        };
-
-        // Update flags and active settings
-        SetActiveSettings(type);
-
-        // Create/load the appropriate sub-view and assign it
-        CurrentSettingsView = LoadSettingsPage();
     }
 }

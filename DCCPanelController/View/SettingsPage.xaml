@@ -44,296 +44,135 @@
         <Grid RowDefinitions="*,70">
             <ScrollView Grid.Row="0">
                 <Grid RowDefinitions="auto,auto,auto">
-                    <StackLayout Margin="10,10,10,10" Grid.Row="0">
-                        <toolkit:Expander IsExpanded="True" x:Name="ExpanderControl">
-                            <toolkit:Expander.Header>
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition Width="*"/>
-                                    </Grid.ColumnDefinitions>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="25"/>
-                                    </Grid.RowDefinitions>
+                    <StackLayout Margin="10,10,10,10" HorizontalOptions="Start">
+                        <!-- Profile Name -->
+                        <HorizontalStackLayout VerticalOptions="Center">
+                            <Grid ColumnDefinitions="200,*" Margin="0,10,0,0">
+                                <Label Grid.Column="0" Text="Profile Name"
+                                       Style="{StaticResource MediumLabel}" VerticalOptions="Center"/>
+                                <Border Grid.Column="1" Padding="0,0,0,0" HeightRequest="35"
+                                        Style="{StaticResource EntryBorderStyle}">
+                                    <Entry Margin="8,0,0,0" Text="{Binding Profile.ProfileName}"
+                                           HorizontalOptions="Fill"/>
+                                </Border>
+                            </Grid>
+                        </HorizontalStackLayout>
 
-                                    <Image Grid.Column="0" Grid.Row="0"
-                                           VerticalOptions="Center"
-                                           HorizontalOptions="Center"
-                                           Margin="0,0,0,0"
-                                           Source="{Binding Source={x:Reference ExpanderControl}, Path=IsExpanded, x:DataType='toolkit:Expander',
-                                       Converter={StaticResource BoolToChevronConverter}}">
-                                        <Image.Behaviors>
-                                            <toolkit:IconTintColorBehavior TintColor="{StaticResource Primary}"/>
-                                        </Image.Behaviors>
-                                    </Image>
+                        <!-- Background Color -->
+                        <Grid ColumnDefinitions="200,*" Margin="0,10,0,0">
+                            <Label Text="Background Color?"
+                                   Style="{StaticResource MediumLabel}"
+                                   VerticalOptions="Center"/>
+                            <components:ColorPickerButton
+                                Grid.Column="1"
+                                AllowsNoColor="true"
+                                HeightRequest="35"
+                                BorderColor="{StaticResource Primary}"
+                                BorderWidth="1"
+                                WidthRequest="175"
+                                SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type view:SettingsPageViewModel}}, Path=Settings.BackgroundColor, Mode=TwoWay}"
+                                VerticalOptions="Center"
+                                HorizontalOptions="Start"/>
+                        </Grid>
 
-                                    <Grid Grid.Column="1" Grid.Row="0" Margin="5,0,10,0">
-                                        <Label Grid.Column="0" Text="Profile Settings"
-                                               Style="{StaticResource LargeLabel}" TextColor="{StaticResource Primary}"/>
-                                    </Grid>
-                                </Grid>
-                            </toolkit:Expander.Header>
-                            <toolkit:Expander.Content>
-                                <StackLayout Margin="10,10,10,10" HorizontalOptions="Start">
-                                    <!-- Profile Name -->
-                                    <HorizontalStackLayout VerticalOptions="Center">
-                                        <Grid ColumnDefinitions="200,*" Margin="0,10,0,0">
-                                            <Label Grid.Column="0" Text="Profile Name"
-                                                   Style="{StaticResource MediumLabel}" VerticalOptions="Center"/>
-                                            <Border Grid.Column="1" Padding="0,0,0,0" HeightRequest="35"
-                                                    Style="{StaticResource EntryBorderStyle}">
-                                                <Entry Margin="8,0,0,0" Text="{Binding Profile.ProfileName}"
-                                                       HorizontalOptions="Fill"/>
-                                            </Border>
-                                        </Grid>
-                                    </HorizontalStackLayout>
+                        <!-- Background Color -->
+                        <Grid ColumnDefinitions="200,*" Margin="0,10,0,0">
+                            <Label Text="Foreground Color?"
+                                   Style="{StaticResource MediumLabel}"
+                                   VerticalOptions="Center"/>
+                            <components:ColorPickerButton
+                                Grid.Column="1"
+                                AllowsNoColor="true"
+                                HeightRequest="35"
+                                BorderColor="{StaticResource Primary}"
+                                BorderWidth="1"
+                                WidthRequest="175"
+                                SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type view:SettingsPageViewModel}}, Path=Settings.ForegroundColor, Mode=TwoWay}"
+                                VerticalOptions="Center"
+                                HorizontalOptions="Start"/>
+                        </Grid>
 
-                                    <!-- Background Color -->
-                                    <Grid ColumnDefinitions="200,*" Margin="0,10,0,0">
-                                        <Label Text="Background Color?"
-                                               Style="{StaticResource MediumLabel}"
-                                               VerticalOptions="Center"/>
-                                        <components:ColorPickerButton
-                                            Grid.Column="1"
-                                            AllowsNoColor="true"
-                                            HeightRequest="35"
-                                            BorderColor="{StaticResource Primary}"
-                                            BorderWidth="1"
-                                            WidthRequest="175"
-                                            SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type view:SettingsPageViewModel}}, Path=Settings.BackgroundColor, Mode=TwoWay}"
-                                            VerticalOptions="Center"
-                                            HorizontalOptions="Start"/>
-                                    </Grid>
+                        <!-- Show Welcome Page -->
+                        <Grid ColumnDefinitions="200,*" Margin="0,10,0,0">
+                            <Label Text="Show Welcome Page?"
+                                   Style="{StaticResource MediumLabel}"
+                                   VerticalOptions="Center"/>
+                            <Switch Grid.Column="1"
+                                    IsToggled="{Binding Settings.ShowWelcomePage}"
+                                    OnColor="{StaticResource Primary}"
+                                    ThumbColor="{StaticResource Gray200}"/>
+                        </Grid>
 
-                                    <!-- Background Color -->
-                                    <Grid ColumnDefinitions="200,*" Margin="0,10,0,0">
-                                        <Label Text="Foreground Color?"
-                                               Style="{StaticResource MediumLabel}"
-                                               VerticalOptions="Center"/>
-                                        <components:ColorPickerButton
-                                            Grid.Column="1"
-                                            AllowsNoColor="true"
-                                            HeightRequest="35"
-                                            BorderColor="{StaticResource Primary}"
-                                            BorderWidth="1"
-                                            WidthRequest="175"
-                                            SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type view:SettingsPageViewModel}}, Path=Settings.ForegroundColor, Mode=TwoWay}"
-                                            VerticalOptions="Center"
-                                            HorizontalOptions="Start"/>
-                                    </Grid>
+                        <!-- Automatically Connect -->
+                        <Grid ColumnDefinitions="200,*" Margin="0,10,0,0">
+                            <Label Text="Automatically Connect?"
+                                   Style="{StaticResource MediumLabel}"
+                                   VerticalOptions="Center"/>
+                            <Switch Grid.Column="1"
+                                    IsToggled="{Binding Settings.ConnectOnStartup}"
+                                    OnColor="{StaticResource Primary}"
+                                    ThumbColor="{StaticResource Gray200}"/>
+                        </Grid>
 
-                                    <!-- Show Welcome Page -->
-                                    <Grid ColumnDefinitions="200,*" Margin="0,10,0,0">
-                                        <Label Text="Show Welcome Page?"
-                                               Style="{StaticResource MediumLabel}"
-                                               VerticalOptions="Center"/>
-                                        <Switch Grid.Column="1"
-                                                IsToggled="{Binding Settings.ShowWelcomePage}"
-                                                OnColor="{StaticResource Primary}"
-                                                ThumbColor="{StaticResource Gray200}"/>
-                                    </Grid>
-                                    
-                                    <!-- Automatically Connect -->
-                                    <Grid ColumnDefinitions="200,*" Margin="0,10,0,0">
-                                        <Label Text="Automatically Connect?"
-                                               Style="{StaticResource MediumLabel}"
-                                               VerticalOptions="Center"/>
-                                        <Switch Grid.Column="1"
-                                                IsToggled="{Binding Settings.ConnectOnStartup}"
-                                                OnColor="{StaticResource Primary}"
-                                                ThumbColor="{StaticResource Gray200}"/>
-                                    </Grid>
+                        <!-- Set Turnouts on Connect -->
+                        <Grid ColumnDefinitions="200,*" Margin="0,10,0,0">
+                            <Label Text="Set Turnouts on Connect?"
+                                   Style="{StaticResource MediumLabel}"
+                                   VerticalOptions="Center"/>
+                            <Switch Grid.Column="1"
+                                    IsToggled="{Binding Settings.SetTurnoutStatesOnStartup}"
+                                    OnColor="{StaticResource Primary}"
+                                    ThumbColor="{StaticResource Gray200}"/>
+                        </Grid>
 
-                                    <!-- Set Turnouts on Connect -->
-                                    <Grid ColumnDefinitions="200,*" Margin="0,10,0,0">
-                                        <Label Text="Set Turnouts on Connect?"
-                                               Style="{StaticResource MediumLabel}"
-                                               VerticalOptions="Center"/>
-                                        <Switch Grid.Column="1"
-                                                IsToggled="{Binding Settings.SetTurnoutStatesOnStartup}"
-                                                OnColor="{StaticResource Primary}"
-                                                ThumbColor="{StaticResource Gray200}"/>
-                                    </Grid>
+                        <!-- Enable Click Sounds -->
+                        <Grid ColumnDefinitions="200,*" Margin="0,10,0,0">
+                            <Label Text="Enable Click Sounds?"
+                                   Style="{StaticResource MediumLabel}"
+                                   VerticalOptions="Center"/>
+                            <Switch Grid.Column="1"
+                                    IsToggled="{Binding Settings.UseClickSounds}"
+                                    OnColor="{StaticResource Primary}"
+                                    ThumbColor="{StaticResource Gray200}"/>
+                        </Grid>
 
-                                    <!-- Enable Click Sounds -->
-                                    <Grid ColumnDefinitions="200,*" Margin="0,10,0,0">
-                                        <Label Text="Enable Click Sounds?"
-                                               Style="{StaticResource MediumLabel}"
-                                               VerticalOptions="Center"/>
-                                        <Switch Grid.Column="1"
-                                                IsToggled="{Binding Settings.UseClickSounds}"
-                                                OnColor="{StaticResource Primary}"
-                                                ThumbColor="{StaticResource Gray200}"/>
-                                    </Grid>
+                        <!-- Enable Click Sounds -->
+                        <Grid ColumnDefinitions="200,*" Margin="0,10,0,0">
+                            <Label Text="Start Full Screen?"
+                                   Style="{StaticResource MediumLabel}"
+                                   VerticalOptions="Center"/>
+                            <Switch Grid.Column="1"
+                                    IsToggled="{Binding Settings.StartFullScreen}"
+                                    OnColor="{StaticResource Primary}"
+                                    ThumbColor="{StaticResource Gray200}"/>
+                        </Grid>
 
-                                    <!-- Enable Click Sounds -->
-                                    <Grid ColumnDefinitions="200,*" Margin="0,10,0,0">
-                                        <Label Text="Start Full Screen?"
-                                               Style="{StaticResource MediumLabel}"
-                                               VerticalOptions="Center"/>
-                                        <Switch Grid.Column="1"
-                                                IsToggled="{Binding Settings.StartFullScreen}"
-                                                OnColor="{StaticResource Primary}"
-                                                ThumbColor="{StaticResource Gray200}"/>
-                                    </Grid>
+                        <!-- Show Title Display Selector -->
+                        <Grid ColumnDefinitions="200,*" Margin="0,10,0,0">
+                            <Label Text="Title Bar Shows?"
+                                   Style="{StaticResource MediumLabel}"
+                                   VerticalOptions="Center"/>
 
-                                    <!-- Show Title Display Selector -->
-                                    <Grid ColumnDefinitions="200,*" Margin="0,10,0,0">
-                                        <Label Text="Title Bar Shows?"
-                                               Style="{StaticResource MediumLabel}"
-                                               VerticalOptions="Center"/>
-                                        
-                                        <HorizontalStackLayout Grid.Column="1">
-                                            <RadioButton Content="Panel"
-                                                         IsChecked="{Binding Settings.TitleBarDisplay, 
+                            <HorizontalStackLayout Grid.Column="1">
+                                <RadioButton Content="Panel"
+                                             IsChecked="{Binding Settings.TitleBarDisplay, 
                                                          Converter={StaticResource TitleBarEnumConverter}, 
-                                                         ConverterParameter={x:Static entities:TitleBarTextDisplayEnum.PanelName}}" 
-                                                         GroupName="TitleBarType"/>
-                                            <RadioButton Content="Profile"
-                                                         IsChecked="{Binding Settings.TitleBarDisplay, 
+                                                         ConverterParameter={x:Static entities:TitleBarTextDisplayEnum.PanelName}}"
+                                             GroupName="TitleBarType"/>
+                                <RadioButton Content="Profile"
+                                             IsChecked="{Binding Settings.TitleBarDisplay, 
                                                          Converter={StaticResource TitleBarEnumConverter}, 
-                                                         ConverterParameter={x:Static entities:TitleBarTextDisplayEnum.ProfileName}}" 
-                                                         GroupName="TitleBarType"/>
-                                            <RadioButton Content="Blank"
-                                                         IsChecked="{Binding Settings.TitleBarDisplay, 
+                                                         ConverterParameter={x:Static entities:TitleBarTextDisplayEnum.ProfileName}}"
+                                             GroupName="TitleBarType"/>
+                                <RadioButton Content="Blank"
+                                             IsChecked="{Binding Settings.TitleBarDisplay, 
                                                          Converter={StaticResource TitleBarEnumConverter}, 
-                                                         ConverterParameter={x:Static entities:TitleBarTextDisplayEnum.Blank}}" 
-                                                         GroupName="TitleBarType"/>
-                                        </HorizontalStackLayout>
-                                    </Grid>
-                                </StackLayout>
-                            </toolkit:Expander.Content>
-                        </toolkit:Expander>
-                        <BoxView Margin="10,10,20,10"
-                                 BackgroundColor="{StaticResource Primary}"
-                                 HeightRequest="1"
-                                 HorizontalOptions="FillAndExpand"/>
+                                                         ConverterParameter={x:Static entities:TitleBarTextDisplayEnum.Blank}}"
+                                             GroupName="TitleBarType"/>
+                            </HorizontalStackLayout>
+                        </Grid>
                     </StackLayout>
 
-                    <Grid Margin="10,0,10,0" Grid.Row="1" HeightRequest="200">
-                        <toolkit:Expander IsExpanded="True" x:Name="ConnectionExpander" Margin="0,0,10,0">
-                            <toolkit:Expander.Header>
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition Width="*"/>
-                                    </Grid.ColumnDefinitions>
-
-                                    <Image Grid.Column="0"
-                                           VerticalOptions="Center"
-                                           HorizontalOptions="Center"
-                                           Margin="0,0,0,0"
-                                           Source="{Binding Source={x:Reference ConnectionExpander}, 
-                                       Path=IsExpanded, x:DataType='toolkit:Expander',
-                                       Converter={StaticResource BoolToChevronConverter}}">
-                                        <Image.Behaviors>
-                                            <toolkit:IconTintColorBehavior TintColor="{StaticResource Primary}"/>
-                                        </Image.Behaviors>
-                                    </Image>
-                                    <Label Grid.Column="1" Text="Server Connection Details" Margin="5,0,10,0"
-                                           Style="{StaticResource LargeLabel}" TextColor="{StaticResource Primary}"/>
-                                </Grid>
-                            </toolkit:Expander.Header>
-
-                            <toolkit:Expander.Content>
-                                <StackLayout Margin="0,10,0,0">
-                                    <textInputLayout:SfSegmentedControl
-                                        WidthRequest="350"
-                                        x:Name="SelectionSegmentControl"
-                                        BackgroundColor="White"
-                                        HorizontalOptions="Start"
-                                        Stroke="{StaticResource Primary}"
-                                        EnableRippleEffect="True"
-                                        AutoScrollToSelectedSegment="True"
-                                        ShowSeparator="True"
-                                        SegmentWidth="110"
-                                        SelectedIndex="{Binding SelectedSegmentIndex, Mode=TwoWay}">
-                                        <textInputLayout:SfSegmentedControl.SelectionIndicatorSettings>
-                                            <textInputLayout:SelectionIndicatorSettings
-                                                SelectionIndicatorPlacement="Fill"
-                                                Background="{StaticResource Primary}"/>
-                                        </textInputLayout:SfSegmentedControl.SelectionIndicatorSettings>
-                                        <textInputLayout:SfSegmentedControl.ItemsSource>
-                                            <x:Array Type="{x:Type x:String}">
-                                                <x:String>Simulator</x:String>
-                                                <x:String>JMRI</x:String>
-                                                <x:String>WiThrottle</x:String>
-                                            </x:Array>
-                                        </textInputLayout:SfSegmentedControl.ItemsSource>
-                                    </textInputLayout:SfSegmentedControl>
-
-                                    <StackLayout WidthRequest="350" HorizontalOptions="Start">
-                                        <Label Margin="10,0,0,0" Text="Server Capabilities"
-                                               Style="{StaticResource MicroLabel}" HorizontalOptions="Center"/>
-                                        <CollectionView ItemsSource="{Binding Capabilities.CapabilityIcons}"
-                                                        HeightRequest="40" Margin="10,0,30,0"
-                                                        HorizontalOptions="Center">
-                                            <CollectionView.ItemsLayout>
-                                                <LinearItemsLayout Orientation="Horizontal" ItemSpacing="8"/>
-                                            </CollectionView.ItemsLayout>
-                                            <CollectionView.ItemTemplate>
-                                                <DataTemplate x:DataType="helpers1:CapabilityIcon">
-                                                    <Grid RowDefinitions="auto,15">
-                                                        <Border StrokeShape="RoundRectangle 5" StrokeThickness="0.5">
-                                                            <Border.BackgroundColor>
-                                                                <Binding Path="IsAvailable">
-                                                                    <Binding.Converter>
-                                                                        <converters1:BoolToColorConverter
-                                                                            TrueColor="White"
-                                                                            FalseColor="GhostWhite"/>
-                                                                    </Binding.Converter>
-                                                                </Binding>
-                                                            </Border.BackgroundColor>
-                                                            <Border.Stroke>
-                                                                <Binding Path="IsAvailable">
-                                                                    <Binding.Converter>
-                                                                        <converters1:BoolToColorConverter
-                                                                            TrueColor="{StaticResource Primary}"
-                                                                            FalseColor="LightGray"/>
-                                                                    </Binding.Converter>
-                                                                </Binding>
-                                                            </Border.Stroke>
-                                                        </Border>
-
-                                                        <Image Source="{Binding IconSource}" WidthRequest="24"
-                                                               HeightRequest="24"
-                                                               Aspect="AspectFit"/>
-
-                                                        <Label Grid.Row="1" LineBreakMode="MiddleTruncation"
-                                                               Text="{Binding Capability}"
-                                                               VerticalOptions="Center" HorizontalOptions="Center"
-                                                               FontFamily="OpenSansLight" FontSize="9">
-                                                            <Label.TextColor>
-                                                                <Binding Path="IsAvailable">
-                                                                    <Binding.Converter>
-                                                                        <converters1:BoolToColorConverter
-                                                                            TrueColor="{StaticResource Black}"
-                                                                            FalseColor="Gray"/>
-                                                                    </Binding.Converter>
-                                                                </Binding>
-                                                            </Label.TextColor>
-
-                                                        </Label>
-                                                    </Grid>
-                                                </DataTemplate>
-                                            </CollectionView.ItemTemplate>
-                                        </CollectionView>
-                                    </StackLayout>
-
-                                    <Button HorizontalOptions="Start"
-                                            VerticalOptions="Center"
-                                            WidthRequest="350"
-                                            Clicked="EditConnectionButtonClicked"
-                                            Padding="10"
-                                            Margin="0,10,0,10"
-                                            Text="Edit Connection Details"
-                                            Style="{StaticResource ButtonOutline}"
-                                            ImageSource="edit.png"/>
-
-                                </StackLayout>
-                            </toolkit:Expander.Content>
-                        </toolkit:Expander>
-                    </Grid>
                 </Grid>
             </ScrollView>
             <Grid Grid.Row="1" ColumnDefinitions="*,*,*" HorizontalOptions="Center"
@@ -386,14 +225,5 @@
 
             </Grid>
         </Grid>
-
-        <!-- Bottom Sheet for editing the Connection Details -->
-        <textInputLayout:SfBottomSheet
-            x:Name="BottomSheet"
-            CornerRadius="15, 15, 0, 0"
-            StateChanged="BottomSheetOnStateChanged"
-            HalfExpandedRatio="0.5" ContentPadding="10">
-            <textInputLayout:SfBottomSheet.BottomSheetContent/>
-        </textInputLayout:SfBottomSheet>
     </Grid>
 </ContentPage>

@@ -299,6 +299,9 @@
         <MauiXaml Update="View\SensorsEditView.xaml">
           <SubType>Designer</SubType>
         </MauiXaml>
+        <MauiXaml Update="View\SettingsConnectionPage.xaml">
+          <SubType>Designer</SubType>
+        </MauiXaml>
     </ItemGroup>
 
     <ItemGroup>
@@ -452,6 +455,13 @@
         </Compile>
         <Compile Update="View\BlocksEditViewModel.cs">
           <DependentUpon>BlocksEditView.xaml</DependentUpon>
+        </Compile>
+        <Compile Update="View\SettingsConnectionPage.xaml.cs">
+          <DependentUpon>SettingsConnectionPage.xaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="View\SettingsConnectionViewModel.cs">
+          <DependentUpon>SettingsConnectionPage.xaml</DependentUpon>
         </Compile>
     </ItemGroup>
 

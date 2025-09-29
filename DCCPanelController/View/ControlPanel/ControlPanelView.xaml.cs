@@ -524,7 +524,7 @@ public partial class ControlPanelView {
     ///     Given an Entity, create a tile and add it to the panel grid.
     /// </summary>
     private ITile? AddEntityToGrid(Entity entity) {
-        var tile = TileFactory.CreateTile(entity, _gridSize);
+        var tile = TileFactory.CreateTile(entity, _gridSize, DesignMode);
         if (tile is { }) {
             tile.TileChanged += TileOnPropertiesChanged;
             if (tile is ContentView view) {

@@ -102,7 +102,7 @@ public static class TileSelectorPaletteCache {
                 categories.Add(category);
                 var list = new ObservableCollection<ITile>();
                 foreach (var e in entities) {
-                    var tile = TileFactory.CreateTile(e, 32);
+                    var tile = TileFactory.CreateTile(e, 32, false);
                     if (tile is { }) list.Add(tile);
                 }
                 byCategory[category] = list;

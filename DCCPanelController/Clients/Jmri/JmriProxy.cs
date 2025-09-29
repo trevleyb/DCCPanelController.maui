@@ -18,7 +18,7 @@ public class JmriProxy : DccClientBase, IDccClient {
         _settings = clientSettings as JmriSettings ?? throw new InvalidCastException("Incorrect Settings Type provided for Jmri");
     }
 
-    public static List<DccClientCapability> Capabilities => [DccClientCapability.Turnouts, DccClientCapability.Routes, DccClientCapability.Lights, DccClientCapability.Blocks, DccClientCapability.Sensors];
+    public static List<DccClientCapability> Capabilities => [DccClientCapability.Turnouts, DccClientCapability.Routes, DccClientCapability.Lights, DccClientCapability.Blocks];
     public DccClientType Type => DccClientType.Jmri;
 
     #region Connect and Disconnect Methods

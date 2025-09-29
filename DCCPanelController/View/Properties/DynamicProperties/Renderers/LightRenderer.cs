@@ -22,9 +22,18 @@ internal sealed class LightRenderer : BaseRenderer, IPropertyRenderer {
             VerticalOptions = LayoutOptions.Center,
             Margin = new Thickness(5, 0, 0, 0),
         };
-        foreach (var i in lights) picker.Items.Add(i.DisplayFormat);
-        if (row.OriginalValue is string s) picker.SelectedIndex = SelectedIndex(s, lights);
-        picker.SelectedIndexChanged += (s2, e2) => SetValue(row, SelectedValue(picker.SelectedItem, lights));
+        picker.ItemsSource = lights;
+        picker.ItemDisplayBinding = new Binding(nameof(Light.DisplayFormat));
+        if (row.OriginalValue is string s) {
+            var item = lights.FirstOrDefault(b => b.Id == s) ?? lights.FirstOrDefault(b => b.Name == s);
+            picker.SelectedItem = item;
+        }
+        picker.SelectedIndexChanged += (s2, e2) => {
+            if (picker.SelectedIndex < lights.Count) {
+                var item = lights[picker.SelectedIndex];
+                SetValue(row, item.Id);
+            }
+        };
         picker.IsEnabled = !row.Field.Meta.IsReadOnlyInRunMode;
 
         var wrapped = WrapPicker(ctx, picker, GetFieldWidth(ctx));

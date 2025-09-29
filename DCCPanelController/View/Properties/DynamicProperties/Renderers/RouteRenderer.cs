@@ -22,9 +22,18 @@ internal sealed class RouteRenderer : BaseRenderer, IPropertyRenderer {
             VerticalOptions = LayoutOptions.Center,
             Margin = new Thickness(5, 0, 0, 0),
         };
-        foreach (var i in routes) picker.Items.Add(i.DisplayFormat);
-        if (row.OriginalValue is string s) picker.SelectedIndex = SelectedIndex(s, routes);
-        picker.SelectedIndexChanged += (s2, e2) => SetValue(row, SelectedValue(picker.SelectedItem, routes));
+        picker.ItemsSource = routes;
+        picker.ItemDisplayBinding = new Binding(nameof(Route.DisplayFormat));
+        if (row.OriginalValue is string s) {
+            var item = routes.FirstOrDefault(b => b.Id == s) ?? routes.FirstOrDefault(b => b.Name == s);
+            picker.SelectedItem = item;
+        }
+        picker.SelectedIndexChanged += (s2, e2) => {
+            if (picker.SelectedIndex < routes.Count) {
+                var item = routes[picker.SelectedIndex];
+                SetValue(row, item.Id);
+            }
+        };
         picker.IsEnabled = !row.Field.Meta.IsReadOnlyInRunMode;
 
         var wrapped = WrapPicker(ctx, picker, GetFieldWidth(ctx));

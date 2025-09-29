@@ -36,7 +36,7 @@ public partial class SensorsViewModel : ConnectionViewModel {
         _profileService = profileService;
         _profileService.ActiveProfileChanged += (sender, args) => {
             Sensors = _profileService?.ActiveProfile?.Sensors ?? throw new ArgumentNullException(nameof(profileService), "SensorsViewModel: Active profile is not defined.");
-            IsSupported = _profileService.ActiveProfile?.Settings?.ClientSettings?.Capabilities.Contains(DccClientCapability.Sensors) ?? false;
+            IsSupported = false;//_profileService.ActiveProfile?.Settings?.ClientSettings?.Capabilities.Contains(DccClientCapability.Sensors) ?? false;
             SetLabels();
         };
 
@@ -47,7 +47,7 @@ public partial class SensorsViewModel : ConnectionViewModel {
         };
         
         Sensors = _profileService?.ActiveProfile?.Sensors ?? throw new ArgumentNullException(nameof(profileService), "SensorsViewModel: Active profile is not defined.");
-        IsSupported = _profileService.ActiveProfile?.Settings?.ClientSettings?.Capabilities.Contains(DccClientCapability.Sensors) ?? false;
+        IsSupported = false; //_profileService.ActiveProfile?.Settings?.ClientSettings?.Capabilities.Contains(DccClientCapability.Sensors) ?? false;
         SetLabels();
     }
 
@@ -62,7 +62,7 @@ public partial class SensorsViewModel : ConnectionViewModel {
     public void SetNavigationReferences(SfBottomSheet bottomSheet) => _bottomSheet = bottomSheet;
 
     public void SetToolbarItems() {
-        IsSupported = _profileService.ActiveProfile?.Settings?.ClientSettings?.Capabilities.Contains(DccClientCapability.Sensors) ?? false;
+        IsSupported = false; //_profileService.ActiveProfile?.Settings?.ClientSettings?.Capabilities.Contains(DccClientCapability.Sensors) ?? false;
         CanAddSensor = _profileService.ActiveProfile?.Settings?.ClientSettings?.SupportsManualEntries == true && IsSupported;
     }
     

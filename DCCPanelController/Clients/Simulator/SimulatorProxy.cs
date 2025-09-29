@@ -20,7 +20,7 @@ public partial class SimulatorProxy : DccClientBase, IDccClient {
         Settings = clientSettings as SimulatorSettings ?? throw new InvalidCastException("Incorrect Settings Type provided for Simulator");
     }
 
-    public static List<DccClientCapability> Capabilities => [DccClientCapability.Turnouts, DccClientCapability.Routes, DccClientCapability.Lights, DccClientCapability.Blocks, DccClientCapability.Sensors];
+    public static List<DccClientCapability> Capabilities => [DccClientCapability.Turnouts, DccClientCapability.Routes, DccClientCapability.Lights, DccClientCapability.Blocks];
     public DccClientType Type => DccClientType.Simulator;
 
     #region Connect and Disconnect Methods

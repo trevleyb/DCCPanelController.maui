@@ -4,7 +4,7 @@ public enum DccClientType { Jmri, WiThrottle, Simulator }
 
 public enum DccClientStatus { Connected, Disconnected, Reconnecting, Initialising }
 
-public enum DccClientCapability { Turnouts, Routes, Sensors, Blocks, Lights, Signals }
+public enum DccClientCapability { Turnouts, Routes, Blocks, Lights, Signals }
 
 public enum DccClientMessageType { Inbound, Outbound, System, Error }
 

@@ -22,10 +22,25 @@ internal sealed class TurnoutRenderer : BaseRenderer, IPropertyRenderer {
             VerticalOptions = LayoutOptions.Center,
             Margin = new Thickness(5, 0, 0, 0),
         };
-        foreach (var i in turnouts) picker.Items.Add(i.DisplayFormat);
-        if (row.OriginalValue is string s) picker.SelectedIndex = SelectedIndex(s, turnouts);
-        picker.SelectedIndexChanged += (s2, e2) => SetValue(row, SelectedValue(picker.SelectedItem, turnouts));
+        
+        picker.ItemsSource = turnouts;
+        picker.ItemDisplayBinding = new Binding(nameof(Turnout.DisplayFormat));
+        if (row.OriginalValue is string s) {
+            var item = turnouts.FirstOrDefault(b => b.Id == s) ?? turnouts.FirstOrDefault(b => b.Name == s);
+            picker.SelectedItem = item;
+        }
+        picker.SelectedIndexChanged += (s2, e2) => {
+            if (picker.SelectedIndex < turnouts.Count) {
+                var item = turnouts[picker.SelectedIndex];
+                SetValue(row, item.Id);
+            }
+        };
         picker.IsEnabled = !row.Field.Meta.IsReadOnlyInRunMode;
+
+        
+        // foreach (var i in turnouts) picker.Items.Add(i.DisplayFormat);
+        // if (row.OriginalValue is string s) picker.SelectedIndex = SelectedIndex(s, turnouts);
+        // picker.SelectedIndexChanged += (s2, e2) => SetValue(row, SelectedValue(picker.SelectedItem, turnouts));
 
         var wrapped = WrapPicker(ctx, picker, GetFieldWidth(ctx));
         return WrapWithLabel(ctx, AddBorder(wrapped));

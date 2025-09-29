@@ -33,10 +33,11 @@ public static class TileFactory {
         return mappings;
     });
 
-    public static ITile? CreateTile(Entity entity, double gridSize) {
+    public static ITile? CreateTile(Entity entity, double gridSize, bool designMode) {
         var entityType = entity.GetType();
         if (EntityTileMappings.Value.TryGetValue(entityType, out var tileType)) {
-            return(ITile?)Activator.CreateInstance(tileType, entity, gridSize);
+            var tile = (ITile?)Activator.CreateInstance(tileType, entity, gridSize);
+            tile?.IsDesignMode = designMode;
         }
         LogHelper.CreateLogger("Tilefactory").LogDebug("No tile found for entity type {entityTypeName}", entityType.Name);
         return null;

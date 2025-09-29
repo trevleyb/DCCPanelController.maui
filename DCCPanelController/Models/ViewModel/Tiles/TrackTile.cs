@@ -15,6 +15,11 @@ namespace DCCPanelController.Models.ViewModel.Tiles;
 public abstract class TrackTile : Tile, ITileTrack {
     private const float HighlightColorAlpha = 0.25f;
 
+    // @formatter:off
+    public bool IsOccupied {get; set => SetField(ref field, value); }
+    public bool IsPath {get; set => SetField(ref field, value); }
+    // @formatter:on
+    
     protected TrackTile(TrackEntity entity, double gridSize) : base(entity, gridSize) {
         Watch
            .Track(nameof(TrackEntity.TrackType), () => entity.TrackType)
@@ -204,12 +209,14 @@ public abstract class TrackTile : Tile, ITileTrack {
                 style.Add(e => e.WithName(SvgElementType.Terminator).WithColor(straightEntity.TerminatorColor ?? Entity.Parent?.TerminatorColor ?? Colors.Gray).Visible());
             }
 
-            if (IsPath) {
-                var color = Entity.Parent?.ShowPathColor ?? Colors.CornflowerBlue.WithAlpha(HighlightColorAlpha);
-                style.Add(e => e.WithName(SvgElementType.Track).WithColor(color).Visible());
-            } else if (IsOccupied) {
-                var color = Entity.Parent?.OccupiedColor ?? Colors.Tomato.WithAlpha(HighlightColorAlpha);
-                style.Add(e => e.WithName(SvgElementType.Track).WithColor(color).Visible());
+            if (!IsDesignMode) {
+                if (IsPath) {
+                    var color = Entity.Parent?.ShowPathColor ?? Colors.CornflowerBlue.WithAlpha(HighlightColorAlpha);
+                    style.Add(e => e.WithName(SvgElementType.Track).WithColor(color).Visible());
+                } else if (IsOccupied) {
+                    var color = Entity.Parent?.OccupiedColor ?? Colors.Tomato.WithAlpha(HighlightColorAlpha);
+                    style.Add(e => e.WithName(SvgElementType.Track).WithColor(color).Visible());
+                }
             }
         }
         return style;
@@ -258,8 +265,4 @@ public abstract class TrackTile : Tile, ITileTrack {
         return absoluteLayout;
     }
      
-    // @formatter:off
-    public bool IsOccupied {get; set => SetField(ref field, value); }
-    public bool IsPath {get; set => SetField(ref field, value); }
-    // @formatter:on
 }

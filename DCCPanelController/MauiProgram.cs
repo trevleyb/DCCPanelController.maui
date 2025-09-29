@@ -84,6 +84,7 @@ public static class MauiProgram {
         //services.AddTransientViewAndModel<SignalsPage, LightsViewModel>();
 
         services.AddTransientViewAndModel<SettingsPage, SettingsPageViewModel>();
+        services.AddTransientViewAndModel<SettingsConnectionPage, SettingsConnectionViewModel>();
         services.AddTransientViewAndModel<ServerMessagesPage, ServerMessagesViewModel>();
         services.AddTransientPopup<ColorPickerGrid, ColorPickerGridViewModel>();
 

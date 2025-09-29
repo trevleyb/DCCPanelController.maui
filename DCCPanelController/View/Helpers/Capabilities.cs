@@ -37,7 +37,6 @@ public partial class Capabilities : ObservableObject {
     private ImageSource GetIconForCapability(DccClientCapability capability, bool isEnabled) => capability switch {
         DccClientCapability.Turnouts => isEnabled ? ImageSource.FromFile("turnout_thrown.png") : ImageSource.FromFile("turnout_unknown.png"),
         DccClientCapability.Routes   => isEnabled ? ImageSource.FromFile("route_active.png") : ImageSource.FromFile("route_unknown.png"),
-        DccClientCapability.Sensors  => isEnabled ? ImageSource.FromFile("sensor_active.png") : ImageSource.FromFile("sensor_unknown.png"),
         DccClientCapability.Blocks   => isEnabled ? ImageSource.FromFile("block_free.png") : ImageSource.FromFile("block_unknown.png"),
         DccClientCapability.Signals  => isEnabled ? ImageSource.FromFile("signal_active.png") : ImageSource.FromFile("signal_unknown.png"),
         DccClientCapability.Lights   => isEnabled ? ImageSource.FromFile("light_active.png") : ImageSource.FromFile("light_unknown.png"),
