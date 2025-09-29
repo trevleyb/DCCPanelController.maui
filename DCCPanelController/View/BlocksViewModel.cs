@@ -170,7 +170,8 @@ public partial class BlocksViewModel : ConnectionViewModel {
         block ??= SelectedBlock;
         try {
             if (block is { } && _bottomSheet is { } sfBottomSheet) {
-                var blocksEditViewModel = new BlocksEditViewModel(LogHelper.CreateLogger<BlocksEditViewModel>(), block, ConnectionService);
+                var sensors = _profileService?.ActiveProfile?.Sensors ?? [];
+                var blocksEditViewModel = new BlocksEditViewModel(LogHelper.CreateLogger<BlocksEditViewModel>(), block, sensors, ConnectionService);
                 sfBottomSheet.BottomSheetContent = blocksEditViewModel.CreatePropertiesView(); 
         
                 if (DeviceInfo.Platform == DevicePlatform.iOS && DeviceInfo.Current.Idiom == DeviceIdiom.Phone) {

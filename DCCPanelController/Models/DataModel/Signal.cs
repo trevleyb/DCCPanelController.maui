@@ -12,9 +12,6 @@ namespace DCCPanelController.Models.DataModel;
 public partial class Signal : DccDccTable {
     [ObservableProperty] private string  _aspect = "Off";
 
-    [JsonIgnore]
-    public string DisplayFormat => $"{Name} ({Id})";
-    
     public event EventHandler<string>? AspectChanged;
     partial void OnAspectChanged(string value) => AspectChanged?.Invoke(this, value);
 

@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Models.DataModel;
@@ -14,9 +15,12 @@ public partial class BlocksEditViewModel : BaseViewModel {
     [ObservableProperty] private string                       _title;
     [ObservableProperty] private Block                        _block;
 
-    public BlocksEditViewModel(ILogger<BlocksEditViewModel> logger, Block block, ConnectionService connectionService) {
+    public ObservableCollection<Sensor> Sensors { get; init; }
+    
+    public BlocksEditViewModel(ILogger<BlocksEditViewModel> logger, Block block, ObservableCollection<Sensor> sensors, ConnectionService connectionService) {
         _logger = logger;
         Block = block;
+        Sensors = sensors;
         ConnectionService = connectionService;
         Title = Block?.Name ?? "Block Properties";
         IsServerControlled = Block?.IsEditable == false;

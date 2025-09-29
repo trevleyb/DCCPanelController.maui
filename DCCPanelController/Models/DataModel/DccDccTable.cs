@@ -10,18 +10,21 @@ public partial class DccDccTable : ObservableObject, IDccTable {
     [ObservableProperty] private int     _dccAddress;
     [ObservableProperty] private bool    _isEditable;
     [ObservableProperty] private bool    _isModified;
+    [ObservableProperty] private bool    _dccAddressLocked = false;
 
     [JsonIgnore]
     public string DisplayFormat => $"{Name} ({Id})";
 
     partial void OnIdChanged(string? oldValue, string? newValue) {
-        SetDccAddress(newValue);
+        if (newValue != oldValue) SetDccAddress(newValue);
     }
 
     public void SetDccAddress() => SetDccAddress(Id);
     public void SetDccAddress(string? id) {
-        if (id is {} && DccAddress == 0) {
-            var number = int.Parse(MyRegex().Match(id).Value);
+        if (id is {} && !DccAddressLocked) {
+            if (int.TryParse(MyRegex().Match(id).Value, out var address)) {
+                DccAddress = address;
+            }
         }
     }
 

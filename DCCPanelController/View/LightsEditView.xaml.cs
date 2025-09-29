@@ -19,5 +19,8 @@ public partial class LightsEditView : ContentView {
         if (e is { PropertyName: nameof(LightsEditViewModel.Light.Name) }) {
             _viewModel.Title = string.IsNullOrEmpty(_viewModel.Light.Name) ? "Light Properties" : _viewModel.Light.Name;
         }
+        if (e is { PropertyName: nameof(LightsEditViewModel.Light.Id) }) {
+            _viewModel.Light.SetDccAddress(_viewModel.Light.Id);
+        }
     }
 }

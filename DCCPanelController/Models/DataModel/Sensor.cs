@@ -12,9 +12,6 @@ namespace DCCPanelController.Models.DataModel;
 public partial class Sensor : DccDccTable, IDccTable {
     [ObservableProperty] private bool    _state;
 
-    [JsonIgnore]
-    public string DisplayFormat => $"{Name} ({Id})";
-    
     public event EventHandler<bool>? StateChanged;
     partial void OnStateChanged(bool value) => StateChanged?.Invoke(this, value);
 

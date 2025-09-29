@@ -337,7 +337,7 @@
                 Value="{AppThemeBinding Light={StaticResource Gray900}, Dark={StaticResource Gray200}}"/>
         <Setter Property="BackgroundColor" Value="Transparent"/>
         <Setter Property="FontFamily" Value="OpenSansRegular"/>
-        <Setter Property="FontSize" Value="{OnIdiom 18, Desktop=24}"/>
+        <Setter Property="FontSize" Value="{OnIdiom 12, Desktop=18, Default=12}"/>
         <Setter Property="MinimumHeightRequest" Value="44"/>
         <Setter Property="MinimumWidthRequest" Value="44"/>
         <Setter Property="VisualStateManager.VisualStateGroups">
@@ -610,7 +610,7 @@
         <Setter Property="WidthRequest" Value="175"/>
     </Style>
 
-    <Style TargetType="Entry">
+    <Style x:Key="EntryStyle" TargetType="Entry">
         <Setter Property="TextColor"
                 Value="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark={StaticResource LightOnDarkBackground}}"/>
         <Setter Property="BackgroundColor" Value="Transparent"/>
@@ -652,5 +652,13 @@
         <Setter Property="WaveColor"
                 Value="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}"/>
     </Style>
+    
+    <Style x:Key="InvalidEntryStyle" TargetType="Entry" BasedOn="{StaticResource EntryStyle}">
+        <Setter Property="TextColor" Value="Red" />
+        <Setter Property="BackgroundColor" Value="#FFF0F0" /> <!-- light red background -->
+        <Setter Property="CursorPosition" Value="0" /> <!-- optional, resets caret -->
+    </Style>
 
+    <Style x:Key="ValidEntryStyle" TargetType="Entry" BasedOn="{StaticResource EntryStyle}"/>
+    
 </ResourceDictionary>
