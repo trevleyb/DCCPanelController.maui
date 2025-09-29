@@ -66,7 +66,7 @@
     <Grid>
     <StackLayout x:Name="MainStackLayout">
         <Grid
-            ColumnDefinitions="150,2*,*,120"
+            ColumnDefinitions="150,*,120"
             HorizontalOptions="Fill">
             <Button
                 Command="{Binding SortByColumnCommand}"
@@ -83,14 +83,8 @@
                 Text="{Binding ColumnLabelName}"/>
             <Button
                 Command="{Binding SortByColumnCommand}"
-                CommandParameter="{Binding LabelSensor}"
-                Grid.Column="2"
-                Style="{StaticResource ColumnLabel}"
-                Text="{Binding ColumnLabelSensor}"/>
-            <Button
-                Command="{Binding SortByColumnCommand}"
                 CommandParameter="{Binding LabelState}"
-                Grid.Column="3"
+                Grid.Column="2"
                 Style="{StaticResource ColumnLabel}"
                 Text="{Binding ColumnLabelState}"/>
         </Grid>
@@ -117,7 +111,7 @@
                         <DataTemplate x:DataType="dataModel:Block">
                             <Grid Style="{StaticResource SelectableItemStyle}">
                             <StackLayout Padding="0">
-                                <Grid ColumnDefinitions="150,2*,*,120" Margin="10,5,0,5" Padding="0">
+                                <Grid ColumnDefinitions="150,*,120" Margin="10,5,0,5" Padding="0">
                                     <Label
                                         Grid.Column="0"
                                         HorizontalOptions="Start"
@@ -133,16 +127,8 @@
                                         Style="{StaticResource MediumLabel}"
                                         Text="{Binding Name}"
                                         VerticalOptions="Center"/>
-                                    <Label
-                                        FontAttributes="Bold"
-                                        Grid.Column="2"
-                                        HorizontalOptions="FillAndExpand"
-                                        LineBreakMode="WordWrap"
-                                        Style="{StaticResource MediumLabel}"
-                                        Text="{Binding Sensor}"
-                                        VerticalOptions="Center"/>
                                     <Image
-                                        Grid.Column="4"
+                                        Grid.Column="3"
                                         HeightRequest="32"
                                         HorizontalOptions="End"
                                         VerticalOptions="Center"
@@ -163,7 +149,7 @@
                                         </Image.Triggers>
                                     </Image>
                                     <Label
-                                        Grid.Column="3"
+                                        Grid.Column="2"
                                         HorizontalOptions="Fill"
                                         Style="{StaticResource MediumLabel}"
                                         Text="{Binding State}"

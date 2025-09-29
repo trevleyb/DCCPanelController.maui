@@ -14,6 +14,7 @@ public partial class BlocksEditViewModel : BaseViewModel {
     [ObservableProperty] private bool                         _isServerControlled;
     [ObservableProperty] private string                       _title;
     [ObservableProperty] private Block                        _block;
+    [ObservableProperty] private Sensor?                      _sensor;
 
     public ObservableCollection<Sensor> Sensors { get; init; }
     
@@ -21,6 +22,7 @@ public partial class BlocksEditViewModel : BaseViewModel {
         _logger = logger;
         Block = block;
         Sensors = sensors;
+        Sensor = sensors.FirstOrDefault(x => x?.Id == block?.Sensor);
         ConnectionService = connectionService;
         Title = Block?.Name ?? "Block Properties";
         IsServerControlled = Block?.IsEditable == false;

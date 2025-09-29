@@ -76,18 +76,15 @@
         <BoxView Margin="0,10,0,10"
                  BackgroundColor="{StaticResource Primary}"
                  HeightRequest="1"
+                 VerticalOptions="End"
                  HorizontalOptions="FillAndExpand"/>
 
-        <Label HorizontalOptions="Start" VerticalOptions="Center" FontFamily="OpenSansLight"
+        <Label HorizontalOptions="Start" VerticalOptions="End" FontFamily="OpenSansLight"
                MaximumWidthRequest="500" LineBreakMode="WordWrap" IsVisible="{Binding IsManualControlled}"
                Text="This turnout is a manual turnout and will only work if your system allows undefined turnouts to be sent commands."/>
-        <Label HorizontalOptions="Start" VerticalOptions="Center" FontFamily="OpenSansLight"
+        <Label HorizontalOptions="Start" VerticalOptions="End" FontFamily="OpenSansLight"
                MaximumWidthRequest="500" LineBreakMode="WordWrap" IsVisible="{Binding IsServerControlled}"
                Text="This turnout is managed by the server. You cannot change the System Name or User Name and if you delete this turnout, it will be recreated if it exists on the server."/>
 
-        <BoxView Margin="0,10,0,10"
-                 BackgroundColor="{StaticResource Primary}"
-                 HeightRequest="1"
-                 HorizontalOptions="FillAndExpand"/>
     </StackLayout>
 </ContentView>

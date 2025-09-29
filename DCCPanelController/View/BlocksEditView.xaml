@@ -28,7 +28,7 @@
         <HorizontalStackLayout HeightRequest="40">
             <Label WidthRequest="175" HorizontalOptions="Start" Text="Sensor" VerticalOptions="Center"/>
             <Border Padding="0,0,0,0" Style="{StaticResource EntryBorderStyle}" x:DataType="view:BlocksEditViewModel">
-                <Picker  ItemsSource="{Binding Sensors}" ItemDisplayBinding="{Binding DisplayFormat, x:DataType=dataModel:Sensor}" SelectedItem="{Binding Block.Sensor}"></Picker>            
+                <Picker  Margin="5,0,0,0" SelectedIndexChanged="Picker_OnSelectedIndexChanged" ItemsSource="{Binding Sensors}" ItemDisplayBinding="{Binding DisplayFormat, x:DataType=dataModel:Sensor}" SelectedItem="{Binding Sensor}"/>            
             </Border>
         </HorizontalStackLayout>
         <BoxView Margin="0,10,0,10"

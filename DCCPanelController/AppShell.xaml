@@ -61,8 +61,8 @@
             <ShellContent ContentTemplate="{DataTemplate view:TurnoutsPage}" Title="Turnouts"/>
             <ShellContent ContentTemplate="{DataTemplate view:RoutesPage}" Title="Routes"/>
             <ShellContent ContentTemplate="{DataTemplate view:BlocksPage}" Title="Blocks"/>
-            <ShellContent ContentTemplate="{DataTemplate view:SensorsPage}" Title="Sensors"/>
             <ShellContent ContentTemplate="{DataTemplate view:LightsPage}" Title="Lights"/>
+            <!-- <ShellContent ContentTemplate="{DataTemplate view:SensorsPage}" Title="Sensors"/> -->
         </Tab>
 
         <!-- <Tab Title="Tables" Icon="tables.png" -->

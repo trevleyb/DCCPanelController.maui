@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using DCCPanelController.Models.DataModel;
 using Microsoft.Extensions.Logging;
 
 namespace DCCPanelController.View;
@@ -19,5 +20,9 @@ public partial class BlocksEditView : ContentView {
         if (e is { PropertyName: nameof(BlocksEditViewModel.Block.Name) }) {
             _viewModel.Title = string.IsNullOrEmpty(_viewModel.Block.Name) ? "Block Properties" : _viewModel.Block.Name;
         }
+    }
+
+    private void Picker_OnSelectedIndexChanged(object? sender, EventArgs e) {
+        if (sender is Picker { SelectedItem: Sensor sensor }) _viewModel?.Block?.Sensor = sensor.Id;
     }
 }

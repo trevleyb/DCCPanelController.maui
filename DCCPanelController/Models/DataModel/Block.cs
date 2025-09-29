@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
 
@@ -5,6 +6,7 @@ namespace DCCPanelController.Models.DataModel;
 
 public partial class Block : DccDccTable {
     [ObservableProperty] private string? _sensor;
+
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(State))]
     private bool _isOccupied;

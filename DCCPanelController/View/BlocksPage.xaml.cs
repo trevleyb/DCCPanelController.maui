@@ -9,7 +9,6 @@ public partial class BlocksPage : ContentPage {
 
     public BlocksPage(ILogger<BlocksPage> logger, BlocksViewModel viewModel) {
         _logger = logger;
-        _logger.LogInformation("BlocksPage Started");
         InitializeComponent();
         BindingContext = viewModel;
 
