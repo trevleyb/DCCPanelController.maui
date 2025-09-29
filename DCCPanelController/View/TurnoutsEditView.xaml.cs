@@ -4,10 +4,10 @@ using Microsoft.Extensions.Logging;
 namespace DCCPanelController.View;
 
 public partial class TurnoutsEditView : ContentView {
-    private readonly ILogger<TurnoutsEditView> _logger;
+    private readonly ILogger<TurnoutsEditViewModel> _logger;
     private readonly TurnoutsEditViewModel     _viewModel;
 
-    public TurnoutsEditView(ILogger<TurnoutsEditView> logger, TurnoutsEditViewModel viewModel) {
+    public TurnoutsEditView(ILogger<TurnoutsEditViewModel> logger, TurnoutsEditViewModel viewModel) {
         InitializeComponent();
         _logger = logger;
         _viewModel = viewModel;

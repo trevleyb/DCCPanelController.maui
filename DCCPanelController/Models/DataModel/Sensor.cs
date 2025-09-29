@@ -9,19 +9,8 @@ namespace DCCPanelController.Models.DataModel;
 ///     This is controlled by data that comes in via the Withrottle Interface
 /// </summary>
 [DebuggerDisplay("UniqueId: {Id}, SystemName: {Name}, State: {State}")]
-public partial class Sensor : ObservableObject, ITable {
-    [ObservableProperty] private string? _id;
-    [ObservableProperty] private string? _name;
-    [ObservableProperty] private bool    _isEditable;
-    [ObservableProperty] private bool    _isModified;
-    [ObservableProperty] private int     _dccAddress;
+public partial class Sensor : DccDccTable, IDccTable {
     [ObservableProperty] private bool    _state;
-
-    /// <summary>
-    ///     Represents a Turnout with its current state.
-    ///     This is controlled by data that comes in via the Withrottle Interface
-    /// </summary>
-    public Sensor() => _dccAddress = 0;
 
     [JsonIgnore]
     public string DisplayFormat => $"{Name} ({Id})";

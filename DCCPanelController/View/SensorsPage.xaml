@@ -63,7 +63,8 @@
             </Setter>
         </Style>
     </ContentPage.Resources>
-    
+
+    <Grid>
     <StackLayout x:Name="MainStackLayout">
         <Grid
             ColumnDefinitions="150,*,120"
@@ -192,17 +193,23 @@
             </Grid>
         </RefreshView>
 
-        <!-- Bottom Sheet for editing the Connection Details -->
-        <bottomSheet:SfBottomSheet
-            x:Name="BottomSheet"
-            CornerRadius="15, 15, 0, 0"
-            HalfExpandedRatio="0.50" 
-            ContentPadding="10"/>
-        
         <BoxView
             BackgroundColor="{StaticResource Primary}"
             HeightRequest="1"
             HorizontalOptions="FillAndExpand"/>
-    </StackLayout>
+        
+        <Grid HorizontalOptions="Center" VerticalOptions="End" Margin="10">
+            <Label Text="Sensors are controlled by your DCC system and trigger the state of a Occupancy Block."/>
+        </Grid>
 
+    </StackLayout>
+    <!-- Bottom Sheet for editing the Connection Details -->
+    <bottomSheet:SfBottomSheet
+        x:Name="BottomSheet"
+        CornerRadius="15, 15, 0, 0"
+        HalfExpandedRatio="0.50" 
+        ContentPadding="10"/>
+
+
+    </Grid>
 </ContentPage>

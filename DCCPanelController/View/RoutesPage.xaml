@@ -52,6 +52,7 @@
         </Style>
     </ContentPage.Resources>
     
+    <Grid>
     <StackLayout x:Name="MainStackLayout">
         <Grid
             ColumnDefinitions="120,*,100"
@@ -192,12 +193,16 @@
             HeightRequest="1"
             HorizontalOptions="FillAndExpand"/>
         
+        <Grid HorizontalOptions="Center" VerticalOptions="End" Margin="10">
+            <Label Text="Routes are only managed via your DCC System. Manual routes are created using Action Buttons on a Panel."/>
+        </Grid>
+        
+    </StackLayout>
         <!-- Bottom Sheet for editing the Connection Details -->
         <bottomSheet:SfBottomSheet
             x:Name="BottomSheet"
             CornerRadius="15, 15, 0, 0"
             HalfExpandedRatio="0.50" 
             ContentPadding="10"/>
-    </StackLayout>
-
+    </Grid>
 </ContentPage>

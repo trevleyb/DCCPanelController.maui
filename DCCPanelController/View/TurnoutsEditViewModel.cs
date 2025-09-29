@@ -29,7 +29,7 @@ public partial class TurnoutsEditViewModel : BaseViewModel {
     public static Task ApplyChangesAsync() => Task.CompletedTask;
 
     public ContentView CreatePropertiesView() {
-        var propPage = new TurnoutsEditView((ILogger<TurnoutsEditView>)_logger, this);
+        var propPage = new TurnoutsEditView(_logger, this);
         return propPage;
     }
 

@@ -65,7 +65,7 @@ public partial class BlocksViewModel : ConnectionViewModel {
     public void SetNavigationReferences(SfBottomSheet bottomSheet) => _bottomSheet = bottomSheet;
 
     public void SetToolbarItems() {
-        IsSupported = _profileService.ActiveProfile?.Settings?.ClientSettings?.Capabilities.Contains(DccClientCapability.Turnouts) ?? false;
+        IsSupported = _profileService.ActiveProfile?.Settings?.ClientSettings?.Capabilities.Contains(DccClientCapability.Blocks) ?? false;
         CanAddBlock = _profileService.ActiveProfile?.Settings?.ClientSettings?.SupportsManualEntries == true && IsSupported;
     }
 
@@ -171,23 +171,23 @@ public partial class BlocksViewModel : ConnectionViewModel {
         try {
             if (block is { } && _bottomSheet is { } sfBottomSheet) {
                 var blocksEditViewModel = new BlocksEditViewModel(LogHelper.CreateLogger<BlocksEditViewModel>(), block, ConnectionService);
+                sfBottomSheet.BottomSheetContent = blocksEditViewModel.CreatePropertiesView(); 
         
                 if (DeviceInfo.Platform == DevicePlatform.iOS && DeviceInfo.Current.Idiom == DeviceIdiom.Phone) {
-                    _bottomSheet.ContentWidthMode = BottomSheetContentWidthMode.Full;
+                    sfBottomSheet.ContentWidthMode = BottomSheetContentWidthMode.Full;
                 } else {
-                    _bottomSheet.ContentWidthMode = BottomSheetContentWidthMode.Custom;
-                    _bottomSheet.BottomSheetContentWidth = 400;
+                    sfBottomSheet.ContentWidthMode = BottomSheetContentWidthMode.Custom;
+                    sfBottomSheet.BottomSheetContentWidth = 400;
                 }
 
-                _bottomSheet.BottomSheetContent = blocksEditViewModel.CreatePropertiesView(); 
-                _bottomSheet.ShowGrabber = true;
-                _bottomSheet.EnableSwiping = true;
-                _bottomSheet.CollapsedHeight = 0;
-                _bottomSheet.CollapseOnOverlayTap = true;
-                _bottomSheet.State = BottomSheetState.HalfExpanded;
-                _bottomSheet.IsModal = true;
-                _bottomSheet.IsVisible = true;
-                _bottomSheet.Show();
+                sfBottomSheet.ShowGrabber = true;
+                sfBottomSheet.EnableSwiping = true;
+                sfBottomSheet.CollapsedHeight = 0;
+                sfBottomSheet.CollapseOnOverlayTap = true;
+                sfBottomSheet.State = BottomSheetState.HalfExpanded;
+                sfBottomSheet.IsModal = true;
+                sfBottomSheet.IsVisible = true;
+                sfBottomSheet.Show();
             }
         } catch (Exception ex) {
             _logger.LogCritical("Error Launching Blocks Properties Page: " + ex.Message);

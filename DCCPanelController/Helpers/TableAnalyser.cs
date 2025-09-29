@@ -3,7 +3,7 @@ using DCCPanelController.Models.DataModel;
 
 namespace DCCPanelController.Helpers;
 
-public class TableAnalyser<T>  where T : ITable {
+public class TableAnalyser<T>  where T : IDccTable {
     public static string GetUniqueID(List<T> collection) => AnalyzeCollection(collection).NewUniqueId;
 
     public static (string MostCommonPrefix, string NewUniqueId) AnalyzeCollection(List<T> collection) {

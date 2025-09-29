@@ -169,23 +169,23 @@ public partial class TurnoutsViewModel : ConnectionViewModel {
         try {
             if (turnout is { } && _bottomSheet is { } sfBottomSheet) {
                 var turnoutsEditViewModel = new TurnoutsEditViewModel(LogHelper.CreateLogger<TurnoutsEditViewModel>(), turnout, ConnectionService);
+                sfBottomSheet.BottomSheetContent = turnoutsEditViewModel.CreatePropertiesView(); //new TurnoutsEditView(LogHelper.CreateLogger<TurnoutsEditView>(), turnoutsEditViewModel);
 
                 if (DeviceInfo.Platform == DevicePlatform.iOS && DeviceInfo.Current.Idiom == DeviceIdiom.Phone) {
-                    _bottomSheet.ContentWidthMode = BottomSheetContentWidthMode.Full;
+                    sfBottomSheet.ContentWidthMode = BottomSheetContentWidthMode.Full;
                 } else {
-                    _bottomSheet.ContentWidthMode = BottomSheetContentWidthMode.Custom;
-                    _bottomSheet.BottomSheetContentWidth = 400;
+                    sfBottomSheet.ContentWidthMode = BottomSheetContentWidthMode.Custom;
+                    sfBottomSheet.BottomSheetContentWidth = 400;
                 }
 
-                _bottomSheet.BottomSheetContent = new TurnoutsEditView(LogHelper.CreateLogger<TurnoutsEditView>(), turnoutsEditViewModel);
-                _bottomSheet.ShowGrabber = true;
-                _bottomSheet.EnableSwiping = true;
-                _bottomSheet.CollapsedHeight = 0;
-                _bottomSheet.CollapseOnOverlayTap = true;
-                _bottomSheet.State = BottomSheetState.HalfExpanded;
-                _bottomSheet.IsModal = true;
-                _bottomSheet.IsVisible = true;
-                _bottomSheet.Show();
+                sfBottomSheet.ShowGrabber = true;
+                sfBottomSheet.EnableSwiping = true;
+                sfBottomSheet.CollapsedHeight = 0;
+                sfBottomSheet.CollapseOnOverlayTap = true;
+                sfBottomSheet.State = BottomSheetState.HalfExpanded;
+                sfBottomSheet.IsModal = true;
+                sfBottomSheet.IsVisible = true;
+                sfBottomSheet.Show();
             }
         } catch (Exception ex) {
             _logger.LogCritical("Error Launching Panel Properties Page: " + ex.Message);

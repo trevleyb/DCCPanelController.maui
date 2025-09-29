@@ -49,6 +49,11 @@ public partial class RoutesViewModel : ConnectionViewModel {
     public bool IsSupported { get; private set; }
     public bool IsNotSupported => !IsSupported;
 
+    public void SetToolbarItems() {
+        IsSupported = _profileService.ActiveProfile?.Settings?.ClientSettings?.Capabilities.Contains(DccClientCapability.Routes) ?? false;
+        _ = _profileService.ActiveProfile?.Settings?.ClientSettings?.SupportsManualEntries == true && IsSupported;
+    }
+
     [RelayCommand]
     private async Task SortByColumnAsync(string columnName) {
         List<Route> sortedRoutes;

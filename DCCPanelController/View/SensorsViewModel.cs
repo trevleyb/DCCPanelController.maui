@@ -62,7 +62,7 @@ public partial class SensorsViewModel : ConnectionViewModel {
     public void SetNavigationReferences(SfBottomSheet bottomSheet) => _bottomSheet = bottomSheet;
 
     public void SetToolbarItems() {
-        IsSupported = _profileService.ActiveProfile?.Settings?.ClientSettings?.Capabilities.Contains(DccClientCapability.Turnouts) ?? false;
+        IsSupported = _profileService.ActiveProfile?.Settings?.ClientSettings?.Capabilities.Contains(DccClientCapability.Sensors) ?? false;
         CanAddSensor = _profileService.ActiveProfile?.Settings?.ClientSettings?.SupportsManualEntries == true && IsSupported;
     }
     
@@ -162,23 +162,23 @@ public partial class SensorsViewModel : ConnectionViewModel {
         try {
             if (sensor is { } && _bottomSheet is { } sfBottomSheet) {
                 var sensorsEditViewModel = new SensorsEditViewModel(LogHelper.CreateLogger<SensorsEditViewModel>(), sensor, ConnectionService);
+                sfBottomSheet.BottomSheetContent = sensorsEditViewModel.CreatePropertiesView();
         
                 if (DeviceInfo.Platform == DevicePlatform.iOS && DeviceInfo.Current.Idiom == DeviceIdiom.Phone) {
-                    _bottomSheet.ContentWidthMode = BottomSheetContentWidthMode.Full;
+                    sfBottomSheet.ContentWidthMode = BottomSheetContentWidthMode.Full;
                 } else {
-                    _bottomSheet.ContentWidthMode = BottomSheetContentWidthMode.Custom;
-                    _bottomSheet.BottomSheetContentWidth = 400;
+                    sfBottomSheet.ContentWidthMode = BottomSheetContentWidthMode.Custom;
+                    sfBottomSheet.BottomSheetContentWidth = 400;
                 }
         
-                _bottomSheet.BottomSheetContent = sensorsEditViewModel.CreatePropertiesView();
-                _bottomSheet.ShowGrabber = true;
-                _bottomSheet.EnableSwiping = true;
-                _bottomSheet.CollapsedHeight = 0;
-                _bottomSheet.CollapseOnOverlayTap = true;
-                _bottomSheet.State = BottomSheetState.HalfExpanded;
-                _bottomSheet.IsModal = true;
-                _bottomSheet.IsVisible = true;
-                _bottomSheet.Show();
+                sfBottomSheet.ShowGrabber = true;
+                sfBottomSheet.EnableSwiping = true;
+                sfBottomSheet.CollapsedHeight = 0;
+                sfBottomSheet.CollapseOnOverlayTap = true;
+                sfBottomSheet.State = BottomSheetState.HalfExpanded;
+                sfBottomSheet.IsModal = true;
+                sfBottomSheet.IsVisible = true;
+                sfBottomSheet.Show();
             }
         } catch (Exception ex) {
             _logger.LogCritical("Error Launching Sensor Properties Page: " + ex.Message);

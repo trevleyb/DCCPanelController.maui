@@ -4,11 +4,7 @@ using DCCPanelController.Models.DataModel.Entities;
 
 namespace DCCPanelController.Models.DataModel;
 
-public partial class Route : ObservableObject, ITable {
-    [ObservableProperty] private string?        _id;
-    [ObservableProperty] private string?        _name;
-    [ObservableProperty] private bool           _isEditable;
-    [ObservableProperty] private bool           _isModified;
+public partial class Route : DccDccTable {
     [ObservableProperty] private RouteStateEnum _state = RouteStateEnum.Unknown;
 
     /// <summary>
@@ -17,9 +13,6 @@ public partial class Route : ObservableObject, ITable {
     /// </summary>
     public Route() { }
 
-    [JsonIgnore]
-    public string DisplayFormat => $"{Name} ({Id})";
-    
     public event EventHandler<RouteStateEnum>? StateChanged;
     partial void OnStateChanged(RouteStateEnum value) => StateChanged?.Invoke(this, value);
 

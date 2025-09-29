@@ -63,6 +63,7 @@
             </Setter>
         </Style>
     </ContentPage.Resources>
+    <Grid>
     <StackLayout x:Name="MainStackLayout">
         <Grid
             ColumnDefinitions="150,2*,*,120"
@@ -200,18 +201,23 @@
                 </CollectionView>
             </Grid>
         </RefreshView>
+
+        <BoxView
+            BackgroundColor="{StaticResource Primary}"
+            HeightRequest="1"
+            HorizontalOptions="FillAndExpand"/>
         
+        <Grid HorizontalOptions="Center" VerticalOptions="End" Margin="10">
+            <Label Text="Blocks can be created and are linked to a Sensor. The state of the block is dependant on the state of the associated Sensor."/>
+        </Grid>
+
+        
+    </StackLayout>
         <!-- Bottom Sheet for editing the Connection Details -->
         <bottomSheet:SfBottomSheet
             x:Name="BottomSheet"
             CornerRadius="15, 15, 0, 0"
             HalfExpandedRatio="0.50" 
             ContentPadding="10"/>
-
-        <BoxView
-            BackgroundColor="{StaticResource Primary}"
-            HeightRequest="1"
-            HorizontalOptions="FillAndExpand"/>
-    </StackLayout>
-
+    </Grid>
 </ContentPage>
