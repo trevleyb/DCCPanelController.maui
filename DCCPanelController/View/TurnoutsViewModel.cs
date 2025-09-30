@@ -156,9 +156,7 @@ public partial class TurnoutsViewModel : ConnectionViewModel {
     [RelayCommand]
     private async Task SendTurnoutStateAsync(Turnout? turnout) {
         if (turnout is { }) {
-            if (IsConnected) {
-                if (ConnectionService.Client is { } client) await client.SendTurnoutCmdAsync(turnout, turnout.State == TurnoutStateEnum.Thrown)!;
-            }
+            if (ConnectionService.Client is { Status: DccClientStatus.Connected } client) await client.SendTurnoutCmdAsync(turnout, turnout.State == TurnoutStateEnum.Thrown)!;
             OnPropertyChanged(nameof(Turnouts));
         }
     }

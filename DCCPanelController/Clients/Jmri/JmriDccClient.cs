@@ -21,13 +21,8 @@ namespace DCCPanelController.Clients.Jmri;
 /// - No proxy, no inner client
 /// </summary>
 public sealed class JmriDccClient : DccClientBase, IDccClient, IDisposable {
-    // -------------------- Settings --------------------
+    
     private readonly JmriSettings _jmriSettings;
-
-    //private string _address = "localhost";
-    //private int    _port = 12080;
-    //private int    _refreshMs = 1000;            // subscription relist cadence
-    //private bool   _auto = false;
 
     // -------------------- Transport --------------------
     private ClientWebSocket?            _ws;
@@ -120,12 +115,11 @@ public sealed class JmriDccClient : DccClientBase, IDccClient, IDisposable {
         CloseSocket();
 
         Status = DccClientStatus.Disconnected;
-        IsConnected = false;
         OnClientMessage("Disconnected from JMRI");
         return Result.Ok();
     }
 
-    public Task<IResult> ValidateConnectionAsync() => Task.FromResult<IResult>(IsConnected ? Result.Ok("JMRI connected") : Result.Fail("JMRI not connected"));
+    public Task<IResult> ValidateConnectionAsync() => Task.FromResult<IResult>(Status == DccClientStatus.Connected ? Result.Ok("JMRI connected") : Result.Fail("JMRI not connected"));
 
     public async Task<IResult> SetAutomaticSettingsAsync() {
         var auto = await GetAutomaticConnectionDetailsAsync();
@@ -166,27 +160,27 @@ public sealed class JmriDccClient : DccClientBase, IDccClient, IDisposable {
     }
 
     // -------------------- Commands --------------------
-    public Task<IResult> SendTurnoutCmdAsync(Turnout t, bool thrown) => SendWrap(() => SetTurnoutStateAsync(t?.Id ?? t?.Name ?? "", thrown),
+    public Task<IResult> SendTurnoutCmdAsync(Turnout t, bool thrown) => SendWrap(() => SetTurnoutStateAsync(t.Id ?? t.Name ?? "", thrown),
         $"Setting turnout {t.Name}({t.Id}) to {(thrown ? "THROWN" : "CLOSED")}",
         DccClientOperation.Turnout);
 
-    public Task<IResult> SendRouteCmdAsync(Route r, bool active) => SendWrap(() => SetRouteStateAsync(r?.Id ?? r?.Name ?? "", active),
+    public Task<IResult> SendRouteCmdAsync(Route r, bool active) => SendWrap(() => SetRouteStateAsync(r.Id ?? r.Name ?? "", active),
         $"Setting route {r.Name}({r.Id}) to {(active ? "ACTIVE" : "INACTIVE")}",
         DccClientOperation.Route);
 
-    public Task<IResult> SendSignalCmdAsync(Signal s, SignalAspectEnum aspect) => SendWrap(() => SetSignalAppearanceAsync(s?.Id ?? s?.Name ?? "", aspect.ToString()),
+    public Task<IResult> SendSignalCmdAsync(Signal s, SignalAspectEnum aspect) => SendWrap(() => SetSignalAppearanceAsync(s.Id ?? s.Name ?? "", aspect.ToString()),
         $"Setting signal {s.Name}({s.Id}) to {aspect}",
         DccClientOperation.Signal);
 
-    public Task<IResult> SendLightCmdAsync(Light l, bool on) => SendWrap(() => SetLightStateAsync(l?.Id ?? l?.Name ?? "", on),
+    public Task<IResult> SendLightCmdAsync(Light l, bool on) => SendWrap(() => SetLightStateAsync(l.Id ?? l.Name ?? "", on),
         $"Setting light {l.Name}({l.Id}) to {(on ? "ON" : "OFF")}",
         DccClientOperation.Light);
 
-    public Task<IResult> SendBlockCmdAsync(Block b, bool allocated) => SendWrap(() => SetBlockAllocatedAsync(b?.Id ?? b?.Name ?? "", allocated),
+    public Task<IResult> SendBlockCmdAsync(Block b, bool allocated) => SendWrap(() => SetBlockAllocatedAsync(b.Id ?? b.Name ?? "", allocated),
         $"Setting block {b.Name}({b.Id}) to {(allocated ? "OCCUPIED" : "FREE")}",
         DccClientOperation.Block);
 
-    public Task<IResult> SendSensorCmdAsync(Sensor s, bool active) => SendWrap(() => SetSensorStateAsync(s?.Id ?? s?.Name ?? "", active),
+    public Task<IResult> SendSensorCmdAsync(Sensor s, bool active) => SendWrap(() => SetSensorStateAsync(s.Id ?? s.Name ?? "", active),
         $"Setting sensor {s.Name}({s.Id}) to {(active ? "ON" : "OFF")}",
         DccClientOperation.Sensor);
 
@@ -210,7 +204,6 @@ public sealed class JmriDccClient : DccClientBase, IDccClient, IDisposable {
                 break;
             } catch (Exception ex) when (!ct.IsCancellationRequested) {
                 Status = DccClientStatus.Disconnected;
-                IsConnected = false;
                 OnClientMessage($"JMRI connection error: {ex.Message}", DccClientOperation.System, DccClientMessageType.Error);
 
                 try {
@@ -233,7 +226,6 @@ public sealed class JmriDccClient : DccClientBase, IDccClient, IDisposable {
         await _ws.ConnectAsync(uri, ct);
 
         Status = DccClientStatus.Connected;
-        IsConnected = true;
         OnClientMessage("Connected to JMRI server, waiting for handshake");
 
         // Start receive loop
@@ -254,7 +246,6 @@ public sealed class JmriDccClient : DccClientBase, IDccClient, IDisposable {
         // When listen exits, mark disconnected (reconnect loop will schedule the retry)
         StopHeartbeat();
         StopRefreshTimer();
-        IsConnected = false;
         Status = DccClientStatus.Disconnected;
         OnClientMessage("JMRI connection closed");
     }
@@ -409,9 +400,9 @@ public sealed class JmriDccClient : DccClientBase, IDccClient, IDisposable {
     private void StartRefreshTimer(int refreshMs) {
         StopRefreshTimer();
         if (refreshMs <= 0) return;
-        _refresh = new Timer(async _ => {
+        _refresh = new Timer(async void (_) => {
             try {
-                if (IsConnected) await SubscribeToUpdatesAsync();
+                if (Status == DccClientStatus.Connected) await SubscribeToUpdatesAsync();
             } catch (Exception ex) {
                 Debug.WriteLine($"JMRI refresh failed: {ex.Message}");
             }
@@ -495,7 +486,7 @@ public sealed class JmriDccClient : DccClientBase, IDccClient, IDisposable {
     }
 
     private Task SendCommandAsync(string? json) => (_ws is { State: WebSocketState.Open } && !string.IsNullOrEmpty(json))
-        ? SendMessageAsync(json!)
+        ? SendMessageAsync(json)
         : Task.CompletedTask;
 
     private async Task SendMessageAsync(string message) {
@@ -513,7 +504,6 @@ public sealed class JmriDccClient : DccClientBase, IDccClient, IDisposable {
     // -------------------- Utilities --------------------
     private void OnConnectionStateChanged(string message,
         [CallerMemberName] string member = "unknown", [CallerLineNumber] int line = 0) {
-        // Map to unified surface (we’re already connected if here; errors flip status elsewhere)
         OnClientMessage($"{message}", DccClientOperation.System, DccClientMessageType.System);
     }
 

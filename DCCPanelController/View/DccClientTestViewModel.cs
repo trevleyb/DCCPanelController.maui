@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Data;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Clients;
@@ -19,9 +20,9 @@ namespace DCCPanelController.View;
 
 public partial class DccClientTestViewModel : ObservableObject {
     private readonly ConnectionService _svc;
-    private readonly ProfileService _prf;
-    public  Profile Profile { get; init; }
-    
+    private readonly ProfileService    _prf;
+    public Profile Profile { get; init; }
+
     public DccClientTestViewModel(ProfileService profile, ConnectionService svc) {
         _svc = svc;
         _prf = profile;
@@ -40,6 +41,10 @@ public partial class DccClientTestViewModel : ObservableObject {
         OccupancyStates = new ObservableCollection<string>(new[] { "Free", "Occupied" });
         SignalAspects = new ObservableCollection<SignalAspectEnum>(new[] { SignalAspectEnum.Clear, SignalAspectEnum.Approach, SignalAspectEnum.Stop, SignalAspectEnum.Off });
 
+        ConnectionStatusText = "Disconnected";
+        ConnectionIndicatorColor = Colors.Red;
+        ConnectionState = DccClientStatus.Disconnected;
+        
         Messages = new ObservableCollection<MsgLine>();
         RefreshCurrentStates();
         HookMessageStream(); // see method body — designed to work with your existing patterns
@@ -52,22 +57,32 @@ public partial class DccClientTestViewModel : ObservableObject {
     [ObservableProperty] private bool          _isNotConnected;
 
     // Inline settings view models (yours)
-    [ObservableProperty] private ContentView?                 _settingsView; 
+    [ObservableProperty] private ContentView?                 _settingsView;
     [ObservableProperty] private SettingsViewModel?           _activeSettingsVM;
     [ObservableProperty] private JmriSettingsViewModel?       _jmriSettingsVM;
     [ObservableProperty] private WiThrottleSettingsViewModel? _wiThrottleSettingsVM;
     [ObservableProperty] private SimulatorSettingsViewModel?  _simulatorSettingsVM;
     [ObservableProperty] private IDccClientSettings?          _activeSettings;
-    
+
+    [ObservableProperty] private bool _supportsTurnouts;
+    [ObservableProperty] private bool _supportsBlocks;
+    [ObservableProperty] private bool _supportsLights;
+    [ObservableProperty] private bool _supportsSensors;
+    [ObservableProperty] private bool _supportsSignals;
+    [ObservableProperty] private bool _supportsRoutes;
+
+    [ObservableProperty] private string _connectionStatusText;
+    [ObservableProperty] private Color  _connectionIndicatorColor;
+    [ObservableProperty] private DccClientStatus _connectionState;
+
+    public bool IsConnectionAvailable => CanConnect;
     public bool IsJmri => SelectedClientType == DccClientType.Jmri;
     public bool IsWiThrottle => SelectedClientType == DccClientType.WiThrottle;
     public bool IsSimulator => SelectedClientType == DccClientType.Simulator;
 
-    public bool CanConnect => ActiveSettingsVM is not null && !IsConnected;
-    public bool CanDisconnect => ActiveSettingsVM is not null && IsConnected;
+    public bool CanConnect => ActiveSettingsVM is { } && !IsConnected;
+    public bool CanDisconnect => ActiveSettingsVM is { } && IsConnected;
 
-    public string ConnectionStatusText => IsConnected ? "Connected" : "Disconnected";
-    public Color ConnectionIndicatorColor => IsConnected ? Colors.Green : Colors.Red;
 
     partial void OnSelectedClientTypeChanged(DccClientType value) {
         // Build a fresh settings VM of the right kind (reusing your pattern)
@@ -99,6 +114,14 @@ public partial class DccClientTestViewModel : ObservableObject {
                 SettingsView = new SimulatorSettingsView(SimulatorSettingsVM);
             break;
         }
+
+        SupportsTurnouts = ActiveSettings.Capabilities.Contains(DccClientCapability.Turnouts);
+        SupportsBlocks = ActiveSettings.Capabilities.Contains(DccClientCapability.Blocks);
+        SupportsLights = ActiveSettings.Capabilities.Contains(DccClientCapability.Lights);
+        SupportsSignals = ActiveSettings.Capabilities.Contains(DccClientCapability.Signals);
+        SupportsRoutes = ActiveSettings.Capabilities.Contains(DccClientCapability.Routes);
+        SupportsSensors = false;
+
         OnPropertyChanged(nameof(IsJmri));
         OnPropertyChanged(nameof(IsWiThrottle));
         OnPropertyChanged(nameof(IsSimulator));
@@ -119,7 +142,7 @@ public partial class DccClientTestViewModel : ObservableObject {
         HookMessageStream();
         RefreshCurrentStates();
     }
-    
+
     [RelayCommand]
     private async Task DisconnectAsync() {
         await _svc.DisconnectAsync();
@@ -135,37 +158,37 @@ public partial class DccClientTestViewModel : ObservableObject {
 
     // ---------- Senders ----------
     private string? TurnoutId => Turnout?.Id ?? "";
-    [ObservableProperty] private Turnout? _turnout;
+    [ObservableProperty] private Turnout?         _turnout;
     [ObservableProperty] private TurnoutStateEnum _turnoutDesired      = TurnoutStateEnum.Closed;
     [ObservableProperty] private string           _turnoutCurrentText  = "–";
     [ObservableProperty] private Color            _turnoutCurrentColor = Colors.Gray;
 
     private string? RouteId => Route?.Id ?? "";
-    [ObservableProperty] private Route?  _route; 
+    [ObservableProperty] private Route?         _route;
     [ObservableProperty] private RouteStateEnum _routeDesired      = RouteStateEnum.Inactive;
     [ObservableProperty] private string         _routeCurrentText  = "–";
     [ObservableProperty] private Color          _routeCurrentColor = Colors.Gray;
 
     private string? SensorId => Sensor?.Id ?? "";
-    [ObservableProperty] private Sensor? _sensor; 
+    [ObservableProperty] private Sensor? _sensor;
     [ObservableProperty] private string  _sensorDesired      = "Off";
     [ObservableProperty] private string  _sensorCurrentText  = "–";
     [ObservableProperty] private Color   _sensorCurrentColor = Colors.Gray;
 
     private string? LightId => Light?.Id ?? "";
-    [ObservableProperty] private Light?  _light; 
-    [ObservableProperty] private string  _lightDesired      = "Off";
-    [ObservableProperty] private string  _lightCurrentText  = "–";
-    [ObservableProperty] private Color   _lightCurrentColor = Colors.Gray;
+    [ObservableProperty] private Light? _light;
+    [ObservableProperty] private string _lightDesired      = "Off";
+    [ObservableProperty] private string _lightCurrentText  = "–";
+    [ObservableProperty] private Color  _lightCurrentColor = Colors.Gray;
 
     private string? BlockId => Block?.Id ?? "";
-    [ObservableProperty] private Block?  _block; 
-    [ObservableProperty] private string  _blockDesired      = "Free";
-    [ObservableProperty] private string  _blockCurrentText  = "–";
-    [ObservableProperty] private Color   _blockCurrentColor = Colors.Gray;
+    [ObservableProperty] private Block? _block;
+    [ObservableProperty] private string _blockDesired      = "Free";
+    [ObservableProperty] private string _blockCurrentText  = "–";
+    [ObservableProperty] private Color  _blockCurrentColor = Colors.Gray;
 
     private string? SignalId => Signal?.Id ?? "";
-    [ObservableProperty] private Signal?          _signal; 
+    [ObservableProperty] private Signal?          _signal;
     [ObservableProperty] private SignalAspectEnum _signalDesired      = SignalAspectEnum.Clear;
     [ObservableProperty] private string           _signalCurrentText  = "–";
     [ObservableProperty] private Color            _signalCurrentColor = Colors.Gray;
@@ -241,41 +264,75 @@ public partial class DccClientTestViewModel : ObservableObject {
             DccClientMessageType.Outbound => "OUT",
             _                             => "SYS"
         };
-        Messages.Insert(0,new MsgLine(text, kind));
+        Messages.Insert(0, new MsgLine(text, kind));
         _svc.AddServerMessage(text); // also push into your global log, consistent with SettingsViewModel :contentReference[oaicite:5]{index=5}
     }
-    
+
     private void AddMessage(string text, string kind) {
-        Messages.Insert(0,new MsgLine(text, kind));
+        Messages.Insert(0, new MsgLine(text, kind));
         _svc.AddServerMessage(text); // also push into your global log, consistent with SettingsViewModel :contentReference[oaicite:5]{index=5}
     }
 
     private void HookMessageStream() {
-        _svc.ConnectStateChanged += SvcOnConnectStateChanged;
-        _svc.ClientEvent += SvcOnClientEvent;
-    }
-    
-    private void UnHookMessageStream() {
-        _svc.ConnectStateChanged -= SvcOnConnectStateChanged;
-        _svc.ClientEvent -= SvcOnClientEvent;
+        _svc.ConnectionStateChanged += SvcOnConnectionStateChanged;
+        _svc.ConnectionEvent += SvcOnConnectionEvent;
     }
 
-    private void SvcOnClientEvent(object? sender, DccClientEvent e) {
+    private void UnHookMessageStream() {
+        _svc.ConnectionStateChanged -= SvcOnConnectionStateChanged;
+        _svc.ConnectionEvent -= SvcOnConnectionEvent;
+    }
+
+    private void SvcOnConnectionEvent(object? sender, DccClientEvent e) {
         var msg = e.Message;
         AddMessage($"{(msg?.Operation.ToString() ?? "Unknown Op")} => {msg?.Message ?? "Unknown Message"}", msg?.MessageType ?? DccClientMessageType.Error);
         RefreshCurrentStates();
     }
 
-    private void SvcOnConnectStateChanged(object? sender, bool e) {
-        if (e) {
-            AddMessage($"***Connection State Change => CONNECTED","SYS");
-            IsConnected = true;
-            IsNotConnected = false;
-        } else {
-            AddMessage($"Connection State Change => DISCONNECTED","SYS");
-            IsConnected = false;
-            IsNotConnected = true;
+    private void SvcOnConnectionStateChanged(object? sender, DccClientStatus e) {
+        ConnectionState = e;
+        switch (e) {
+            case DccClientStatus.Connected:
+                AddMessage($"***Connection State Change => CONNECTED", "SYS");
+                ConnectionStatusText = "Connected";
+                ConnectionIndicatorColor = Colors.Green;
+                IsConnected = true;
+                IsNotConnected = false;
+            break;
+
+            case DccClientStatus.Disconnected:
+                AddMessage($"***Connection State Change => DISCONNECTED", "SYS");
+                ConnectionStatusText = "Disconnected";
+                ConnectionIndicatorColor = Colors.Gray;
+                IsConnected = false;
+                IsNotConnected = true;
+            break;
+
+            case DccClientStatus.Error:
+                AddMessage($"***Connection State Change => ERROR", "SYS");
+                ConnectionStatusText = "Error";
+                ConnectionIndicatorColor = Colors.Red;
+                IsConnected = false;
+                IsNotConnected = true;
+            break;
+
+            case DccClientStatus.Initialising:
+                AddMessage($"***Connection State Change => INITIALISING", "SYS");
+                ConnectionStatusText = "Initialising";
+                ConnectionIndicatorColor = Colors.Blue;
+                IsConnected = false;
+                IsNotConnected = false;
+            break;
+
+            case DccClientStatus.Reconnecting:
+                AddMessage($"***Connection State Change => RECONNECTING", "SYS");
+                ConnectionStatusText = "Reconnecting";
+                ConnectionIndicatorColor = Colors.Yellow;
+                IsConnected = false;
+                IsNotConnected = false;
+            break;
         }
+
         OnPropertyChanged(nameof(ConnectionStatusText));
         OnPropertyChanged(nameof(ConnectionIndicatorColor));
         OnPropertyChanged(nameof(IsConnected));
@@ -293,6 +350,7 @@ public partial class DccClientTestViewModel : ObservableObject {
 
     private void RefreshCurrentStates() {
         var p = Profile;
+
         // Turnout
         if (!string.IsNullOrWhiteSpace(TurnoutId) && p.Turnouts.TryGet(TurnoutId, out var t)) {
             TurnoutCurrentText = t?.State.ToString() ?? "";
@@ -359,6 +417,7 @@ public partial class DccClientTestViewModel : ObservableObject {
 
 public record MsgLine(string Text, string Kind) {
     public DateTime Time { get; } = DateTime.Now;
+
     public Color KindColor =>
         Kind switch {
             "OUT" => Colors.SteelBlue,

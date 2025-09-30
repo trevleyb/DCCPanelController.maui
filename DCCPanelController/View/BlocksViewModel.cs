@@ -103,8 +103,8 @@ public partial class BlocksViewModel : ConnectionViewModel {
     public async Task ToggleBlockState(Block? block) {
         if (block == null) return;
         block.IsOccupied = !block.IsOccupied;
-        if (!string.IsNullOrEmpty(block.Id) && IsConnected) {
-            if (ConnectionService.Client is { } client) await client.SendBlockCmdAsync(block, block.IsOccupied)!;
+        if (!string.IsNullOrEmpty(block.Id)) {
+            if (ConnectionService.Client is {Status: DccClientStatus.Connected } client) await client.SendBlockCmdAsync(block, block.IsOccupied)!;
         }
     }
 

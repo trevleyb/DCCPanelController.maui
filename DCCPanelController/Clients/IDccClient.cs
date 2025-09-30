@@ -8,9 +8,6 @@ public interface IDccClient {
     DccClientType Type { get; }
     DccClientStatus Status { get; }
 
-    bool IsConnected { get; }
-    bool IsDisconnected => !IsConnected;
-
     public event EventHandler<DccClientEvent>? ClientMessage;
 
     Task<IResult> ConnectAsync();

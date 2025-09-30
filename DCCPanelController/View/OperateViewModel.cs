@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using DCCPanelController.Clients;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Services;
 using DCCPanelController.Services.ProfileService;
@@ -39,21 +40,37 @@ public partial class OperateViewModel : ConnectionViewModel {
     public OperateViewModel(ILogger<OperateViewModel> logger, ProfileService profileService, ConnectionService connectionService) : base(profileService, connectionService) {
         _logger = logger;
         _connectionService = connectionService;
-        _connectionService.ConnectStateChanged += OnConnectStateChanged;
+        _connectionService.ConnectionStateChanged += OnConnectionStateChanged;
         _profileService = profileService;
         _profileService.ActiveProfileChanged += (_, _) => OnProfileChanged();
         PropertyChanged += OnPropertyChanged;
         OnProfileChanged();
-        OnConnectStateChanged(this, _connectionService.IsConnected);
+        OnConnectionStateChanged(this, _connectionService.ConnectionState);
     }
 
-    private void OnConnectStateChanged(object? sender, bool e) {
-        if (e) {
-            ConnectionStateText = "Connected";
-            ConnectionStateColor = Colors.LightGray;
-        } else {
-            ConnectionStateText = "Not Connected to DCC Server";
-            ConnectionStateColor = Colors.Red;
+    private void OnConnectionStateChanged(object? sender, DccClientStatus e) {
+        switch (e) {
+            case DccClientStatus.Connected:
+                ConnectionStateText = "Connected";
+                ConnectionStateColor = Colors.Green;
+            break;
+            case DccClientStatus.Disconnected:
+                ConnectionStateText = "Disconnected";
+                ConnectionStateColor = Colors.LightGray;
+            break;
+            case DccClientStatus.Error:
+                ConnectionStateText = "Error";
+                ConnectionStateColor = Colors.Red;
+            break;
+            case DccClientStatus.Initialising:
+                ConnectionStateText = "Initialising";
+                ConnectionStateColor = Colors.Blue;
+            break;
+            case DccClientStatus.Reconnecting:
+                ConnectionStateText = "Reconnecting";
+                ConnectionStateColor = Colors.Yellow;
+            break;
+            
         }
     }
 

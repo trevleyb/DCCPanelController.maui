@@ -8,19 +8,14 @@ namespace DCCPanelController.Clients;
 public abstract partial class DccClientBase(Profile profile) : ObservableObject {
     protected const int ReconnectDelayMs = 5000;
 
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(IsDisconnected))]
-    private bool _isConnected;
+    public event EventHandler<DccClientEvent>? ClientMessage;
+    [ObservableProperty] private DccClientStatus _status;
 
     protected Profile Profile = profile;
-    public DccClientStatus Status { get; protected set; } = DccClientStatus.Disconnected;
-    public bool IsDisconnected => !IsConnected;
-    public event EventHandler<DccClientEvent>? ClientMessage;
 
     // Helper methods for populating the Profile data with new data that 
     // has been received from a server. 
     // ---------------------------------------------------------------------------
-
     protected void UpdateTurnout(string id, string name, TurnoutStateEnum state, int? dccAddress = null) {
         if (Profile?.Turnouts is { } collection) {
             Turnout? entity = null;

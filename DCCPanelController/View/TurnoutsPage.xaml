@@ -34,11 +34,9 @@
             Command="{Binding ToggleConnectionCommand}"
             IsEnabled="{Binding IsConnectionAvailable}">
             <ToolbarItem.IconImageSource>
-                <MultiBinding Converter="{StaticResource MultiBoolToIcon}">
-                    <Binding Path="IsConnectionAvailable"/>
-                    <Binding Path="IsConnected"/>
-                    <Binding Path="IconWifiOn"/>
-                    <Binding Path="IconWifiOff"/>
+                <MultiBinding Converter="{StaticResource ConnectionIconConverter}">
+                    <Binding Path="IsConnectionAvailable"/>     <!-- Parameter 1: bool for _active/_inactive -->
+                    <Binding Path="ConnectionState"/>           <!-- Parameter 2: bool for name selection -->
                 </MultiBinding>
             </ToolbarItem.IconImageSource>
         </ToolbarItem>

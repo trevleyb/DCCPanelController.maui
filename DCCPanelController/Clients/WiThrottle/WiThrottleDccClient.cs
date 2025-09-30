@@ -42,7 +42,6 @@ namespace DCCPanelController.Clients.WiThrottle {
 
             try {
                 Status = DccClientStatus.Initialising;
-                IsConnected = false;
                 OnClientMessage($"Connecting to WiThrottle {_settings.Address}:{_settings.Port}...");
 
                 _tcp = new TcpClient();
@@ -57,7 +56,6 @@ namespace DCCPanelController.Clients.WiThrottle {
                 await SendRawAsync($"HU{Guid.NewGuid()}"); // Hardware/UUID
                 await SendRawAsync("*+");                  // Request heartbeat / capabilities  :contentReference[oaicite:1]{index=1}
 
-                IsConnected = true;
                 Status = DccClientStatus.Connected;
                 OnClientMessage("WiThrottle connected");
 
@@ -75,26 +73,22 @@ namespace DCCPanelController.Clients.WiThrottle {
 
         public async Task<IResult> DisconnectAsync() {
             try {
-                _cts?.Cancel();
-
-                // Try graceful shutdown if we still have a writable stream
+                await _cts?.CancelAsync()!;
                 if (_stream is { CanWrite: true }) {
                     try {
                         await SendRawAsync("*-");
                         await SendRawAsync("Q");
-                    } catch { /* best-effort */
-                    }
+                    } catch { /* best-effort */ }
                 }
 
                 // Wait briefly for the loop to exit cleanly
-                if (_recvLoop is not null) {
+                if (_recvLoop is {}) {
                     var completed = await Task.WhenAny(_recvLoop, Task.Delay(1000));
                 }
 
                 CloseTransport();
                 _recvLoop = null;
 
-                IsConnected = false;
                 Status = DccClientStatus.Disconnected;
                 OnClientMessage("WiThrottle disconnected");
                 return Result.Ok();
@@ -120,7 +114,7 @@ namespace DCCPanelController.Clients.WiThrottle {
             _tcp = null;
         }
 
-        public Task<IResult> ValidateConnectionAsync() => Task.FromResult<IResult>(IsConnected ? Result.Ok("WiThrottle connected") : Result.Fail("WiThrottle not connected"));
+        public Task<IResult> ValidateConnectionAsync() => Task.FromResult<IResult>(Status == DccClientStatus.Connected ? Result.Ok("WiThrottle connected") : Result.Fail("WiThrottle not connected"));
 
         public Task<IResult> SetAutomaticSettingsAsync() => Task.FromResult<IResult>(Result.Ok("WiThrottle settings OK"));
 
@@ -133,7 +127,7 @@ namespace DCCPanelController.Clients.WiThrottle {
         // ---- Commands (supported: Turnouts & Routes per your proxy) ---------
 
         public async Task<IResult> SendTurnoutCmdAsync(Turnout turnout, bool thrown) {
-            if (!IsConnected || _stream is null) return Result.Fail("Not connected to WiThrottle server");
+            if (Status != DccClientStatus.Connected || _stream is null) return Result.Fail("Not connected to WiThrottle server");
             if (string.IsNullOrEmpty(turnout.Id)) return Result.Fail("Invalid Turnout Id provided.");
 
             try {
@@ -148,7 +142,7 @@ namespace DCCPanelController.Clients.WiThrottle {
         }
 
         public async Task<IResult> SendRouteCmdAsync(Route route, bool active) {
-            if (!IsConnected || _stream is null) return Result.Fail("Not connected to WiThrottle server");
+            if (Status != DccClientStatus.Connected || _stream is null) return Result.Fail("Not connected to WiThrottle server");
             if (string.IsNullOrEmpty(route.Id)) return Result.Fail("Invalid Route Id provided.");
 
             try {
@@ -203,7 +197,6 @@ namespace DCCPanelController.Clients.WiThrottle {
                 OnClientMessage($"WiThrottle read error: {ex.Message}", DccClientOperation.System, DccClientMessageType.Error);
             } finally {
                 CloseTransport();
-                IsConnected = false;
                 Status = DccClientStatus.Disconnected;
                 OnClientMessage("Disconnecting from WiThrottle server");
                 await DisconnectAsync();
@@ -251,7 +244,6 @@ namespace DCCPanelController.Clients.WiThrottle {
                         ConnectionState.Connecting => DccClientStatus.Initialising,
                         _                          => DccClientStatus.Disconnected,
                     };
-                    IsConnected = Status == DccClientStatus.Connected;
                     OnClientMessage($"WiThrottle connection: {c.State}");
                 break;
 

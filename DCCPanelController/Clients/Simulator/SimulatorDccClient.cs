@@ -62,7 +62,6 @@ namespace DCCPanelController.Clients.Simulator {
 
         public Task<IResult> ConnectAsync() {
             Status = DccClientStatus.Initialising;
-            IsConnected = true;
 
             // Reset view and seed a small layout
             Profile.RefreshAll();
@@ -92,12 +91,11 @@ namespace DCCPanelController.Clients.Simulator {
             StopTimers();
 
             Status = DccClientStatus.Disconnected;
-            IsConnected = false;
             OnClientMessage("Simulator disconnected");
             return Task.FromResult<IResult>(Result.Ok());
         }
 
-        public Task<IResult> ValidateConnectionAsync() => Task.FromResult<IResult>(IsConnected ? Result.Ok("Simulator connected") : Result.Fail("Simulator not connected"));
+        public Task<IResult> ValidateConnectionAsync() => Task.FromResult<IResult>(Status == DccClientStatus.Connected ? Result.Ok("Simulator connected") : Result.Fail("Simulator not connected"));
 
         public Task<IResult> SetAutomaticSettingsAsync() => Task.FromResult<IResult>(Result.Ok("Simulator settings OK"));
 
@@ -293,7 +291,7 @@ namespace DCCPanelController.Clients.Simulator {
         }
 
         private void FlipRandomOnce() {
-            if (!IsConnected) return;
+            if (Status != DccClientStatus.Connected) return;
 
             var pick = _rand.Next(6);
             switch (pick) {
@@ -352,7 +350,7 @@ namespace DCCPanelController.Clients.Simulator {
         }
 
         private void SendBurst() {
-            if (!IsConnected) return;
+            if (Status != DccClientStatus.Connected) return;
 
             var burstSize = _rand.Next(Math.Max(1, _burstSizeMin), Math.Max(_burstSizeMin + 1, _burstSizeMax + 1));
             var kinds = new[] { "NT", "RT", "SN", "LT", "BK", "SG" };

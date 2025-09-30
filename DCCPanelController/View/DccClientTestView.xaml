@@ -8,8 +8,21 @@
     xmlns:wth="clr-namespace:DCCPanelController.View.Settings.WiThrottle"
     xmlns:sim="clr-namespace:DCCPanelController.View.Settings.Simulator"
     xmlns:view="clr-namespace:DCCPanelController.View"
-    xmlns:clients="clr-namespace:DCCPanelController.Clients">
+    xmlns:clients="clr-namespace:DCCPanelController.Clients"
+    xmlns:system="clr-namespace:System;assembly=System.Runtime"
+    xmlns:dataModel="clr-namespace:DCCPanelController.Models.DataModel">
 
+    <ContentPage.ToolbarItems>
+    <ToolbarItem>
+        <ToolbarItem.IconImageSource>
+            <MultiBinding Converter="{StaticResource ConnectionIconConverter}">
+                <Binding Path="IsConnectionAvailable"/>     <!-- Parameter 1: bool for _active/_inactive -->
+                <Binding Path="ConnectionState"/>           <!-- Parameter 2: bool for name selection -->
+            </MultiBinding>
+        </ToolbarItem.IconImageSource>
+    </ToolbarItem>
+    </ContentPage.ToolbarItems>
+    
     <ScrollView>
     <Grid RowDefinitions="Auto,Auto,Auto,*,Auto" ColumnDefinitions="*">
         <!-- Header: client picker + connect controls -->
@@ -56,12 +69,12 @@
             <VerticalStackLayout Spacing="5">
 
                 <!-- TURNOUT -->
-                <Border BackgroundColor="White" Padding="5" StrokeThickness="2" HeightRequest="50">
+                <Border BackgroundColor="White" Padding="5" StrokeThickness="2" HeightRequest="50" IsVisible="{Binding SupportsTurnouts}">
                     <Grid ColumnDefinitions="100,100,auto,Auto,Auto" ColumnSpacing="8" RowSpacing="4">
                         <Button Grid.Column="0" Text="Send" Command="{Binding SendTurnoutCommand}" IsEnabled="{Binding IsConnected}"/>
                         <Label Grid.Column="1" Text="Turnout Id:" VerticalOptions="Center"/>
-                        <Border Grid.Column="2" Style="{StaticResource EntryBorderStyle}">
-                            <Picker ItemsSource="{Binding Profile.Turnouts}" SelectedItem="{Binding Turnout}" ItemDisplayBinding="{Binding DisplayFormat}"  />
+                        <Border Grid.Column="2" Style="{StaticResource EntryBorderStyle}" >
+                            <Picker ItemsSource="{Binding Profile.Turnouts}" SelectedItem="{Binding Turnout}" ItemDisplayBinding="{Binding DisplayFormat, x:DataType='dataModel:Turnout'}"  />
                             <!-- <Entry Placeholder="e.g. NT101" Text="{Binding TurnoutId}" /> -->
                         </Border>
                         <Border Grid.Column="3" Style="{StaticResource EntryBorderStyle}">
@@ -76,12 +89,12 @@
                 </Border>
 
                 <!-- ROUTE -->
-                <Border BackgroundColor="White" Padding="5" StrokeThickness="2" HeightRequest="50">
+                <Border BackgroundColor="White" Padding="5" StrokeThickness="2" HeightRequest="50" IsVisible="{Binding SupportsRoutes}">
                     <Grid ColumnDefinitions="100,100,auto,Auto,Auto" ColumnSpacing="8" RowSpacing="4">
                         <Button Grid.Column="0" Text="Send" Command="{Binding SendRouteCommand}" IsEnabled="{Binding IsConnected}"/>
                         <Label Grid.Column="1" Text="Route Id:" VerticalOptions="Center"/>
                         <Border Grid.Column="2" Style="{StaticResource EntryBorderStyle}">
-                            <Picker ItemsSource="{Binding Profile.Routes}" SelectedItem="{Binding Route}" ItemDisplayBinding="{Binding DisplayFormat}" />
+                            <Picker ItemsSource="{Binding Profile.Routes}" SelectedItem="{Binding Route}" ItemDisplayBinding="{Binding DisplayFormat, x:DataType='dataModel:Route'}" />
                             <!-- <Entry Grid.Column="2" Placeholder="e.g. RT201" Text="{Binding RouteId}" /> -->
                         </Border>
                         <Border Grid.Column="3" Style="{StaticResource EntryBorderStyle}">
@@ -96,12 +109,12 @@
                 </Border>
 
                 <!-- SENSOR -->
-                <Border BackgroundColor="White" Padding="5" StrokeThickness="2" HeightRequest="50">
+                <Border BackgroundColor="White" Padding="5" StrokeThickness="2" HeightRequest="50" IsVisible="{Binding SupportsSensors}">
                     <Grid ColumnDefinitions="100,100,auto,Auto,Auto" ColumnSpacing="8" RowSpacing="4">
                         <Button Grid.Column="0" Text="Send" Command="{Binding SendSensorCommand}" IsEnabled="{Binding IsConnected}"/>
                         <Label Grid.Column="1" Text="Sensor Id:" VerticalOptions="Center"/>
                         <Border Grid.Column="2" Style="{StaticResource EntryBorderStyle}">
-                            <Picker ItemsSource="{Binding Profile.Sensors}" SelectedItem="{Binding Sensor}" ItemDisplayBinding="{Binding DisplayFormat}" />
+                            <Picker ItemsSource="{Binding Profile.Sensors}" SelectedItem="{Binding Sensor}" ItemDisplayBinding="{Binding DisplayFormat, x:DataType='dataModel:Sensor'}" />
                         <!-- <Entry Grid.Column="2" Placeholder="e.g. SN301" Text="{Binding SensorId}" /> -->
                         </Border>
                         <Border Grid.Column="3" Style="{StaticResource EntryBorderStyle}">
@@ -116,12 +129,12 @@
                 </Border>
 
                 <!-- LIGHT -->
-                <Border BackgroundColor="White" Padding="5" StrokeThickness="2" HeightRequest="50">
+                <Border BackgroundColor="White" Padding="5" StrokeThickness="2" HeightRequest="50" IsVisible="{Binding SupportsLights}">
                     <Grid ColumnDefinitions="100,100,auto,Auto,Auto" ColumnSpacing="8" RowSpacing="4">
                         <Button Grid.Column="0" Text="Send" Command="{Binding SendLightCommand}" IsEnabled="{Binding IsConnected}"/>
                         <Label Grid.Column="1" Text="Light Id:" VerticalOptions="Center"/>
                         <Border Grid.Column="2" Style="{StaticResource EntryBorderStyle}">
-                            <Picker ItemsSource="{Binding Profile.Lights}" SelectedItem="{Binding Light}" ItemDisplayBinding="{Binding DisplayFormat}" />
+                            <Picker ItemsSource="{Binding Profile.Lights}" SelectedItem="{Binding Light}" ItemDisplayBinding="{Binding DisplayFormat, x:DataType='dataModel:Light'}" />
                             <!-- <Entry Grid.Column="2" Placeholder="e.g. LT401" Text="{Binding LightId}" /> -->
                         </Border>
                         <Border Grid.Column="3" Style="{StaticResource EntryBorderStyle}">
@@ -136,12 +149,12 @@
                 </Border>
 
                 <!-- BLOCK -->
-                <Border BackgroundColor="White" Padding="5" StrokeThickness="2" HeightRequest="50">
+                <Border BackgroundColor="White" Padding="5" StrokeThickness="2" HeightRequest="50" IsVisible="{Binding SupportsBlocks}">
                     <Grid ColumnDefinitions="100,100,auto,Auto,Auto" ColumnSpacing="8" RowSpacing="4">
                         <Button Grid.Column="0" Text="Send" Command="{Binding SendBlockCommand}" IsEnabled="{Binding IsConnected}"/>
                         <Label Grid.Column="1" Text="Block Id:" VerticalOptions="Center"/>
                         <Border Grid.Column="2" Style="{StaticResource EntryBorderStyle}">
-                            <Picker ItemsSource="{Binding Profile.Blocks}" SelectedItem="{Binding Block}" ItemDisplayBinding="{Binding DisplayFormat}" />
+                            <Picker ItemsSource="{Binding Profile.Blocks}" SelectedItem="{Binding Block}" ItemDisplayBinding="{Binding DisplayFormat, x:DataType='dataModel:Block'}" />
                             <!-- <Entry Grid.Column="2" Placeholder="e.g. BK501" Text="{Binding BlockId}" /> -->
                         </Border>
                         <Border Grid.Column="3" Style="{StaticResource EntryBorderStyle}">
@@ -156,12 +169,12 @@
                 </Border>
 
                 <!-- SIGNAL -->
-                <Border BackgroundColor="White" Padding="5" StrokeThickness="2" HeightRequest="50">
+                <Border BackgroundColor="White" Padding="5" StrokeThickness="2" HeightRequest="50" IsVisible="{Binding SupportsSignals}">
                     <Grid ColumnDefinitions="100,100,auto,Auto,Auto" ColumnSpacing="8" RowSpacing="4">
                         <Button Grid.Column="0" Text="Send" Command="{Binding SendSignalCommand}" IsEnabled="{Binding IsConnected}"/>
                         <Label Grid.Column="1" Text="Signal Id:" VerticalOptions="Center"/>
                         <Border Grid.Column="2" Style="{StaticResource EntryBorderStyle}">
-                            <Picker ItemsSource="{Binding Profile.Signals}" SelectedItem="{Binding Signal}" ItemDisplayBinding="{Binding DisplayFormat}" />
+                            <Picker ItemsSource="{Binding Profile.Signals}" SelectedItem="{Binding Signal}" ItemDisplayBinding="{Binding DisplayFormat, x:DataType='dataModel:Signal'}" />
                             <!-- <Entry Grid.Column="2" Placeholder="e.g. SG601" Text="{Binding SignalId}" /> -->
                         </Border>
                         <Border Grid.Column="3" Style="{StaticResource EntryBorderStyle}">

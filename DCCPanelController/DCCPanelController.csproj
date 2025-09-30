@@ -464,7 +464,7 @@
         <Compile Update="View\SettingsConnectionViewModel.cs">
           <DependentUpon>SettingsConnectionPage.xaml</DependentUpon>
         </Compile>
-        <Compile Update="View\DccClienttestViewModel.cs">
+        <Compile Update="View\DccClientTestViewModel.cs">
           <DependentUpon>DccClientTestView.xaml</DependentUpon>
         </Compile>
     </ItemGroup>

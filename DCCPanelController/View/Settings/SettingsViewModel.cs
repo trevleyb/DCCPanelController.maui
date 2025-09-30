@@ -28,8 +28,8 @@ public partial class SettingsViewModel : BaseViewModel {
         try {
             IsBusy = true;
 
-            var reconnect = ConnectionService.IsConnected;
-            if (reconnect) await ConnectionService.DisconnectAsync();
+            var reconnect = ConnectionService.ConnectionState;
+            if (reconnect == DccClientStatus.Connected) await ConnectionService.DisconnectAsync();
 
             var result = await ConnectionService.ConnectAsync();
             if (result.IsFailure) {
@@ -39,7 +39,7 @@ public partial class SettingsViewModel : BaseViewModel {
                 var message = $"Unable to connect to the server{(string.IsNullOrEmpty(result?.Message) ? "." : $" due to {result?.Exception?.Message ?? "?"}")}";
                 await DisplayAlertHelper.DisplayOkAlertAsync("Error Connecting", message);
             } else {
-                if (!reconnect) await ConnectionService.DisconnectAsync();
+                if (reconnect != DccClientStatus.Connected) await ConnectionService.DisconnectAsync();
                 ConnectionService.AddServerMessage("Connected Successfully.");
                 await DisplayAlertHelper.DisplayOkAlertAsync("Connected", "Successfully connected to the server.");
             }
