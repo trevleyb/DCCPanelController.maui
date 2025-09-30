@@ -81,9 +81,9 @@ public partial class SettingsPageViewModel : ConnectionViewModel {
     [RelayCommand]
     public async Task SaveSettingsAsync() {
         var reconnect = ConnectionService.ConnectionState;
-        if (reconnect == DccClientStatus.Connected) await ConnectionService.DisconnectAsync();
+        if (reconnect == DccClientState.Connected) await ConnectionService.DisconnectAsync();
         await ProfileService.SaveAsync();
-        if (Settings is { ClientSettings: { } } && reconnect == DccClientStatus.Connected) await ConnectionService.ConnectAsync();
+        if (Settings is { ClientSettings: { } } && reconnect == DccClientState.Connected) await ConnectionService.ConnectAsync();
         await DisplayAlertHelper.DisplayToastAlert("Success: Settings and Profile Saved");
         IsDirty = false;
     }

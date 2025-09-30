@@ -1,4 +1,5 @@
 using CommunityToolkit.Mvvm.ComponentModel;
+using DCCPanelController.Clients.Helpers;
 using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
@@ -9,7 +10,7 @@ public abstract partial class DccClientBase(Profile profile) : ObservableObject 
     protected const int ReconnectDelayMs = 5000;
 
     public event EventHandler<DccClientEvent>? ClientMessage;
-    [ObservableProperty] private DccClientStatus _status;
+    [ObservableProperty] private DccClientState _state;
 
     protected Profile Profile = profile;
 
@@ -139,9 +140,9 @@ public abstract partial class DccClientBase(Profile profile) : ObservableObject 
     // ---------------------------------------------------------------------------
     protected virtual void OnClientMessage(string message, DccClientOperation operation = DccClientOperation.System, DccClientMessageType msgType = DccClientMessageType.System) => OnClientMessage(new DccClientMessage(message, operation, msgType));
 
-    protected virtual void OnClientMessage(DccClientMessage message) => OnClientMessage(new DccClientEvent(Status, message));
+    protected virtual void OnClientMessage(DccClientMessage message) => OnClientMessage(new DccClientEvent(State, message));
 
-    protected virtual void OnClientMessage() => ClientMessage?.Invoke(this, new DccClientEvent(Status, null));
+    protected virtual void OnClientMessage() => ClientMessage?.Invoke(this, new DccClientEvent(State, null));
 
     protected virtual void OnClientMessage(DccClientEvent e) => ClientMessage?.Invoke(this, e);
 }

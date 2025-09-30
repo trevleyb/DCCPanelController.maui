@@ -104,7 +104,7 @@ public partial class SensorsViewModel : ConnectionViewModel {
         if (sensor == null) return;
         sensor.State = !sensor.State;
         if (!string.IsNullOrEmpty(sensor.Id)) {
-            if (ConnectionService.Client is {Status: DccClientStatus.Connected } client) await client.SendSensorCmdAsync(sensor, sensor.State)!;
+            if (ConnectionService.Client is {State: DccClientState.Connected } client) await client.SendSensorCmdAsync(sensor, sensor.State)!;
         }
     }
 
@@ -149,7 +149,7 @@ public partial class SensorsViewModel : ConnectionViewModel {
     [RelayCommand]
     private async Task SendSensorStateAsync(Sensor? sensor) {
         if (sensor is { }) {
-            if (ConnectionService.Client is {Status: DccClientStatus.Connected } client) await client.SendSensorCmdAsync(sensor, sensor.State)!;
+            if (ConnectionService.Client is {State: DccClientState.Connected } client) await client.SendSensorCmdAsync(sensor, sensor.State)!;
             OnPropertyChanged(nameof(Sensors));
         }
     }

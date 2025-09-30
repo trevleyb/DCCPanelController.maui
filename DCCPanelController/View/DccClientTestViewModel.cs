@@ -3,6 +3,7 @@ using System.Data;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Clients;
+using DCCPanelController.Clients.Helpers;
 using DCCPanelController.Clients.Jmri;
 using DCCPanelController.Clients.Simulator;
 using DCCPanelController.Clients.WiThrottle;
@@ -43,7 +44,7 @@ public partial class DccClientTestViewModel : ObservableObject {
 
         ConnectionStatusText = "Disconnected";
         ConnectionIndicatorColor = Colors.Red;
-        ConnectionState = DccClientStatus.Disconnected;
+        ConnectionState = DccClientState.Disconnected;
         
         Messages = new ObservableCollection<MsgLine>();
         RefreshCurrentStates();
@@ -73,7 +74,7 @@ public partial class DccClientTestViewModel : ObservableObject {
 
     [ObservableProperty] private string _connectionStatusText;
     [ObservableProperty] private Color  _connectionIndicatorColor;
-    [ObservableProperty] private DccClientStatus _connectionState;
+    [ObservableProperty] private DccClientState _connectionState;
 
     public bool IsConnectionAvailable => CanConnect;
     public bool IsJmri => SelectedClientType == DccClientType.Jmri;
@@ -289,10 +290,10 @@ public partial class DccClientTestViewModel : ObservableObject {
         RefreshCurrentStates();
     }
 
-    private void SvcOnConnectionStateChanged(object? sender, DccClientStatus e) {
+    private void SvcOnConnectionStateChanged(object? sender, DccClientState e) {
         ConnectionState = e;
         switch (e) {
-            case DccClientStatus.Connected:
+            case DccClientState.Connected:
                 AddMessage($"***Connection State Change => CONNECTED", "SYS");
                 ConnectionStatusText = "Connected";
                 ConnectionIndicatorColor = Colors.Green;
@@ -300,7 +301,7 @@ public partial class DccClientTestViewModel : ObservableObject {
                 IsNotConnected = false;
             break;
 
-            case DccClientStatus.Disconnected:
+            case DccClientState.Disconnected:
                 AddMessage($"***Connection State Change => DISCONNECTED", "SYS");
                 ConnectionStatusText = "Disconnected";
                 ConnectionIndicatorColor = Colors.Gray;
@@ -308,7 +309,7 @@ public partial class DccClientTestViewModel : ObservableObject {
                 IsNotConnected = true;
             break;
 
-            case DccClientStatus.Error:
+            case DccClientState.Error:
                 AddMessage($"***Connection State Change => ERROR", "SYS");
                 ConnectionStatusText = "Error";
                 ConnectionIndicatorColor = Colors.Red;
@@ -316,7 +317,7 @@ public partial class DccClientTestViewModel : ObservableObject {
                 IsNotConnected = true;
             break;
 
-            case DccClientStatus.Initialising:
+            case DccClientState.Initialising:
                 AddMessage($"***Connection State Change => INITIALISING", "SYS");
                 ConnectionStatusText = "Initialising";
                 ConnectionIndicatorColor = Colors.Blue;
@@ -324,7 +325,7 @@ public partial class DccClientTestViewModel : ObservableObject {
                 IsNotConnected = false;
             break;
 
-            case DccClientStatus.Reconnecting:
+            case DccClientState.Reconnecting:
                 AddMessage($"***Connection State Change => RECONNECTING", "SYS");
                 ConnectionStatusText = "Reconnecting";
                 ConnectionIndicatorColor = Colors.Yellow;

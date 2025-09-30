@@ -104,7 +104,7 @@ public partial class BlocksViewModel : ConnectionViewModel {
         if (block == null) return;
         block.IsOccupied = !block.IsOccupied;
         if (!string.IsNullOrEmpty(block.Id)) {
-            if (ConnectionService.Client is {Status: DccClientStatus.Connected } client) await client.SendBlockCmdAsync(block, block.IsOccupied)!;
+            if (ConnectionService.Client is {State: DccClientState.Connected } client) await client.SendBlockCmdAsync(block, block.IsOccupied)!;
         }
     }
 

@@ -48,25 +48,25 @@ public partial class OperateViewModel : ConnectionViewModel {
         OnConnectionStateChanged(this, _connectionService.ConnectionState);
     }
 
-    private void OnConnectionStateChanged(object? sender, DccClientStatus e) {
+    private void OnConnectionStateChanged(object? sender, DccClientState e) {
         switch (e) {
-            case DccClientStatus.Connected:
+            case DccClientState.Connected:
                 ConnectionStateText = "Connected";
                 ConnectionStateColor = Colors.Green;
             break;
-            case DccClientStatus.Disconnected:
+            case DccClientState.Disconnected:
                 ConnectionStateText = "Disconnected";
                 ConnectionStateColor = Colors.LightGray;
             break;
-            case DccClientStatus.Error:
+            case DccClientState.Error:
                 ConnectionStateText = "Error";
                 ConnectionStateColor = Colors.Red;
             break;
-            case DccClientStatus.Initialising:
+            case DccClientState.Initialising:
                 ConnectionStateText = "Initialising";
                 ConnectionStateColor = Colors.Blue;
             break;
-            case DccClientStatus.Reconnecting:
+            case DccClientState.Reconnecting:
                 ConnectionStateText = "Reconnecting";
                 ConnectionStateColor = Colors.Yellow;
             break;

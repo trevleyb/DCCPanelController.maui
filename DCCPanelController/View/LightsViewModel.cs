@@ -102,7 +102,7 @@ public partial class LightsViewModel : ConnectionViewModel {
         if (light == null) return;
         light.State = !light.State;
         if (!string.IsNullOrEmpty(light.Id)) {
-            if (ConnectionService.Client is {Status: DccClientStatus.Connected } client) await client.SendLightCmdAsync(light, light.State)!;
+            if (ConnectionService.Client is {State: DccClientState.Connected } client) await client.SendLightCmdAsync(light, light.State)!;
         }
     }
 
@@ -148,7 +148,7 @@ public partial class LightsViewModel : ConnectionViewModel {
     [RelayCommand]
     private async Task SendLightStateAsync(Light? light) {
         if (light is { }) {
-            if (ConnectionService.Client is {Status: DccClientStatus.Connected } client) await client.SendLightCmdAsync(light, light.State)!;
+            if (ConnectionService.Client is {State: DccClientState.Connected } client) await client.SendLightCmdAsync(light, light.State)!;
             OnPropertyChanged(nameof(Lights));
         }
     }

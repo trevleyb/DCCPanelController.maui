@@ -2,7 +2,7 @@ namespace DCCPanelController.Clients;
 
 public enum DccClientType { Jmri, WiThrottle, Simulator }
 
-public enum DccClientStatus { Connected, Disconnected, Reconnecting, Initialising, Error }
+public enum DccClientState { Connected, Disconnected, Reconnecting, Initialising, Error }
 
 public enum DccClientCapability { Turnouts, Routes, Blocks, Lights, Signals }
 

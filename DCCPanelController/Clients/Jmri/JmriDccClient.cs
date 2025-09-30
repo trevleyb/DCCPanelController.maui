@@ -5,10 +5,10 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.Json;
 using DCCPanelController.Clients.Discovery;
+using DCCPanelController.Clients.Helpers;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Clients.Jmri.Events;
-using DCCPanelController.Clients.Jmri.Helpers;
 using DCCPanelController.Helpers; // JMRI event args
 
 namespace DCCPanelController.Clients.Jmri;
@@ -61,7 +61,7 @@ public sealed class JmriDccClient : DccClientBase, IDccClient, IDisposable {
         if (_jmriSettings.SetAutomatically) {
             var auto = await GetAutomaticConnectionDetailsAsync();
             if (auto.IsFailure || auto.Value is null || auto.Value is not JmriSettings) {
-                Status = DccClientStatus.Disconnected;
+                State = DccClientState.Disconnected;
                 OnClientMessage("Could not automatically set connection details.");
                 return Result.Fail(auto.Message ?? "Autodetect failed.");
             }
@@ -77,7 +77,7 @@ public sealed class JmriDccClient : DccClientBase, IDccClient, IDisposable {
             _connectionTask = MaintainConnectionAsync(_cts.Token);
         }
 
-        Status = DccClientStatus.Initialising;
+        State = DccClientState.Initialising;
         OnClientMessage($"Connecting to JMRI at {_jmriSettings.Address}:{_jmriSettings.Port}...");
         return Result.Ok();
     }
@@ -114,12 +114,12 @@ public sealed class JmriDccClient : DccClientBase, IDccClient, IDisposable {
 
         CloseSocket();
 
-        Status = DccClientStatus.Disconnected;
+        State = DccClientState.Disconnected;
         OnClientMessage("Disconnected from JMRI");
         return Result.Ok();
     }
 
-    public Task<IResult> ValidateConnectionAsync() => Task.FromResult<IResult>(Status == DccClientStatus.Connected ? Result.Ok("JMRI connected") : Result.Fail("JMRI not connected"));
+    public Task<IResult> ValidateConnectionAsync() => Task.FromResult<IResult>(State == DccClientState.Connected ? Result.Ok("JMRI connected") : Result.Fail("JMRI not connected"));
 
     public async Task<IResult> SetAutomaticSettingsAsync() {
         var auto = await GetAutomaticConnectionDetailsAsync();
@@ -203,7 +203,7 @@ public sealed class JmriDccClient : DccClientBase, IDccClient, IDisposable {
             } catch (OperationCanceledException) {
                 break;
             } catch (Exception ex) when (!ct.IsCancellationRequested) {
-                Status = DccClientStatus.Disconnected;
+                State = DccClientState.Disconnected;
                 OnClientMessage($"JMRI connection error: {ex.Message}", DccClientOperation.System, DccClientMessageType.Error);
 
                 try {
@@ -216,7 +216,7 @@ public sealed class JmriDccClient : DccClientBase, IDccClient, IDisposable {
     }
 
     private async Task ConnectAndListenAsync(CancellationToken ct) {
-        Status = DccClientStatus.Initialising;
+        State = DccClientState.Initialising;
         CloseSocket();
 
         _ws = new ClientWebSocket();
@@ -225,7 +225,7 @@ public sealed class JmriDccClient : DccClientBase, IDccClient, IDisposable {
         var uri = new Uri($"ws://{_jmriSettings.Address}:{_jmriSettings.Port}/json/");
         await _ws.ConnectAsync(uri, ct);
 
-        Status = DccClientStatus.Connected;
+        State = DccClientState.Connected;
         OnClientMessage("Connected to JMRI server, waiting for handshake");
 
         // Start receive loop
@@ -246,7 +246,7 @@ public sealed class JmriDccClient : DccClientBase, IDccClient, IDisposable {
         // When listen exits, mark disconnected (reconnect loop will schedule the retry)
         StopHeartbeat();
         StopRefreshTimer();
-        Status = DccClientStatus.Disconnected;
+        State = DccClientState.Disconnected;
         OnClientMessage("JMRI connection closed");
     }
 
@@ -402,7 +402,7 @@ public sealed class JmriDccClient : DccClientBase, IDccClient, IDisposable {
         if (refreshMs <= 0) return;
         _refresh = new Timer(async void (_) => {
             try {
-                if (Status == DccClientStatus.Connected) await SubscribeToUpdatesAsync();
+                if (State == DccClientState.Connected) await SubscribeToUpdatesAsync();
             } catch (Exception ex) {
                 Debug.WriteLine($"JMRI refresh failed: {ex.Message}");
             }

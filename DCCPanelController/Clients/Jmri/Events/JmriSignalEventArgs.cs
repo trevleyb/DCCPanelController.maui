@@ -1,5 +1,5 @@
 using System.Text.Json;
-using DCCPanelController.Clients.Jmri.Helpers;
+using DCCPanelController.Clients.Helpers;
 
 namespace DCCPanelController.Clients.Jmri.Events;
 

@@ -1,7 +1,7 @@
 namespace DCCPanelController.Clients;
 
-public class DccClientEvent(DccClientStatus status, DccClientMessage? message) : EventArgs {
-    public DccClientStatus Status { get; init; } = status;
+public class DccClientEvent(DccClientState state, DccClientMessage? message) : EventArgs {
+    public DccClientState State { get; init; } = state;
     public DccClientMessage? Message { get; init; } = message;
-    public bool IsConnected => Status == DccClientStatus.Connected;
+    public bool IsConnected => State == DccClientState.Connected;
 }

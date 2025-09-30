@@ -15,7 +15,7 @@ public partial class ConnectionService : ObservableObject {
     private readonly ILogger<ConnectionService>    _logger = LogHelper.CreateLogger<ConnectionService>();
     private readonly ProfileService.ProfileService _profileService;
 
-    [ObservableProperty] private DccClientStatus                        _connectionState;
+    [ObservableProperty] private DccClientState                        _connectionState;
     [ObservableProperty] private ObservableCollection<DccClientMessage> _serverMessages = [];
 
     public ConnectionService(ProfileService.ProfileService profileService) {
@@ -26,7 +26,7 @@ public partial class ConnectionService : ObservableObject {
     public IDccClient? Client { get; private set; }
 
     public static ConnectionService Instance => MauiProgram.ServiceHelper.GetService<ConnectionService>();
-    public event EventHandler<DccClientStatus>? ConnectionStateChanged;
+    public event EventHandler<DccClientState>? ConnectionStateChanged;
     public event EventHandler<DccClientEvent>? ConnectionEvent;
 
     private async Task InitializeConnectionAsync() {
@@ -40,21 +40,21 @@ public partial class ConnectionService : ObservableObject {
 
     public async Task<IResult> ToggleConnectionAsync() {
         switch (ConnectionState) {
-            case DccClientStatus.Initialising:
+            case DccClientState.Initialising:
                 Debug.WriteLine("Toggle: Initialising Connection");
                 _= await DisconnectAsync();
                 return await ConnectAsync();
-            case DccClientStatus.Connected:
+            case DccClientState.Connected:
                 Debug.WriteLine("Toggle: Connected so Disconnecting");
                 return await DisconnectAsync();
-            case DccClientStatus.Disconnected:
+            case DccClientState.Disconnected:
                 Debug.WriteLine("Toggle: Disconnected so Connecting");
                 return await ConnectAsync();
-            case DccClientStatus.Error:
+            case DccClientState.Error:
                 Debug.WriteLine("Toggle: Error so disconnecting and connecting");
                 _= await DisconnectAsync();
                 return await ConnectAsync();
-            case DccClientStatus.Reconnecting:
+            case DccClientState.Reconnecting:
                 Debug.WriteLine("Toggle: Reconnecting state so disconnecting and connecting");
                 _= await DisconnectAsync();
                 return await ConnectAsync();
@@ -72,19 +72,19 @@ public partial class ConnectionService : ObservableObject {
     public async Task<IResult> ConnectAsync(IDccClientSettings settings) {
         _hasConnected = false;
         try {
-            if (Client is { Status: DccClientStatus.Connected }) await DisconnectAsync();
+            if (Client is { State: DccClientState.Connected }) await DisconnectAsync();
             if (_profileService.ActiveProfile is { } activeProfile) {
                 Client = DccClientFactory.CreateClient(activeProfile, settings);
                 Client.ClientMessage += ClientOnClientMessage;
                 if (Client is null) {
-                    OnConnectionChanged(DccClientStatus.Error);
+                    OnConnectionChanged(DccClientState.Error);
                     _logger.LogDebug("Unable to create a Client instance.");
                     return Result.Fail("Unable to create a Client instance.");
                 }
 
                 var connectResult = await Client.ConnectAsync();
                 if (connectResult.IsFailure) {
-                    OnConnectionChanged(DccClientStatus.Error);
+                    OnConnectionChanged(DccClientState.Error);
                     _logger.LogDebug("Unable to connect to the specified server.");
                     return Result.Fail("Unable to connect to the specified server.");
                 }
@@ -96,7 +96,7 @@ public partial class ConnectionService : ObservableObject {
             }
         } catch (Exception ex) {
             _logger.LogDebug("Connection Failed: {Message}", ex.Message);
-            OnConnectionChanged(DccClientStatus.Error);
+            OnConnectionChanged(DccClientState.Error);
             return Result.Fail(ex, "Unable to connect to the server.");
         }
         _logger.LogDebug("Unable to connect to the specified server.");
@@ -107,21 +107,21 @@ public partial class ConnectionService : ObservableObject {
         _hasConnected = false;
         if (Client is { }) {
             await ResetOccupancyStates();
-            if (Client.Status == DccClientStatus.Connected) await Client.DisconnectAsync();
+            if (Client.State == DccClientState.Connected) await Client.DisconnectAsync();
             Client.ClientMessage -= ClientOnClientMessage;
             Client = null;
         }
-        OnConnectionChanged(DccClientStatus.Disconnected);
+        OnConnectionChanged(DccClientState.Disconnected);
         return Result.Ok();
     }
 
     private async void ClientOnClientMessage(object? sender, DccClientEvent e) {
         try {
             var lastConnectionState = ConnectionState;
-            ConnectionState = e.Status;
+            ConnectionState = e.State;
             
             Console.WriteLine($"Last: {lastConnectionState} & State: {ConnectionState}");
-            if (ConnectionState == DccClientStatus.Connected && !_hasConnected) {
+            if (ConnectionState == DccClientState.Connected && !_hasConnected) {
                 await SetTurnoutsToDefaultState();
                 await ResetOccupancyStates();
                 _hasConnected = true;
@@ -135,7 +135,7 @@ public partial class ConnectionService : ObservableObject {
         }
     }
 
-    private void OnConnectionChanged(DccClientStatus state) {
+    private void OnConnectionChanged(DccClientState state) {
         ConnectionState = state;
         ConnectionStateChanged?.Invoke(this, state);
     }
@@ -150,7 +150,7 @@ public partial class ConnectionService : ObservableObject {
     public async Task SetTurnoutsToDefaultState() {
         var profile = _profileService.ActiveProfile;
         if (profile?.Settings.SetTurnoutStatesOnStartup ?? false) {
-            if (Client is { Status: DccClientStatus.Connected }) {
+            if (Client is { State: DccClientState.Connected }) {
                 foreach (var turnout in profile.Turnouts) {
                     if (turnout.Default != TurnoutStateEnum.Unknown && !string.IsNullOrEmpty(turnout.Id)) {
                         await Client.SendTurnoutCmdAsync(turnout, turnout.State == TurnoutStateEnum.Thrown);

@@ -481,4 +481,10 @@
         <PackageReference Include="SkiaSharp.NativeAssets.Android" Version="3.119.0"/>
     </ItemGroup>
 
+    <ItemGroup>
+      <AdditionalFiles Include="Clients\Settings\Jmri\JmriSettingsView.xaml" />
+      <AdditionalFiles Include="Clients\Settings\Simulator\SimulatorSettingsView.xaml" />
+      <AdditionalFiles Include="Clients\Settings\WiThrottle\WiThrottleSettingsView.xaml" />
+    </ItemGroup>
+
 </Project>

@@ -1,4 +1,5 @@
 using DCCPanelController.Clients.Discovery;
+using DCCPanelController.Clients.Helpers;
 using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel;
 
@@ -6,7 +7,7 @@ namespace DCCPanelController.Clients;
 
 public interface IDccClient {
     DccClientType Type { get; }
-    DccClientStatus Status { get; }
+    DccClientState State { get; }
 
     public event EventHandler<DccClientEvent>? ClientMessage;
 

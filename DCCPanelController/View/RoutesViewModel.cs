@@ -109,7 +109,7 @@ public partial class RoutesViewModel : ConnectionViewModel {
             _                       => RouteStateEnum.Active,
         };
         if (!string.IsNullOrEmpty(route.Id)) {
-            if (ConnectionService.Client is {Status: DccClientStatus.Connected } client) await client.SendRouteCmdAsync(route, true)!;
+            if (ConnectionService.Client is {State: DccClientState.Connected } client) await client.SendRouteCmdAsync(route, true)!;
         }
     }
 }

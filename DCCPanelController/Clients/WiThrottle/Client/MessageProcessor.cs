@@ -1,4 +1,4 @@
-using DCCPanelController.Clients.WiThrottle.Client.Messages;
+using DCCPanelController.Clients.WiThrottle.Messages;
 
 namespace DCCPanelController.Clients.WiThrottle.Client;
 

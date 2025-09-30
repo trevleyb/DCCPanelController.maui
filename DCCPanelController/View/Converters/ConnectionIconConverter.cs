@@ -14,14 +14,14 @@ public class ConnectionIconConverter : IMultiValueConverter {
         var isActive = values[0] as bool? ?? false;
 
         // Parameter 2: bool (determines which base name to use)
-        var state = values[1] is DccClientStatus ? (DccClientStatus)values[1] : DccClientStatus.Connected;
+        var state = values[1] is DccClientState ? (DccClientState)values[1] : DccClientState.Connected;
 
         var baseName = state switch {
-            DccClientStatus.Connected    => "wifi_on",
-            DccClientStatus.Disconnected => "wifi_off",
-            DccClientStatus.Error        => "wifi_error",
-            DccClientStatus.Reconnecting => "wifi_reconnecting",
-            DccClientStatus.Initialising => "wifi_initialising",
+            DccClientState.Connected    => "wifi_on",
+            DccClientState.Disconnected => "wifi_off",
+            DccClientState.Error        => "wifi_error",
+            DccClientState.Reconnecting => "wifi_reconnecting",
+            DccClientState.Initialising => "wifi_initialising",
             _                            => "wifi_off",
         };
 
