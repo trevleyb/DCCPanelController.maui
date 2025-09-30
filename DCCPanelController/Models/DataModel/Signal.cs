@@ -9,7 +9,7 @@ namespace DCCPanelController.Models.DataModel;
 ///     This is controlled by data that comes in via the Withrottle Interface
 /// </summary>
 [DebuggerDisplay("UniqueId: {Id}, SystemName: {Name}, State: {DccAddress}")]
-public partial class Signal : DccDccTable {
+public partial class Signal : DccTable {
     [ObservableProperty] private string  _aspect = "Off";
 
     public event EventHandler<string>? AspectChanged;

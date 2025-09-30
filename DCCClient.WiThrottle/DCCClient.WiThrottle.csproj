@@ -23,8 +23,4 @@
         <PackageReference Include="Syncfusion.Maui.Toolkit" Version="1.0.6"/>
     </ItemGroup>
 
-    <ItemGroup>
-      <ProjectReference Include="..\DCCCommon\DCCCommon.csproj" />
-    </ItemGroup>
-
 </Project>

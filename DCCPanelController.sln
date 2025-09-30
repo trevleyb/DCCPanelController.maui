@@ -2,14 +2,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DCCPanelController", "DCCPanelController\DCCPanelController.csproj", "{E1D9373F-6622-41EE-9617-ED6921FC73E3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DCCClient.WiThrottle", "DCCClient.WiThrottle\DCCClient.WiThrottle.csproj", "{D9D3B2A3-5278-48D2-B74D-BF485EB0D4B8}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DCCClient.Jmri", "DCCClient.Jmri\DCCClient.Jmri.csproj", "{EB3DB364-3252-4925-98AC-72C7BA7CCE00}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DCCClient.Simulator", "DCCClient.Simulator\DCCClient.Simulator.csproj", "{3B2F6EDC-973B-40A7-870B-5CE8045C99BB}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DCCCommon", "DCCCommon\DCCCommon.csproj", "{FF0CFA97-7C36-4D53-AA6A-6F2DB0DD5F37}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -20,21 +12,5 @@ Global
 		{E1D9373F-6622-41EE-9617-ED6921FC73E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E1D9373F-6622-41EE-9617-ED6921FC73E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E1D9373F-6622-41EE-9617-ED6921FC73E3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D9D3B2A3-5278-48D2-B74D-BF485EB0D4B8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D9D3B2A3-5278-48D2-B74D-BF485EB0D4B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D9D3B2A3-5278-48D2-B74D-BF485EB0D4B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D9D3B2A3-5278-48D2-B74D-BF485EB0D4B8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{EB3DB364-3252-4925-98AC-72C7BA7CCE00}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EB3DB364-3252-4925-98AC-72C7BA7CCE00}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EB3DB364-3252-4925-98AC-72C7BA7CCE00}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EB3DB364-3252-4925-98AC-72C7BA7CCE00}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3B2F6EDC-973B-40A7-870B-5CE8045C99BB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3B2F6EDC-973B-40A7-870B-5CE8045C99BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3B2F6EDC-973B-40A7-870B-5CE8045C99BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3B2F6EDC-973B-40A7-870B-5CE8045C99BB}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FF0CFA97-7C36-4D53-AA6A-6F2DB0DD5F37}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FF0CFA97-7C36-4D53-AA6A-6F2DB0DD5F37}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FF0CFA97-7C36-4D53-AA6A-6F2DB0DD5F37}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FF0CFA97-7C36-4D53-AA6A-6F2DB0DD5F37}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

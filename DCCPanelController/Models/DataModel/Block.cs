@@ -4,7 +4,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace DCCPanelController.Models.DataModel;
 
-public partial class Block : DccDccTable {
+public partial class Block : DccTable {
     [ObservableProperty] private string? _sensor;
 
     [ObservableProperty]

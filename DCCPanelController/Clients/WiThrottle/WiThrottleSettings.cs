@@ -24,7 +24,8 @@ public partial class WiThrottleSettings : ObservableObject, IDccClientSettings {
 
     [JsonIgnore] public bool SetManually => !SetAutomatically;
     [JsonIgnore] public bool SupportsManualEntries => true;
-    [JsonIgnore] public List<DccClientCapability> Capabilities => WiThrottleProxy.Capabilities;
+    [JsonIgnore] public List<DccClientCapability> Capabilities => [DccClientCapability.Turnouts, DccClientCapability.Routes];
+
     public DccClientType Type => DccClientType.WiThrottle;
 
     [JsonIgnore]

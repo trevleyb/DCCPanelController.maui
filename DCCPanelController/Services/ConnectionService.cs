@@ -1,7 +1,6 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using DCCCommon;
 using DCCPanelController.Clients;
 using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel.Entities;
@@ -29,6 +28,7 @@ public partial class ConnectionService : ObservableObject {
 
     public static ConnectionService Instance => MauiProgram.ServiceHelper.GetService<ConnectionService>();
     public event EventHandler<bool>? ConnectStateChanged;
+    public event EventHandler<DccClientEvent>? ClientEvent;
 
     private async Task InitializeConnectionAsync() {
         try {
@@ -48,12 +48,18 @@ public partial class ConnectionService : ObservableObject {
     }
 
     public async Task<IResult> ConnectAsync() {
+        if (_profileService.ActiveProfile?.Settings.ClientSettings is { } settings) {
+            return await ConnectAsync(settings);
+        }
+        return Result.Fail("Unable to connect to the server.");
+    }
+
+    public async Task<IResult> ConnectAsync(IDccClientSettings settings) {
         isConnected = false;
         try {
             if (Client is { IsConnected : true }) await DisconnectAsync();
-            var activeProfile = _profileService.ActiveProfile;
-            if (activeProfile?.Settings.ClientSettings is { } settings) {
-                Client = DccClientFactory.CreateClient(activeProfile, activeProfile.Settings.ClientSettings);
+            if (_profileService.ActiveProfile is { } activeProfile) {
+                Client = DccClientFactory.CreateClient(activeProfile, settings);
                 Client.ClientMessage += ClientOnClientMessage;
                 if (Client is null) {
                     OnConnectionChanged(false);
@@ -68,7 +74,8 @@ public partial class ConnectionService : ObservableObject {
                     return Result.Fail("Unable to connect to the specified server.");
                 }
 
-                //OnConnectionChanged(true);
+                OnConnectionChanged(true);
+
                 //await SetTurnoutsToDefaultState();
                 //await ResetOccupancyStates();
                 return connectResult;
@@ -107,10 +114,11 @@ public partial class ConnectionService : ObservableObject {
                 isConnected = true;
             }
 
-            ConnectStateChanged?.Invoke(null, IsConnected);
+            ClientEvent?.Invoke(this, e);
+            //ConnectStateChanged?.Invoke(null, IsConnected);
             ServerMessages.Add(e.Message);
         } catch (Exception ex) {
-            Console.WriteLine("Client Message Error: " +ex.Message);
+            Console.WriteLine("Client Message Error: " + ex.Message);
         }
     }
 

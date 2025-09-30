@@ -114,10 +114,7 @@ public abstract class TrackTile : Tile, ITileTrack {
     }
 
     private SKImage GetOrRender(TileRenderKey key, SvgImage svgImage, SvgStyleBuilder style) {
-        if (TileRenderCache.Shared.TryGet(key, out var cached)) {
-            Debug.WriteLine($"{Entity.EntityName} loaded from Cache");
-            return cached;
-        }
+        if (TileRenderCache.Shared.TryGet(key, out var cached)) return cached;
 
         svgImage.ApplyStyle(style.Build());
         var info = new SKImageInfo(key.PixelWidth, key.PixelHeight, SKColorType.Rgba8888, SKAlphaType.Premul);

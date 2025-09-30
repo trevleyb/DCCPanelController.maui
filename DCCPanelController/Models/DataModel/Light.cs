@@ -9,7 +9,7 @@ namespace DCCPanelController.Models.DataModel;
 ///     This is controlled by data that comes in via the Withrottle Interface
 /// </summary>
 [DebuggerDisplay("UniqueId: {Id}, SystemName: {Name}, State: {State}")]
-public partial class Light : DccDccTable {
+public partial class Light : DccTable {
     [ObservableProperty] private bool    _state;
     
     public event EventHandler<bool>? StateChanged;

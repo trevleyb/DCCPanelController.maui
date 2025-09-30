@@ -24,7 +24,7 @@ public partial class JmriSettings : ObservableObject, IDccClientSettings {
 
     [JsonIgnore] public bool SetManually => !SetAutomatically;
     [JsonIgnore] public bool SupportsManualEntries => false;
-    [JsonIgnore] public List<DccClientCapability> Capabilities => JmriProxy.Capabilities;
+    [JsonIgnore] public List<DccClientCapability> Capabilities => [DccClientCapability.Turnouts, DccClientCapability.Routes, DccClientCapability.Lights, DccClientCapability.Blocks];
     public DccClientType Type => DccClientType.Jmri;
 
     [JsonIgnore]

@@ -3,8 +3,8 @@ using System.Runtime.CompilerServices;
 using CommunityToolkit.Maui.Core.Extensions;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using DCCCommon.Discovery;
 using DCCPanelController.Clients;
+using DCCPanelController.Clients.Discovery;
 using DCCPanelController.Services;
 using DCCPanelController.View.Base;
 

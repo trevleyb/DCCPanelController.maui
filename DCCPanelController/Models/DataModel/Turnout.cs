@@ -10,7 +10,7 @@ namespace DCCPanelController.Models.DataModel;
 ///     This is controlled by data that comes in via the Withrottle Interface
 /// </summary>
 [DebuggerDisplay("UniqueId: {Id}, SystemName: {Name}, State: {State}")]
-public partial class Turnout : DccDccTable {
+public partial class Turnout : DccTable {
     [ObservableProperty] private TurnoutStateEnum _state   = TurnoutStateEnum.Unknown;
     [ObservableProperty] private TurnoutStateEnum _default = TurnoutStateEnum.Unknown;
 

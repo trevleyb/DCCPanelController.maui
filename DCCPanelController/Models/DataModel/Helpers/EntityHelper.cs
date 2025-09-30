@@ -4,6 +4,52 @@ using DCCPanelController.Models.DataModel.Entities.Interfaces;
 namespace DCCPanelController.Models.DataModel.Helpers;
 
 public static class EntityHelper {
+    public static bool TryGet<T>(this IEnumerable<T>? sourceEnumerator, string? key, out T? item)
+        where T : class, IDccTable {
+        
+        item = null;
+        var source = sourceEnumerator?.ToList();
+        if (source is null || string.IsNullOrWhiteSpace(key)) return false;
+
+        const StringComparison cmp = StringComparison.InvariantCultureIgnoreCase;
+
+        // 1) Id match
+        item = source.FirstOrDefault(x => string.Equals(x.Id, key, cmp));
+        if (item is { }) return true;
+
+        // 2) Name match
+        item = source.FirstOrDefault(x => string.Equals(x.Name, key, cmp));
+        if (item is { }) return true;
+
+        // 3) DccAddress match (extract digits from the key, like your base does)
+        var digits = new string(key.Where(char.IsDigit).ToArray());
+        if (digits.Length > 0 && int.TryParse(digits, out var addr)) {
+            item = source.FirstOrDefault(x => x.DccAddress == addr);
+            if (item is not null) return true;
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    /// Overload that also accepts a nullable DCC address if you have it handy.
+    /// Tries Id/Name first; then DccAddress if provided.
+    /// </summary>
+    public static bool TryGet<T>(this IEnumerable<T> sourceEnumerator, string? idOrName, int? dccAddress, out T? item)
+        where T : class, IDccTable {
+        
+        item = null;
+        var source = sourceEnumerator?.ToList();
+        if (source is null || string.IsNullOrWhiteSpace(idOrName) || dccAddress is null) return false; 
+        
+        if (source.TryGet(idOrName, out item)) return true;
+        item = source.FirstOrDefault(x => x.DccAddress == dccAddress.Value);
+        if (item is { }) return true;
+
+        item = null;
+        return false;
+    }
+
     public static List<T> GetAllEntitiesByType<T>(Panel? parent) where T : IEntityID {
         if (parent is null) return[];
 

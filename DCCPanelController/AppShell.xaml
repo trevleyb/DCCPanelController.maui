@@ -53,6 +53,12 @@
             <ShellContent ContentTemplate="{DataTemplate view:OperatePage}"/>
         </Tab>
 
+        <Tab Icon="control.png"
+             Title="DCC Testing"
+             IsEnabled="{Binding Source={x:Static services:AppStateService.Instance}, Path=IsNavigationAllowed}">
+            <ShellContent ContentTemplate="{DataTemplate view:DccClientTestView}"/>
+        </Tab>
+
         <Tab
             Icon="panels.png"
             Title="Panel Editor"

@@ -4,7 +4,7 @@ using DCCPanelController.Models.DataModel.Entities;
 
 namespace DCCPanelController.Models.DataModel;
 
-public partial class Route : DccDccTable {
+public partial class Route : DccTable {
     [ObservableProperty] private RouteStateEnum _state = RouteStateEnum.Unknown;
 
     /// <summary>

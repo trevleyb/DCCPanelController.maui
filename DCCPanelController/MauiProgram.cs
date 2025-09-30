@@ -74,6 +74,7 @@ public static class MauiProgram {
         services.AddSingletonViewAndModel<OperatePage, OperateViewModel>();
         services.AddSingletonViewAndModel<PanelViewer, PanelViewerViewModel>();
         services.AddSingletonViewAndModel<TestPage, TestPageViewModel>();
+        services.AddSingletonViewAndModel<DccClientTestView, DccClientTestViewModel>();
 
         services.AddTransientViewAndModel<TurnoutsPage, TurnoutsViewModel>();
         services.AddTransientViewAndModel<RoutesPage, RoutesViewModel>();

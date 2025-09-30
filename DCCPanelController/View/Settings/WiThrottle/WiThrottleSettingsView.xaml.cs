@@ -1,12 +1,12 @@
-using DCCCommon.Discovery;
 using DCCPanelController.Clients;
+using DCCPanelController.Clients.Discovery;
 using DCCPanelController.Services;
 
 namespace DCCPanelController.View.Settings.WiThrottle;
 
 public partial class WiThrottleSettingsView : ContentView {
-    public WiThrottleSettingsView(IDccClientSettings settings, ConnectionService connectionService) {
-        var viewModel = new WiThrottleSettingsViewModel(settings, connectionService);
+    public WiThrottleSettingsView(IDccClientSettings settings, ConnectionService connectionService) : this(new WiThrottleSettingsViewModel(settings, connectionService)) { }
+    public WiThrottleSettingsView(WiThrottleSettingsViewModel viewModel) {
         BindingContext = viewModel;
         InitializeComponent();
 

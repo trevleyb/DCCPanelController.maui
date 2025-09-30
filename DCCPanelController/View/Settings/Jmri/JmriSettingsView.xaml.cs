@@ -1,12 +1,12 @@
-using DCCCommon.Discovery;
 using DCCPanelController.Clients;
+using DCCPanelController.Clients.Discovery;
 using DCCPanelController.Services;
 
 namespace DCCPanelController.View.Settings.Jmri;
 
 public partial class JmriSettingsView : ContentView {
-    public JmriSettingsView(IDccClientSettings settings, ConnectionService connectionService) {
-        var viewModel = new JmriSettingsViewModel(settings, connectionService);
+    public JmriSettingsView(IDccClientSettings settings, ConnectionService connectionService) : this(new JmriSettingsViewModel(settings, connectionService)) { }
+    public JmriSettingsView(JmriSettingsViewModel viewModel) {
         BindingContext = viewModel;
         InitializeComponent();
         viewModel.PropertyChanged += (sender, args) => OnPropertyChanged(args.PropertyName);
