@@ -167,15 +167,17 @@ public class WiThrottleProxy : DccClientBase, IDccClient {
             break;
 
             case TurnoutEvent turnout:
+                OnClientMessage($"Turnout Change Event: {turnout.SystemName}=>{turnout.State}", DccClientOperation.Turnout, DccClientMessageType.Inbound);
                 UpdateTurnout(turnout.SystemName, turnout.UserName, turnout.StateEnum == TurnoutStateEnum.Thrown ? Models.DataModel.Entities.TurnoutStateEnum.Thrown : Models.DataModel.Entities.TurnoutStateEnum.Closed);
             break;
 
             case RouteEvent route:
+                OnClientMessage($"Route Change Event: {route.SystemName}=>{route.State}", DccClientOperation.Route, DccClientMessageType.Inbound);
                 UpdateRoute(route.SystemName, route.UserName, route.StateEnum == RouteStateEnum.Active ? Models.DataModel.Entities.RouteStateEnum.Active : Models.DataModel.Entities.RouteStateEnum.Inactive);
             break;
 
             default:
-                OnClientMessage($"Recieved an invalid Message from WiThrottle '{clientEvent.GetType().Name}' {clientEvent.ToString()}");
+                OnClientMessage($"Received an invalid Message from WiThrottle '{clientEvent.GetType().Name}' {clientEvent.ToString()}");
             break;
         }
     }

@@ -71,8 +71,9 @@ public class JmriProxy : DccClientBase, IDccClient {
     /// </summary>
     public async Task<IResult> DisconnectAsync() {
         Status = DccClientStatus.Disconnected;
-        OnClientMessage("Disconnected from Jmri");
+        OnClientMessage("Disconnecting from Jmri");
         if (_client is { }) {
+            await _client.DisconnectAsync();
             _client.ConnectionStateChanged -= ClientOnConnectionStateChanged;
             _client.TurnoutChanged -= ClientOnTurnoutChanged;
             _client.BlockChanged -= ClientOnBlockChanged;
@@ -83,6 +84,7 @@ public class JmriProxy : DccClientBase, IDccClient {
             _client.Dispose();
             _client = null;
         }
+        OnClientMessage("Disconnected from Jmri");
         return Result.Ok();
     }
 
@@ -199,17 +201,35 @@ public class JmriProxy : DccClientBase, IDccClient {
     #endregion
 
     #region Respond to Data Events
-    private void ClientOnSignalChanged(object? sender, JmriSignalEventArgs e) => UpdateSignal(e.Name, e.UserName, SignalAspectEnum.Off);
+    private void ClientOnSignalChanged(object? sender, JmriSignalEventArgs e) {
+        OnClientMessage($"Signal Change Event: {e.Name}=>{e.Appearance}", DccClientOperation.Signal, DccClientMessageType.Inbound);
+        UpdateSignal(e.Name, e.UserName, SignalAspectEnum.Off);
+    }
 
-    private void ClientOnRouteChanged(object? sender, JmriRouteEventArgs e) => UpdateRoute(e.Name, e.UserName, e.State == 2 ? RouteStateEnum.Active : RouteStateEnum.Inactive);
+    private void ClientOnRouteChanged(object? sender, JmriRouteEventArgs e) {
+        OnClientMessage($"Route Change Event: {e.Name}=>{(e.State == 0 ? "UnSet" : "Set")}", DccClientOperation.Route, DccClientMessageType.Inbound);
+        UpdateRoute(e.Name, e.UserName, e.State == 2 ? RouteStateEnum.Active : RouteStateEnum.Inactive);
+    }
 
-    private void ClientOnSensorChanged(object? sender, JmriSensorEventArgs e) => UpdateSensor(e.Name, e.UserName, e.State == 2);
+    private void ClientOnSensorChanged(object? sender, JmriSensorEventArgs e) {
+        OnClientMessage($"Sensor Change Event: {e.Name}=>{(e.State == 0 ? "Off" : "On")}", DccClientOperation.Sensor, DccClientMessageType.Inbound);
+        UpdateSensor(e.Name, e.UserName, e.State == 2);
+    }
 
-    private void ClientOnLightChanged(object? sender, JmriLightEventArgs e) => UpdateLight(e.Name, e.UserName, e.State == 2);
+    private void ClientOnLightChanged(object? sender, JmriLightEventArgs e) {
+        OnClientMessage($"Light Change Event: {e.Name}=>{(e.State == 0 ? "Off" : "On")}", DccClientOperation.Light, DccClientMessageType.Inbound);
+        UpdateLight(e.Name, e.UserName, e.State == 2);
+    }
 
-    private void ClientOnBlockChanged(object? sender, JmriBlockEventArgs e) => UpdateBlock(e.Name, e.UserName, e.State == 2, e.SensorName);
+    private void ClientOnBlockChanged(object? sender, JmriBlockEventArgs e) {
+        OnClientMessage($"Block Change Event: {e.Name}=>{(e.State == 0 ? "Free" : "Occupied")}", DccClientOperation.Block, DccClientMessageType.Inbound);
+        UpdateBlock(e.Name, e.UserName, e.State == 2, e.SensorName);
+    }
 
-    private void ClientOnTurnoutChanged(object? sender, JmriTurnoutEventArgs e) => UpdateTurnout(e.Name, e.UserName, e.State == 2 ? TurnoutStateEnum.Closed : TurnoutStateEnum.Thrown);
+    private void ClientOnTurnoutChanged(object? sender, JmriTurnoutEventArgs e) {
+        OnClientMessage($"Turnout Change Event: {e.Name}=>{(e.State == 0 ? "Closed" : "Thrown")}", DccClientOperation.Turnout, DccClientMessageType.Inbound);
+        UpdateTurnout(e.Name, e.UserName, e.State == 2 ? TurnoutStateEnum.Closed : TurnoutStateEnum.Thrown);
+    }
 
     private void ClientOnConnectionStateChanged(object? sender, JmriConnectionChangedEventArgs e) {
         Status = e.IsConnected ? DccClientStatus.Connected : DccClientStatus.Disconnected;

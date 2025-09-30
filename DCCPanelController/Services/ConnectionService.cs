@@ -12,6 +12,8 @@ namespace DCCPanelController.Services;
 public partial class ConnectionService : ObservableObject {
     private const int MaxServerMessages = 500;
 
+    private bool isConnected = false;
+
     private readonly ILogger<ConnectionService>    _logger = LogHelper.CreateLogger<ConnectionService>();
     private readonly ProfileService.ProfileService _profileService;
 
@@ -46,6 +48,7 @@ public partial class ConnectionService : ObservableObject {
     }
 
     public async Task<IResult> ConnectAsync() {
+        isConnected = false;
         try {
             if (Client is { IsConnected : true }) await DisconnectAsync();
             var activeProfile = _profileService.ActiveProfile;
@@ -65,9 +68,9 @@ public partial class ConnectionService : ObservableObject {
                     return Result.Fail("Unable to connect to the specified server.");
                 }
 
-                OnConnectionChanged(true);
-                await SetTurnoutsToDefaultState();
-                await ResetOccupancyStates();
+                //OnConnectionChanged(true);
+                //await SetTurnoutsToDefaultState();
+                //await ResetOccupancyStates();
                 return connectResult;
             }
         } catch (Exception ex) {
@@ -80,6 +83,7 @@ public partial class ConnectionService : ObservableObject {
     }
 
     public async Task DisconnectAsync() {
+        isConnected = false;
         if (Client is { }) {
             await ResetOccupancyStates();
             if (Client.IsConnected) await Client.DisconnectAsync();
@@ -89,14 +93,25 @@ public partial class ConnectionService : ObservableObject {
         OnConnectionChanged(false);
     }
 
-    private void ClientOnClientMessage(object? sender, DccClientEvent e) {
-        if (e.Message is null) return;
-        IsConnected = e.Status switch {
-            DccClientStatus.Connected => true,
-            _                         => false,
-        };
-        ConnectStateChanged?.Invoke(null, IsConnected);
-        ServerMessages.Add(e.Message);
+    private async void ClientOnClientMessage(object? sender, DccClientEvent e) {
+        try {
+            if (e.Message is null) return;
+            IsConnected = e.Status switch {
+                DccClientStatus.Connected => true,
+                _                         => false,
+            };
+
+            if (IsConnected && !isConnected) {
+                await SetTurnoutsToDefaultState();
+                await ResetOccupancyStates();
+                isConnected = true;
+            }
+
+            ConnectStateChanged?.Invoke(null, IsConnected);
+            ServerMessages.Add(e.Message);
+        } catch (Exception ex) {
+            Console.WriteLine("Client Message Error: " +ex.Message);
+        }
     }
 
     private void OnConnectionChanged(bool? isConnected = null) {

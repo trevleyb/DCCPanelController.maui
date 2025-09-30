@@ -4,4 +4,5 @@ public enum ConnectionStateEnum {
     Initialising,
     Connected, 
     Disconnected,
+    Disconnecting
 }

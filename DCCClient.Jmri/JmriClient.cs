@@ -10,27 +10,31 @@ using DccClients.Jmri.Helpers;
 namespace DccClients.Jmri;
 
 public class JmriClient : IDisposable {
-    private const int MinimumRefreshMs = 250;
-    private readonly ConcurrentDictionary<string, JmriBlockEventArgs> _blocks = new();
-    private readonly Lock _connectionLock = new();
-    private readonly ConcurrentDictionary<string, JmriLightEventArgs> _lights = new();
-    private readonly int _reconnectDelayMs;
-    private readonly int _refreshMs;
-    private readonly ConcurrentDictionary<string, JmriRouteEventArgs> _routes = new();
-    private readonly ConcurrentDictionary<string, JmriSensorEventArgs> _sensors = new();
+    private const int DefaultConnectTimeoutMs   = 10000; // 10s
+    private const int DefaultHandshakeTimeoutMs = 8000;  // 8s
+    private const int MinimumRefreshMs          = 250;
+
+    private readonly ConcurrentDictionary<string, JmriBlockEventArgs>   _blocks   = new();
+    private readonly ConcurrentDictionary<string, JmriRouteEventArgs>   _routes   = new();
+    private readonly ConcurrentDictionary<string, JmriSensorEventArgs>  _sensors  = new();
+    private readonly ConcurrentDictionary<string, JmriLightEventArgs>   _lights   = new();
+    private readonly ConcurrentDictionary<string, JmriSignalEventArgs>  _signals  = new();
+    private readonly ConcurrentDictionary<string, JmriTurnoutEventArgs> _turnouts = new();
+
+    private readonly int    _reconnectDelayMs;
+    private readonly int    _refreshMs;
     private readonly string _serverUrl;
-    private readonly ConcurrentDictionary<string, JmriSignalEventArgs> _signals = new();
 
     // Collections to store current-state
-    private readonly ConcurrentDictionary<string, JmriTurnoutEventArgs> _turnouts = new();
-    private CancellationTokenSource? _cancellationTokenSource;
-    private Task? _connectionTask;
-    private TaskCompletionSource<bool>? _handshakeCompletion;
+    private readonly Lock                        _connectionLock = new();
+    private          CancellationTokenSource?    _cancellationTokenSource;
+    private          Task?                       _connectionTask;
+    private          TaskCompletionSource<bool>? _handshakeCompletion;
 
     private Timer? _heartbeatTimer;
-    private bool _isDisposed;
+    private bool   _isDisposed;
 
-    private bool _isHandshakeComplete;
+    private bool   _isHandshakeComplete;
     private Timer? _refreshTimer;
 
     private ClientWebSocket? _webSocket;
@@ -73,6 +77,7 @@ public class JmriClient : IDisposable {
     public event EventHandler<JmriBlockEventArgs>? BlockChanged;
 
     public Task ConnectAsync() {
+        Debug.WriteLine("JMRI CLIENT: ConnectAsync");
         lock (_connectionLock) {
             if (_connectionTask is { IsCompleted: false }) return Task.CompletedTask;
             _cancellationTokenSource?.Cancel();
@@ -83,6 +88,7 @@ public class JmriClient : IDisposable {
     }
 
     public async Task DisconnectAsync() {
+        Debug.WriteLine("JMRI CLIENT: DisconnectAsync");
         StopHeartbeat();
         StopRefreshTimer();
         ConnectionState = ConnectionStateEnum.Disconnected;
@@ -96,8 +102,7 @@ public class JmriClient : IDisposable {
         if (_webSocket?.State == WebSocketState.Open) {
             try {
                 await _webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Client disconnect", CancellationToken.None);
-            } catch { /* ignore errors as we are closing */
-            }
+            } catch { /* ignore errors as we are closing */ }
         }
 
         if (_connectionTask != null) {
@@ -107,20 +112,21 @@ public class JmriClient : IDisposable {
                 Debug.WriteLine("DisconnectAsync: Connection task didn't complete within timeout");
             }
         }
+        Debug.WriteLine("JMRI CLIENT: Disconnected Completely");
         OnConnectionStateChanged(ConnectionState, "Disconnected from JMRI server.");
     }
 
     private async Task MaintainConnectionAsync(CancellationToken cancellationToken) {
+        Debug.WriteLine("JMRI CLIENT: MaintainConnectionAsync");
         while (!cancellationToken.IsCancellationRequested) {
             try {
                 await ConnectAndListenAsync(cancellationToken);
             } catch (OperationCanceledException) {
-                // Cancellation requested - exit cleanly
                 break;
             } catch (Exception ex) when (!cancellationToken.IsCancellationRequested) {
+                Debug.WriteLine("JMRI CLIENT: Exception in MaintainConnectionAsync: " + ex.Message);
                 ConnectionState = ConnectionStateEnum.Disconnected;
-                OnConnectionStateChanged(ConnectionState, $"Connection error: {ex.Message}");
-
+                OnConnectionStateChanged(ConnectionState, $"Connection error: {ex.Message}. Reconnecting in {_reconnectDelayMs}ms...");
                 try {
                     await Task.Delay(_reconnectDelayMs, cancellationToken);
                 } catch (OperationCanceledException) {
@@ -131,37 +137,73 @@ public class JmriClient : IDisposable {
     }
 
     private async Task ConnectAndListenAsync(CancellationToken cancellationToken) {
+        Debug.WriteLine("JMRI CLIENT: ConnectAndListenAsync");
         ConnectionState = ConnectionStateEnum.Initialising;
+        OnConnectionStateChanged(ConnectionState, "Attempting connection...");
 
-        _webSocket?.Dispose();
-        _webSocket = new ClientWebSocket();
+        try {
+            _webSocket?.Dispose();
+            _webSocket = new ClientWebSocket();
+            _webSocket.Options.KeepAliveInterval = TimeSpan.FromSeconds(15);
 
-        _isHandshakeComplete = false;
-        _handshakeCompletion = new TaskCompletionSource<bool>();
+            _isHandshakeComplete = false;
+            _handshakeCompletion = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
 
-        var uri = new Uri(_serverUrl);
-        await _webSocket.ConnectAsync(uri, cancellationToken);
+            var uri = new Uri(_serverUrl);
+            Debug.WriteLine("JMRI CLIENT: Connecting to " + uri);
 
-        ConnectionState = ConnectionStateEnum.Connected;
-        OnConnectionStateChanged(ConnectionState, "Connected to JMRI server, waiting for handshake");
+            // CONNECT with timeout
+            using (var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken)) {
+                cts.CancelAfter(DefaultConnectTimeoutMs);
+                Debug.WriteLine("JMRI CLIENT: Attempting to connect to " + uri);
+                await _webSocket.ConnectAsync(uri, cts.Token);
+            }
 
-        var listenTask = ListenForMessagesAsync(cancellationToken);
+            Debug.WriteLine("JMRI CLIENT: Connected");
+            ConnectionState = ConnectionStateEnum.Connected;
+            OnConnectionStateChanged(ConnectionState, "Connected; waiting for handshake");
 
-        // Wait for handshake with cancellation support
-        using var combinedCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-        var handshakeTask = _handshakeCompletion.Task;
-        var completedTask = await Task.WhenAny(handshakeTask, Task.Delay(-1, combinedCts.Token));
+            // Start listener first so it can catch the hello immediately
+            var listenTask = ListenForMessagesAsync(cancellationToken);
 
-        if (completedTask != handshakeTask) {
-            // Cancellation occurred before handshake
-            cancellationToken.ThrowIfCancellationRequested();
+            // HANDSHAKE with timeout
+            Debug.WriteLine("JMRI CLIENT: Handshake started");
+            using (var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken)) {
+                var timeout = Task.Delay(DefaultHandshakeTimeoutMs, cts.Token);
+                var completed = await Task.WhenAny(_handshakeCompletion.Task, timeout);
+                if (completed != _handshakeCompletion.Task || !_isHandshakeComplete) {
+                    Debug.WriteLine("JMRI CLIENT: Handshake timed out");
+                    throw new TimeoutException("JMRI handshake timed out");
+                }
+            }
+
+            Debug.WriteLine("JMRI CLIENT: Handshake completed");
+            OnConnectionStateChanged(ConnectionState, "Handshake complete; subscribing");
+            await SubscribeToUpdatesAsync();
+            StartRefreshTimer(_refreshMs);
+
+            // Wait for listener to finish; if it exits due to close/error, bubble it up
+            Debug.WriteLine("JMRI CLIENT: Waiting for Listen Tasks");
+            await listenTask;
+            Debug.WriteLine("JMRI CLIENT: Listen task completed/stopped");
+            throw new WebSocketException("Listener stopped unexpectedly");
+        } catch (OperationCanceledException) {
+            throw; // let outer loop exit on cancellation
+        } catch (Exception ex) {
+            Debug.WriteLine("JMRI CLIENT: Connect and Listen Exception: " + ex.Message);
+            StopHeartbeat();
+            StopRefreshTimer();
+            try {
+                _webSocket?.Abort();
+            } catch { /* ignore */ }
+            try {
+                _webSocket?.Dispose();
+            } catch { /* ignore */ }
+
+            ConnectionState = ConnectionStateEnum.Disconnected;
+            OnConnectionStateChanged(ConnectionState, $"Unable to connect: {ex.Message}");
+            throw;
         }
-
-        OnConnectionStateChanged(ConnectionState, "Handshake complete, subscribing to updates");
-        StartRefreshTimer(_refreshMs);
-
-        // Now wait for the listen task to complete
-        await listenTask;
     }
 
     public Task ResetUpdates() {
@@ -196,20 +238,34 @@ public class JmriClient : IDisposable {
         var buffer = new byte[4096];
         var messageBuffer = new StringBuilder();
 
-        while (_webSocket is { State: WebSocketState.Open } && !cancellationToken.IsCancellationRequested && ConnectionState != ConnectionStateEnum.Disconnected) {
-            var result = await _webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), cancellationToken);
+        while (_webSocket is { State: WebSocketState.Open } &&
+               !cancellationToken.IsCancellationRequested &&
+               ConnectionState != ConnectionStateEnum.Disconnected) {
+            WebSocketReceiveResult result;
+            try {
+                result = await _webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), cancellationToken);
+            } catch (OperationCanceledException) {
+                Debug.WriteLine("JMRI CLIENT: ListenForMessagesAsync timed out");
+                throw;
+            } catch (Exception ex) {
+                Debug.WriteLine("JMRI CLIENT:  ListenForMessagesAsync Exception: " + ex.Message);
+                throw new WebSocketException($"Receive failed: {ex.Message}", ex);
+            }
 
             if (result.MessageType == WebSocketMessageType.Text) {
-                var message = Encoding.UTF8.GetString(buffer, 0, result.Count);
-                messageBuffer.Append(message);
+                var chunk = Encoding.UTF8.GetString(buffer, 0, result.Count);
+                messageBuffer.Append(chunk);
 
                 if (result.EndOfMessage) {
                     ProcessMessage(messageBuffer.ToString());
                     messageBuffer.Clear();
                 }
             } else if (result.MessageType == WebSocketMessageType.Close) {
-                Debug.WriteLine("WebSocket was CLOSED.");
-                break;
+                Debug.WriteLine("JMRI CLIENT: Server Closed WebSocket");
+                OnConnectionStateChanged(ConnectionStateEnum.Disconnected, $"Server closed: {result.CloseStatus} {result.CloseStatusDescription}");
+                throw new WebSocketException($"Closed: {result.CloseStatus} {result.CloseStatusDescription}");
+            } else {
+                Debug.WriteLine("JMRI CLIENT: Got something we can't process: " + result.MessageType);
             }
         }
     }
@@ -262,7 +318,16 @@ public class JmriClient : IDisposable {
     }
 
     private bool ProcessGoodbyeMessage(JsonElement root) {
-        OnConnectionStateChanged(ConnectionState, "Goodbye message received from JMRI, disconnecting.");
+        OnConnectionStateChanged(ConnectionStateEnum.Disconnecting, "Goodbye from JMRI; closing.");
+        _ = Task.Run(async () => {
+            try {
+                StopHeartbeat();
+                StopRefreshTimer();
+                if (_webSocket?.State == WebSocketState.Open)
+                    await _webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Server said goodbye", CancellationToken.None);
+            } catch { /* ignore */
+            }
+        });
         return true;
     }
 
@@ -272,7 +337,7 @@ public class JmriClient : IDisposable {
             _isHandshakeComplete = true;
             _handshakeCompletion?.SetResult(true);
             StartHeartbeat(hello.Heartbeat);
-            OnConnectionStateChanged(ConnectionState, "Connection to JMRI has been established.");
+            OnConnectionStateChanged(ConnectionStateEnum.Connected, "Connection established.");
             return true;
         }
         return false;
@@ -411,12 +476,8 @@ public class JmriClient : IDisposable {
     private async Task SendMessageAsync(string? message) {
         if (!string.IsNullOrEmpty(message) && _webSocket?.State == WebSocketState.Open) {
             var bytes = Encoding.UTF8.GetBytes(message);
-            try {
-                await _webSocket.SendAsync(new ArraySegment<byte>(bytes), WebSocketMessageType.Text, true, CancellationToken.None);
-            } catch (Exception ex) {
-                Debug.WriteLine($"Failed to send message to server: {ex.Message}");
-                throw;
-            }
+            using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+            await _webSocket.SendAsync(new ArraySegment<byte>(bytes), WebSocketMessageType.Text, true, cts.Token);
         }
     }
 
