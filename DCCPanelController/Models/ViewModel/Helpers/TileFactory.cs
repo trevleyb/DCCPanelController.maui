@@ -37,9 +37,12 @@ public static class TileFactory {
         var entityType = entity.GetType();
         if (EntityTileMappings.Value.TryGetValue(entityType, out var tileType)) {
             var tile = (ITile?)Activator.CreateInstance(tileType, entity, gridSize);
-            tile?.IsDesignMode = designMode;
+            if (tile is { }) {
+                tile.IsDesignMode = designMode;
+                return tile;
+            } 
         }
-        LogHelper.CreateLogger("Tilefactory").LogDebug("No tile found for entity type {entityTypeName}", entityType.Name);
+        LogHelper.CreateLogger("TileFactory").LogDebug("No tile found for entity type {entityTypeName}", entityType.Name);
         return null;
     }
 }

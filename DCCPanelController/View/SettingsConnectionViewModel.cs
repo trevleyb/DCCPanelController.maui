@@ -23,11 +23,12 @@ using Capabilities = DCCPanelController.View.Helpers.Capabilities;
 namespace DCCPanelController.View;
 
 public partial class SettingsConnectionViewModel : ConnectionViewModel {
-    private readonly             ILogger<SettingsViewModel>                    _logger;
-    private readonly             Dictionary<DccClientType, IDccClientSettings> _settingsCache = [];
-    public readonly              ProfileService                                ProfileService;
-    [ObservableProperty] private Capabilities                                  _capabilities = new();
-    [ObservableProperty] private Microsoft.Maui.Controls.View?                 _currentSettingsView;
+    private readonly ILogger<SettingsViewModel>                    _logger;
+    private readonly Dictionary<DccClientType, IDccClientSettings> _settingsCache = [];
+    public readonly  ProfileService                                ProfileService;
+
+    [ObservableProperty] private Capabilities _capabilities = new();
+    [ObservableProperty] private ContentView? _currentSettingsView;
 
     [ObservableProperty] private bool _isJmriServer;
 
@@ -91,10 +92,10 @@ public partial class SettingsConnectionViewModel : ConnectionViewModel {
         await DisplayAlertHelper.DisplayToastAlert("Success: Settings and Profile Saved");
         IsDirty = false;
     }
-    
+
     public void SetCapabilities() => Capabilities = new Capabilities(Settings?.ClientSettings?.Capabilities ?? []);
 
-    public Microsoft.Maui.Controls.View? LoadSettingsPage() {
+    public ContentView? LoadSettingsPage() {
         if (Settings is null) return null;
         ContentView? view = null;
         if (IsJmriServer) {
@@ -161,7 +162,7 @@ public partial class SettingsConnectionViewModel : ConnectionViewModel {
             return new T();
         }
     }
-    
+
     // React to selection changes from the UI
     partial void OnSelectedSegmentIndexChanged(int value) {
         // Map index to type

@@ -128,12 +128,12 @@
 
         <Button
             Command="{Binding ConnectClickedCommand}"
-            HorizontalOptions="Center"
+            HorizontalOptions="Start"
             IsEnabled="{Binding IsNotBusy}"
             Margin="20,0,20,20"
             Style="{StaticResource ButtonOutline}"
             Text="{Binding ConnectLabel}"
-            WidthRequest="150"/>
+            WidthRequest="180"/>
 
         <BoxView
             BackgroundColor="{StaticResource Primary}"
@@ -152,12 +152,11 @@
                         Available Servers :
                     </Label>
                     <Button
-                        BackgroundColor="{StaticResource White}"
+                        BackgroundColor="Transparent"
                         Command="{Binding RefreshServersClickedCommand}"
                         Grid.Column="1"
                         HorizontalOptions="End"
                         ImageSource="refresh_cw.png"
-                        Style="{StaticResource SmallLabel}"
                         Text="Refresh"
                         TextColor="{StaticResource Primary}"
                         VerticalOptions="Center"/>
