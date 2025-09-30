@@ -32,10 +32,6 @@
 
 
     <VerticalStackLayout Margin="10,0,10,0">
-        <BoxView Margin="0,0,0,10" BackgroundColor="{StaticResource Primary}"
-                 HeightRequest="1"
-                 HorizontalOptions="FillAndExpand"/>
-
         <VerticalStackLayout Margin="10,0,10,0">
             <Label Style="{StaticResource MediumLabel}" HorizontalOptions="Start" VerticalOptions="Start"
                    Text="Device Name (unique name for this Device)"/>
