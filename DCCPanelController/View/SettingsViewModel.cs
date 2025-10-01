@@ -102,7 +102,16 @@ public partial class SettingsPageViewModel : ConnectionViewModel {
     public async Task AddProfileAsync() {
 
         await SaveSettingsAsync();
-        var choices = new[] { "Empty Profile", "Chelsea & Balmain Sample", "Piedmont Southern Sample" };
+        var preChoices = new[] { "Empty Profile", "Chelsea & Balmain Sample", "Piedmont Southern Sample" };
+        var choices = new List<string>();
+        foreach (var choice in preChoices) {
+            var found = false;
+            foreach (var profile in ProfileService.GetProfileNamesWithDefault()) {
+                if (profile.Equals(choice)) found = true;
+            }
+            if (!found) choices.Add(choice);
+        }
+        
         var index = await ProfileSelector.ShowProfileSelector(choices);
         if (index is{ } selectedProfile and>= 0) {
             await SaveSettingsAsync();

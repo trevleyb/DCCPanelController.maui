@@ -31,7 +31,6 @@ public sealed partial class ProfileCatalog {
     public ProfileRef? GetByFileName(string fileName) => Profiles.FirstOrDefault(p => p.FileName == fileName);
 
     public ProfileRef Upsert(Profile profile) {
-        // update if exists
         var i = Profiles.FindIndex(p => p.FileName == profile.Filename);
         if (i >= 0) {
             var updated = Profiles[i] with { ProfileName = profile.ProfileName };
@@ -40,7 +39,6 @@ public sealed partial class ProfileCatalog {
             return updated;
         }
 
-        // insert
         var item = new ProfileRef(profile.ProfileName, profile.Filename, false);
         Profiles.Add(item);
         Save();

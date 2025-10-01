@@ -2,6 +2,7 @@ using System.IO.Compression;
 using System.Text;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Repository;
+using DCCPanelController.Resources.Strings;
 
 namespace DCCPanelController.Services.ProfileService;
 
@@ -188,14 +189,19 @@ public class ProfileService {
     }
 
     public async Task<Profile> CreateFromTemplateAsync(string templateName) {
-        switch (templateName) {
-            case "ChelseaAndBalmain": 
-                return await CreateAsync(templateName, false);
-            case "PiedmontSouthern": 
-                return await CreateAsync(templateName, false);
-            default:    
-                return await CreateAsync(templateName, false);
-        }
+        var profile = templateName switch {
+            "ChelseaAndBalmain" => await LoadTemplateAsync("Templates/ChelseaAndBalmain.json"),
+            "PiedmontSouthern"  => await LoadTemplateAsync("Templates/PiedmontSouthern.json"),
+            _                   => await CreateAsync(templateName, false)
+        };
+        return profile ?? await CreateAsync(templateName, false);
+    }
+    
+    public async Task<Profile?> LoadTemplateAsync(string filename) {
+        await using var stream = await FileSystem.OpenAppPackageFileAsync(filename);
+        using var reader = new StreamReader(stream);
+        var json = await reader.ReadToEndAsync();
+        return await UploadProfileAsync(json);
     }
     
     public async Task<Profile> CreateAsync(string? profileName = null, bool setActive = true) {
