@@ -89,7 +89,7 @@ public partial class SettingsPageViewModel : ConnectionViewModel {
     public async Task SwitchProfileAsync() {
         await SaveSettingsAsync();
         var choices = ProfileService.GetProfileNamesWithDefault();
-        var index = await ProfileSelector.ShowProfileSelector(choices);
+        var index = await ProfileSelector.ShowProfileSelector("Select a Profile",choices);
         if (index is{ } selectedProfile and>= 0) await ProfileService.SwitchProfileByIndexAsync(selectedProfile);
         OnProfileChanged();
         await DisplayAlertHelper.DisplayToastAlert("Switched Active Profile");
@@ -102,23 +102,14 @@ public partial class SettingsPageViewModel : ConnectionViewModel {
     public async Task AddProfileAsync() {
 
         await SaveSettingsAsync();
-        var preChoices = new[] { "Empty Profile", "Chelsea & Balmain Sample", "Piedmont Southern Sample" };
-        var choices = new List<string>();
-        foreach (var choice in preChoices) {
-            var found = false;
-            foreach (var profile in ProfileService.GetProfileNamesWithDefault()) {
-                if (profile.Equals(choice)) found = true;
-            }
-            if (!found) choices.Add(choice);
-        }
-        
-        var index = await ProfileSelector.ShowProfileSelector(choices);
-        if (index is{ } selectedProfile and>= 0) {
+        var choices = new[] { "New Profile", "Chelsea & Balmain Sample", "Piedmont Southern Sample" };
+        var index = await ProfileSelector.ShowProfileSelector("Select a Template",choices);
+        if (index is { } selectedProfile and>= 0) {
             await SaveSettingsAsync();
-            _ = index switch {
+            _ = selectedProfile switch {
                 1 => await ProfileService.CreateFromTemplateAsync("ChelseaAndBalmain"),
                 2 => await ProfileService.CreateFromTemplateAsync("PiedmontSouthern"),
-                _ => await ProfileService.CreateAsync("")
+                _ => await ProfileService.CreateAsync("New Profile")
             };
             await SaveSettingsAsync();
             OnProfileChanged();

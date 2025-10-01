@@ -6,19 +6,26 @@ namespace DCCPanelController.View.Components;
 public record ProfileItem(int Index, string Name);
 
 public partial class ProfileSelector : ContentView {
-    public ProfileSelector(IReadOnlyList<string> items, int? preselect = null) {
+    public ProfileSelector(string title, IReadOnlyList<string> items, int? preselect = null) {
         BindingContext = this;
         InitializeComponent();
         IsOkEnabled = false;
+        Title = title;
         for (var i = 0; i < items.Count; i++) Items.Add(new ProfileItem(i, items[i]));
         ProfilesList.ItemsSource = Items;
     }
 
+    public string Title {
+        get;
+        set {
+            field = value;
+            OnPropertyChanged();
+        }
+    }
     public bool IsOkEnabled { get; set; }
     public ProfileItem? SelectedItem { get; set; }
     public ObservableCollection<ProfileItem> Items { get; set; } = [];
 
-    // Add events for the popup
     public event Action<int>? SelectionCompleted;
     public event Action? SelectionCancelled;
 
@@ -31,9 +38,9 @@ public partial class ProfileSelector : ContentView {
         OnPropertyChanged(nameof(IsOkEnabled));
     }
 
-    public static async Task<int?> ShowProfileSelector(IReadOnlyList<string> items, int? preselect = null) {
+    public static async Task<int?> ShowProfileSelector(string title, IReadOnlyList<string> items, int? preselect = null) {
         var tcs = new TaskCompletionSource<int?>();
-        var selector = new ProfileSelector(items, preselect);
+        var selector = new ProfileSelector(title, items, preselect);
         var popup = new SfPopup {
             ContentTemplate = new DataTemplate(() => selector),
             ShowHeader = false,

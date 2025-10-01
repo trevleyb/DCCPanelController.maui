@@ -112,7 +112,7 @@ public partial class OperateViewModel : ConnectionViewModel {
     [RelayCommand]
     private async Task SwitchActiveProfileAsync() {
         var choices = _profileService.GetProfileNamesWithDefault();
-        var index = await ProfileSelector.ShowProfileSelector(choices);
+        var index = await ProfileSelector.ShowProfileSelector("Select a Profile", choices);
         if (index is{ } selectedProfile and>= 0) await _profileService.SwitchProfileByIndexAsync(selectedProfile);
         HaveClosedWelcome = false;
     }

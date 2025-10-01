@@ -14,7 +14,7 @@
     <Border Padding="10" Stroke="{StaticResource Primary}" StrokeThickness="4" StrokeShape="RoundRectangle 10">
         <Grid RowDefinitions="40,*,auto">
             <Grid Grid.Row="0" RowDefinitions="35,3">
-                <Label Grid.Row="0" Text="Select a Profile" HorizontalOptions="Center" VerticalOptions="Center"
+                <Label Grid.Row="0" Text="{Binding Title}" HorizontalOptions="Center" VerticalOptions="Center"
                        Style="{StaticResource LargeLabel}"/>
                 <BoxView Grid.Row="1" Color="{StaticResource Primary}" HeightRequest="2" HorizontalOptions="Fill"
                          VerticalOptions="Center"/>

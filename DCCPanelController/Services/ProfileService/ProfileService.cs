@@ -1,4 +1,5 @@
 using System.IO.Compression;
+using System.Reflection.PortableExecutable;
 using System.Text;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Repository;
@@ -196,19 +197,23 @@ public class ProfileService {
         };
         return profile ?? await CreateAsync(templateName, false);
     }
-    
+
     public async Task<Profile?> LoadTemplateAsync(string filename) {
-        await using var stream = await FileSystem.OpenAppPackageFileAsync(filename);
-        using var reader = new StreamReader(stream);
-        var json = await reader.ReadToEndAsync();
-        return await UploadProfileAsync(json);
+        try {
+            await using var stream = await FileSystem.OpenAppPackageFileAsync(filename);
+            using var reader = new StreamReader(stream);
+            var json = await reader.ReadToEndAsync();
+            return await UploadProfileAsync(json);
+        } catch {
+            return null;
+        }
     }
     
     public async Task<Profile> CreateAsync(string? profileName = null, bool setActive = true) {
         ArgumentNullException.ThrowIfNull(_catalog);
         await _gate.WaitAsync();
         try {
-            profileName ??= _catalog.GetUniqueProfileName("Profile");
+            profileName = _catalog.GetUniqueProfileName(profileName ?? "Profile");
             var fileName = $"DCCPanelController.{Guid.NewGuid()}";
             var profile = new Profile(profileName, fileName);
             await JsonRepository.SaveAsync(profile);
@@ -261,7 +266,7 @@ public class ProfileService {
         var profile = await JsonRepository.LoadAsync(fileName);
         if (profile is null) {
             _catalog?.Delete(fileName);
-            profile = await CreateAsync(fileName, false);
+            profile = await CreateAsync("Profile", false);
             if (profile is null) throw new ApplicationException($"Failed to load profile: {fileName}");
         }
         SetActive(profile, markAsDefault);

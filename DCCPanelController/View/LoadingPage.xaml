@@ -9,7 +9,7 @@
              x:Class="DCCPanelController.View.LoadingPage">
     <ContentPage.Content>
         <Grid>
-            <Border BackgroundColor="{StaticResource Primary}" HorizontalOptions="Fill" VerticalOptions="Fill">
+            <Border BackgroundColor="{StaticResource Primary}" StrokeThickness="0" HorizontalOptions="Fill" VerticalOptions="Fill">
                 <Grid>
                     <Image Source="splash.png" HorizontalOptions="Center" VerticalOptions="Center" Scale="1.5"/>
                     <progressBar:SfLinearProgressBar
