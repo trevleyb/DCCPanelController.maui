@@ -1,6 +1,6 @@
 using System.Reflection;
 
-namespace DCCPanelController.View.Helpers;
+namespace DCCPanelController.Helpers;
 
 public static class VersionInfo {
     public static string Version {

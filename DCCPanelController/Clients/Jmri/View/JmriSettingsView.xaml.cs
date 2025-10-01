@@ -1,18 +1,13 @@
-using DCCPanelController.Clients;
 using DCCPanelController.Clients.Discovery;
 using DCCPanelController.Services;
 
-namespace DCCPanelController.View.Settings.WiThrottle;
+namespace DCCPanelController.Clients.Jmri.View;
 
-public partial class WiThrottleSettingsView : ContentView {
-    public WiThrottleSettingsView(IDccClientSettings settings, ConnectionService connectionService) : this(new WiThrottleSettingsViewModel(settings, connectionService)) { }
-    public WiThrottleSettingsView(WiThrottleSettingsViewModel viewModel) {
+public partial class JmriSettingsView : ContentView {
+    public JmriSettingsView(IDccClientSettings settings, ConnectionService connectionService) : this(new JmriSettingsViewModel(settings, connectionService)) { }
+    public JmriSettingsView(JmriSettingsViewModel viewModel) {
         BindingContext = viewModel;
         InitializeComponent();
-
-        // Propagate any messages from the underlying setting module 
-        // so the parent can access these and show them in the UI
-        // ---------------------------------------------------------------
         viewModel.PropertyChanged += (sender, args) => OnPropertyChanged(args.PropertyName);
     }
 
@@ -25,7 +20,7 @@ public partial class WiThrottleSettingsView : ContentView {
 
     private void SelectableItemsView_OnSelectionChanged(object? sender, SelectionChangedEventArgs e) {
         var selected = e?.CurrentSelection?.FirstOrDefault() ?? null;
-        if (selected is DiscoveredService service && BindingContext is WiThrottleSettingsViewModel viewModel) {
+        if (selected is DiscoveredService service && BindingContext is JmriSettingsViewModel viewModel) {
             viewModel.Address = service?.Address.ToString() ?? "0.0.0.0";
             viewModel.Port = service?.Port ?? 12080;
         }

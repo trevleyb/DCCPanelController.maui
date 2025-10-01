@@ -3,6 +3,7 @@ using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using DCCPanelController.Helpers;
+using DCCPanelController.Helpers.Logging;
 using Microsoft.Extensions.Logging;
 
 namespace DCCPanelController.Models.DataModel.Repository;

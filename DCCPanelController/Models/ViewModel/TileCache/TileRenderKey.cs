@@ -1,4 +1,4 @@
-namespace DCCPanelController.Models.ViewModel.Helpers;
+namespace DCCPanelController.Models.ViewModel.TileCache;
 
 internal readonly record struct TileRenderKey(
     string Asset,     // e.g., SvgImage.Filename (full resource name/path)

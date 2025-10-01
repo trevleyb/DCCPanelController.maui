@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
+using DCCPanelController.View.Helpers;
 
 namespace DCCPanelController.Models.DataModel;
 
@@ -9,13 +10,13 @@ public partial class Profile : ObservableObject {
     [ObservableProperty] private string _filename;
     [ObservableProperty] private string _profileName;
 
-    [ObservableProperty] private Panels                        _panels;
-    [ObservableProperty] private ObservableCollection<Light>   _lights;
-    [ObservableProperty] private ObservableCollection<Route>   _routes;
-    [ObservableProperty] private ObservableCollection<Sensor>  _sensors;
-    [ObservableProperty] private ObservableCollection<Signal>  _signals;
-    [ObservableProperty] private ObservableCollection<Turnout> _turnouts;
-    [ObservableProperty] private Settings                      _settings;
+    [ObservableProperty] private Panels                          _panels;
+    [ObservableProperty] private Settings                        _settings;
+    [ObservableProperty] private UiObservableCollection<Light>   _lights;
+    [ObservableProperty] private UiObservableCollection<Route>   _routes;
+    [ObservableProperty] private UiObservableCollection<Sensor>  _sensors;
+    [ObservableProperty] private UiObservableCollection<Signal>  _signals;
+    [ObservableProperty] private UiObservableCollection<Turnout> _turnouts;
 
     public Profile(string profileName, string? fileName = null) {
         _filename = string.IsNullOrWhiteSpace(fileName) ? Guid.NewGuid().ToString() : fileName;

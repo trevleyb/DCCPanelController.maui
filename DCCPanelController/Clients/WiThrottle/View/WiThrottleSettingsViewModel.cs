@@ -1,10 +1,9 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using DCCPanelController.Clients;
-using DCCPanelController.Clients.WiThrottle;
+using DCCPanelController.Clients.Helpers;
 using DCCPanelController.Services;
 
-namespace DCCPanelController.View.Settings.WiThrottle;
+namespace DCCPanelController.Clients.WiThrottle.View;
 
 public partial class WiThrottleSettingsViewModel : SettingsViewModel {
     [ObservableProperty] private WiThrottleSettings _wiThrottleSettings;

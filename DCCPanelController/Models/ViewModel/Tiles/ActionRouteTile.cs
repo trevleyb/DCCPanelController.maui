@@ -4,6 +4,7 @@ using DCCPanelController.Models.ViewModel.Helpers;
 using DCCPanelController.Models.ViewModel.ImageManager;
 using DCCPanelController.Models.ViewModel.Interfaces;
 using DCCPanelController.Models.ViewModel.StyleManager;
+using DCCPanelController.Models.ViewModel.TileCache;
 using DCCPanelController.Services;
 
 namespace DCCPanelController.Models.ViewModel.Tiles;

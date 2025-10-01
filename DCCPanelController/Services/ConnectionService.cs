@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Clients;
 using DCCPanelController.Helpers;
+using DCCPanelController.Helpers.Logging;
 using DCCPanelController.Models.DataModel.Entities;
 using Microsoft.Extensions.Logging;
 
@@ -24,6 +25,7 @@ public partial class ConnectionService : ObservableObject {
     }
 
     public IDccClient? Client { get; private set; }
+    public ProfileService.ProfileService? ProfileService => _profileService;
 
     public static ConnectionService Instance => MauiProgram.ServiceHelper.GetService<ConnectionService>();
     public event EventHandler<DccClientState>? ConnectionStateChanged;
@@ -120,7 +122,6 @@ public partial class ConnectionService : ObservableObject {
             var lastConnectionState = ConnectionState;
             ConnectionState = e.State;
             
-            Console.WriteLine($"Last: {lastConnectionState} & State: {ConnectionState}");
             if (ConnectionState == DccClientState.Connected && !_hasConnected) {
                 await SetTurnoutsToDefaultState();
                 await ResetOccupancyStates();
@@ -128,7 +129,7 @@ public partial class ConnectionService : ObservableObject {
             }
 
             ConnectionEvent?.Invoke(this, e);
-            if (lastConnectionState != ConnectionState) ConnectionStateChanged?.Invoke(this, ConnectionState);
+            if (lastConnectionState != ConnectionState) OnConnectionChanged(ConnectionState);
             ServerMessages.Add(e.Message ?? new DccClientMessage("Unknown Event."));
         } catch (Exception ex) {
             Debug.WriteLine("Client Message Error: " + ex.Message);
@@ -162,11 +163,15 @@ public partial class ConnectionService : ObservableObject {
 
     public virtual void AddServerMessage(string message, DccClientOperation operation = DccClientOperation.System, DccClientMessageType msgType = DccClientMessageType.System) => AddServerMessage(new DccClientMessage(message, operation, msgType));
 
-    public virtual void AddServerMessage(DccClientMessage message) => ServerMessages.Add(message);
+    public virtual void AddServerMessage(DccClientMessage message) {
+            ServerMessages.Add(message);
+            OnPropertyChanged(nameof(ServerMessages));
+    }
 
     [RelayCommand]
     public void ClearMessages() {
-        ServerMessages.Clear();
-        OnPropertyChanged(nameof(ServerMessages));
+            ServerMessages.Clear();
+            OnPropertyChanged(nameof(ServerMessages));
+        
     }
 }

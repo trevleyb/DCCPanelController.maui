@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Maui;
 using CommunityToolkit.Maui.Markup;
 using DCCPanelController.Helpers;
+using DCCPanelController.Helpers.Logging;
 using DCCPanelController.Services;
 using DCCPanelController.Services.ProfileService;
 using DCCPanelController.View;

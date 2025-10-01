@@ -3,7 +3,7 @@ using Serilog;
 using Serilog.Core;
 using Serilog.Events;
 
-namespace DCCPanelController.Helpers;
+namespace DCCPanelController.Helpers.Logging;
 
 public static class LoggingLevelHelper {
     private static LoggingLevelSwitch? _levelSwitch;

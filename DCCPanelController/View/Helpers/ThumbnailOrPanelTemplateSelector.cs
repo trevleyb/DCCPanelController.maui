@@ -1,6 +1,6 @@
 using DCCPanelController.Models.DataModel;
 
-namespace DCCPanelController.View.Selectors;
+namespace DCCPanelController.View.Helpers;
 
 public class ThumbnailOrPanelTemplateSelector : DataTemplateSelector {
     public DataTemplate? ThumbnailTemplate { get; set; }

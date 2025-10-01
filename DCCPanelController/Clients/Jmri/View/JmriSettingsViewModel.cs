@@ -1,10 +1,9 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using DCCPanelController.Clients;
-using DCCPanelController.Clients.Jmri;
+using DCCPanelController.Clients.Helpers;
 using DCCPanelController.Services;
 
-namespace DCCPanelController.View.Settings.Jmri;
+namespace DCCPanelController.Clients.Jmri.View;
 
 public partial class JmriSettingsViewModel : SettingsViewModel {
     [ObservableProperty] private JmriSettings _jmriSettings;

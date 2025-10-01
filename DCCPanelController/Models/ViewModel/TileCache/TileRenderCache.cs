@@ -1,10 +1,9 @@
-using DCCPanelController.Models.ViewModel.Tiles;
-using SkiaSharp;
 using System.Collections.Concurrent;
 using System.Security.Cryptography;
 using System.Text;
+using SkiaSharp;
 
-namespace DCCPanelController.Models.ViewModel.Helpers;
+namespace DCCPanelController.Models.ViewModel.TileCache;
 
 internal sealed class TileRenderCache : IDisposable {
     private readonly ConcurrentDictionary<TileRenderKey, (SKImage Img, int Gen)> _map = new();

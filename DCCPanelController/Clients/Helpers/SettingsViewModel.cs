@@ -3,12 +3,12 @@ using System.Runtime.CompilerServices;
 using CommunityToolkit.Maui.Core.Extensions;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using DCCPanelController.Clients;
 using DCCPanelController.Clients.Discovery;
 using DCCPanelController.Services;
+using DCCPanelController.Services.ProfileService;
 using DCCPanelController.View.Base;
 
-namespace DCCPanelController.View.Settings;
+namespace DCCPanelController.Clients.Helpers;
 
 public partial class SettingsViewModel : BaseViewModel {
     protected readonly ConnectionService  ConnectionService;
@@ -23,35 +23,30 @@ public partial class SettingsViewModel : BaseViewModel {
     }
 
     [RelayCommand]
-    protected async Task OnConnectClickedAsync() {
+    protected async Task OnConnectClickedAsync()
+    {
         ConnectionService.AddServerMessage($"Testing server connection: ({Settings.Type})");
         try {
+            if (ConnectionService.ProfileService?.ActiveProfile is null) return;
+            
             IsBusy = true;
+            var client = DccClientFactory.CreateClient(ConnectionService.ProfileService.ActiveProfile, Settings);
+            var result = await client.ValidateConnectionAsync();                               
+            await client.DisconnectAsync();                                                    
 
-            var reconnect = ConnectionService.ConnectionState;
-            if (reconnect == DccClientState.Connected) await ConnectionService.DisconnectAsync();
-
-            var result = await ConnectionService.ConnectAsync();
-            if (result.IsFailure) {
-                ConnectionService.AddServerMessage($"Unable to connect: {result.Message}", DccClientOperation.System, DccClientMessageType.Error);
-                if (result?.Message is { } errMessage) ConnectionService.AddServerMessage(errMessage, DccClientOperation.System, DccClientMessageType.Error);
-                if (result?.Exception is { } excMessage) ConnectionService.AddServerMessage(excMessage.Message, DccClientOperation.System, DccClientMessageType.Error);
-                var message = $"Unable to connect to the server{(string.IsNullOrEmpty(result?.Message) ? "." : $" due to {result?.Exception?.Message ?? "?"}")}";
-                await DisplayAlertHelper.DisplayOkAlertAsync("Error Connecting", message);
-            } else {
-                if (reconnect != DccClientState.Connected) await ConnectionService.DisconnectAsync();
+            if (result.IsSuccess) {
                 ConnectionService.AddServerMessage("Connected Successfully.");
                 await DisplayAlertHelper.DisplayOkAlertAsync("Connected", "Successfully connected to the server.");
+            } else {
+                ConnectionService.AddServerMessage($"Unable to connect: {result.Message}", DccClientOperation.System, DccClientMessageType.Error);
+                await DisplayAlertHelper.DisplayOkAlertAsync("Error Connecting", result.Message ?? "Probe failed.");
             }
         } catch (Exception ex) {
-            ConnectionService.AddServerMessage("Unable to Connect.", DccClientOperation.System, DccClientMessageType.Error);
             ConnectionService.AddServerMessage(ex.Message, DccClientOperation.System, DccClientMessageType.Error);
-            var message = $"Unable to connect to the server due to {ex.Message}";
-            await DisplayAlertHelper.DisplayOkAlertAsync("Error Connecting", message);
+            await DisplayAlertHelper.DisplayOkAlertAsync("Error Connecting", $"Unable to connect to the server due to {ex.Message}");
         } finally {
             IsBusy = false;
         }
-        IsBusy = false;
     }
 
     [RelayCommand]

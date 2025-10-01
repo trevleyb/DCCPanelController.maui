@@ -5,20 +5,20 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Clients;
 using DCCPanelController.Clients.Jmri;
+using DCCPanelController.Clients.Jmri.View;
 using DCCPanelController.Clients.Simulator;
+using DCCPanelController.Clients.Simulator.View;
 using DCCPanelController.Clients.WiThrottle;
+using DCCPanelController.Clients.WiThrottle.View;
 using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Services;
 using DCCPanelController.Services.ProfileService;
 using DCCPanelController.View.Base;
 using DCCPanelController.View.Components;
-using DCCPanelController.View.Settings;
-using DCCPanelController.View.Settings.Jmri;
-using DCCPanelController.View.Settings.Simulator;
-using DCCPanelController.View.Settings.WiThrottle;
 using Microsoft.Extensions.Logging;
 using Capabilities = DCCPanelController.View.Helpers.Capabilities;
+using SettingsViewModel = DCCPanelController.Clients.Helpers.SettingsViewModel;
 
 namespace DCCPanelController.View;
 

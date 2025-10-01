@@ -1,5 +1,6 @@
 using System.Reflection;
 using DCCPanelController.Helpers;
+using DCCPanelController.Helpers.Logging;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.ViewModel.Interfaces;
 using DCCPanelController.Models.ViewModel.Tiles;

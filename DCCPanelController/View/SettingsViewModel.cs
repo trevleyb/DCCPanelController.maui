@@ -13,12 +13,9 @@ using DCCPanelController.Services;
 using DCCPanelController.Services.ProfileService;
 using DCCPanelController.View.Base;
 using DCCPanelController.View.Components;
-using DCCPanelController.View.Settings;
-using DCCPanelController.View.Settings.Jmri;
-using DCCPanelController.View.Settings.Simulator;
-using DCCPanelController.View.Settings.WiThrottle;
 using Microsoft.Extensions.Logging;
 using Capabilities = DCCPanelController.View.Helpers.Capabilities;
+using SettingsViewModel = DCCPanelController.Clients.Helpers.SettingsViewModel;
 
 namespace DCCPanelController.View;
 

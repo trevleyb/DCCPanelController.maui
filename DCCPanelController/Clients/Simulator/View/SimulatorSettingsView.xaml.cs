@@ -1,7 +1,6 @@
-using DCCPanelController.Clients;
 using DCCPanelController.Services;
 
-namespace DCCPanelController.View.Settings.Simulator;
+namespace DCCPanelController.Clients.Simulator.View;
 
 public partial class SimulatorSettingsView : ContentView {
 

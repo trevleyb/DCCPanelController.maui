@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:converters1="clr-namespace:DCCPanelController.View.Converters"
+             xmlns:view="clr-namespace:DCCPanelController.Clients.Simulator.View"
+             xmlns:helpers="clr-namespace:DCCPanelController.Clients.Helpers"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             x:DataType="view:SimulatorSettingsViewModel"
+             x:Class="DCCPanelController.Clients.Simulator.View.SimulatorSettingsView">
+
+
+    <ContentView.Resources>
+    </ContentView.Resources>
+
+
+    <VerticalStackLayout Margin="10,0,10,0" Padding="0,10,0,10">
+        <HorizontalStackLayout Margin="0,5,0,0">
+            <Label Text="Heartbeat" WidthRequest="150" Style="{StaticResource MediumLabel}"
+                   HorizontalOptions="Start" VerticalOptions="Center"/>
+            <Border WidthRequest="45" Padding="0" HeightRequest="30" Style="{StaticResource EntryBorderStyle}">
+                <Entry Text="{Binding SimulatorSettings.HeartbeatSeconds, Mode=TwoWay}"
+                       HorizontalOptions="Fill"
+                       HorizontalTextAlignment="Center">
+                    <Entry.Behaviors>
+                        <helpers:EntryValidationBehavior/>
+                    </Entry.Behaviors>
+                </Entry>
+            </Border>
+            <Label Text="Seconds" Margin="10,0,0,0" VerticalOptions="Center"/>
+        </HorizontalStackLayout>
+
+        <HorizontalStackLayout Margin="0,5,0,0">
+            <Label Text="Fastclock Rate" WidthRequest="150" Style="{StaticResource MediumLabel}"
+                   HorizontalOptions="Start" VerticalOptions="Center"/>
+            <Border WidthRequest="45" Padding="0" HeightRequest="30" Style="{StaticResource EntryBorderStyle}">
+                <Entry Text="{Binding SimulatorSettings.FastClockRate, Mode=TwoWay}" HorizontalOptions="Fill"
+                       HorizontalTextAlignment="Center">
+                    <Entry.Behaviors>
+                        <helpers:FastClockValidationBehavior/>
+                    </Entry.Behaviors>
+                </Entry>
+            </Border>
+            <Label Text="Seconds Multiple (ie: 1.5)" Margin="10,0,0,0" VerticalOptions="Center"/>
+        </HorizontalStackLayout>
+
+        <HorizontalStackLayout Margin="0,5,0,0">
+            <Label Text="Disconnect Every" WidthRequest="150" Style="{StaticResource MediumLabel}"
+                   HorizontalOptions="Start" VerticalOptions="Center"/>
+            <Border WidthRequest="45" Padding="0" HeightRequest="30" Style="{StaticResource EntryBorderStyle}">
+                <Entry Text="{Binding SimulatorSettings.DisconnectEvery, Mode=TwoWay}" HorizontalOptions="Fill"
+                       HorizontalTextAlignment="Center">
+                    <Entry.Behaviors>
+                        <helpers:EntryValidationBehavior/>
+                    </Entry.Behaviors>
+                </Entry>
+            </Border>
+            <Label Text="Seconds" Margin="10,0,0,0" VerticalOptions="Center"/>
+        </HorizontalStackLayout>
+
+        <HorizontalStackLayout Margin="0,5,0,0">
+            <Label Text="Random Flip" WidthRequest="150" Style="{StaticResource MediumLabel}"
+                   HorizontalOptions="Start" VerticalOptions="Center"/>
+            <Border WidthRequest="45" Padding="0" HeightRequest="30" Style="{StaticResource EntryBorderStyle}">
+                <Entry Text="{Binding SimulatorSettings.RandomFlipSeconds, Mode=TwoWay}"
+                       HorizontalOptions="Fill"
+                       HorizontalTextAlignment="Center">
+                    <Entry.Behaviors>
+                        <helpers:EntryValidationBehavior/>
+                    </Entry.Behaviors>
+                </Entry>
+            </Border>
+            <Label Text="Seconds" Margin="10,0,0,0" VerticalOptions="Center"/>
+        </HorizontalStackLayout>
+
+        <HorizontalStackLayout Margin="0,5,0,0">
+            <Label Text="Burst Every" WidthRequest="150" Style="{StaticResource MediumLabel}"
+                   HorizontalOptions="Start" VerticalOptions="Center"/>
+            <Border WidthRequest="45" Padding="0" HeightRequest="30" Style="{StaticResource EntryBorderStyle}">
+                <Entry Text="{Binding SimulatorSettings.BurstEverySeconds, Mode=TwoWay}"
+                       HorizontalOptions="Fill"
+                       HorizontalTextAlignment="Center">
+                    <Entry.Behaviors>
+                        <helpers:EntryValidationBehavior/>
+                    </Entry.Behaviors>
+                </Entry>
+            </Border>
+            <Label Text="Seconds" Margin="10,0,0,0" VerticalOptions="Center"/>
+        </HorizontalStackLayout>
+
+        <HorizontalStackLayout Margin="0,5,0,0">
+            <Label Text="Burst Min/Max" WidthRequest="150" Style="{StaticResource MediumLabel}"
+                   HorizontalOptions="Start" VerticalOptions="Center"/>
+            <Border WidthRequest="45" Padding="0" HeightRequest="30" Style="{StaticResource EntryBorderStyle}">
+                <Entry Text="{Binding SimulatorSettings.BurstSizeMin, Mode=TwoWay}" HorizontalOptions="Fill"
+                       HorizontalTextAlignment="Center">
+                    <Entry.Behaviors>
+                        <helpers:EntryValidationBehavior/>
+                    </Entry.Behaviors>
+                </Entry>
+            </Border>
+            <Border WidthRequest="45" Padding="0" HeightRequest="30" Style="{StaticResource EntryBorderStyle}"
+                    Margin="10,0,0,0">
+                <Entry Text="{Binding SimulatorSettings.BurstSizeMax, Mode=TwoWay}" HorizontalOptions="Fill"
+                       HorizontalTextAlignment="Center">
+                    <Entry.Behaviors>
+                        <helpers:EntryValidationBehavior/>
+                    </Entry.Behaviors>
+                </Entry>
+            </Border>
+        </HorizontalStackLayout>
+
+        <HorizontalStackLayout Padding="10" Margin="10">
+            <Button Text="All Off" Margin="0,0,10,0" WidthRequest="120"
+                    Command="{Binding TurnOffAllSettingsCommand}" Style="{StaticResource ButtonOutline}"/>
+            <Button Text="Reset Defaults" Margin="10,0,0,0" WidthRequest="150"
+                    Command="{Binding ResetSettingsCommand}" Style="{StaticResource ButtonOutline}"/>
+        </HorizontalStackLayout>
+    </VerticalStackLayout>
+
+</ContentView>

@@ -3,6 +3,7 @@ using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.ViewModel.Helpers;
 using DCCPanelController.Models.ViewModel.ImageManager;
 using DCCPanelController.Models.ViewModel.Interfaces;
+using DCCPanelController.Models.ViewModel.TileCache;
 using DCCPanelController.View.Converters;
 using Microsoft.Maui.Controls.Shapes;
 using Colors = Microsoft.Maui.Graphics.Colors;

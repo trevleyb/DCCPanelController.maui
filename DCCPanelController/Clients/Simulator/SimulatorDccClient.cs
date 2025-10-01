@@ -17,6 +17,10 @@ namespace DCCPanelController.Clients.Simulator {
     public sealed class SimulatorDccClient : DccClientBase, IDccClient, IDisposable {
         private readonly SimulatorSettings _settings;
 
+        private CancellationTokenSource?    _cts;
+        private Task?                       _loopTask;
+        private TaskCompletionSource<bool>? _dropTcs;
+
         // timers
         private System.Timers.Timer? _heartbeat;
         private System.Timers.Timer? _randomFlips;
@@ -46,8 +50,8 @@ namespace DCCPanelController.Clients.Simulator {
 
             // read optional knobs from settings via reflection (no breaking changes to your class)
             _heartbeatSecs = GetInt(_settings, "HeartbeatSeconds", 15);
-            _randomFlipsSecs = GetInt(_settings, "RandomFlipSeconds", 0);             // 0 = Disabled, 1000 = 1 sec
-            _burstEverySecs = GetInt(_settings, "BurstEverySeconds", 0); // 0 = Disabled, 1000 = 1 sec
+            _randomFlipsSecs = GetInt(_settings, "RandomFlipSeconds", 0); // 0 = Disabled, 1000 = 1 sec
+            _burstEverySecs = GetInt(_settings, "BurstEverySeconds", 0);  // 0 = Disabled, 1000 = 1 sec
             _burstSizeMin = GetInt(_settings, "BurstSizeMin", 3);
             _burstSizeMax = GetInt(_settings, "BurstSizeMax", 8);
             _disconnectEverySecs = GetInt(_settings, "DisconnectEvery", 0); // 0 = disabled
@@ -65,36 +69,60 @@ namespace DCCPanelController.Clients.Simulator {
 
         public Task<IResult> ConnectAsync() {
             State = DccClientState.Initialising;
+            OnClientMessage("Simulator connecting…");
+
+            // cancel any previous loop
+            _cts?.Cancel();
+            _cts = new CancellationTokenSource();
+
+            // start the reconnection loop using the shared base helper
+            _loopTask = RunReconnectLoopAsync(
+                connectOnce: ConnectOnceAsync, // defined below
+                isDisposed: () => _cts == null || _cts.IsCancellationRequested,
+                maxRetries: _settings.MaxRetries,
+                initialDelay: TimeSpan.FromMilliseconds(Math.Max(1, _settings.InitialBackoffMs)),
+                multiplier: _settings.BackoffMultiplier <= 1 ? 1.5 : _settings.BackoffMultiplier,
+                ct: _cts.Token
+            );
+
+            return Task.FromResult<IResult>(Result.Ok());
+        }
+
+        private async Task ConnectOnceAsync(CancellationToken ct) {
+            // simulate a small network delay
+            await Task.Delay(250, ct);
 
             // Reset view and seed a small layout
             Profile.RefreshAll();
 
             //SeedEntities();
 
-            // "Hello" after a brief handshake delay
-            Task.Run(async () => {
-                await Task.Delay(250);
-                OnClientMessage($"SIM HELLO: heartbeat={_heartbeatSecs}s; clockRate={_clockRate:0.##}x",
-                    DccClientOperation.System, DccClientMessageType.Inbound);
+            StartHeartbeat();
+            StartFastClock();
+            StartRandomFlips();
+            StartBursts();
+            StartFailureInjection();
 
-                StartHeartbeat();
-                StartFastClock();
-                StartRandomFlips();
-                StartBursts();
-                StartFailureInjection();
+            State = DccClientState.Connected;
+            OnClientMessage("Simulator connected");
 
-                State = DccClientState.Connected;
-                OnClientMessage("Simulator connected");
-            });
+            _dropTcs = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+            await using (ct.Register(() => _dropTcs.TrySetCanceled(ct))) await _dropTcs.Task;
+        }
 
+        public Task<IResult> DisconnectAsync()
+        {
+            _cts?.Cancel();
+            _cts = null;
+            InternalDropConnection();
             return Task.FromResult<IResult>(Result.Ok());
         }
 
-        public Task<IResult> DisconnectAsync() {
+        private void InternalDropConnection() {
             StopTimers();
             State = DccClientState.Disconnected;
             OnClientMessage("Simulator disconnected");
-            return Task.FromResult<IResult>(Result.Ok());
+            _dropTcs?.TrySetResult(true); // release ConnectOnceAsync so the outer loop can backoff + retry
         }
 
         public Task<IResult> ValidateConnectionAsync() => Task.FromResult<IResult>(State == DccClientState.Connected ? Result.Ok("Simulator connected") : Result.Fail("Simulator not connected"));
@@ -197,8 +225,6 @@ namespace DCCPanelController.Clients.Simulator {
             _heartbeat = new System.Timers.Timer(Math.Max(1, _heartbeatSecs) * 1000);
             _heartbeat.Elapsed += (_, _) => {
                 OnClientMessage("SIM HB", DccClientOperation.System, DccClientMessageType.Inbound);
-
-                // Tiny chance to flip something exactly on the heartbeat
                 if (_rand.Next(5) == 0) FlipRandomOnce();
             };
             _heartbeat.AutoReset = true;
@@ -237,9 +263,9 @@ namespace DCCPanelController.Clients.Simulator {
             if (_disconnectEverySecs <= 0) return;
             _failureInjector = new System.Timers.Timer(_disconnectEverySecs * 1000);
             _failureInjector.AutoReset = true;
-            _failureInjector.Elapsed += async (_, _) => {
+            _failureInjector.Elapsed += (_, _) => {
                 OnClientMessage("SIM: injected disconnect", DccClientOperation.System, DccClientMessageType.Error);
-                await DisconnectAsync();
+                InternalDropConnection();
             };
             _failureInjector.Start();
         }

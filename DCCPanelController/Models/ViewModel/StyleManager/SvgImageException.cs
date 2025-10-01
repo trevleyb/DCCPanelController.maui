@@ -1,4 +1,5 @@
 using DCCPanelController.Helpers;
+using DCCPanelController.Helpers.Logging;
 using Microsoft.Extensions.Logging;
 
 namespace DCCPanelController.Models.ViewModel.StyleManager;

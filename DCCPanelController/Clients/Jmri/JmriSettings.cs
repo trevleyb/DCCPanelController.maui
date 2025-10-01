@@ -35,4 +35,8 @@ public partial class JmriSettings : ObservableObject, IDccClientSettings {
             return true;
         }
     }
+
+    public int MaxRetries { get; set; } = 5;
+    public int InitialBackoffMs { get; set; } = 500;
+    public double BackoffMultiplier { get; set; } = 1.5;
 }

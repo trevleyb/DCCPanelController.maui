@@ -1,6 +1,7 @@
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.ViewModel.Helpers;
 using DCCPanelController.Models.ViewModel.ImageManager;
+using DCCPanelController.Models.ViewModel.TileCache;
 
 namespace DCCPanelController.Models.ViewModel.Tiles;
 

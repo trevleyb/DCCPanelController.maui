@@ -1,7 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.View.Properties.DynamicProperties;
 
-namespace DCCPanelController.Models.DataModel.Entities;
+namespace DCCPanelController.Models.DataModel.Entities.BaseClasses;
 
 public abstract partial class ButtonEntity : Entity {
     [ObservableProperty] [property: Editable("Button Off", "Color of the Button when the button is **OFF**", 5, Group = "Colors")]

@@ -1,4 +1,4 @@
-namespace DCCPanelController.View.Settings;
+namespace DCCPanelController.Clients.Helpers;
 
 public class EntryValidationBehavior : Behavior<Entry> {
     protected override void OnAttachedTo(Entry entry) {

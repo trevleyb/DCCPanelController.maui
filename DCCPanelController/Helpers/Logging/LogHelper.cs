@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Logging;
 
-namespace DCCPanelController.Helpers;
+namespace DCCPanelController.Helpers.Logging;
 
 public static class LogHelper {
     private static ILoggerFactory? _loggerFactory;

@@ -22,6 +22,10 @@ public partial class WiThrottleSettings : ObservableObject, IDccClientSettings {
         Port = port ?? 12090;
     }
 
+    public int MaxRetries { get; set; } = 5;
+    public int InitialBackoffMs { get; set; } = 500;
+    public double BackoffMultiplier { get; set; } = 1.5;
+
     [JsonIgnore] public bool SetManually => !SetAutomatically;
     [JsonIgnore] public bool SupportsManualEntries => true;
     [JsonIgnore] public List<DccClientCapability> Capabilities => [DccClientCapability.Turnouts, DccClientCapability.Routes];

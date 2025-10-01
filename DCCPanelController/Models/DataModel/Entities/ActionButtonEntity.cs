@@ -9,7 +9,7 @@ using DCCPanelController.View.Properties.DynamicProperties;
 
 namespace DCCPanelController.Models.DataModel.Entities;
 
-public partial class ActionButtonEntity : ButtonEntity, IEntityGeneratingID, IInteractiveEntity, IActionEntity {
+public partial class ActionButtonEntity : BaseClasses.ButtonEntity, IEntityGeneratingID, IInteractiveEntity, IActionEntity {
 
     [ObservableProperty] [property: Editable("Button Size", Order = 2)]
     private ButtonSizeEnum _buttonSize = ButtonSizeEnum.Normal;

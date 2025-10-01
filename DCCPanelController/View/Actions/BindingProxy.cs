@@ -1,4 +1,4 @@
-namespace DCCPanelController.View.Helpers;
+namespace DCCPanelController.View.Actions;
 
 public class BindingProxy : BindableObject {
     public static readonly BindableProperty DataProperty =

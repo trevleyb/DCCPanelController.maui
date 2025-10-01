@@ -6,6 +6,24 @@ public class DccClientMessage(string message, DccClientOperation operation = Dcc
     public DccClientMessageType MessageType { get; init; } = msgType;
     public DateTime TimeStamp { get; init; } = DateTime.Now;
 
+    public string MessageTypeCode =>
+        MessageType switch {
+            DccClientMessageType.Inbound  => "IN",
+            DccClientMessageType.Outbound => "OUT",
+            DccClientMessageType.System   => "SYS",
+            DccClientMessageType.Error    => "ERR",
+            _                             => "???",
+        };
+    
+    public Color MessageTypeColor =>
+        MessageType switch {
+            DccClientMessageType.Inbound  => Colors.Blue,
+            DccClientMessageType.Outbound => Colors.Green,
+            DccClientMessageType.System   => Colors.Gray,
+            DccClientMessageType.Error    => Colors.Red,
+            _                             => Colors.Yellow,
+        };
+    
     public string IconSource =>
         MessageType switch {
             DccClientMessageType.Inbound  => "message_in.png",

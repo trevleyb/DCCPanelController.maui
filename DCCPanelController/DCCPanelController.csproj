@@ -303,6 +303,15 @@
         <MauiXaml Update="View\SettingsConnectionPage.xaml">
           <SubType>Designer</SubType>
         </MauiXaml>
+        <MauiXaml Update="Clients\Jmri\View\JmriSettingsView.xaml">
+          <SubType>Designer</SubType>
+        </MauiXaml>
+        <MauiXaml Update="Clients\Simulator\View\SimulatorSettingsView.xaml">
+          <SubType>Designer</SubType>
+        </MauiXaml>
+        <MauiXaml Update="Clients\WiThrottle\View\WiThrottleSettingsView.xaml">
+          <SubType>Designer</SubType>
+        </MauiXaml>
     </ItemGroup>
 
     <ItemGroup>
@@ -467,24 +476,30 @@
         <Compile Update="View\DccClientTestViewModel.cs">
           <DependentUpon>DccClientTestView.xaml</DependentUpon>
         </Compile>
+        <Compile Update="Clients\Jmri\View\JmriSettingsView.xaml.cs">
+          <DependentUpon>JmriSettingsView.xaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Clients\Simulator\View\SimulatorSettingsView.xaml.cs">
+          <DependentUpon>SimulatorSettingsView.xaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Clients\WiThrottle\View\WiThrottleSettingsView.xaml.cs">
+          <DependentUpon>WiThrottleSettingsView.xaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
     </ItemGroup>
 
     <ItemGroup Condition="'$(TargetFramework)' == 'net9.0-ios'">
-        <PackageReference Include="SkiaSharp.NativeAssets.iOS" Version="3.119.0"/>
+        <PackageReference Include="SkiaSharp.NativeAssets.iOS" Version="3.119.0" />
     </ItemGroup>
 
     <ItemGroup Condition="'$(TargetFramework)' == 'net9.0-maccatalyst'">
-        <PackageReference Include="SkiaSharp.NativeAssets.MacCatalyst" Version="3.119.0"/>
+        <PackageReference Include="SkiaSharp.NativeAssets.MacCatalyst" Version="3.119.0" />
     </ItemGroup>
 
     <ItemGroup Condition="'$(TargetFramework)' == 'net9.0-android'">
-        <PackageReference Include="SkiaSharp.NativeAssets.Android" Version="3.119.0"/>
-    </ItemGroup>
-
-    <ItemGroup>
-      <AdditionalFiles Include="Clients\Settings\Jmri\JmriSettingsView.xaml" />
-      <AdditionalFiles Include="Clients\Settings\Simulator\SimulatorSettingsView.xaml" />
-      <AdditionalFiles Include="Clients\Settings\WiThrottle\WiThrottleSettingsView.xaml" />
+        <PackageReference Include="SkiaSharp.NativeAssets.Android" Version="3.119.0" />
     </ItemGroup>
 
 </Project>

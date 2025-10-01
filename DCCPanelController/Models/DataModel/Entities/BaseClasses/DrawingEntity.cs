@@ -1,7 +1,4 @@
-using System.Text.Json.Serialization;
-using DCCPanelController.View.Properties.DynamicProperties;
-
-namespace DCCPanelController.Models.DataModel.Entities;
+namespace DCCPanelController.Models.DataModel.Entities.BaseClasses;
 
 public abstract class DrawingEntity : Entity {
     protected DrawingEntity(Panel panel) : base(panel) { }

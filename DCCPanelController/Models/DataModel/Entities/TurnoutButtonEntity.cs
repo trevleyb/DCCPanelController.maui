@@ -6,7 +6,7 @@ using DCCPanelController.View.Properties.DynamicProperties;
 
 namespace DCCPanelController.Models.DataModel.Entities;
 
-public partial class TurnoutButtonEntity : ButtonEntity, IInteractiveEntity {
+public partial class TurnoutButtonEntity : BaseClasses.ButtonEntity, IInteractiveEntity {
     [ObservableProperty] [property: Editable("Button Size", "", 1)]
     private ButtonSizeEnum _buttonSize = ButtonSizeEnum.Normal;
 

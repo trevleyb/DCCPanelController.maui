@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Helpers;
+using DCCPanelController.Helpers.Logging;
 using DCCPanelController.Services;
 using Microsoft.Extensions.Logging;
 

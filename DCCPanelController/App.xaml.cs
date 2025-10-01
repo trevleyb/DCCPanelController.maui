@@ -1,4 +1,5 @@
 ﻿using DCCPanelController.Helpers;
+using DCCPanelController.Helpers.Logging;
 using DCCPanelController.Services.ProfileService;
 using DCCPanelController.View;
 using Microsoft.Extensions.Logging;

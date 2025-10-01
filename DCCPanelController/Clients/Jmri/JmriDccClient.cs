@@ -21,7 +21,6 @@ namespace DCCPanelController.Clients.Jmri;
 /// - No proxy, no inner client
 /// </summary>
 public sealed class JmriDccClient : DccClientBase, IDccClient, IDisposable {
-    
     private readonly JmriSettings _jmriSettings;
 
     // -------------------- Transport --------------------
@@ -69,17 +68,23 @@ public sealed class JmriDccClient : DccClientBase, IDccClient, IDisposable {
             _jmriSettings.Port = ((JmriSettings)auto.Value).Port;
         }
 
+        // in JmriDccClient.ConnectAsync()
         lock (_sync) {
-            if (_disposed) return Result.Fail("JMRI client already disposed.");
-            _cts?.Cancel();
-            _cts?.Dispose();
+            _cts?.Cancel(); _cts?.Dispose();
             _cts = new CancellationTokenSource();
-            _connectionTask = MaintainConnectionAsync(_cts.Token);
+            _connectionTask = RunReconnectLoopAsync(
+                connectOnce: ConnectAndListenAsync,                // your existing method
+                isDisposed: () => _disposed,
+                maxRetries: _jmriSettings.MaxRetries <= 0 ? int.MaxValue : _jmriSettings.MaxRetries,
+                initialDelay: TimeSpan.FromMilliseconds(_jmriSettings.InitialBackoffMs <= 0 ? 1000 : _jmriSettings.InitialBackoffMs),
+                multiplier: _jmriSettings.BackoffMultiplier <= 1 ? 1.5 : _jmriSettings.BackoffMultiplier,
+                ct: _cts.Token
+            );
         }
-
         State = DccClientState.Initialising;
         OnClientMessage($"Connecting to JMRI at {_jmriSettings.Address}:{_jmriSettings.Port}...");
         return Result.Ok();
+
     }
 
     public async Task<IResult> DisconnectAsync() {
@@ -119,7 +124,37 @@ public sealed class JmriDccClient : DccClientBase, IDccClient, IDisposable {
         return Result.Ok();
     }
 
-    public Task<IResult> ValidateConnectionAsync() => Task.FromResult<IResult>(State == DccClientState.Connected ? Result.Ok("JMRI connected") : Result.Fail("JMRI not connected"));
+    public async Task<IResult> ValidateConnectionAsync() {
+        try {
+            using var ws = new ClientWebSocket();
+            using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+            var uri = new Uri($"ws://{_jmriSettings.Address}:{_jmriSettings.Port}/json/");
+            await ws.ConnectAsync(uri, cts.Token);
+
+            // wait for a 'hello' ON THIS TEMP SOCKET
+            var buf = new byte[4096];
+            var sb = new StringBuilder();
+            while (!cts.IsCancellationRequested && ws.State == WebSocketState.Open) {
+                var res = await ws.ReceiveAsync(new ArraySegment<byte>(buf), cts.Token);
+                if (res.MessageType == WebSocketMessageType.Close) break;
+                sb.Append(Encoding.UTF8.GetString(buf, 0, res.Count));
+                if (res.EndOfMessage && sb.Length > 0) {
+                    using var doc = JsonDocument.Parse(sb.ToString());
+                    var root = doc.RootElement.ValueKind == JsonValueKind.Array
+                        ? doc.RootElement.EnumerateArray().FirstOrDefault()
+                        : doc.RootElement;
+                    if (root.ValueKind == JsonValueKind.Object &&
+                        root.TryGetProperty("type", out var t) && t.GetString() == "hello") {
+                        return Result.Ok("JMRI handshake OK");
+                    }
+                    sb.Clear();
+                }
+            }
+            return Result.Fail("JMRI handshake not received");
+        } catch (Exception ex) {
+            return Result.Fail(ex, "JMRI probe failed");
+        }
+    }
 
     public async Task<IResult> SetAutomaticSettingsAsync() {
         var auto = await GetAutomaticConnectionDetailsAsync();
@@ -372,7 +407,7 @@ public sealed class JmriDccClient : DccClientBase, IDccClient, IDisposable {
     }
 
     private void OnSignalChanged(JmriSignalEventArgs e) {
-        UpdateSignal(e.Name, e.UserName, SignalAspectEnum.Off );
+        UpdateSignal(e.Name, e.UserName, SignalAspectEnum.Off);
         OnClientMessage($"Signal {e.Name} appearance={e.Appearance}", DccClientOperation.Signal, DccClientMessageType.Inbound);
     }
 

@@ -5,17 +5,20 @@ using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Clients;
 using DCCPanelController.Clients.Helpers;
 using DCCPanelController.Clients.Jmri;
+using DCCPanelController.Clients.Jmri.View;
 using DCCPanelController.Clients.Simulator;
+using DCCPanelController.Clients.Simulator.View;
 using DCCPanelController.Clients.WiThrottle;
+using DCCPanelController.Clients.WiThrottle.View;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.DataModel.Helpers;
 using DCCPanelController.Services;
 using DCCPanelController.Services.ProfileService;
-using DCCPanelController.View.Settings;
-using DCCPanelController.View.Settings.Jmri;
-using DCCPanelController.View.Settings.Simulator;
-using DCCPanelController.View.Settings.WiThrottle;
+using JmriSettingsViewModel = DCCPanelController.Clients.Jmri.View.JmriSettingsViewModel;
+using SettingsViewModel = DCCPanelController.Clients.Helpers.SettingsViewModel;
+using SimulatorSettingsViewModel = DCCPanelController.Clients.Simulator.View.SimulatorSettingsViewModel;
+using WiThrottleSettingsViewModel = DCCPanelController.Clients.WiThrottle.View.WiThrottleSettingsViewModel;
 
 namespace DCCPanelController.View;
 
@@ -23,7 +26,8 @@ public partial class DccClientTestViewModel : ObservableObject {
     private readonly ConnectionService _svc;
     private readonly ProfileService    _prf;
     public Profile Profile { get; init; }
-
+    public ObservableCollection<DccClientMessage> ServerMessages => _svc.ServerMessages;
+    
     public DccClientTestViewModel(ProfileService profile, ConnectionService svc) {
         _svc = svc;
         _prf = profile;
@@ -46,7 +50,6 @@ public partial class DccClientTestViewModel : ObservableObject {
         ConnectionIndicatorColor = Colors.Red;
         ConnectionState = DccClientState.Disconnected;
         
-        Messages = new ObservableCollection<MsgLine>();
         RefreshCurrentStates();
         HookMessageStream(); // see method body — designed to work with your existing patterns
     }
@@ -83,7 +86,6 @@ public partial class DccClientTestViewModel : ObservableObject {
 
     public bool CanConnect => ActiveSettingsVM is { } && !IsConnected;
     public bool CanDisconnect => ActiveSettingsVM is { } && IsConnected;
-
 
     partial void OnSelectedClientTypeChanged(DccClientType value) {
         // Build a fresh settings VM of the right kind (reusing your pattern)
@@ -133,12 +135,13 @@ public partial class DccClientTestViewModel : ObservableObject {
     [RelayCommand]
     private async Task ConnectAsync() {
         if (ActiveSettingsVM is null || ActiveSettings is null) return;
+        ClearMessages();
         var result = await _svc.ConnectAsync(ActiveSettings);
         if (result.IsFailure) {
-            AddMessage($"ERROR: {result.Message}", "ERR");
+            AddMessage($"ERROR: {result.Message}", DccClientOperation.System, DccClientMessageType.Error);
             return;
         }
-        AddMessage($"Connected ({SelectedClientType})", "SYS");
+        AddMessage($"Connected ({SelectedClientType})", DccClientOperation.System, DccClientMessageType.System);
         UnHookMessageStream();
         HookMessageStream();
         RefreshCurrentStates();
@@ -147,7 +150,7 @@ public partial class DccClientTestViewModel : ObservableObject {
     [RelayCommand]
     private async Task DisconnectAsync() {
         await _svc.DisconnectAsync();
-        AddMessage("Disconnected", "SYS");
+        AddMessage("Disconnected", DccClientOperation.System, DccClientMessageType.System);
     }
 
     partial void OnTurnoutChanged(Turnout? value) => RefreshCurrentStates();
@@ -203,45 +206,45 @@ public partial class DccClientTestViewModel : ObservableObject {
     [RelayCommand] private async Task SendTurnoutAsync() => await SendWrap(async c => {
             if (string.IsNullOrWhiteSpace(TurnoutId)) return;
             await c.SendTurnoutCmdAsync(new Turnout { Id = TurnoutId, Name = TurnoutId }, TurnoutDesired == TurnoutStateEnum.Thrown);
-        }, $"TX Turnout {TurnoutId} → {TurnoutDesired}");
+        }, DccClientOperation.Turnout, $"TX Turnout {TurnoutId} → {TurnoutDesired}");
 
     [RelayCommand] private async Task SendRouteAsync() => await SendWrap(async c => {
             if (string.IsNullOrWhiteSpace(RouteId)) return;
             await c.SendRouteCmdAsync(new Route { Id = RouteId, Name = RouteId }, RouteDesired == RouteStateEnum.Active);
-        }, $"TX Route {RouteId} → {RouteDesired}");
+        }, DccClientOperation.Route, $"TX Route {RouteId} → {RouteDesired}");
 
     [RelayCommand] private async Task SendSensorAsync() => await SendWrap(async c => {
             if (string.IsNullOrWhiteSpace(SensorId)) return;
             await c.SendSensorCmdAsync(new Sensor { Id = SensorId, Name = SensorId }, SensorDesired == "On");
-        }, $"TX Sensor {SensorId} → {SensorDesired}");
+        }, DccClientOperation.Sensor, $"TX Sensor {SensorId} → {SensorDesired}");
 
     [RelayCommand] private async Task SendLightAsync() => await SendWrap(async c => {
             if (string.IsNullOrWhiteSpace(LightId)) return;
             await c.SendLightCmdAsync(new Light { Id = LightId, Name = LightId }, LightDesired == "On");
-        }, $"TX Light {LightId} → {LightDesired}");
+        }, DccClientOperation.Light, $"TX Light {LightId} → {LightDesired}");
 
     [RelayCommand] private async Task SendBlockAsync() => await SendWrap(async c => {
             if (string.IsNullOrWhiteSpace(BlockId)) return;
             await c.SendBlockCmdAsync(new Block { Id = BlockId, Name = BlockId }, BlockDesired == "Occupied");
-        }, $"TX Block {BlockId} → {BlockDesired}");
+        }, DccClientOperation.Block, $"TX Block {BlockId} → {BlockDesired}");
 
     [RelayCommand] private async Task SendSignalAsync() => await SendWrap(async c => {
             if (string.IsNullOrWhiteSpace(SignalId)) return;
             await c.SendSignalCmdAsync(new Signal { Id = SignalId, Name = SignalId }, SignalDesired);
-        }, $"TX Signal {SignalId} → {SignalDesired}");
+        }, DccClientOperation.Signal, $"TX Signal {SignalId} → {SignalDesired}");
 
-    private async Task SendWrap(Func<IDccClient, Task> sender, string log) {
+    private async Task SendWrap(Func<IDccClient, Task> sender, DccClientOperation operation, string log) {
         var client = GetClientOrNull();
         if (client is null) {
-            AddMessage("No client connected", "ERR");
+            AddMessage("No client connected", DccClientOperation.System, DccClientMessageType.Error);
             return;
         }
 
         try {
             await sender(client);
-            AddMessage(log, "OUT");
+            AddMessage(log, operation, DccClientMessageType.Outbound);
         } catch (Exception ex) {
-            AddMessage($"Send failed: {ex.Message}", "ERR");
+            AddMessage($"Send failed: {ex.Message}", DccClientOperation.System, DccClientMessageType.Error);
         }
 
         // After send, re-check current states (the event should also update the UI when it arrives)
@@ -249,29 +252,19 @@ public partial class DccClientTestViewModel : ObservableObject {
     }
 
     // ---------- Message log ----------
-    public ObservableCollection<MsgLine> Messages { get; }
-    [RelayCommand] private void ClearMessages() => Messages.Clear();
+    [RelayCommand] private void ClearMessages() => _svc.ClearMessages();
 
     [RelayCommand] private async Task CopyMessages() {
-        var text = string.Join(Environment.NewLine, Messages.Select(m => $"[{m.Time:HH:mm:ss}] {m.Kind}: {m.Text}"));
+        var text = string.Join(Environment.NewLine, _svc.ServerMessages.Select(m => $"[{m.TimeStamp:HH:mm:ss}] {m.Operation}: {m.Message}"));
         await Clipboard.SetTextAsync(text);
     }
 
-    private void AddMessage(string text, DccClientMessageType msg) {
-        var kind = msg switch {
-            DccClientMessageType.System   => "SYS",
-            DccClientMessageType.Error    => "ERR",
-            DccClientMessageType.Inbound  => "IN",
-            DccClientMessageType.Outbound => "OUT",
-            _                             => "SYS"
-        };
-        Messages.Insert(0, new MsgLine(text, kind));
-        _svc.AddServerMessage(text); // also push into your global log, consistent with SettingsViewModel :contentReference[oaicite:5]{index=5}
+    private void AddMessage(string text, DccClientOperation operation,  DccClientMessageType msgType) {
+        _svc.AddServerMessage(new DccClientMessage(text, operation, msgType));
     }
 
-    private void AddMessage(string text, string kind) {
-        Messages.Insert(0, new MsgLine(text, kind));
-        _svc.AddServerMessage(text); // also push into your global log, consistent with SettingsViewModel :contentReference[oaicite:5]{index=5}
+    private void AddMessage(string text, DccClientMessageType msgType) {
+        _svc.AddServerMessage(new DccClientMessage(text, DccClientOperation.System, msgType));
     }
 
     private void HookMessageStream() {
@@ -291,10 +284,11 @@ public partial class DccClientTestViewModel : ObservableObject {
     }
 
     private void SvcOnConnectionStateChanged(object? sender, DccClientState e) {
+        Console.WriteLine($"SvcOnConnectionStateChanged: {sender?.ToString() ?? "Null Sender"} => {e}");
         ConnectionState = e;
         switch (e) {
             case DccClientState.Connected:
-                AddMessage($"***Connection State Change => CONNECTED", "SYS");
+                AddMessage($"***Connection State Change => CONNECTED", DccClientOperation.System, DccClientMessageType.System);
                 ConnectionStatusText = "Connected";
                 ConnectionIndicatorColor = Colors.Green;
                 IsConnected = true;
@@ -302,7 +296,7 @@ public partial class DccClientTestViewModel : ObservableObject {
             break;
 
             case DccClientState.Disconnected:
-                AddMessage($"***Connection State Change => DISCONNECTED", "SYS");
+                AddMessage($"***Connection State Change => DISCONNECTED", DccClientOperation.System, DccClientMessageType.System);
                 ConnectionStatusText = "Disconnected";
                 ConnectionIndicatorColor = Colors.Gray;
                 IsConnected = false;
@@ -310,7 +304,7 @@ public partial class DccClientTestViewModel : ObservableObject {
             break;
 
             case DccClientState.Error:
-                AddMessage($"***Connection State Change => ERROR", "SYS");
+                AddMessage($"***Connection State Change => ERROR", DccClientOperation.System, DccClientMessageType.System);
                 ConnectionStatusText = "Error";
                 ConnectionIndicatorColor = Colors.Red;
                 IsConnected = false;
@@ -318,7 +312,7 @@ public partial class DccClientTestViewModel : ObservableObject {
             break;
 
             case DccClientState.Initialising:
-                AddMessage($"***Connection State Change => INITIALISING", "SYS");
+                AddMessage($"***Connection State Change => INITIALISING", DccClientOperation.System, DccClientMessageType.System);
                 ConnectionStatusText = "Initialising";
                 ConnectionIndicatorColor = Colors.Blue;
                 IsConnected = false;
@@ -326,7 +320,7 @@ public partial class DccClientTestViewModel : ObservableObject {
             break;
 
             case DccClientState.Reconnecting:
-                AddMessage($"***Connection State Change => RECONNECTING", "SYS");
+                AddMessage($"***Connection State Change => RECONNECTING", DccClientOperation.System, DccClientMessageType.System);
                 ConnectionStatusText = "Reconnecting";
                 ConnectionIndicatorColor = Colors.Yellow;
                 IsConnected = false;
@@ -414,17 +408,4 @@ public partial class DccClientTestViewModel : ObservableObject {
             SignalCurrentColor = Colors.Gray;
         }
     }
-}
-
-public record MsgLine(string Text, string Kind) {
-    public DateTime Time { get; } = DateTime.Now;
-
-    public Color KindColor =>
-        Kind switch {
-            "OUT" => Colors.SteelBlue,
-            "IN"  => Colors.DarkGreen,
-            "ERR" => Colors.OrangeRed,
-            "SYS" => Colors.Gray,
-            _     => Colors.Gray
-        };
 }
