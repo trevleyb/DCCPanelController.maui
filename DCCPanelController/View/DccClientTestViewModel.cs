@@ -91,7 +91,7 @@ public partial class DccClientTestViewModel : ObservableObject {
         // Build a fresh settings VM of the right kind (reusing your pattern)
         switch (value) {
             case DccClientType.Jmri:
-                ActiveSettings = new JmriSettings { Address = "127.0.0.1", Port = 12080, Name = DeviceInfo.Name };
+                ActiveSettings = new JmriSettings { Address = "127.0.0.1", Port = 12080, Name = DeviceInfo.Name, SetAutomatically = true};
                 JmriSettingsVM = new JmriSettingsViewModel(ActiveSettings, _svc);
                 WiThrottleSettingsVM = null;
                 SimulatorSettingsVM = null;
@@ -100,7 +100,7 @@ public partial class DccClientTestViewModel : ObservableObject {
             break;
 
             case DccClientType.WiThrottle:
-                ActiveSettings = new WiThrottleSettings { Address = "127.0.0.1", Port = 12090, Name = DeviceInfo.Name };
+                ActiveSettings = new WiThrottleSettings { Address = "127.0.0.1", Port = 12090, Name = DeviceInfo.Name, SetAutomatically = true };
                 WiThrottleSettingsVM = new WiThrottleSettingsViewModel(ActiveSettings, _svc);
                 JmriSettingsVM = null;
                 SimulatorSettingsVM = null;

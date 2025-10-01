@@ -8,9 +8,18 @@ namespace DCCPanelController.Clients.WiThrottle.View;
 public partial class WiThrottleSettingsViewModel : SettingsViewModel {
     [ObservableProperty] private WiThrottleSettings _wiThrottleSettings;
 
+    public bool SetAutomatically {
+        get => WiThrottleSettings.SetAutomatically;
+        set {
+            WiThrottleSettings.SetAutomatically = value;
+            OnPropertyChanged();
+        }
+    }
+
     public WiThrottleSettingsViewModel(IDccClientSettings settings, ConnectionService connectionService) : base(settings, connectionService) {
         WiThrottleSettings = Settings as WiThrottleSettings ?? throw new InvalidCastException("Invalid Client Settings type provided.");
         if (string.IsNullOrEmpty(WiThrottleSettings.Name)) WiThrottleSettings.Name = DeviceInfo.Name;
+        WiThrottleSettings.PropertyChanged +=  (s, e) => { OnPropertyChanged(e.PropertyName); };
     }
 
     public int Port {

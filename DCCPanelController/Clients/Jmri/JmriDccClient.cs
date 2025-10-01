@@ -54,26 +54,38 @@ public sealed class JmriDccClient : DccClientBase, IDccClient, IDisposable {
 
     public DccClientType Type => DccClientType.Jmri;
 
-    // -------------------- Lifecycle --------------------
-    public async Task<IResult> ConnectAsync() {
+    public async Task<IResult> UpdateAutomaticSettings() {
         // If auto, try to discover and update the bound settings object
         if (_jmriSettings.SetAutomatically) {
             var auto = await GetAutomaticConnectionDetailsAsync();
             if (auto.IsFailure || auto.Value is null || auto.Value is not JmriSettings) {
                 State = DccClientState.Disconnected;
-                OnClientMessage("Could not automatically set connection details.");
+                OnClientMessage("Could not automatically set connection details. Is JMRI Server running?");
                 return Result.Fail(auto.Message ?? "Autodetect failed.");
             }
             _jmriSettings.Address = ((JmriSettings)auto.Value).Address;
             _jmriSettings.Port = ((JmriSettings)auto.Value).Port;
+            OnClientMessage($"Found server at {_jmriSettings.Address}:{_jmriSettings.Port}");
         }
+        return Result.Ok();
+    }
 
+    
+    // -------------------- Lifecycle --------------------
+    public async Task<IResult> ConnectAsync() {
+        var result = await UpdateAutomaticSettings();
+        if (result.IsFailure) {
+            OnClientMessage("Could not auto-detect connection settings.");
+            return Result.Fail("Could not auto-detect connection settings.");
+        }
+        
         // in JmriDccClient.ConnectAsync()
         lock (_sync) {
-            _cts?.Cancel(); _cts?.Dispose();
+            _cts?.Cancel();
+            _cts?.Dispose();
             _cts = new CancellationTokenSource();
             _connectionTask = RunReconnectLoopAsync(
-                connectOnce: ConnectAndListenAsync,                // your existing method
+                connectOnce: ConnectAndListenAsync, // your existing method
                 isDisposed: () => _disposed,
                 maxRetries: _jmriSettings.MaxRetries <= 0 ? int.MaxValue : _jmriSettings.MaxRetries,
                 initialDelay: TimeSpan.FromMilliseconds(_jmriSettings.InitialBackoffMs <= 0 ? 1000 : _jmriSettings.InitialBackoffMs),
@@ -84,7 +96,6 @@ public sealed class JmriDccClient : DccClientBase, IDccClient, IDisposable {
         State = DccClientState.Initialising;
         OnClientMessage($"Connecting to JMRI at {_jmriSettings.Address}:{_jmriSettings.Port}...");
         return Result.Ok();
-
     }
 
     public async Task<IResult> DisconnectAsync() {
@@ -126,6 +137,12 @@ public sealed class JmriDccClient : DccClientBase, IDccClient, IDisposable {
 
     public async Task<IResult> ValidateConnectionAsync() {
         try {
+            var result = await UpdateAutomaticSettings();
+            if (result.IsFailure) {
+                OnClientMessage("Could not auto-detect connection settings.");
+                return Result.Fail("Could not auto-detect connection settings.");
+            }
+            
             using var ws = new ClientWebSocket();
             using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
             var uri = new Uri($"ws://{_jmriSettings.Address}:{_jmriSettings.Port}/json/");
@@ -358,7 +375,20 @@ public sealed class JmriDccClient : DccClientBase, IDccClient, IDisposable {
     }
 
     private bool ProcessGoodbye(JsonElement _) {
-        OnConnectionStateChanged("Goodbye message received from JMRI, disconnecting.");
+        OnClientMessage("JMRI sent goodbye; closing without retry.", DccClientOperation.System, DccClientMessageType.System);
+
+        // Stop periodic work
+        StopHeartbeat();
+        StopRefreshTimer();
+
+        // Tell the outer RunReconnectLoopAsync to stop (no retry)
+        _cts?.Cancel();
+
+        // Close the transport so ListenForMessagesAsync returns
+        CloseSocket();
+
+        // Reflect final state
+        State = DccClientState.Disconnected;
         return true;
     }
 

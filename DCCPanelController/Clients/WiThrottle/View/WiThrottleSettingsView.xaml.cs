@@ -13,7 +13,9 @@ public partial class WiThrottleSettingsView : ContentView {
         // Propagate any messages from the underlying setting module 
         // so the parent can access these and show them in the UI
         // ---------------------------------------------------------------
-        viewModel.PropertyChanged += (sender, args) => OnPropertyChanged(args.PropertyName);
+        viewModel.PropertyChanged += (sender, args) => {
+            OnPropertyChanged(args.PropertyName);
+        };
     }
 
     public void OnEntryFocused(object sender, FocusEventArgs e) {
@@ -30,4 +32,10 @@ public partial class WiThrottleSettingsView : ContentView {
             viewModel.Port = service?.Port ?? 12080;
         }
     }
+
+    // private void Switch_OnToggled(object? sender, ToggledEventArgs e) {
+    //     if (BindingContext is WiThrottleSettingsViewModel viewModel) {
+    //         viewModel.WiThrottleSettings.SetAutomatically = e.Value;
+    //     }    
+    // }
 }

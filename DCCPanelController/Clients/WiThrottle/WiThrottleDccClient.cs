@@ -20,10 +20,11 @@ namespace DCCPanelController.Clients.WiThrottle {
     public sealed partial class WiThrottleDccClient : DccClientBase, IDccClient, IDisposable {
         private readonly WiThrottleSettings _settings;
 
-        private TcpClient?               _tcp;
-        private NetworkStream?           _stream;
-        private CancellationTokenSource? _cts;
-        private Task?                    _recvLoop;
+        private TcpClient?                  _tcp;
+        private NetworkStream?              _stream;
+        private CancellationTokenSource?    _cts;
+        private Task?                       _recvLoop;
+        private TaskCompletionSource<bool>? _openedTcs;
 
         private readonly byte[]               _buf = new byte[4096];
         private readonly StringBuilder        _sb  = new();
@@ -38,45 +39,7 @@ namespace DCCPanelController.Clients.WiThrottle {
 
         // ---- Lifecycle ------------------------------------------------------
 
-        // public async Task<IResult> ConnectAsync() {
-        //     await DisconnectAsync(); // clean slate
-        //     _cts = new CancellationTokenSource();
-        //
-        //     try {
-        //         State = DccClientState.Initialising;
-        //         var connectPort = _settings.SetAutomatically ? "Searching for Address:Port" : $"{_settings.Address}:{_settings.Port}";
-        //         OnClientMessage($"Connecting to WiThrottle on '{connectPort}'...");
-        //
-        //         _tcp = new TcpClient();
-        //         using var connectCts = CancellationTokenSource.CreateLinkedTokenSource(_cts.Token);
-        //         connectCts.CancelAfter(TimeSpan.FromSeconds(10));
-        //         await _tcp.ConnectAsync(_settings.Address, _settings.Port, connectCts.Token);
-        //
-        //         _stream = _tcp.GetStream();
-        //
-        //         // Wake-up handshake
-        //         // --------------------------------------------------------------------
-        //         await SendRawAsync($"N{_settings.Name}");  // Name message
-        //         await SendRawAsync($"HU{Guid.NewGuid()}"); // Hardware/UUID
-        //         await SendRawAsync("*+");                  // Request heartbeat / capabilities 
-        //
-        //         State = DccClientState.Connected;
-        //         OnClientMessage("WiThrottle connected");
-        //
-        //         _recvLoop = Task.Run(() => ReceiveLoopAsync(_cts!.Token), connectCts.Token);
-        //         _ = _recvLoop.ContinueWith(t => {
-        //             var msg = t.Exception?.GetBaseException().Message ?? "unknown error";
-        //             OnClientMessage($"WiThrottle receive loop faulted: {msg}", DccClientOperation.System, DccClientMessageType.Error);
-        //         }, TaskContinuationOptions.OnlyOnFaulted | TaskContinuationOptions.ExecuteSynchronously);
-        //         return Result.Ok("Connected");
-        //     } catch (Exception ex) {
-        //         await DisconnectAsync();
-        //         return Result.Fail(ex, "WiThrottle connect failed");
-        //     }
-        // }
-
-        public async Task<IResult> ConnectAsync()
-        {
+        public async Task<IResult> ConnectAsync() {
             await DisconnectAsync(); // clean slate
             _cts = new CancellationTokenSource();
             _ = RunReconnectLoopAsync(
@@ -92,9 +55,19 @@ namespace DCCPanelController.Clients.WiThrottle {
             return Result.Ok();
         }
 
-        private async Task ConnectAndListenAsync(CancellationToken ct)
-        {
+        private async Task ConnectAndListenAsync(CancellationToken ct) {
+            _openedTcs = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+            // Update the address and port if Automatic Settings is turned on
+            // --------------------------------------------------------------
+            var result = await UpdateAutomaticSettings();
+            if (result.IsFailure) {
+                OnClientMessage("Could not auto-detect connection settings.");
+                return;
+            }
+            
             // (re)open transport
+            // --------------------------------------------------------------
             _tcp = new TcpClient();
             await _tcp.ConnectAsync(_settings.Address, _settings.Port, ct);
             _stream = _tcp.GetStream();
@@ -103,15 +76,22 @@ namespace DCCPanelController.Clients.WiThrottle {
             await SendRawAsync($"N{_settings.Name}");
             await SendRawAsync($"HU{Guid.NewGuid()}");
             await SendRawAsync("*+");
-            State = DccClientState.Connected;
-            OnClientMessage("WiThrottle connected");
 
-            // receive until close/error
-            await ReceiveLoopAsync(ct); // on exit, we drop to Disconnected and throw to trigger backoff
+            // start to receive; don’t set Connected yet
+            var recvTask = ReceiveLoopAsync(ct);
+
+            // wait up to a few seconds for *any* inbound to prove liveness
+            var opened = await Task.WhenAny(_openedTcs.Task, Task.Delay(3000, ct)) == _openedTcs.Task;
+            if (opened) {
+                State = DccClientState.Connected;
+                OnClientMessage("WiThrottle connected");
+            }
+
+            // wait for loop (throws on close to trigger backoff)
+            await recvTask;
             throw new IOException("WiThrottle socket closed");
         }
 
-        
         public async Task<IResult> DisconnectAsync() {
             try {
                 await _cts?.CancelAsync()!;
@@ -156,8 +136,29 @@ namespace DCCPanelController.Clients.WiThrottle {
             _tcp = null;
         }
 
+        public async Task<IResult> UpdateAutomaticSettings() {
+            if (_settings.SetAutomatically) {
+                var auto = await GetAutomaticConnectionDetailsAsync();
+                if (auto.IsFailure || auto.Value is null || auto.Value is not WiThrottleSettings settings) {
+                    State = DccClientState.Disconnected;
+                    OnClientMessage("Could not automatically set connection details. Is WiThrottle service running?");
+                    return Result.Fail(auto.Message ?? "Autodetect failed.");
+                }
+                _settings.Address = settings.Address;
+                _settings.Port = settings.Port;
+                OnClientMessage($"Found server at {_settings.Address}:{_settings.Port}");
+            }
+            return Result.Ok();
+        }
+        
         public async Task<IResult> ValidateConnectionAsync() {
             try {
+                var result = await UpdateAutomaticSettings();
+                if (result.IsFailure) {
+                    OnClientMessage("Could not auto-detect connection settings.");
+                    return Result.Fail("Could not auto-detect connection settings.");
+                }
+
                 using var tcp = new TcpClient();
                 using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
                 await tcp.ConnectAsync(_settings.Address, _settings.Port, cts.Token);
@@ -237,7 +238,17 @@ namespace DCCPanelController.Clients.WiThrottle {
 
         public Task<IResult<List<DiscoveredService>>> FindAvailableServicesAsync() => DccClientFactory.FindServices(DccClientType.WiThrottle);
 
-        public Task<IResult<IDccClientSettings?>> GetAutomaticConnectionDetailsAsync() => Task.FromResult(Result<IDccClientSettings?>.Ok(_settings) as IResult<IDccClientSettings?>);
+        public async Task<IResult<IDccClientSettings?>> GetAutomaticConnectionDetailsAsync() {
+            var found = await FindAvailableServicesAsync();
+            if (found.IsFailure || found.Value is null || found.Value.Count == 0)
+                return Result<IDccClientSettings?>.Fail("No available servers could be found.");
+
+            var first = found.Value![0];
+            var rawSettings = new WiThrottleSettings();
+            rawSettings.Address = first.Address.ToString();
+            rawSettings.Port = first.Port;
+            return Result<IDccClientSettings?>.Ok(rawSettings);
+        }
 
         public void Dispose() => _cts?.Cancel();
 
@@ -262,12 +273,15 @@ namespace DCCPanelController.Clients.WiThrottle {
                 OnClientMessage($"WiThrottle read error: {ex.Message}", DccClientOperation.System, DccClientMessageType.Error);
             } finally {
                 CloseTransport();
-                State = DccClientState.Disconnected;
-                OnClientMessage("Disconnecting from WiThrottle server");
+                if (!ct.IsCancellationRequested) {
+                    State = DccClientState.Disconnected;
+                    OnClientMessage("Disconnecting from WiThrottle server");
+                }
             }
         }
 
         private void ProcessInbound(string message) {
+            _openedTcs?.TrySetResult(true);
             var clientMsg = MessageProcessor.Interpret(message);
 
             switch (clientMsg.GetType().Name) {

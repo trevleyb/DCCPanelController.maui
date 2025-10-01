@@ -3,15 +3,14 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace DCCPanelController.Clients.WiThrottle;
 
-public partial class WiThrottleSettings : ObservableObject, IDccClientSettings {
+public partial class WiThrottleSettings : DccClientSettings, IDccClientSettings {
     [ObservableProperty] private string _address = "localhost";
-
     [ObservableProperty] private string _name     = "Unknown";
     [ObservableProperty] private int    _port     = 12080;
     [ObservableProperty] private string _protocol = "http";
 
-    [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(SetManually))]
+    [ObservableProperty]
     private bool _setAutomatically;
 
     public WiThrottleSettings() : this("", "", 12090) { }
@@ -21,10 +20,6 @@ public partial class WiThrottleSettings : ObservableObject, IDccClientSettings {
         Address = address ?? "192.168.1.1";
         Port = port ?? 12090;
     }
-
-    public int MaxRetries { get; set; } = 5;
-    public int InitialBackoffMs { get; set; } = 500;
-    public double BackoffMultiplier { get; set; } = 1.5;
 
     [JsonIgnore] public bool SetManually => !SetAutomatically;
     [JsonIgnore] public bool SupportsManualEntries => true;

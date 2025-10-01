@@ -266,7 +266,7 @@
 
             <!-- Footer tip -->
             <Label Grid.Row="4" Padding="12" FontSize="12" Opacity="0.7"
-                   Text="Tip: these controls update from your Profile as events arrive. If a state doesn’t change, check your server logs above."/>
+                   Text="This page is used for testing connections to DCC Systems and generally should not be used."/>
         </Grid>
     </ScrollView>
 </ContentPage>

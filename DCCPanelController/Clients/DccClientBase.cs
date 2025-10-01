@@ -148,31 +148,17 @@ public abstract partial class DccClientBase(Profile profile) : ObservableObject 
 
     // Support for Retries
     // ----------------------------------------------------------------------------
-    // DccClientBase
-    protected async Task<TResult> WithBackoffAsync<TResult>(Func<CancellationToken, Task<TResult>> attempt,
-        int maxRetries, TimeSpan initialDelay, double multiplier,
-        CancellationToken ct) {
-        var delay = initialDelay;
-        for (var i = 0; i < maxRetries; i++) {
-            ct.ThrowIfCancellationRequested();
-            var result = await attempt(ct);
-            if (result is not null) return result;
-            await Task.Delay(delay, ct);
-            delay = TimeSpan.FromMilliseconds(Math.Min(delay.TotalMilliseconds * multiplier, 30000)); // cap at 30s
-        }
-        return default!;
-    }
-
     protected async Task RunReconnectLoopAsync(Func<CancellationToken, Task> connectOnce,
         Func<bool> isDisposed,
         int maxRetries,
         TimeSpan initialDelay,
         double multiplier,
         CancellationToken ct) {
+        
         var attempt = 0;
         while (!ct.IsCancellationRequested && !isDisposed()) {
             try {
-                await connectOnce(ct); // should return when the connection drops
+                await connectOnce(ct); 
                 if (!ct.IsCancellationRequested) {
                     State = DccClientState.Disconnected;
                     OnClientMessage("Connection closed");
@@ -211,7 +197,11 @@ public abstract partial class DccClientBase(Profile profile) : ObservableObject 
 
     protected virtual void OnClientMessage(DccClientMessage message) => OnClientMessage(new DccClientEvent(State, message));
 
-    protected virtual void OnClientMessage() => ClientMessage?.Invoke(this, new DccClientEvent(State, null));
+    protected virtual void OnClientMessage() {
+        OnUi(() => ClientMessage?.Invoke(this, new DccClientEvent(State, null)));
+    }
 
-    protected virtual void OnClientMessage(DccClientEvent e) => ClientMessage?.Invoke(this, e);
+    protected virtual void OnClientMessage(DccClientEvent e) {
+        OnUi(() => ClientMessage?.Invoke(this, e));
+    }
 }

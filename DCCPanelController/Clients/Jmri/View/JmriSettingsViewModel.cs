@@ -11,6 +11,7 @@ public partial class JmriSettingsViewModel : SettingsViewModel {
     public JmriSettingsViewModel(IDccClientSettings settings, ConnectionService connectionService) : base(settings, connectionService) {
         JmriSettings = Settings as JmriSettings ?? throw new InvalidOperationException();
         if (string.IsNullOrEmpty(JmriSettings.Name)) JmriSettings.Name = DeviceInfo.Name;
+        JmriSettings.PropertyChanged +=  (s, e) => { OnPropertyChanged(e.PropertyName); };
     }
 
     public int Port {

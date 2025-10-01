@@ -164,14 +164,14 @@ public partial class ConnectionService : ObservableObject {
     public virtual void AddServerMessage(string message, DccClientOperation operation = DccClientOperation.System, DccClientMessageType msgType = DccClientMessageType.System) => AddServerMessage(new DccClientMessage(message, operation, msgType));
 
     public virtual void AddServerMessage(DccClientMessage message) {
-            ServerMessages.Add(message);
-            OnPropertyChanged(nameof(ServerMessages));
+        ServerMessages.Add(message);
+        OnPropertyChanged(nameof(ServerMessages));
     }
 
     [RelayCommand]
     public void ClearMessages() {
-            ServerMessages.Clear();
-            OnPropertyChanged(nameof(ServerMessages));
+        ServerMessages.Clear();
+        OnPropertyChanged(nameof(ServerMessages));
         
     }
 }

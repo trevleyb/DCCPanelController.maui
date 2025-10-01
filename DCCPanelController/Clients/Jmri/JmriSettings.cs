@@ -3,7 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace DCCPanelController.Clients.Jmri;
 
-public partial class JmriSettings : ObservableObject, IDccClientSettings {
+public partial class JmriSettings : DccClientSettings, IDccClientSettings {
     [ObservableProperty] private string _address         = "localhost";
     [ObservableProperty] private string _name            = "Unknown";
     [ObservableProperty] private double _pollingInterval = 1.0;
@@ -35,8 +35,4 @@ public partial class JmriSettings : ObservableObject, IDccClientSettings {
             return true;
         }
     }
-
-    public int MaxRetries { get; set; } = 5;
-    public int InitialBackoffMs { get; set; } = 500;
-    public double BackoffMultiplier { get; set; } = 1.5;
 }

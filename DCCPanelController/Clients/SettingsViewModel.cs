@@ -31,9 +31,11 @@ public partial class SettingsViewModel : BaseViewModel {
             
             IsBusy = true;
             var client = DccClientFactory.CreateClient(ConnectionService.ProfileService.ActiveProfile, Settings);
+            client.ClientMessage += ClientOnClientMessage;
             var result = await client.ValidateConnectionAsync();                               
             await client.DisconnectAsync();                                                    
-
+            client.ClientMessage -= ClientOnClientMessage;
+            
             if (result.IsSuccess) {
                 ConnectionService.AddServerMessage("Connected Successfully.");
                 await DisplayAlertHelper.DisplayOkAlertAsync("Connected", "Successfully connected to the server.");
@@ -47,6 +49,10 @@ public partial class SettingsViewModel : BaseViewModel {
         } finally {
             IsBusy = false;
         }
+    }
+
+    private void ClientOnClientMessage(object? sender, DccClientEvent e) {
+        ConnectionService.AddServerMessage(e.Message ?? new DccClientMessage("???"));
     }
 
     [RelayCommand]
