@@ -187,6 +187,17 @@ public class ProfileService {
         RaiseActiveProfileChanged(old, profile);
     }
 
+    public async Task<Profile> CreateFromTemplateAsync(string templateName) {
+        switch (templateName) {
+            case "ChelseaAndBalmain": 
+                return await CreateAsync(templateName, false);
+            case "PiedmontSouthern": 
+                return await CreateAsync(templateName, false);
+            default:    
+                return await CreateAsync(templateName, false);
+        }
+    }
+    
     public async Task<Profile> CreateAsync(string? profileName = null, bool setActive = true) {
         ArgumentNullException.ThrowIfNull(_catalog);
         await _gate.WaitAsync();

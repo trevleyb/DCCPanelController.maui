@@ -100,10 +100,17 @@ public partial class SettingsPageViewModel : ConnectionViewModel {
 
     [RelayCommand]
     public async Task AddProfileAsync() {
-        var result = await DisplayAlertHelper.DisplayAlertAsync("Add New Profile?", "This will add a new Profile to the system and make it active. Do you wish to continue?", "Continue", "Cancel");
-        if (result) {
+
+        await SaveSettingsAsync();
+        var choices = new[] { "Empty Profile", "Chelsea & Balmain Sample", "Piedmont Southern Sample" };
+        var index = await ProfileSelector.ShowProfileSelector(choices);
+        if (index is{ } selectedProfile and>= 0) {
             await SaveSettingsAsync();
-            _ = await ProfileService.CreateAsync();
+            _ = index switch {
+                1 => await ProfileService.CreateFromTemplateAsync("ChelseaAndBalmain"),
+                2 => await ProfileService.CreateFromTemplateAsync("PiedmontSouthern"),
+                _ => await ProfileService.CreateAsync("")
+            };
             await SaveSettingsAsync();
             OnProfileChanged();
             await DisplayAlertHelper.DisplayToastAlert("New Profile Created");
@@ -112,7 +119,7 @@ public partial class SettingsPageViewModel : ConnectionViewModel {
 
     [RelayCommand]
     public async Task DeleteProfileAsync() {
-        if (ProfileService.NumberOfProfiles <= 1 || Profile is null) return;
+        if (ProfileService.NumberOfProfiles <= 1) return;
         var profileName = Profile?.ProfileName;
         var result = await DisplayAlertHelper.DisplayAlertAsync("Delete Profile?", "This will delete the current profile. Are you sure you want to do this?", "Continue", "Cancel");
         if (result && Profile is { } profile) {
