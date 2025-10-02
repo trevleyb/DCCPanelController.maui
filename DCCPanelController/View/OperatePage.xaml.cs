@@ -1,5 +1,7 @@
 using System.ComponentModel;
 using System.Diagnostics;
+using DCCPanelController.Clients;
+using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.ViewModel.Interfaces;
 using DCCPanelController.Services;
@@ -16,21 +18,32 @@ public partial class OperatePage : ContentPage, INotifyPropertyChanged {
     private          ConnectionService?   _connectionService;
 
     public OperatePage(ILogger<OperatePage> logger, OperateViewModel viewModel, ProfileService profileService, ConnectionService connectionService) {
+        InitializeComponent();
+
         _logger = logger;
         _profileService = profileService;
         _connectionService = connectionService;
+        _connectionService.ConnectionStateChanged += ConnectionServiceOnConnectionStateChanged;
         _viewModel = viewModel;
         _viewModel.CurrentPanelIndex = 0;
         _viewModel.PropertyChanged += ViewModelOnPropertyChanged;
 
         BindingContext = _viewModel;
-        InitializeComponent();
         SetTabBarState(!(_profileService?.ActiveProfile?.Settings?.StartFullScreen ?? true));
+        PanelView.Opacity = _connectionService.ConnectionState == DccClientState.Connected ? 1 : 0.25;
+    }
+
+    private void ConnectionServiceOnConnectionStateChanged(object? sender, DccClientState e) {
+        PanelView.Opacity = e == DccClientState.Connected ? 1 : 0.25;
     }
 
     protected override async void OnAppearing() {
-        base.OnAppearing();
-        await _viewModel.ReselectActivePanelAsync();
+        try {
+            base.OnAppearing();
+            await _viewModel.ReselectActivePanelAsync();
+        } catch (Exception ex) {
+            Console.WriteLine($"Exception in OnAppearing: {ex}");
+        }
     }
 
     private void ViewModelOnPropertyChanged(object? sender, PropertyChangedEventArgs e) {

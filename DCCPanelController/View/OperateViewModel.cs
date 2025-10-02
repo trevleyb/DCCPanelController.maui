@@ -18,12 +18,9 @@ namespace DCCPanelController.View;
 public partial class OperateViewModel : ConnectionViewModel {
     private readonly ProfileService    _profileService;
     private readonly ConnectionService _connectionService;
-    
+
     [ObservableProperty] private Panel? _activePanel;
     [ObservableProperty] private int    _currentPanelIndex;
-
-    [ObservableProperty] private string _connectionStateText = "Connection State Unknown";
-    [ObservableProperty] private Color  _connectionStateColor = Colors.LightGray;
 
     [NotifyPropertyChangedFor(nameof(IsNotMaximized))]
     [ObservableProperty] private bool _isMaximized;
@@ -36,44 +33,24 @@ public partial class OperateViewModel : ConnectionViewModel {
     [NotifyPropertyChangedFor(nameof(HideWelcomePage))]
     [ObservableProperty] private bool _showWelcomePage;
 
-    public bool HaveClosedWelcome;
+    public bool   HaveClosedWelcome;
 
     public OperateViewModel(ILogger<OperateViewModel> logger, ProfileService profileService, ConnectionService connectionService) : base(profileService, connectionService) {
         _logger = logger;
         _connectionService = connectionService;
-        _connectionService.ConnectionStateChanged += OnConnectionStateChanged;
+        // _connectionService.ConnectionStateChanged += ConnectionServiceOnConnectionStateChanged;
         _profileService = profileService;
         _profileService.ActiveProfileChanged += (_, _) => OnProfileChanged();
         PropertyChanged += OnPropertyChanged;
         OnProfileChanged();
-        OnConnectionStateChanged(this, _connectionService.ConnectionState);
     }
 
-    private void OnConnectionStateChanged(object? sender, DccClientState e) {
-        switch (e) {
-            case DccClientState.Connected:
-                ConnectionStateText = "Connected";
-                ConnectionStateColor = Colors.Green;
-            break;
-            case DccClientState.Disconnected:
-                ConnectionStateText = "Disconnected";
-                ConnectionStateColor = Colors.LightGray;
-            break;
-            case DccClientState.Error:
-                ConnectionStateText = "Error";
-                ConnectionStateColor = Colors.Red;
-            break;
-            case DccClientState.Initialising:
-                ConnectionStateText = "Initialising";
-                ConnectionStateColor = Colors.Blue;
-            break;
-            case DccClientState.Reconnecting:
-                ConnectionStateText = "Reconnecting";
-                ConnectionStateColor = Colors.Yellow;
-            break;
-            
-        }
-    }
+    // private async void ConnectionServiceOnConnectionStateChanged(object? sender, DccClientState e) {
+    //     OnPropertyChanged(nameof(IsConnectionAvailable));
+    //     OnPropertyChanged(nameof(ConnectionState));
+    //     OnPropertyChanged(nameof(ConnectionText));
+    //     OnPropertyChanged(nameof(ConnectionColor));
+    // }
 
     public bool IsNotMaximized => !IsMaximized;
     public bool HideWelcomePage => !ShowWelcomePage;
@@ -100,9 +77,12 @@ public partial class OperateViewModel : ConnectionViewModel {
         try {
             Panels = null;
             var profile = _profileService.ActiveProfile;
+            if (profile is null) throw new NullReferenceException("Profile is null");
+
             Panels = profile?.Panels ?? throw new ApplicationException("OperateViewModel: Panels Collection should not be empty.");
             ShowWelcomePage = Panels.Count <= 0 || (profile?.Settings?.ShowWelcomePage ?? true);
             HaveClosedWelcome = !ShowWelcomePage;
+            if (profile!.Settings?.ConnectOnStartup == true) await _connectionService.ConnectAsync();
             await SelectPanelAsync(0);
         } catch (Exception e) {
             Debug.WriteLine("Error loading profile: " + e.Message);
@@ -113,7 +93,10 @@ public partial class OperateViewModel : ConnectionViewModel {
     private async Task SwitchActiveProfileAsync() {
         var choices = _profileService.GetProfileNamesWithDefault();
         var index = await ProfileSelector.ShowProfileSelector("Select a Profile", choices);
-        if (index is{ } selectedProfile and>= 0) await _profileService.SwitchProfileByIndexAsync(selectedProfile);
+        if (index is{ } selectedProfile and>= 0) {
+            await _connectionService.DisconnectAsync();
+            await _profileService.SwitchProfileByIndexAsync(selectedProfile);
+        }
         HaveClosedWelcome = false;
     }
 

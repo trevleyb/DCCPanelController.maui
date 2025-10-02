@@ -11,7 +11,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:converters="clr-namespace:DCCPanelController.View.Converters"
     xmlns:controlPanel="clr-namespace:DCCPanelController.View.ControlPanel"
-    xmlns:services="clr-namespace:DCCPanelController.Services">
+    xmlns:services="clr-namespace:DCCPanelController.Services"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit">
 
     <ContentPage.Resources>
         <ResourceDictionary>
@@ -174,27 +175,36 @@
                     IsVisible="{Binding HideWelcomePage}"
                     Position="{Binding CurrentPanelIndex}"/>
 
-                <Label Margin="10,0,10,5"
-                       FontSize="10"
-                       Text="{Binding ConnectionStateText}"
-                       HorizontalOptions="Start"
-                       VerticalOptions="End" IsVisible="{Binding IsMaximized}"
-                       BackgroundColor="Transparent" TextColor="{Binding ConnectionStateColor}">
-                    <Label.GestureRecognizers>
-                        <TapGestureRecognizer Command="{Binding ToggleConnectionCommand}"/>
-                    </Label.GestureRecognizers>
-                </Label>
+                <HorizontalStackLayout HorizontalOptions="Start" HeightRequest="16">
+                    <Image Source="{Binding ConnectionIcon}" VerticalOptions="Center" IsVisible="{Binding IsMaximized}">
+                        <Image.Behaviors>
+                            <toolkit:IconTintColorBehavior TintColor="{Binding ConnectionColor, Mode=OneWay}"/>
+                        </Image.Behaviors>
+                    </Image>
+                    <Label Margin="5,0,0,0"
+                           FontSize="10"
+                           Text="{Binding ConnectionText}"
+                           HorizontalOptions="Start"
+                           VerticalOptions="Center" IsVisible="{Binding IsMaximized}"
+                           BackgroundColor="Transparent" TextColor="{Binding ConnectionColor}">
+                        <Label.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding ToggleConnectionCommand}"/>
+                        </Label.GestureRecognizers>
+                    </Label>
+                </HorizontalStackLayout>
 
-                <Label Margin="0,0,10,5"
-                       FontSize="8"
-                       Text="{Binding ProfileName}"
-                       HorizontalOptions="End"
-                       VerticalOptions="End" IsVisible="{Binding IsMaximized}"
-                       BackgroundColor="Transparent" TextColor="Gainsboro">
-                    <Label.GestureRecognizers>
-                        <TapGestureRecognizer Command="{Binding SwitchActiveProfileCommand}"/>
-                    </Label.GestureRecognizers>
-                </Label>
+                <HorizontalStackLayout HorizontalOptions="End" HeightRequest="16">
+                    <Label Margin="0,0,5,0"
+                           FontSize="10"
+                           Text="{Binding ProfileName}"
+                           HorizontalOptions="End"
+                           VerticalOptions="End" IsVisible="{Binding IsMaximized}"
+                           BackgroundColor="Transparent" TextColor="Gainsboro">
+                        <Label.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding SwitchActiveProfileCommand}"/>
+                        </Label.GestureRecognizers>
+                    </Label>
+                </HorizontalStackLayout>
             </Grid>
         </Grid>
     </ContentPage.Content>

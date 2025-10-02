@@ -14,7 +14,7 @@ public class ConnectionIconConverter : IMultiValueConverter {
         var isActive = values[0] as bool? ?? false;
 
         // Parameter 2: bool (determines which base name to use)
-        var state = values[1] is DccClientState ? (DccClientState)values[1] : DccClientState.Connected;
+        var state = values[1] is DccClientState ? (DccClientState)values[1] : DccClientState.Disconnected;
 
         var baseName = state switch {
             DccClientState.Connected    => "wifi_on",

@@ -21,7 +21,6 @@ public partial class ConnectionService : ObservableObject {
 
     public ConnectionService(ProfileService.ProfileService profileService) {
         _profileService = profileService;
-        _ = Task.Run(async () => await InitializeConnectionAsync());
     }
 
     public IDccClient? Client { get; private set; }
@@ -31,7 +30,8 @@ public partial class ConnectionService : ObservableObject {
     public event EventHandler<DccClientState>? ConnectionStateChanged;
     public event EventHandler<DccClientEvent>? ConnectionEvent;
 
-    private async Task InitializeConnectionAsync() {
+    public async Task InitializeAsync() {
+        ConnectionState = DccClientState.Disconnected;
         try {
             if (_profileService.ActiveProfile?.Settings.ConnectOnStartup ?? false) await ConnectAsync();
             _logger.LogInformation("Initialised Connection");
@@ -141,10 +141,13 @@ public partial class ConnectionService : ObservableObject {
         ConnectionStateChanged?.Invoke(this, state);
     }
 
+    // This resets any occupancy states. They will be updated on the next connection
+    // -------------------------------------------------------------------------------
     public async Task ResetOccupancyStates() {
         var profile = _profileService.ActiveProfile;
         if (profile is { }) {
             foreach (var sensor in profile.Sensors) sensor.State = false;
+            foreach (var block in profile.Blocks) block.IsOccupied = false;
         }
     }
 
@@ -165,6 +168,9 @@ public partial class ConnectionService : ObservableObject {
 
     public virtual void AddServerMessage(DccClientMessage message) {
         ServerMessages.Add(message);
+        #if DEBUG
+        Debug.WriteLine($"SERVER: {message.MessageType.ToString()} @ {message.Operation.ToString()} => {message.Message}");
+        #endif
         OnPropertyChanged(nameof(ServerMessages));
     }
 

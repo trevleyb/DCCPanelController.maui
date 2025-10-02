@@ -43,7 +43,7 @@ public partial class SettingsPageViewModel : ConnectionViewModel {
     public bool CanDeleteProfile => ProfileService.NumberOfProfiles > 1;
     public bool IsProfileDefault => ProfileService.IsDefault(Profile);
     public bool IsProfileNotDefault => !IsProfileDefault;
-    public Models.DataModel.Settings? Settings => Profile?.Settings;
+    public Settings? Settings => Profile?.Settings;
 
     private void ProfileOnPropertyChanged(object? sender, PropertyChangedEventArgs e) => IsDirty = true;
 

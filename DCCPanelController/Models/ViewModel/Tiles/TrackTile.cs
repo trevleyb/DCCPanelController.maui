@@ -14,7 +14,7 @@ using SkiaSharp.Views.Maui.Controls;
 namespace DCCPanelController.Models.ViewModel.Tiles;
 
 public abstract class TrackTile : Tile, ITileTrack {
-    private const float HighlightColorAlpha = 0.25f;
+    protected const float HighlightColorAlpha = 0.25f;
 
     // @formatter:off
     public bool IsOccupied {get; set => SetField(ref field, value); }

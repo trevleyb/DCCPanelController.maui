@@ -66,6 +66,17 @@ public abstract class TurnoutTile : TrackTile, ITileInteractive {
                 }
             }
 
+            if (!IsDesignMode) {
+                if (IsPath && turnout.State == TurnoutStateEnum.Thrown) {
+                    var color = Entity.Parent?.ShowPathColor ?? Colors.CornflowerBlue.WithAlpha(HighlightColorAlpha);
+                    style.Add(e => e.WithName(SvgElementType.TrackDiverging).WithColor(color).Visible());
+                } else if (IsOccupied) {
+                    var color = Entity.Parent?.OccupiedColor ?? Colors.Tomato.WithAlpha(HighlightColorAlpha);
+                    style.Add(e => e.WithName(SvgElementType.TrackDiverging).WithColor(color).Visible());
+                }
+            }
+
+            
             var trackTurnout = base.CreateTrackTile(imageName, Entity.Rotation, style.Build());
             return trackTurnout;
         }

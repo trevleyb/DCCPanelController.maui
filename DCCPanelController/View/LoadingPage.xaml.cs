@@ -24,15 +24,17 @@ public partial class LoadingPage : ContentPage {
         Dispatcher.Dispatch(async () => {
             if (IPlatformApplication.Current?.Services is { } services) {
                 var profileService = services.GetRequiredService<ProfileService>();
-
+                var connectionService = services.GetRequiredService<ConnectionService>();
+                
                 try {
                     DCCPanelController.Helpers.MethodTimeLogger.LogDirectory = Path.Combine(FileSystem.AppDataDirectory, "PerfLogs");
                     DCCPanelController.Helpers.MethodTimeLogger.MaxBytesBeforeRotate = 20 * 1024 * 1024; // 20 MB
 
-                    // 1) Initialize domain state
+                    // Initialize domain state
                     await profileService.InitializeAsync();
-
-                    // Optional: any other one-time startup work here (help assets, migrations, etc.)
+                    await connectionService.InitializeAsync();
+                    
+                    // Any other one-time startup work here (help assets, migrations, etc.)
                     await HelpService.Current.InitializeAsync(true);
 
                     #if DEBUG
@@ -40,10 +42,10 @@ public partial class LoadingPage : ContentPage {
                     await ValidateExtractedAsync();
                     #endif
 
-                    // 2) Only now create Shell and replace the root
+                    // Only now create Shell and replace the root
                     var shell = services.GetRequiredService<AppShell>();
 
-                    // 3) Prebuild the Palette Cache
+                    // Prebuild the Palette Cache
                     TileSelectorPaletteCache.PrebuildDefaultPalette();
 
                     // Important: swap the root page instead of navigating

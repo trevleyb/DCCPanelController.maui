@@ -127,8 +127,6 @@ public abstract class Tile : ContentView, ITile, IDisposable {
             or nameof(Entity.Height)
             or nameof(Entity.Rotation);
         HaveVisualPropertiesChanged = true;
-
-        Debug.WriteLine($"{Entity.EntityName} => visual change → {e.PropertyName}");
         RebuildIfNecessary();
     }
 
