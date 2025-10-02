@@ -69,7 +69,6 @@ public sealed class JmriDccClient : DccClientBase, IDccClient, IDisposable {
         }
         return Result.Ok();
     }
-
     
     // -------------------- Lifecycle --------------------
     public async Task<IResult> ConnectAsync() {
@@ -377,6 +376,8 @@ public sealed class JmriDccClient : DccClientBase, IDccClient, IDisposable {
             "hello"      => ProcessHello(item),
             "goodbye"    => ProcessGoodbye(item),
             "error"      => ProcessError(item),
+            "power"      => ProcessPower(item),
+            "time"       => ProcessTime(item),
             "pong"       => true, // ignore
             _            => false
         };
@@ -420,6 +421,44 @@ public sealed class JmriDccClient : DccClientBase, IDccClient, IDisposable {
         var code = data.GetIntProperty("code");
         var msg = data.GetStringProperty("message");
         OnConnectionStateChanged($"JMRI error: {code} => {msg}");
+        return true;
+    }
+
+    private bool ProcessPower(JsonElement root) {
+        if (!root.TryGetProperty("data", out var data)) return false;
+        var name = data.GetStringProperty("name");
+        var state = data.GetIntProperty("state");
+        var defaultState = data.GetBoolProperty("default");
+
+        var stateEnum = state switch {
+            0 => PowerStateEnum.Off,
+            1 => PowerStateEnum.On,
+            _ => PowerStateEnum.Unknown
+        };
+
+        if (Profile?.PowerState != stateEnum) {
+            UpdatePowerState(stateEnum);
+            OnClientMessage($"Power State : {(stateEnum)}", DccClientOperation.System, DccClientMessageType.Inbound);
+        }
+        return true;
+    }
+    
+    private bool ProcessTime(JsonElement root) {
+        if (!root.TryGetProperty("data", out var data)) return false;
+        var time = data.GetTimeProperty("time");
+        var rate = data.GetDoubleProperty("rate");
+        var state = data.GetIntProperty("state");
+
+        var stateEnum = state switch {
+            0 => FastClockStateEnum.Off,
+            1 => FastClockStateEnum.On,
+            _ => FastClockStateEnum.Unknown
+        };
+        
+        if (time is {}  && Profile?.FastClock != time) {
+            UpdateFastClock(time, stateEnum);
+            OnClientMessage($"Fast Clock Updated : {time:HH:mm:ss tt} @ {rate} State={state}", DccClientOperation.System, DccClientMessageType.Inbound);
+        }
         return true;
     }
 
@@ -511,8 +550,13 @@ public sealed class JmriDccClient : DccClientBase, IDccClient, IDisposable {
             new { type = "light", method = "list" },
             new { type = "block", method = "list" },
         };
-        foreach (var s in subs)
-            await SendCommandAsync(JsonSerializer.Serialize(s));
+        foreach (var s in subs) await SendCommandAsync(JsonSerializer.Serialize(s));
+
+        await SendCommandAsync(JsonSerializer.Serialize( new { type = "power" } ));
+
+        if (Profile.FastClockState == FastClockStateEnum.On) {
+            await SendCommandAsync(JsonSerializer.Serialize(new { type = "time" }));
+        }
     }
 
     // -------------------- Outbound helpers (JMRI JSON) --------------------

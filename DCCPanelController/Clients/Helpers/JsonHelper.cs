@@ -40,4 +40,14 @@ public static class JsonHelper {
             return false;
         }
     }
+    
+    public static DateTime? GetTimeProperty(this JsonElement element, string propertyName) {
+        try {
+            return element.TryGetProperty(propertyName, out var prop) ? prop.GetDateTime() : null;
+        } catch {
+            Debug.WriteLine($"Failed to get 'bool' property: {propertyName} from {element}");
+            return null;
+        }
+    }
+
 }

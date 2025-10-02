@@ -38,19 +38,11 @@ public partial class OperateViewModel : ConnectionViewModel {
     public OperateViewModel(ILogger<OperateViewModel> logger, ProfileService profileService, ConnectionService connectionService) : base(profileService, connectionService) {
         _logger = logger;
         _connectionService = connectionService;
-        // _connectionService.ConnectionStateChanged += ConnectionServiceOnConnectionStateChanged;
         _profileService = profileService;
         _profileService.ActiveProfileChanged += (_, _) => OnProfileChanged();
         PropertyChanged += OnPropertyChanged;
         OnProfileChanged();
     }
-
-    // private async void ConnectionServiceOnConnectionStateChanged(object? sender, DccClientState e) {
-    //     OnPropertyChanged(nameof(IsConnectionAvailable));
-    //     OnPropertyChanged(nameof(ConnectionState));
-    //     OnPropertyChanged(nameof(ConnectionText));
-    //     OnPropertyChanged(nameof(ConnectionColor));
-    // }
 
     public bool IsNotMaximized => !IsMaximized;
     public bool HideWelcomePage => !ShowWelcomePage;
@@ -75,15 +67,23 @@ public partial class OperateViewModel : ConnectionViewModel {
 
     public async void OnProfileChanged() {
         try {
+            // Make sure we are fully disconnected from any existing service
+            // ---------------------------------------------------------------
+            await ConnectionService.DisconnectAsync();
+            
+            // Clear the existing panel and reload it from the profile service
+            // ---------------------------------------------------------------
+            ActivePanel = null;
             Panels = null;
             var profile = _profileService.ActiveProfile;
-            if (profile is null) throw new NullReferenceException("Profile is null");
+            if (profile is null) throw new NullReferenceException("Profile is not correctly set.");
 
             Panels = profile?.Panels ?? throw new ApplicationException("OperateViewModel: Panels Collection should not be empty.");
             ShowWelcomePage = Panels.Count <= 0 || (profile?.Settings?.ShowWelcomePage ?? true);
             HaveClosedWelcome = !ShowWelcomePage;
             if (profile!.Settings?.ConnectOnStartup == true) await _connectionService.ConnectAsync();
             await SelectPanelAsync(0);
+            OnPropertyChanged(nameof(ProfileName));
         } catch (Exception e) {
             Debug.WriteLine("Error loading profile: " + e.Message);
         }

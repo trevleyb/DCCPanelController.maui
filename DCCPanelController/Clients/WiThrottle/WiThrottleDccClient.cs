@@ -11,7 +11,10 @@ using DCCPanelController.Clients.WiThrottle.Client;
 using DCCPanelController.Clients.WiThrottle.Commands;
 using DCCPanelController.Clients.WiThrottle.Events; // MessageProcessor, etc.
 // TurnoutEvent, RouteEvent, ...
-using DCCPanelController.Helpers; // TurnoutCommand, RouteCommand
+using DCCPanelController.Helpers;
+using DCCPanelController.Models.DataModel.Entities;
+using RouteStateEnum = DCCPanelController.Clients.WiThrottle.Client.RouteStateEnum;
+using TurnoutStateEnum = DCCPanelController.Clients.WiThrottle.Client.TurnoutStateEnum; // TurnoutCommand, RouteCommand
 
 namespace DCCPanelController.Clients.WiThrottle {
     /// <summary>
@@ -369,7 +372,18 @@ namespace DCCPanelController.Clients.WiThrottle {
                 break;
 
                 case FastClockEvent fc:
+                    UpdateFastClock(fc.Time, fc.State);
                     OnClientMessage($"FastClock: {fc.Time:T}", DccClientOperation.System, DccClientMessageType.Inbound);
+                break;
+                
+                case PowerEvent pwr:
+                    var state = pwr.State switch {
+                        0 => PowerStateEnum.Off,
+                        1 => PowerStateEnum.On,
+                        _ => PowerStateEnum.Unknown
+                    };
+                    UpdatePowerState(state);
+                    OnClientMessage($"Power State Updated: {pwr.Value}", DccClientOperation.System, DccClientMessageType.Inbound);
                 break;
 
                 case RosterEvent _:
@@ -377,8 +391,7 @@ namespace DCCPanelController.Clients.WiThrottle {
                 break;
 
                 default:
-                    OnClientMessage($"WiThrottle event {ev.GetType().Name}: {ev}",
-                        DccClientOperation.System, DccClientMessageType.Inbound);
+                    OnClientMessage($"WiThrottle event {ev.GetType().Name}: {ev}", DccClientOperation.System, DccClientMessageType.Inbound);
                 break;
             }
         }

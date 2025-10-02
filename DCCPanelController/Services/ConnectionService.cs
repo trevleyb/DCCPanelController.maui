@@ -130,7 +130,7 @@ public partial class ConnectionService : ObservableObject {
 
             ConnectionEvent?.Invoke(this, e);
             if (lastConnectionState != ConnectionState) OnConnectionChanged(ConnectionState);
-            ServerMessages.Add(e.Message ?? new DccClientMessage("Unknown Event."));
+            AddServerMessage(e.Message ?? new DccClientMessage("Unknown Event."));
         } catch (Exception ex) {
             Debug.WriteLine("Client Message Error: " + ex.Message);
         }
@@ -178,6 +178,5 @@ public partial class ConnectionService : ObservableObject {
     public void ClearMessages() {
         ServerMessages.Clear();
         OnPropertyChanged(nameof(ServerMessages));
-        
     }
 }

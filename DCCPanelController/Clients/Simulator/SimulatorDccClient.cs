@@ -222,6 +222,7 @@ namespace DCCPanelController.Clients.Simulator {
             _fastClock.AutoReset = true;
             _fastClock.Elapsed += (_, _) => {
                 _simClock = _simClock.AddSeconds(_clockRate);
+                UpdateFastClock(_simClock, FastClockStateEnum.On);
                 OnClientMessage($"FastClock: {_simClock:HH:mm:ss}", DccClientOperation.System, DccClientMessageType.Inbound);
             };
             _fastClock.Start();

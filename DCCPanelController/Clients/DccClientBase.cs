@@ -20,11 +20,13 @@ public abstract partial class DccClientBase(Profile profile) : ObservableObject 
     protected void UpdateBlock(string id, string name, bool isOccupied, string sensor = "", int? dccAddress = null) => OnUi(() => UpdateBlockCore(id, name, isOccupied, sensor, dccAddress));
     protected void UpdateLight(string id, string name, bool isOn, int? dccAddress = null) => OnUi(() => UpdateLightCore(id, name, isOn, dccAddress));
     protected void UpdateSignal(string id, string name, SignalAspectEnum aspect, int? dccAddress = null) => OnUi(() => UpdateSignalCore(id, name, aspect, dccAddress));
-
+    protected void UpdateFastClock(DateTime? fastClock, FastClockStateEnum state) => OnUi(() => UpdateFastClockCore(fastClock, state));
+    protected void UpdatePowerState(PowerStateEnum state) => OnUi(() => UpdatePowerStateCore(state));
+    
     // Helper methods for populating the Profile data with new data that 
     // has been received from a server. 
     // ---------------------------------------------------------------------------
-    protected void UpdateTurnoutCore(string id, string name, TurnoutStateEnum state, int? dccAddress = null) {
+    private void UpdateTurnoutCore(string id, string name, TurnoutStateEnum state, int? dccAddress = null) {
         if (Profile?.Turnouts is { } collection) {
             Turnout? entity = null;
             entity ??= Profile?.Turnouts?.FirstOrDefault(x => x.Id == id) ?? null;
@@ -44,7 +46,7 @@ public abstract partial class DccClientBase(Profile profile) : ObservableObject 
         }
     }
 
-    protected void UpdateRouteCore(string id, string name, RouteStateEnum state, int? dccAddress = null) {
+    private void UpdateRouteCore(string id, string name, RouteStateEnum state, int? dccAddress = null) {
         if (Profile?.Routes is { } collection) {
             Route? entity = null;
             entity ??= Profile?.Routes?.FirstOrDefault(x => x.Id == id) ?? null;
@@ -62,7 +64,7 @@ public abstract partial class DccClientBase(Profile profile) : ObservableObject 
         }
     }
 
-    protected void UpdateSensorCore(string id, string name, bool isOccupied, int? dccAddress = null) {
+    private void UpdateSensorCore(string id, string name, bool isOccupied, int? dccAddress = null) {
         if (Profile?.Sensors is { } collection) {
             Sensor? entity = null;
             entity ??= Profile?.Sensors?.FirstOrDefault(x => x.Id == id) ?? null;
@@ -81,7 +83,7 @@ public abstract partial class DccClientBase(Profile profile) : ObservableObject 
         }
     }
 
-    protected void UpdateBlockCore(string id, string name, bool isOccupied, string sensor = "", int? dccAddress = null) {
+    private void UpdateBlockCore(string id, string name, bool isOccupied, string sensor = "", int? dccAddress = null) {
         if (Profile?.Blocks is { } collection) {
             Block? entity = null;
             entity ??= Profile?.Blocks?.FirstOrDefault(x => x.Id == id) ?? null;
@@ -101,7 +103,7 @@ public abstract partial class DccClientBase(Profile profile) : ObservableObject 
         }
     }
 
-    protected void UpdateLightCore(string id, string name, bool isOn, int? dccAddress = null) {
+    private void UpdateLightCore(string id, string name, bool isOn, int? dccAddress = null) {
         if (Profile?.Lights is { } collection) {
             Light? entity = null;
             entity ??= Profile?.Lights?.FirstOrDefault(x => x.Id == id) ?? null;
@@ -121,7 +123,7 @@ public abstract partial class DccClientBase(Profile profile) : ObservableObject 
         }
     }
 
-    protected void UpdateSignalCore(string id, string name, SignalAspectEnum aspect, int? dccAddress = null) {
+    private void UpdateSignalCore(string id, string name, SignalAspectEnum aspect, int? dccAddress = null) {
         if (Profile?.Signals is { } collection) {
             Signal? entity = null;
             entity ??= Profile?.Signals?.FirstOrDefault(x => x.Id == id) ?? null;
@@ -138,6 +140,18 @@ public abstract partial class DccClientBase(Profile profile) : ObservableObject 
                 };
                 collection.Add(entity);
             }
+        }
+    }
+
+    private void UpdateFastClockCore(DateTime? fastClock, FastClockStateEnum state) {
+        if (fastClock is { } clock && Profile?.FastClock is { }) {
+            Profile?.FastClock = clock;
+        }
+    }
+
+    private void UpdatePowerStateCore(PowerStateEnum state) {
+        if (Profile?.PowerState is { }) {
+            Profile?.PowerState = state;
         }
     }
 

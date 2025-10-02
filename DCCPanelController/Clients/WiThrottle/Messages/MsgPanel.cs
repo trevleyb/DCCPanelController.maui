@@ -71,8 +71,13 @@ public class MsgPanel : ClientMsg, IClientMsg {
 
         case "PFT":
             var fastClock = GetFastClock(commandStr[3..]);
-            Add(new FastClockEvent(fastClock));
+            Add(new FastClockEvent(fastClock, 0));
             break;
+
+        case "PPA":
+            var power = GetPowerState(commandStr[3..]);
+            Add(new PowerEvent(power));
+        break;
         }
     }
 
@@ -87,7 +92,6 @@ public class MsgPanel : ClientMsg, IClientMsg {
     /// <returns></returns>
     private DateTime GetFastClock(string commandStr) {
         var fastClockNum = 0;
-
         try {
             var fastClockStr = commandStr[3..][..commandStr[3..].IndexOf("<;>", StringComparison.Ordinal)];
             if (!int.TryParse(fastClockStr, out fastClockNum)) fastClockNum = 0;
@@ -97,6 +101,17 @@ public class MsgPanel : ClientMsg, IClientMsg {
 
         return new DateTime(1970, 1, 1, 0, 0, 0, 0).AddSeconds(fastClockNum);
     }
+
+    private int GetPowerState(string commandStr) {
+        try {
+            var stateStr = commandStr[3].ToString();
+            return int.TryParse(stateStr, out var state) ? state : 0;
+        } catch {
+            return 0;
+        }
+        
+    }
+
 }
 
 /*

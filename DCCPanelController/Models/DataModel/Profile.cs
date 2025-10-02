@@ -1,22 +1,26 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
+using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.View.Helpers;
 
 namespace DCCPanelController.Models.DataModel;
 
 public partial class Profile : ObservableObject {
-    [ObservableProperty] private ObservableCollection<Block> _blocks;
-
     [ObservableProperty] private string _filename;
     [ObservableProperty] private string _profileName;
 
     [ObservableProperty] private Panels                          _panels;
     [ObservableProperty] private Settings                        _settings;
     [ObservableProperty] private UiObservableCollection<Light>   _lights;
+    [ObservableProperty] private ObservableCollection<Block>     _blocks;
     [ObservableProperty] private UiObservableCollection<Route>   _routes;
     [ObservableProperty] private UiObservableCollection<Sensor>  _sensors;
     [ObservableProperty] private UiObservableCollection<Signal>  _signals;
     [ObservableProperty] private UiObservableCollection<Turnout> _turnouts;
+
+    [ObservableProperty] private DateTime           _fastClock;
+    [ObservableProperty] private PowerStateEnum     _powerState;
+    [ObservableProperty] private FastClockStateEnum _fastClockState;
 
     public Profile(string profileName, string? fileName = null) {
         _filename = string.IsNullOrWhiteSpace(fileName) ? Guid.NewGuid().ToString() : fileName;
@@ -29,6 +33,9 @@ public partial class Profile : ObservableObject {
         Signals = [];
         Sensors = [];
         Lights = [];
+        FastClock = DateTime.Now;
+        FastClockState = FastClockStateEnum.Unknown;
+        PowerState = PowerStateEnum.Unknown;
     }
 
     public string Version { get; set; } = "1.0.1"; // Ensure we increment this version number when making changes to the schema
