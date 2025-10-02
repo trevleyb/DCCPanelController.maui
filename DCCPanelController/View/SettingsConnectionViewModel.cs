@@ -53,6 +53,7 @@ public partial class SettingsConnectionViewModel : ConnectionViewModel {
         _profile = new Profile("Temporary");
         ProfileService = profileService;
         OnProfileChanged();
+        PropertyChanged += (s, e) => { IsDirty = true; };
     }
 
     public bool IsNavigationDrawerClosed => !IsNavigationDrawerOpen;

@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Data;
+using System.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Clients;
@@ -27,7 +28,8 @@ public partial class DccClientTestViewModel : ObservableObject {
     private readonly ProfileService    _prf;
     public Profile Profile { get; init; }
     public ObservableCollection<DccClientMessage> ServerMessages => _svc.ServerMessages;
-    
+    public event EventHandler<bool>? ConnectStateChanged;
+
     public DccClientTestViewModel(ProfileService profile, ConnectionService svc) {
         _svc = svc;
         _prf = profile;
@@ -49,7 +51,7 @@ public partial class DccClientTestViewModel : ObservableObject {
         ConnectionStatusText = "Disconnected";
         ConnectionIndicatorColor = Colors.Red;
         ConnectionState = DccClientState.Disconnected;
-        
+
         RefreshCurrentStates();
         HookMessageStream(); // see method body — designed to work with your existing patterns
     }
@@ -57,8 +59,6 @@ public partial class DccClientTestViewModel : ObservableObject {
     // ---------- Client selection + settings ----------
     public ObservableCollection<DccClientType> ClientTypes { get; }
     [ObservableProperty] private DccClientType _selectedClientType;
-    [ObservableProperty] private bool          _isConnected;
-    [ObservableProperty] private bool          _isNotConnected;
 
     // Inline settings view models (yours)
     [ObservableProperty] private ContentView?                 _settingsView;
@@ -75,23 +75,29 @@ public partial class DccClientTestViewModel : ObservableObject {
     [ObservableProperty] private bool _supportsSignals;
     [ObservableProperty] private bool _supportsRoutes;
 
-    [ObservableProperty] private string _connectionStatusText;
-    [ObservableProperty] private Color  _connectionIndicatorColor;
+    [ObservableProperty] private string         _connectionStatusText;
+    [ObservableProperty] private Color          _connectionIndicatorColor;
     [ObservableProperty] private DccClientState _connectionState;
+    [ObservableProperty] private bool           _autoScroll;
+    [ObservableProperty] private bool           _isConnectButtonAvailable;
+    [ObservableProperty] private bool           _isDisconnectButtonAvailable;
 
-    public bool IsConnectionAvailable => CanConnect;
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsNotConnected))]
+    private bool _isConnected;
+
+    public bool IsNotConnected => !IsConnected;
+
+    //public bool IsConnectionAvailable => IsConnectButtonAvailable;
     public bool IsJmri => SelectedClientType == DccClientType.Jmri;
     public bool IsWiThrottle => SelectedClientType == DccClientType.WiThrottle;
     public bool IsSimulator => SelectedClientType == DccClientType.Simulator;
 
-    public bool CanConnect => ActiveSettingsVM is { } && !IsConnected;
-    public bool CanDisconnect => ActiveSettingsVM is { } && IsConnected;
-
     partial void OnSelectedClientTypeChanged(DccClientType value) {
-        // Build a fresh settings VM of the right kind (reusing your pattern)
+        ClearMessages();
         switch (value) {
             case DccClientType.Jmri:
-                ActiveSettings = new JmriSettings { Address = "127.0.0.1", Port = 12080, Name = DeviceInfo.Name, SetAutomatically = true};
+                ActiveSettings = new JmriSettings { Address = "127.0.0.1", Port = 12080, Name = DeviceInfo.Name, SetAutomatically = true };
                 JmriSettingsVM = new JmriSettingsViewModel(ActiveSettings, _svc);
                 WiThrottleSettingsVM = null;
                 SimulatorSettingsVM = null;
@@ -128,7 +134,9 @@ public partial class DccClientTestViewModel : ObservableObject {
         OnPropertyChanged(nameof(IsJmri));
         OnPropertyChanged(nameof(IsWiThrottle));
         OnPropertyChanged(nameof(IsSimulator));
-        OnPropertyChanged(nameof(CanConnect));
+        IsConnected = false;
+        IsConnectButtonAvailable = true;
+        IsDisconnectButtonAvailable = false;
     }
 
     // ---------- Connect / Disconnect ----------
@@ -136,6 +144,10 @@ public partial class DccClientTestViewModel : ObservableObject {
     private async Task ConnectAsync() {
         if (ActiveSettingsVM is null || ActiveSettings is null) return;
         ClearMessages();
+        IsConnected = false;
+        ConnectionStatusText = "ATTEMPTING TO CONNECT";
+        ConnectionIndicatorColor = Colors.BlueViolet;
+
         var result = await _svc.ConnectAsync(ActiveSettings);
         if (result.IsFailure) {
             AddMessage($"ERROR: {result.Message}", DccClientOperation.System, DccClientMessageType.Error);
@@ -144,13 +156,18 @@ public partial class DccClientTestViewModel : ObservableObject {
         AddMessage($"Connected ({SelectedClientType})", DccClientOperation.System, DccClientMessageType.System);
         UnHookMessageStream();
         HookMessageStream();
+
         RefreshCurrentStates();
+        AutoScroll = true;
+        ConnectStateChanged?.Invoke(this, true);
     }
 
     [RelayCommand]
     private async Task DisconnectAsync() {
         await _svc.DisconnectAsync();
+        IsConnected = false;
         AddMessage("Disconnected", DccClientOperation.System, DccClientMessageType.System);
+        ConnectStateChanged?.Invoke(this, false);
     }
 
     partial void OnTurnoutChanged(Turnout? value) => RefreshCurrentStates();
@@ -259,7 +276,7 @@ public partial class DccClientTestViewModel : ObservableObject {
         await Clipboard.SetTextAsync(text);
     }
 
-    private void AddMessage(string text, DccClientOperation operation,  DccClientMessageType msgType) {
+    private void AddMessage(string text, DccClientOperation operation, DccClientMessageType msgType) {
         _svc.AddServerMessage(new DccClientMessage(text, operation, msgType));
     }
 
@@ -284,56 +301,58 @@ public partial class DccClientTestViewModel : ObservableObject {
     }
 
     private void SvcOnConnectionStateChanged(object? sender, DccClientState e) {
-        Console.WriteLine($"SvcOnConnectionStateChanged: {sender?.ToString() ?? "Null Sender"} => {e}");
         ConnectionState = e;
         switch (e) {
             case DccClientState.Connected:
-                AddMessage($"***Connection State Change => CONNECTED", DccClientOperation.System, DccClientMessageType.System);
-                ConnectionStatusText = "Connected";
+                AddMessage($"CONNECTED", DccClientOperation.System, DccClientMessageType.System);
+                ConnectionStatusText = "CONNECTED";
                 ConnectionIndicatorColor = Colors.Green;
+                IsConnectButtonAvailable = false;
+                IsDisconnectButtonAvailable = true;
                 IsConnected = true;
-                IsNotConnected = false;
             break;
 
             case DccClientState.Disconnected:
-                AddMessage($"***Connection State Change => DISCONNECTED", DccClientOperation.System, DccClientMessageType.System);
-                ConnectionStatusText = "Disconnected";
+                AddMessage($"DISCONNECTED", DccClientOperation.System, DccClientMessageType.System);
+                ConnectionStatusText = "DISCONNECTED";
                 ConnectionIndicatorColor = Colors.Gray;
+                IsConnectButtonAvailable = true;
+                IsDisconnectButtonAvailable = false;
                 IsConnected = false;
-                IsNotConnected = true;
             break;
 
             case DccClientState.Error:
-                AddMessage($"***Connection State Change => ERROR", DccClientOperation.System, DccClientMessageType.System);
-                ConnectionStatusText = "Error";
+                AddMessage($"ERROR", DccClientOperation.System, DccClientMessageType.System);
+                ConnectionStatusText = "ERROR";
                 ConnectionIndicatorColor = Colors.Red;
+                IsConnectButtonAvailable = true;
+                IsDisconnectButtonAvailable = false;
                 IsConnected = false;
-                IsNotConnected = true;
             break;
 
             case DccClientState.Initialising:
-                AddMessage($"***Connection State Change => INITIALISING", DccClientOperation.System, DccClientMessageType.System);
-                ConnectionStatusText = "Initialising";
+                AddMessage($"INITIALISING", DccClientOperation.System, DccClientMessageType.System);
+                ConnectionStatusText = "INITIALISING";
                 ConnectionIndicatorColor = Colors.Blue;
-                IsConnected = false;
-                IsNotConnected = false;
+                IsConnectButtonAvailable = false;
+                IsDisconnectButtonAvailable = true;
+                IsConnected = true;
             break;
 
             case DccClientState.Reconnecting:
-                AddMessage($"***Connection State Change => RECONNECTING", DccClientOperation.System, DccClientMessageType.System);
-                ConnectionStatusText = "Reconnecting";
+                AddMessage($"RECONNECTING", DccClientOperation.System, DccClientMessageType.System);
+                ConnectionStatusText = "RECONNECTING";
                 ConnectionIndicatorColor = Colors.Yellow;
-                IsConnected = false;
-                IsNotConnected = false;
+                IsConnectButtonAvailable = false;
+                IsDisconnectButtonAvailable = true;
+                IsConnected = true;
             break;
         }
 
         OnPropertyChanged(nameof(ConnectionStatusText));
         OnPropertyChanged(nameof(ConnectionIndicatorColor));
-        OnPropertyChanged(nameof(IsConnected));
-        OnPropertyChanged(nameof(IsNotConnected));
-        OnPropertyChanged(nameof(CanConnect));
-        OnPropertyChanged(nameof(CanDisconnect));
+        OnPropertyChanged(nameof(IsConnectButtonAvailable));
+        OnPropertyChanged(nameof(IsDisconnectButtonAvailable));
     }
 
     // ---------- State lookup ----------
@@ -345,67 +364,68 @@ public partial class DccClientTestViewModel : ObservableObject {
 
     private void RefreshCurrentStates() {
         var p = Profile;
+        MainThread.BeginInvokeOnMainThread(async () => {
+            // Turnout
+            if (!string.IsNullOrWhiteSpace(TurnoutId) && p.Turnouts.TryGet(TurnoutId, out var t)) {
+                TurnoutCurrentText = t?.State.ToString() ?? "";
+                TurnoutCurrentColor = t?.State == TurnoutStateEnum.Thrown ? Colors.OrangeRed : Colors.ForestGreen;
+            } else {
+                TurnoutCurrentText = "–";
+                TurnoutCurrentColor = Colors.Gray;
+            }
 
-        // Turnout
-        if (!string.IsNullOrWhiteSpace(TurnoutId) && p.Turnouts.TryGet(TurnoutId, out var t)) {
-            TurnoutCurrentText = t?.State.ToString() ?? "";
-            TurnoutCurrentColor = t?.State == TurnoutStateEnum.Thrown ? Colors.OrangeRed : Colors.ForestGreen;
-        } else {
-            TurnoutCurrentText = "–";
-            TurnoutCurrentColor = Colors.Gray;
-        }
+            // Route
+            if (!string.IsNullOrWhiteSpace(RouteId) && p.Routes.TryGet(RouteId, out var r)) {
+                RouteCurrentText = r?.State.ToString() ?? "";
+                RouteCurrentColor = r?.State == RouteStateEnum.Active ? Colors.ForestGreen : Colors.Gray;
+            } else {
+                RouteCurrentText = "–";
+                RouteCurrentColor = Colors.Gray;
+            }
 
-        // Route
-        if (!string.IsNullOrWhiteSpace(RouteId) && p.Routes.TryGet(RouteId, out var r)) {
-            RouteCurrentText = r?.State.ToString() ?? "";
-            RouteCurrentColor = r?.State == RouteStateEnum.Active ? Colors.ForestGreen : Colors.Gray;
-        } else {
-            RouteCurrentText = "–";
-            RouteCurrentColor = Colors.Gray;
-        }
+            // Sensor
+            if (!string.IsNullOrWhiteSpace(SensorId) && p.Sensors.TryGet(SensorId, out var s)) {
+                var on = s?.State ?? false;
+                SensorCurrentText = on ? "On" : "Off";
+                SensorCurrentColor = on ? Colors.ForestGreen : Colors.Gray;
+            } else {
+                SensorCurrentText = "–";
+                SensorCurrentColor = Colors.Gray;
+            }
 
-        // Sensor
-        if (!string.IsNullOrWhiteSpace(SensorId) && p.Sensors.TryGet(SensorId, out var s)) {
-            var on = s?.State ?? false;
-            SensorCurrentText = on ? "On" : "Off";
-            SensorCurrentColor = on ? Colors.ForestGreen : Colors.Gray;
-        } else {
-            SensorCurrentText = "–";
-            SensorCurrentColor = Colors.Gray;
-        }
+            // Light
+            if (!string.IsNullOrWhiteSpace(LightId) && p.Lights.TryGet(LightId, out var l)) {
+                var on = l?.State ?? false;
+                LightCurrentText = on ? "On" : "Off";
+                LightCurrentColor = on ? Colors.Gold : Colors.Gray;
+            } else {
+                LightCurrentText = "–";
+                LightCurrentColor = Colors.Gray;
+            }
 
-        // Light
-        if (!string.IsNullOrWhiteSpace(LightId) && p.Lights.TryGet(LightId, out var l)) {
-            var on = l?.State ?? false;
-            LightCurrentText = on ? "On" : "Off";
-            LightCurrentColor = on ? Colors.Gold : Colors.Gray;
-        } else {
-            LightCurrentText = "–";
-            LightCurrentColor = Colors.Gray;
-        }
+            // Block
+            if (!string.IsNullOrWhiteSpace(BlockId) && p.Blocks.TryGet(BlockId, out var b)) {
+                var occ = b?.IsOccupied ?? false;
+                BlockCurrentText = occ ? "Occupied" : "Free";
+                BlockCurrentColor = occ ? Colors.OrangeRed : Colors.ForestGreen;
+            } else {
+                BlockCurrentText = "–";
+                BlockCurrentColor = Colors.Gray;
+            }
 
-        // Block
-        if (!string.IsNullOrWhiteSpace(BlockId) && p.Blocks.TryGet(BlockId, out var b)) {
-            var occ = b?.IsOccupied ?? false;
-            BlockCurrentText = occ ? "Occupied" : "Free";
-            BlockCurrentColor = occ ? Colors.OrangeRed : Colors.ForestGreen;
-        } else {
-            BlockCurrentText = "–";
-            BlockCurrentColor = Colors.Gray;
-        }
-
-        // Signal
-        if (!string.IsNullOrWhiteSpace(SignalId) && p.Signals.TryGet(SignalId, out var sg)) {
-            SignalCurrentText = sg?.Aspect.ToString() ?? "Clear";
-            SignalCurrentColor = sg?.Aspect switch {
-                "Clear"    => Colors.ForestGreen,
-                "Approach" => Colors.Goldenrod,
-                "Stop"     => Colors.OrangeRed,
-                _          => Colors.Gray
-            };
-        } else {
-            SignalCurrentText = "–";
-            SignalCurrentColor = Colors.Gray;
-        }
+            // Signal
+            if (!string.IsNullOrWhiteSpace(SignalId) && p.Signals.TryGet(SignalId, out var sg)) {
+                SignalCurrentText = sg?.Aspect.ToString() ?? "Clear";
+                SignalCurrentColor = sg?.Aspect switch {
+                    "Clear"    => Colors.ForestGreen,
+                    "Approach" => Colors.Goldenrod,
+                    "Stop"     => Colors.OrangeRed,
+                    _          => Colors.Gray
+                };
+            } else {
+                SignalCurrentText = "–";
+                SignalCurrentColor = Colors.Gray;
+            }
+        });
     }
 }

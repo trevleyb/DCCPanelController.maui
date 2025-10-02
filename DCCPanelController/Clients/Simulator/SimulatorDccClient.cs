@@ -24,7 +24,6 @@ namespace DCCPanelController.Clients.Simulator {
         // timers
         private System.Timers.Timer? _heartbeat;
         private System.Timers.Timer? _randomFlips;
-        private System.Timers.Timer? _bursts;
         private System.Timers.Timer? _fastClock;
         private System.Timers.Timer? _failureInjector;
 
@@ -33,15 +32,9 @@ namespace DCCPanelController.Clients.Simulator {
         private          DateTime _simClock;
         private          double   _clockRate; // 1.0 = real time, 10.0 = 10x, etc.
 
-        // entity seeding
-        private const int SeedCount = 4;
-
         // cached knobs (read from settings if present, else defaults)
         private readonly int _randomFlipsSecs;
         private readonly int _heartbeatSecs;
-        private readonly int _burstEverySecs;
-        private readonly int _burstSizeMin;
-        private readonly int _burstSizeMax;
         private readonly int _disconnectEverySecs;
 
         public SimulatorDccClient(Profile profile, IDccClientSettings settings) : base(profile) {
@@ -51,9 +44,6 @@ namespace DCCPanelController.Clients.Simulator {
             // read optional knobs from settings via reflection (no breaking changes to your class)
             _heartbeatSecs = GetInt(_settings, "HeartbeatSeconds", 15);
             _randomFlipsSecs = GetInt(_settings, "RandomFlipSeconds", 0); // 0 = Disabled, 1000 = 1 sec
-            _burstEverySecs = GetInt(_settings, "BurstEverySeconds", 0);  // 0 = Disabled, 1000 = 1 sec
-            _burstSizeMin = GetInt(_settings, "BurstSizeMin", 3);
-            _burstSizeMax = GetInt(_settings, "BurstSizeMax", 8);
             _disconnectEverySecs = GetInt(_settings, "DisconnectEvery", 0); // 0 = disabled
 
             var clockRateD = GetDouble(_settings, "FastClockRate", 12.0); // 12x sim time by default
@@ -81,7 +71,7 @@ namespace DCCPanelController.Clients.Simulator {
                 isDisposed: () => _cts == null || _cts.IsCancellationRequested,
                 maxRetries: _settings.MaxRetries,
                 initialDelay: TimeSpan.FromMilliseconds(Math.Max(1, _settings.InitialBackoffMs)),
-                multiplier: _settings.BackoffMultiplier <= 1 ? 1.5 : _settings.BackoffMultiplier,
+                multiplier: _settings.BackoffMultiplier <= 1 ? 1 : _settings.BackoffMultiplier,
                 ct: _cts.Token
             );
 
@@ -95,12 +85,9 @@ namespace DCCPanelController.Clients.Simulator {
             // Reset view and seed a small layout
             Profile.RefreshAll();
 
-            //SeedEntities();
-
             StartHeartbeat();
             StartFastClock();
             StartRandomFlips();
-            StartBursts();
             StartFailureInjection();
 
             State = DccClientState.Connected;
@@ -110,8 +97,7 @@ namespace DCCPanelController.Clients.Simulator {
             await using (ct.Register(() => _dropTcs.TrySetCanceled(ct))) await _dropTcs.Task;
         }
 
-        public Task<IResult> DisconnectAsync()
-        {
+        public Task<IResult> DisconnectAsync() {
             _cts?.Cancel();
             _cts = null;
             InternalDropConnection();
@@ -130,8 +116,6 @@ namespace DCCPanelController.Clients.Simulator {
         public Task<IResult> SetAutomaticSettingsAsync() => Task.FromResult<IResult>(Result.Ok("Simulator settings OK"));
 
         public Task<IResult> ForceRefreshAsync(DccClientCapability? capability = null) {
-            // Simulate a relist/subscription replay by sending a burst for each type
-            SendBurst();
             OnClientMessage("Simulator: full relist requested", DccClientOperation.System, DccClientMessageType.Inbound);
             return Task.FromResult<IResult>(Result.Ok());
         }
@@ -251,14 +235,6 @@ namespace DCCPanelController.Clients.Simulator {
             _randomFlips.Start();
         }
 
-        private void StartBursts() {
-            if (_burstEverySecs <= 0) return;
-            _bursts = new System.Timers.Timer(_burstEverySecs * 1000);
-            _bursts.AutoReset = true;
-            _bursts.Elapsed += (_, _) => SendBurst();
-            _bursts.Start();
-        }
-
         private void StartFailureInjection() {
             if (_disconnectEverySecs <= 0) return;
             _failureInjector = new System.Timers.Timer(_disconnectEverySecs * 1000);
@@ -277,8 +253,6 @@ namespace DCCPanelController.Clients.Simulator {
             _fastClock = null;
             Stop(_randomFlips);
             _randomFlips = null;
-            Stop(_bursts);
-            _bursts = null;
             Stop(_failureInjector);
             _failureInjector = null;
 
@@ -292,39 +266,49 @@ namespace DCCPanelController.Clients.Simulator {
             }
         }
 
-        public void SeedEntities() {
-            for (var i = 101; i < 101 + SeedCount; i++)
-                UpdateTurnout($"NT{i}", $"Turnout {i}", _rand.Next(2) == 0 ? TurnoutStateEnum.Closed : TurnoutStateEnum.Thrown);
+        public static void SeedEntities(Profile profile, int seedCount = 1) {
+            var rand = new Random();
+            for (var i = 101; i < 101 + seedCount; i++) {
+                if (profile.Turnouts.Count(x => x.Id == $"NT{i}") == 0)
+                    profile.Turnouts.Add(new Turnout() { Id = $"NT{i}", Name = $"Turnout {i}", DccAddress = i, IsEditable = true, State = rand.Next(2) == 0 ? TurnoutStateEnum.Closed : TurnoutStateEnum.Thrown });
+            }
 
-            for (var i = 201; i < 201 + SeedCount; i++)
-                UpdateRoute($"RT{i}", $"Route {i}", _rand.Next(2) == 0 ? RouteStateEnum.Active : RouteStateEnum.Inactive);
+            for (var i = 201; i < 201 + seedCount; i++) {
+                if (profile.Routes.Count(x => x.Id == $"RT{i}") == 0)
+                    profile.Routes.Add(new Route() { Id = $"RT{i}", Name = $"Route {i}", DccAddress = i, IsEditable = true, State = RouteStateEnum.Inactive });
+            }
 
-            for (var i = 301; i < 301 + SeedCount; i++)
-                UpdateSensor($"SN{i}", $"Sensor {i}", _rand.Next(2) == 0);
+            for (var i = 301; i < 301 + seedCount; i++) {
+                if (profile.Sensors.Count(x => x.Id == $"SN{i}") == 0)
+                    profile.Sensors.Add(new Sensor() { Id = $"SN{i}", Name = $"Sensor {i}", DccAddress = i, IsEditable = true, State = rand.Next(2) == 0 });
+            }
 
-            for (var i = 401; i < 401 + SeedCount; i++)
-                UpdateLight($"LT{i}", $"Light {i}", _rand.Next(2) == 0);
+            for (var i = 401; i < 401 + seedCount; i++) {
+                if (profile.Lights.Count(x => x.Id == $"LT{i}") == 0)
+                    profile.Lights.Add(new Light() { Id = $"LT{i}", Name = $"Light {i}", DccAddress = i, IsEditable = true, State = rand.Next(2) == 0 });
+            }
 
-            for (var i = 501; i < 501 + SeedCount; i++)
-                UpdateBlock($"BK{i}", $"Block {i}", _rand.Next(2) == 0);
+            for (var i = 501; i < 501 + seedCount; i++) {
+                if (profile.Blocks.Count(x => x.Id == $"BL{i}") == 0)
+                    profile.Blocks.Add(new Block() { Id = $"BL{i}", Name = $"Block {i}", DccAddress = i, IsEditable = true, Sensor = "SN1", IsOccupied = rand.Next(2) == 0 });
+            }
 
-            for (var i = 601; i < 601 + SeedCount; i++)
-                UpdateSignal($"SG{i}", $"Signal {i}", _rand.Next(3) switch {
-                    0 => SignalAspectEnum.Clear,
-                    1 => SignalAspectEnum.Approach,
-                    _ => SignalAspectEnum.Stop
-                });
-
-            OnClientMessage("SIM: initial relist complete", DccClientOperation.System, DccClientMessageType.Inbound);
+            for (var i = 601; i < 601 + seedCount; i++) {
+                if (profile.Signals.Count(x => x.Id == $"SG{i}") == 0)
+                    profile.Signals.Add(new Signal() { Id = $"SG{i}", Name = $"Signal {i}", DccAddress = i, IsEditable = true, Aspect = "Clear" });
+            }
         }
 
         public (string? id, string? name) Pick(IEnumerable<IDccTable> collection) {
             var table = collection.ToList();
-            var idx = _rand.Next(table.Count);
-            if (idx < table.Count && table is { Count: > 0 }) {
-                var obj = table[idx];
-                var (id, name) = (obj.Id, obj.Name);
-                if (id is { } && name is { }) return(id, name);
+            var count = table.Count;
+            if (count > 0) {
+                var idx = _rand.Next(count);
+                if (idx < count) {
+                    var obj = table[idx];
+                    var (id, name) = (obj.Id, obj.Name);
+                    if (id is { } && name is { }) return(id, name);
+                }
             }
             return(null, null);
         }
@@ -403,63 +387,6 @@ namespace DCCPanelController.Clients.Simulator {
                     break;
                 }
             }
-        }
-
-        private void SendBurst() {
-            if (State != DccClientState.Connected) return;
-
-            var burstSize = _rand.Next(Math.Max(1, _burstSizeMin), Math.Max(_burstSizeMin + 1, _burstSizeMax + 1));
-            var kinds = new[] { "NT", "RT", "SN", "LT", "BK", "SG" };
-
-            for (int i = 0; i < burstSize; i++) {
-                var kind = kinds[_rand.Next(kinds.Length)];
-                switch (kind) {
-                    case"NT": {
-                        var (id, name) = Pick(Profile.Turnouts);
-                        if (id is { } && name is { }) UpdateTurnout(id, name, _rand.Next(2) == 0 ? TurnoutStateEnum.Closed : TurnoutStateEnum.Thrown);
-                        break;
-                    }
-
-                    case"RT": {
-                        var (id, name) = Pick(Profile.Routes);
-                        if (id is { } && name is { }) UpdateRoute(id, name, _rand.Next(2) == 0 ? RouteStateEnum.Active : RouteStateEnum.Inactive);
-                        break;
-                    }
-
-                    case"SN": {
-                        var (id, name) = Pick(Profile.Sensors);
-                        if (id is { } && name is { }) UpdateSensor(id, name, _rand.Next(2) == 0);
-                        break;
-                    }
-
-                    case"LT": {
-                        var (id, name) = Pick(Profile.Lights);
-                        if (id is { } && name is { }) UpdateLight(id, name, _rand.Next(2) == 0);
-                        break;
-                    }
-
-                    case"BK": {
-                        var (id, name) = Pick(Profile.Blocks);
-                        if (id is { } && name is { }) UpdateBlock(id, name, _rand.Next(2) == 0);
-                        break;
-                    }
-
-                    case"SG": {
-                        var (id, name) = Pick(Profile.Signals);
-                        if (id is { } && name is { }) {
-                            var aspect = _rand.Next(3) switch {
-                                0 => SignalAspectEnum.Clear,
-                                1 => SignalAspectEnum.Approach,
-                                _ => SignalAspectEnum.Stop
-                            };
-                            UpdateSignal(id, name, aspect);
-                        }
-                        break;
-                    }
-                }
-            }
-
-            OnClientMessage($"SIM: burst x{burstSize}", DccClientOperation.System, DccClientMessageType.Inbound);
         }
 
         private static int GetInt(object obj, string property, int dflt) => obj.GetType().GetProperty(property)?.GetValue(obj) is int i ? i : dflt;

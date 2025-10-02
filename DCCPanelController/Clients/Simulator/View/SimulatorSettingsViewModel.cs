@@ -13,8 +13,15 @@ public partial class SimulatorSettingsViewModel : SettingsViewModel {
     private async Task InitializeAsync() => await OnRefreshServersClickedAsync();
 
     [RelayCommand]
+    private async Task SeedTablesAsync() {
+        if (ConnectionService?.ProfileService?.ActiveProfile is {} profile && SimulatorSettings.SeedCount > 0) {
+            SimulatorDccClient.SeedEntities(profile, SimulatorSettings.SeedCount);
+            await DisplayAlertHelper.DisplayToastAlert("Seeded Simulator Tables");
+        }
+    }
+
+    [RelayCommand]
     private async Task TurnOffAllSettingsAsync() {
-        SimulatorSettings.BurstEverySeconds = 0;
         SimulatorSettings.FastClockRate = 0;
         SimulatorSettings.DisconnectEvery = 0;
         SimulatorSettings.HeartbeatSeconds = 0;
@@ -23,13 +30,10 @@ public partial class SimulatorSettingsViewModel : SettingsViewModel {
 
     [RelayCommand]
     private async Task ResetSettingsAsync() {
-        SimulatorSettings.BurstEverySeconds = 60;
         SimulatorSettings.FastClockRate = 1.2;
         SimulatorSettings.DisconnectEvery = 90;
         SimulatorSettings.HeartbeatSeconds = 15;
         SimulatorSettings.RandomFlipSeconds = 30;
-        SimulatorSettings.BurstSizeMax = 6;
-        SimulatorSettings.BurstSizeMin = 2;
     }
 
 }

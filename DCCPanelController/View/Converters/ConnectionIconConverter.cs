@@ -20,9 +20,9 @@ public class ConnectionIconConverter : IMultiValueConverter {
             DccClientState.Connected    => "wifi_on",
             DccClientState.Disconnected => "wifi_off",
             DccClientState.Error        => "wifi_error",
-            DccClientState.Reconnecting => "wifi_reconnecting",
-            DccClientState.Initialising => "wifi_initialising",
-            _                            => "wifi_off",
+            DccClientState.Reconnecting => "wifi_search",
+            DccClientState.Initialising => "wifi_search",
+            _                           => "wifi_off",
         };
 
         // Add suffix based on Parameter 1

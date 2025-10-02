@@ -12,13 +12,11 @@ public partial class SimulatorSettings : DccClientSettings, IDccClientSettings {
     [JsonIgnore] public bool HasValidSettings => true;
     [JsonIgnore] public List<DccClientCapability> Capabilities => [DccClientCapability.Turnouts, DccClientCapability.Routes, DccClientCapability.Lights, DccClientCapability.Blocks];
 
-    [ObservableProperty] private int _heartbeatSeconds = 15;
-    [ObservableProperty] private int _randomFlipSeconds = 30; // Every 10 Seconds
-    [ObservableProperty] private int _burstEverySeconds = 60; // Every 30 seconds
-    [ObservableProperty] private int _burstSizeMin = 2;
-    [ObservableProperty] private int _burstSizeMax = 6;
-    [ObservableProperty] private int _disconnectEvery = 90;
-    [ObservableProperty] private double _fastClockRate  = 1.2;
+    [ObservableProperty] private int    _heartbeatSeconds  = 15;
+    [ObservableProperty] private int    _randomFlipSeconds = 30; // Every 10 Seconds
+    [ObservableProperty] private int    _disconnectEvery   = 90;
+    [ObservableProperty] private int    _seedCount         = 2;
+    [ObservableProperty] private double _fastClockRate     = 1.2;
 
 
 }

@@ -41,17 +41,36 @@ namespace DCCPanelController.Clients.WiThrottle {
 
         public async Task<IResult> ConnectAsync() {
             await DisconnectAsync(); // clean slate
+
+            // 1) Try autodetect; your UpdateAutomaticSettings() already does this
+            // var settings = await UpdateAutomaticSettings();
+            // if (settings.IsFailure) {
+            //     State = DccClientState.Disconnected;
+            //     OnClientMessage("Could not auto-detect connection settings.");
+            //     return Result.Fail("Could not auto-detect connection settings.");
+            // }
+
+            // 2) Hard probe: fail-fast with no retries if we can't open now
+            var probe = await ValidateConnectionAsync();
+            if (probe.IsFailure) {
+                State = DccClientState.Error;
+                OnClientMessage($"Initial connect failed: {probe.Message}", DccClientOperation.System, DccClientMessageType.Error);
+                return Result.Fail(probe.Message ?? "Initial connect failed");
+            }
+
+            State = DccClientState.Initialising;
+            OnClientMessage($"Connecting to WiThrottle {_settings.Address}:{_settings.Port}...");
+
+            // 3) Only start the reconnect loop after we know we can connect
             _cts = new CancellationTokenSource();
             _ = RunReconnectLoopAsync(
                 connectOnce: ConnectAndListenAsync,
                 isDisposed: () => false,
                 maxRetries: _settings.MaxRetries <= 0 ? int.MaxValue : _settings.MaxRetries,
                 initialDelay: TimeSpan.FromMilliseconds(_settings.InitialBackoffMs <= 0 ? 1000 : _settings.InitialBackoffMs),
-                multiplier: _settings.BackoffMultiplier <= 1 ? 1.5 : _settings.BackoffMultiplier,
+                multiplier: _settings.BackoffMultiplier <= 1 ? 1 : _settings.BackoffMultiplier,
                 ct: _cts.Token
             );
-            State = DccClientState.Initialising;
-            OnClientMessage($"Connecting to WiThrottle {_settings.Address}:{_settings.Port}...");
             return Result.Ok();
         }
 
@@ -62,6 +81,7 @@ namespace DCCPanelController.Clients.WiThrottle {
             // --------------------------------------------------------------
             var result = await UpdateAutomaticSettings();
             if (result.IsFailure) {
+                State = DccClientState.Error;
                 OnClientMessage("Could not auto-detect connection settings.");
                 return;
             }
@@ -139,14 +159,16 @@ namespace DCCPanelController.Clients.WiThrottle {
         public async Task<IResult> UpdateAutomaticSettings() {
             if (_settings.SetAutomatically) {
                 var auto = await GetAutomaticConnectionDetailsAsync();
-                if (auto.IsFailure || auto.Value is null || auto.Value is not WiThrottleSettings settings) {
+                if (auto.IsFailure || auto.Value is null || auto.Value is not WiThrottleSettings) {
                     State = DccClientState.Disconnected;
                     OnClientMessage("Could not automatically set connection details. Is WiThrottle service running?");
                     return Result.Fail(auto.Message ?? "Autodetect failed.");
                 }
-                _settings.Address = settings.Address;
-                _settings.Port = settings.Port;
-                OnClientMessage($"Found server at {_settings.Address}:{_settings.Port}");
+                if (auto.Value is WiThrottleSettings settings) {
+                    _settings.Address = settings.Address;
+                    _settings.Port = settings.Port;
+                    OnClientMessage($"Found server at {_settings.Address}:{_settings.Port}");
+                }
             }
             return Result.Ok();
         }
@@ -243,11 +265,16 @@ namespace DCCPanelController.Clients.WiThrottle {
             if (found.IsFailure || found.Value is null || found.Value.Count == 0)
                 return Result<IDccClientSettings?>.Fail("No available servers could be found.");
 
-            var first = found.Value![0];
-            var rawSettings = new WiThrottleSettings();
-            rawSettings.Address = first.Address.ToString();
-            rawSettings.Port = first.Port;
-            return Result<IDccClientSettings?>.Ok(rawSettings);
+            foreach (var server in found.Value) {
+                if (server.Address.ToString() != "0.0.0.0" && server.Address.ToString() != "127.0.0.1") {
+                    var rawSettings = new WiThrottleSettings {
+                        Address = server.Address.ToString(),
+                        Port = server.Port,
+                    };
+                    return Result<IDccClientSettings?>.Ok(rawSettings);
+                }
+            }
+            return Result<IDccClientSettings?>.Fail("No available servers could be found.");
         }
 
         public void Dispose() => _cts?.Cancel();

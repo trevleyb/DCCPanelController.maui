@@ -76,7 +76,8 @@
             <ShellContent
                 ContentTemplate="{DataTemplate view:ServerMessagesPage}"
                 Title="Server Messages"/>
-             <ShellContent 
+             <ShellContent
+                 IsVisible="{Binding Source={x:Static services:AppStateService.Instance},Path=DebugMode}"
                  ContentTemplate="{DataTemplate view:DccClientTestView}"
                  Title="DCC System Tester"/>
             <ShellContent

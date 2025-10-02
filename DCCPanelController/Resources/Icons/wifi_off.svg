@@ -1,10 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-     stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-wifi-off">
-    <line x1="1" y1="1" x2="23" y2="23"></line>
-    <path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"></path>
-    <path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"></path>
-    <path d="M10.71 5.05A16 16 0 0 1 22.58 9"></path>
-    <path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"></path>
-    <path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path>
-    <line x1="12" y1="20" x2="12.01" y2="20"></line>
+<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" fill="none" viewBox="0 0 96 96" id="no-wifi">
+  <path stroke="#000" stroke-linecap="round" stroke-width="6" d="M82 39C77.5351 34.5614 72.2344 31.0406 66.4007 28.6385 60.5669 26.2364 54.3144 25 48 25 41.6856 25 35.4331 26.2364 29.5993 28.6385M14 39C16.2563 36.757 18.7261 34.7483 21.3702 33M69 50.0001C66.2422 47.1468 62.9683 44.8834 59.3651 43.3392 55.7619 41.795 51.9001 41.0002 48 41.0002 45.6363 41.0002 45.2866 40.9262 43 41.5M27 50.0002C28.7979 48.14 30.8151 46.5305 33 45.2076M37 61.9999C38.4445 60.4147 40.1595 59.1572 42.0468 58.2993 43.0015 57.8654 43.9909 57.5379 45 57.3203"></path>
+  <circle cx="48" cy="72" r="4" fill="#000"></circle>
+  <path stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="5" d="M20 20L70 70"></path>
 </svg>

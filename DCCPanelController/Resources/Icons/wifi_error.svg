@@ -1,20 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-     stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-wifi-error-center">
-
-    <defs>
-        <mask id="cut-center">
-            <rect x="0" y="0" width="24" height="24" fill="white"/>
-            <circle cx="12" cy="18" r="5" fill="black"/>
-        </mask>
-    </defs>
-
-    <g mask="url(#cut-center)">
-        <path d="M1.42 9a16 16 0 0 1 21.16 0"></path>
-        <path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path>
-    </g>
-    <!-- keep the dot at the bottom (not masked) -->
-    <line x1="12" y1="20" x2="12.01" y2="20" stroke="red"></line>
-    <line x1="10.5" y1="10.5" x2="13.5" y2="13.5" stroke="red"></line>
-    <line x1="13.5" y1="10.5" x2="10.5" y2="13.5" stroke="red"></line>
-
+<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" fill="none" viewBox="0 0 96 96" id="no-signal">
+  <path stroke="#000" stroke-linecap="round" stroke-width="6" d="M82 43.0002C77.5351 38.5616 72.2344 35.0408 66.4007 32.6387M29.5993 32.6387C23.7656 35.0408 18.4649 38.5617 14 43.0002M69 54C66.2422 51.1466 62.9683 48.8832 59.3651 47.339 55.7619 45.7948 51.9001 45 48 45 44.0999 45 40.2381 45.7948 36.6349 47.339 33.0317 48.8832 29.7578 51.1466 27 54M59 66C57.5555 64.4148 55.8405 63.1574 53.9532 62.2995 52.0658 61.4416 50.0429 61 48 61 45.9571 61 43.9342 61.4416 42.0468 62.2995 40.1595 63.1574 38.4445 64.4148 37 66"></path>
+  <circle cx="48" cy="76" r="4" fill="#000"></circle>
+  <path stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="5" d="M40 19L56 35M56 19L40 35"></path>
 </svg>

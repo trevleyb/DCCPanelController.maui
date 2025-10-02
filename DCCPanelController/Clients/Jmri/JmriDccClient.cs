@@ -73,26 +73,37 @@ public sealed class JmriDccClient : DccClientBase, IDccClient, IDisposable {
     
     // -------------------- Lifecycle --------------------
     public async Task<IResult> ConnectAsync() {
-        var result = await UpdateAutomaticSettings();
-        if (result.IsFailure) {
-            OnClientMessage("Could not auto-detect connection settings.");
-            return Result.Fail("Could not auto-detect connection settings.");
+        // 1) Try autodetect (keeps your current behavior)
+        // var settings = await UpdateAutomaticSettings();
+        // if (settings.IsFailure) {
+        //     State = DccClientState.Disconnected;
+        //     OnClientMessage("Could not auto-detect connection settings.");
+        //     return Result.Fail("Could not auto-detect connection settings.");
+        // }
+
+        // 2) Hard probe: fail-fast if we can't connect/handshake now
+        var probe = await ValidateConnectionAsync();
+        if (probe.IsFailure) {
+            State = DccClientState.Error;
+            OnClientMessage($"Initial connect failed: {probe.Message}", DccClientOperation.System, DccClientMessageType.Error);
+            return Result.Fail(probe.Message ?? "Initial connect failed");
         }
-        
-        // in JmriDccClient.ConnectAsync()
+
+        // 3) Only now start the reconnect loop for post-disconnect recovery
         lock (_sync) {
             _cts?.Cancel();
             _cts?.Dispose();
             _cts = new CancellationTokenSource();
             _connectionTask = RunReconnectLoopAsync(
-                connectOnce: ConnectAndListenAsync, // your existing method
+                connectOnce: ConnectAndListenAsync,
                 isDisposed: () => _disposed,
                 maxRetries: _jmriSettings.MaxRetries <= 0 ? int.MaxValue : _jmriSettings.MaxRetries,
                 initialDelay: TimeSpan.FromMilliseconds(_jmriSettings.InitialBackoffMs <= 0 ? 1000 : _jmriSettings.InitialBackoffMs),
-                multiplier: _jmriSettings.BackoffMultiplier <= 1 ? 1.5 : _jmriSettings.BackoffMultiplier,
+                multiplier: _jmriSettings.BackoffMultiplier <= 1 ? 1 : _jmriSettings.BackoffMultiplier,
                 ct: _cts.Token
             );
         }
+
         State = DccClientState.Initialising;
         OnClientMessage($"Connecting to JMRI at {_jmriSettings.Address}:{_jmriSettings.Port}...");
         return Result.Ok();
@@ -175,9 +186,9 @@ public sealed class JmriDccClient : DccClientBase, IDccClient, IDisposable {
 
     public async Task<IResult> SetAutomaticSettingsAsync() {
         var auto = await GetAutomaticConnectionDetailsAsync();
-        if (auto.IsFailure || auto.Value is null || auto.Value is not JmriSettings) return Result.Fail(auto.Message ?? "No JMRI servers found.");
-        _jmriSettings.Address = ((JmriSettings)auto.Value).Address;
-        _jmriSettings.Port = ((JmriSettings)auto.Value).Port;
+        if (auto.IsFailure || auto.Value is null || auto.Value is not JmriSettings settings) return Result.Fail(auto.Message ?? "No JMRI servers found.");
+        _jmriSettings.Address = settings.Address;
+        _jmriSettings.Port = settings.Port;
         return Result.Ok();
     }
 
@@ -204,11 +215,16 @@ public sealed class JmriDccClient : DccClientBase, IDccClient, IDisposable {
         if (found.IsFailure || found.Value is null || found.Value.Count == 0)
             return Result<IDccClientSettings?>.Fail("No available servers could be found.");
 
-        var first = found.Value![0];
-        var rawSettings = new JmriSettings();
-        rawSettings.Address = first.Address.ToString();
-        rawSettings.Port = first.Port;
-        return Result<IDccClientSettings?>.Ok(rawSettings);
+        foreach (var server in found.Value) {
+            if (server.Address.ToString() != "0.0.0.0" &&  server.Address.ToString() != "127.0.0.1") {
+                var rawSettings = new JmriSettings {
+                    Address = server.Address.ToString(),
+                    Port = server.Port,
+                };
+                return Result<IDccClientSettings?>.Ok(rawSettings);
+            }
+        }
+        return Result<IDccClientSettings?>.Fail("No available servers could be found.");
     }
 
     // -------------------- Commands --------------------
@@ -270,6 +286,13 @@ public sealed class JmriDccClient : DccClientBase, IDccClient, IDisposable {
     private async Task ConnectAndListenAsync(CancellationToken ct) {
         State = DccClientState.Initialising;
         CloseSocket();
+
+        var result = await UpdateAutomaticSettings();
+        if (result.IsFailure) {
+            State = DccClientState.Error;
+            OnClientMessage("Could not auto-detect connection settings.");
+            return;
+        }
 
         _ws = new ClientWebSocket();
         _handshakeTcs = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);

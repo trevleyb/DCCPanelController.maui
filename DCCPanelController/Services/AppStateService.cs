@@ -20,12 +20,17 @@ public partial class AppStateService : ObservableObject, INotifyPropertyChanged 
     [ObservableProperty] private Color _tabBarUnselectedColor = Colors.DarkGray;
     [ObservableProperty] private bool  _showEditOptions       = true;
     [ObservableProperty] private bool  _hideEditOptions       = false;
+    [ObservableProperty] private bool  _debugMode             = false;
 
     public AppStateService(ProfileService.ProfileService profileService) {
         _profileService = profileService;
         _profileService.ActiveProfileChanged += OnActiveProfileChanged;
         _profileService.ActiveProfileDataChanged += OnActiveProfileDataChanged;
         OnActiveProfileChanged(null, new ProfileChangedEventArgs(null, _profileService.ActiveProfile));
+        DebugMode = false;
+        #if DEBUG
+        DebugMode = true;
+        #endif
     }
 
     public static AppStateService Instance => MauiProgram.ServiceHelper.GetService<AppStateService>();
