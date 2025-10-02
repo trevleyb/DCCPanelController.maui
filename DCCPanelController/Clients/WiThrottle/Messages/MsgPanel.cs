@@ -86,7 +86,7 @@ public class MsgPanel : ClientMsg, IClientMsg {
     }
 
     /// <summary>
-    ///     Convert the string data from the command into the current fast clock Date & time
+    ///     Convert the string data from the command into the current fast clock Date time
     /// </summary>
     /// <param name="commandStr"></param>
     /// <returns></returns>

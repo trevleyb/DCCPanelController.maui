@@ -36,7 +36,7 @@ public partial class SensorsEditViewModel : BaseViewModel {
 
     [RelayCommand]
     private async Task ToggleTurnoutStateAsync() {
-        ///if (ConnectionService.Client is { } client) await client.SendTurnoutCmdAsync(Turnout, Turnout.State == TurnoutStateEnum.Thrown);
+        //if (ConnectionService.Client is { } client) await client.SendTurnoutCmdAsync(Turnout, Turnout.State == TurnoutStateEnum.Thrown);
         //OnPropertyChanged(nameof(Turnout.State));
         //OnPropertyChanged(nameof(Turnout));
     }
