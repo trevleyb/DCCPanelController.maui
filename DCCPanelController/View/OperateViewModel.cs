@@ -3,14 +3,12 @@ using System.ComponentModel;
 using System.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using DCCPanelController.Clients;
 using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Services;
 using DCCPanelController.Services.ProfileService;
 using DCCPanelController.View.Base;
 using DCCPanelController.View.Components;
-using DCCPanelController.View.Helpers;
 using Microsoft.Extensions.Logging;
 
 namespace DCCPanelController.View;
@@ -44,6 +42,18 @@ public partial class OperateViewModel : ConnectionViewModel {
         OnProfileChanged();
     }
 
+    private async void SettingsOnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
+        try {
+            Console.WriteLine($"SettingsOnPropertyChanged: {e.PropertyName}");
+            if (e.PropertyName == nameof(Settings.ClientSettings.Type)) {
+                await ConnectionService.DisconnectAsync();
+                PropertiesChanged();
+            }
+        } catch (Exception ex) {
+            Debug.WriteLine($"Error in SettingsOnPropertyChanged: {ex.Message}");
+        }
+    }
+
     public bool IsNotMaximized => !IsMaximized;
     public bool HideWelcomePage => !ShowWelcomePage;
 
@@ -67,6 +77,9 @@ public partial class OperateViewModel : ConnectionViewModel {
 
     public async void OnProfileChanged() {
         try {
+            ArgumentNullException.ThrowIfNull(_profileService);
+            ArgumentNullException.ThrowIfNull(_profileService.ActiveProfile);
+            
             // Make sure we are fully disconnected from any existing service
             // ---------------------------------------------------------------
             await ConnectionService.DisconnectAsync();
@@ -75,6 +88,10 @@ public partial class OperateViewModel : ConnectionViewModel {
             // ---------------------------------------------------------------
             ActivePanel = null;
             Panels = null;
+
+            _profileService.ActiveProfile.PropertyChanged -= SettingsOnPropertyChanged;
+            _profileService.ActiveProfile.Settings.PropertyChanged -= SettingsOnPropertyChanged;
+            
             var profile = _profileService.ActiveProfile;
             if (profile is null) throw new NullReferenceException("Profile is not correctly set.");
 
@@ -84,6 +101,10 @@ public partial class OperateViewModel : ConnectionViewModel {
             if (profile!.Settings?.ConnectOnStartup == true) await _connectionService.ConnectAsync();
             await SelectPanelAsync(0);
             OnPropertyChanged(nameof(ProfileName));
+            
+            _profileService?.ActiveProfile?.PropertyChanged -= SettingsOnPropertyChanged;
+            _profileService?.ActiveProfile?.Settings.PropertyChanged -= SettingsOnPropertyChanged;
+
         } catch (Exception e) {
             Debug.WriteLine("Error loading profile: " + e.Message);
         }

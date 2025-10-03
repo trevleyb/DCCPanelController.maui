@@ -1,1 +1,38 @@
 sudo xcode-select -s /Applications/Xcode164.app/Contents/Developer
+
+dotnet publish -f net9.0-ios -c Release
+
+
+
+
+
+
+
+dotnet publish -f net9.0-ios -c Release \
+  -p:ArchiveOnBuild=true \
+  -p:CodesignKey="Apple Distribution: TREVOR GRANT LEYBOURNE" \
+  -p:CodesignProvision="com.trevleyb.dccpanelcontroller"
+
+
+for f in "$HOME/Library/Developer/Xcode/UserData/Provisioning Profiles/"*; do
+  echo "---- $f ----"
+  security cms -D -i "$f" | /usr/bin/plutil -p - | egrep 'UUID|Name|ApplicationIdentifier|TeamIdentifier'
+done
+
+
+
+
+PPDIR="$HOME/Library/Developer/Xcode/UserData/Provisioning Profiles"
+PPFILE=$(ls "$PPDIR" | grep -i "8bea3875-3785-4e51-8ced-a4bc09c8f345" | head -n1)
+echo "Profile file: $PPDIR/$PPFILE"
+echo "== Basic info =="
+security cms -D -i "$PPDIR/$PPFILE" | /usr/bin/plutil -p - | egrep 'Name|UUID|TeamIdentifier|ApplicationIdentifier|ExpirationDate|Entitlements'
+
+echo "== Which certificates does this profile allow? =="
+security cms -D -i "$PPDIR/$PPFILE" \
+| /usr/bin/plutil -extract DeveloperCertificates raw -o - - \
+| openssl pkcs7 -inform DER -print_certs -text -noout \
+| egrep 'Subject: CN=|Issuer: CN='
+
+echo "== What signing identities are in your login keychain? =="
+security find-identity -v -p codesigning login.keychain-db

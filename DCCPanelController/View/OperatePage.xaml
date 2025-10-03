@@ -39,7 +39,7 @@
 
         <ToolbarItem Clicked="HideUnHideTabBar" Text="Hide"
                      ToolTipProperties.Text="Hide Bottom Tab Bar" x:Name="HideUnHide"
-                     IconImageSource="maximize_2"/>
+                     IconImageSource="maximize_2.png"/>
     </ContentPage.ToolbarItems>
 
     <ContentPage.Content>
@@ -176,14 +176,14 @@
                     Position="{Binding CurrentPanelIndex}"/>
 
                 <HorizontalStackLayout HorizontalOptions="Start" HeightRequest="16">
-                    <Image Source="{Binding ConnectionIcon}" VerticalOptions="Center" IsVisible="{Binding IsMaximized}">
+                    <Image Source="{Binding ConnectionIconPng}" VerticalOptions="Center" IsVisible="{Binding IsMaximized}">
                         <Image.Behaviors>
                             <toolkit:IconTintColorBehavior TintColor="{Binding ConnectionColor, Mode=OneWay}"/>
                         </Image.Behaviors>
                     </Image>
                     <Label Margin="5,0,0,0"
                            FontSize="10"
-                           Text="{Binding ConnectionText}"
+                           Text="{Binding ConnectionTextWithSystem}"
                            HorizontalOptions="Start"
                            VerticalOptions="Center" IsVisible="{Binding IsMaximized}"
                            BackgroundColor="Transparent" TextColor="{Binding ConnectionColor}">

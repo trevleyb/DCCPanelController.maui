@@ -47,6 +47,44 @@
 
     </PropertyGroup>
 
+    <!-- === iOS signing === -->
+    <PropertyGroup Condition="'$(TargetFramework)' == 'net9.0-ios'">
+        <!-- Must match the App ID in your profile: 3FBC48TFF3.com.trevleyb.dccpanelcontroller -->
+        <BundleIdentifier>com.trevleyb.dccpanelcontroller</BundleIdentifier>
+        <CodesignTeamId>3FBC48TFF3</CodesignTeamId>
+    </PropertyGroup>
+
+    <!-- Debug = Apple Development + iOS *development* provisioning profile -->
+    <PropertyGroup Condition="'$(TargetFramework)' == 'net9.0-ios' and '$(Configuration)' == 'Debug'">
+        <CodesignKey>Apple Distribution: TREVOR GRANT LEYBOURNE (3FBC48TFF3)</CodesignKey>
+        <CodesignProvision>d1bdad3c-8c02-4773-8dc2-19939ad50bbd</CodesignProvision>
+    </PropertyGroup>
+
+    <!-- Release = Apple Distribution + iOS *App Store* provisioning profile (for TestFlight/App Store) -->
+    <PropertyGroup Condition="'$(TargetFramework)' == 'net9.0-ios' and '$(Configuration)' == 'Release'">
+        <CodesignKey>Apple Distribution: TREVOR GRANT LEYBOURNE (3FBC48TFF3)</CodesignKey>
+        <CodesignProvision>803930f8-7285-45e0-9419-f1fe40a013e4</CodesignProvision>
+    </PropertyGroup>
+
+    <!-- === Mac Catalyst signing === -->
+    <PropertyGroup Condition="'$(TargetFramework)' == 'net9.0-maccatalyst'">
+        <BundleIdentifier>com.trevleyb.dccpanelcontroller</BundleIdentifier>
+        <CodesignTeamId>3FBC48TFF3</CodesignTeamId>
+    </PropertyGroup>
+
+    <!-- Debug (Mac) -->
+    <PropertyGroup Condition="'$(TargetFramework)' == 'net9.0-maccatalyst' and '$(Configuration)' == 'Debug'">
+        <CodesignKey>Apple Distribution: TREVOR GRANT LEYBOURNE (3FBC48TFF3)</CodesignKey>
+        <CodesignProvision>0575195c-39e6-41cd-a975-c22523de8f8a</CodesignProvision>
+    </PropertyGroup>
+
+    <!-- Release (Mac) -->
+    <PropertyGroup Condition="'$(TargetFramework)' == 'net9.0-maccatalyst' and '$(Configuration)' == 'Release'">
+        <CodesignKey>Apple Distribution: TREVOR GRANT LEYBOURNE (3FBC48TFF3)</CodesignKey>
+        <CodesignProvision>0575195c-39e6-41cd-a975-c22523de8f8a</CodesignProvision>
+    </PropertyGroup>
+
+
     <!-- Force NBGV to treat Release builds as public releases (no -beta in version) -->
     <PropertyGroup Condition="'$(Configuration)' == 'Release'">
         <PublicRelease>true</PublicRelease>
@@ -199,34 +237,29 @@
         <EmbeddedResource Include="Models\TileImages\track_turnout_left_angle_diverging.svg" />
         <EmbeddedResource Include="Models\TileImages\track_turnout_left_angle_straight_alt.svg" />
         <EmbeddedResource Include="Models\TileImages\track_turnout_left_angle_diverging_alt.svg" />
-        
-        <EmbeddedResource Update="Resources\Strings\AppResources.resx">
-            <Generator>ResXFileCodeGenerator</Generator>
-            <LastGenOutput>AppResources.Designer.cs</LastGenOutput>
-        </EmbeddedResource>
     </ItemGroup>
 
     <ItemGroup>
         <PackageReference Include="Microsoft.Maui.Controls" Version="9.0.110" />
-        <PackageReference Include="CommunityToolkit.Maui" Version="12.2.0"/>
-        <PackageReference Include="CommunityToolkit.Maui.Markup" Version="6.0.1"/>
-        <PackageReference Include="CommunityToolkit.Maui.MediaElement" Version="6.1.2"/>
-        <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0"/>
+        <PackageReference Include="CommunityToolkit.Maui" Version="12.2.0" />
+        <PackageReference Include="CommunityToolkit.Maui.Markup" Version="6.0.1" />
+        <PackageReference Include="CommunityToolkit.Maui.MediaElement" Version="6.1.2" />
+        <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
         <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.9" />
         <PackageReference Include="Microsoft.Maui.Graphics.Skia" Version="9.0.110" />
-        <PackageReference Include="OnScreenSizeMarkup.Maui" Version="3.0.18"/>
-        <PackageReference Include="Plugin.Maui.Audio" Version="4.0.0"/>
-        <PackageReference Include="Serilog" Version="4.3.0"/>
-        <PackageReference Include="Serilog.Extensions.Logging" Version="9.0.2"/>
-        <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0"/>
-        <PackageReference Include="Serilog.Sinks.Debug" Version="3.0.0"/>
-        <PackageReference Include="Serilog.Sinks.File" Version="7.0.0"/>
-        <PackageReference Include="SkiaSharp" Version="3.119.0"/>
-        <PackageReference Include="SkiaSharp.Views" Version="3.119.0"/>
-        <PackageReference Include="SkiaSharp.Views.Maui.Controls" Version="3.119.0"/>
-        <PackageReference Include="SkiaSharp.Views.Maui.Core" Version="3.119.0"/>
-        <PackageReference Include="Svg.Skia" Version="3.0.6"/>
-        <PackageReference Include="Syncfusion.Maui.Toolkit" Version="1.0.6"/>
+        <PackageReference Include="OnScreenSizeMarkup.Maui" Version="3.0.18" />
+        <PackageReference Include="Plugin.Maui.Audio" Version="4.0.0" />
+        <PackageReference Include="Serilog" Version="4.3.0" />
+        <PackageReference Include="Serilog.Extensions.Logging" Version="9.0.2" />
+        <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
+        <PackageReference Include="Serilog.Sinks.Debug" Version="3.0.0" />
+        <PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
+        <PackageReference Include="SkiaSharp" Version="3.119.0" />
+        <PackageReference Include="SkiaSharp.Views" Version="3.119.0" />
+        <PackageReference Include="SkiaSharp.Views.Maui.Controls" Version="3.119.0" />
+        <PackageReference Include="SkiaSharp.Views.Maui.Core" Version="3.119.0" />
+        <PackageReference Include="Svg.Skia" Version="3.0.6" />
+        <PackageReference Include="Syncfusion.Maui.Toolkit" Version="1.0.6" />
     </ItemGroup>
 
 
@@ -439,11 +472,6 @@
         <Compile Update="View\ControlPanel\ControlPanelView.xaml.cs">
             <DependentUpon>ControlPanelView.xaml</DependentUpon>
             <SubType>Code</SubType>
-        </Compile>
-        <Compile Update="Resources\Strings\AppResources.Designer.cs">
-            <DesignTime>True</DesignTime>
-            <AutoGen>True</AutoGen>
-            <DependentUpon>AppResources.resx</DependentUpon>
         </Compile>
         <Compile Update="View\LightsEditView.xaml.cs">
           <DependentUpon>LightsEditView.xaml</DependentUpon>

@@ -3,7 +3,6 @@ using System.Reflection.PortableExecutable;
 using System.Text;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Repository;
-using DCCPanelController.Resources.Strings;
 
 namespace DCCPanelController.Services.ProfileService;
 

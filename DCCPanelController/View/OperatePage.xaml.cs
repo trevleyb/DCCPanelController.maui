@@ -30,16 +30,14 @@ public partial class OperatePage : ContentPage, INotifyPropertyChanged {
 
         BindingContext = _viewModel;
         SetTabBarState(!(_profileService?.ActiveProfile?.Settings?.StartFullScreen ?? true));
-        PanelView.Opacity = _connectionService.ConnectionState == DccClientState.Connected ? 1 : 0.25;
     }
 
-    private void ConnectionServiceOnConnectionStateChanged(object? sender, DccClientState e) {
-        PanelView.Opacity = e == DccClientState.Connected ? 1 : 0.25;
-    }
+    private void ConnectionServiceOnConnectionStateChanged(object? sender, DccClientState e) { }
 
     protected override async void OnAppearing() {
         try {
             base.OnAppearing();
+            _viewModel.PropertiesChanged(); // Make sure all icons and things are refreshed
             await _viewModel.ReselectActivePanelAsync();
         } catch (Exception ex) {
             Console.WriteLine($"Exception in OnAppearing: {ex}");
@@ -66,9 +64,13 @@ public partial class OperatePage : ContentPage, INotifyPropertyChanged {
     private async void PanelViewOnTileTapped(object? sender, TileSelectedEventArgs e) {
         try {
             if (_viewModel is { } viewModel) {
-                if (e.Tile is ITileInteractive { } tile) {
-                    if (e.IsSingleTap) await tile.Interact(viewModel.ConnectionService);
-                    if (e.IsDoubleTap) await tile.Secondary(viewModel.ConnectionService);
+                if (ConnectionService.Instance.ConnectionState != DccClientState.Connected) {
+                    await DisplayAlertHelper.DisplayToastAlert("Please connect to the DCC Panel Controller first.", 18D);
+                } else {
+                    if (e.Tile is ITileInteractive { } tile) {
+                        if (e.IsSingleTap) await tile.Interact(viewModel.ConnectionService);
+                        if (e.IsDoubleTap) await tile.Secondary(viewModel.ConnectionService);
+                    }
                 }
             }
         } catch (Exception ex) {
@@ -112,10 +114,10 @@ public partial class OperatePage : ContentPage, INotifyPropertyChanged {
     private void SetTabBarState(bool state) {
         if (state) {
             Shell.SetTabBarIsVisible(this, true);
-            HideUnHide.IconImageSource = "maximize_2_active";
+            HideUnHide.IconImageSource = "maximize_2_active.png";
         } else {
             Shell.SetTabBarIsVisible(this, false);
-            HideUnHide.IconImageSource = "minimize_2_active";
+            HideUnHide.IconImageSource = "minimize_2_active.png";
         }
         if (_viewModel is { } viewModel) viewModel.IsMaximized = state;
         InvalidateMeasure();

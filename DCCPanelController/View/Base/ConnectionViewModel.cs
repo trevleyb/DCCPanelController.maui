@@ -15,7 +15,7 @@ public partial class ConnectionViewModel : BaseViewModel {
     public DccClientState ConnectionState => ConnectionService?.ConnectionState ?? DccClientState.Disconnected;
     private Profile Profile => _profileService?.ActiveProfile ?? throw new ArgumentNullException(nameof(Profile), "ConnectionViewModel: Active profile is not defined.");
 
-    public bool IsConnectionAvailable => Profile?.Settings?.ClientSettings?.HasValidSettings ?? false;
+    public bool IsConnectionAvailable => true;
     public bool IsConnected => ConnectionState == DccClientState.Connected;
 
     [ObservableProperty] private ObservableCollection<DccClientMessage> _serverMessages = [];
@@ -24,15 +24,22 @@ public partial class ConnectionViewModel : BaseViewModel {
         _profileService = profileService;
         ConnectionService = connectionService;
         ConnectionService.ConnectionStateChanged += (sender, args) => {
-            OnPropertyChanged(nameof(ConnectionState));
-            OnPropertyChanged(nameof(ConnectionIcon));
-            OnPropertyChanged(nameof(ConnectionText));
-            OnPropertyChanged(nameof(ConnectionColor));
-            OnPropertyChanged(nameof(IsConnectionAvailable));
+            PropertiesChanged();
         };
         ServerMessages = ConnectionService.ServerMessages;
     }
 
+    public void PropertiesChanged() {
+        OnPropertyChanged(nameof(IsConnectionAvailable));
+        OnPropertyChanged(nameof(ConnectionState));
+        OnPropertyChanged(nameof(ConnectionIcon));
+        OnPropertyChanged(nameof(ConnectionIconPng));
+        OnPropertyChanged(nameof(ConnectionText));
+        OnPropertyChanged(nameof(ConnectionTextWithSystem));
+        OnPropertyChanged(nameof(ConnectionColor));
+    }
+    
+    public string ConnectionTextWithSystem => $"{ConnectionText} ({(Profile.Settings.ClientSettings?.Type.ToString() ?? "Unknown")})";
     public string ConnectionText =>
         ConnectionState switch {
             DccClientState.Connected    => "Connected",
@@ -46,13 +53,14 @@ public partial class ConnectionViewModel : BaseViewModel {
     public Color ConnectionColor =>
         ConnectionState switch {
             DccClientState.Connected    => Colors.LightGreen,
-            DccClientState.Disconnected => Colors.Gray,
+            DccClientState.Disconnected => Colors.Black,
             DccClientState.Error        => Colors.Red,
             DccClientState.Initialising => Colors.Blue,
             DccClientState.Reconnecting => Colors.Yellow,
             _                           => Colors.Red
         };
 
+    public string ConnectionIconPng => ConnectionIcon + ".png";
     public string ConnectionIcon =>
         ConnectionState switch {
             DccClientState.Connected    => "wifi_on",
@@ -66,6 +74,7 @@ public partial class ConnectionViewModel : BaseViewModel {
     [RelayCommand]
     protected async Task ToggleConnectionAsync() {
         var result = await ConnectionService.ToggleConnectionAsync();
+        PropertiesChanged();
         if (result.IsFailure) {
             var message = $"Unable to connect to the server{(string.IsNullOrEmpty(result.Message) ? "." : $" due to {result.Message}")}";
             await DisplayAlertHelper.DisplayOkAlertAsync("Error Connecting", message);
