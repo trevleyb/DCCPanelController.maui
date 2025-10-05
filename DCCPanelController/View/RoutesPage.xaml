@@ -6,6 +6,7 @@
     ios:Page.UseSafeArea="False"
     x:Class="DCCPanelController.View.RoutesPage"
     x:DataType="view:RoutesViewModel"
+    x:Name="Page"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:dataModel="clr-namespace:DCCPanelController.Models.DataModel"
     xmlns:ios="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
@@ -98,7 +99,7 @@
                         <DataTemplate x:DataType="dataModel:Route">
                             <Grid Style="{StaticResource SelectableItemStyle}"> 
                             <StackLayout Padding="0">
-                                <Grid ColumnDefinitions="120,*,100" Margin="0,5,0,5" Padding="0" Style="{StaticResource SelectableItemStyle}">
+                                <Grid ColumnDefinitions="120,*,75,20" Margin="0,5,0,5" Padding="0" Style="{StaticResource SelectableItemStyle}">
                                     <Grid.GestureRecognizers>
                                         <TapGestureRecognizer
                                             Command="{Binding Source={RelativeSource AncestorType={x:Type view:RoutesViewModel}}, Path=ToggleRoutesStateCommand}"
@@ -122,12 +123,20 @@
                                         Text="{Binding Name}"
                                         VerticalOptions="Center"/>
                                     <Label
-                                        Grid.Column="3"
-                                        HorizontalOptions="Fill"
+                                        Grid.Column="2"
+                                        HorizontalOptions="Start"
                                         Style="{StaticResource MediumLabel}"
                                         Text="{Binding State}"
                                         VerticalOptions="Center">
                                         <Label.Triggers>
+                                            <DataTrigger TargetType="Label" Binding="{Binding Source={RelativeSource AncestorType={x:Type view:RoutesViewModel}}, x:DataType=view:RoutesViewModel, Path=IsConnected}" Value="True">
+                                                <Setter Property="Opacity" Value="1.00" />
+                                            </DataTrigger>
+
+                                            <DataTrigger TargetType="Label" Binding="{Binding Source={RelativeSource AncestorType={x:Type view:RoutesViewModel}}, x:DataType=view:RoutesViewModel, Path=IsConnected}" Value="False">
+                                                <Setter Property="Opacity" Value="0.35" />
+                                            </DataTrigger>
+
                                             <DataTrigger
                                                 Binding="{Binding State}"
                                                 TargetType="Label"
@@ -149,12 +158,20 @@
                                         </Label.Triggers>
                                     </Label>
                                     <Image
-                                        Grid.Column="2"
+                                        Grid.Column="3"
                                         HeightRequest="32"
                                         HorizontalOptions="End"
                                         VerticalOptions="Center"
                                         WidthRequest="32">
                                         <Image.Triggers>
+                                            <DataTrigger TargetType="Image" Binding="{Binding Source={RelativeSource AncestorType={x:Type view:RoutesViewModel}}, x:DataType=view:RoutesViewModel, Path=IsConnected}" Value="True">
+                                                <Setter Property="Opacity" Value="1.00" />
+                                            </DataTrigger>
+
+                                            <DataTrigger TargetType="Image" Binding="{Binding Source={RelativeSource AncestorType={x:Type view:RoutesViewModel}}, x:DataType=view:RoutesViewModel, Path=IsConnected}" Value="False">
+                                                <Setter Property="Opacity" Value="0.35" />
+                                            </DataTrigger>
+
                                             <DataTrigger
                                                 Binding="{Binding State}"
                                                 TargetType="Image"

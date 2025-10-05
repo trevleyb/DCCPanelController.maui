@@ -6,6 +6,7 @@
     ios:Page.UseSafeArea="False"
     x:Class="DCCPanelController.View.SensorsPage"
     x:DataType="view:SensorsViewModel"
+    x:Name="Page"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:dataModel="clr-namespace:DCCPanelController.Models.DataModel"
     xmlns:ios="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
@@ -136,6 +137,14 @@
                                         Text="{Binding State}"
                                         VerticalOptions="Center">
                                         <Label.Triggers>
+                                            <DataTrigger TargetType="Label" Binding="{Binding Source={RelativeSource AncestorType={x:Type view:SensorsViewModel}}, x:DataType=view:SensorsViewModel, Path=IsConnected}" Value="True">
+                                                <Setter Property="Opacity" Value="1.00" />
+                                            </DataTrigger>
+
+                                            <DataTrigger TargetType="Label" Binding="{Binding Source={RelativeSource AncestorType={x:Type view:SensorsViewModel}}, x:DataType=view:SensorsViewModel, Path=IsConnected}" Value="False">
+                                                <Setter Property="Opacity" Value="0.35" />
+                                            </DataTrigger>
+
                                             <DataTrigger
                                                 Binding="{Binding State}"
                                                 TargetType="Label"
@@ -165,6 +174,14 @@
                                         VerticalOptions="Center"
                                         WidthRequest="42">
                                         <Image.Triggers>
+                                            <DataTrigger TargetType="Image" Binding="{Binding Source={RelativeSource AncestorType={x:Type view:SensorsViewModel}}, x:DataType=view:SensorsViewModel, Path=IsConnected}" Value="True">
+                                                <Setter Property="Opacity" Value="1.00" />
+                                            </DataTrigger>
+
+                                            <DataTrigger TargetType="Image" Binding="{Binding Source={RelativeSource AncestorType={x:Type view:SensorsViewModel}}, x:DataType=view:SensorsViewModel, Path=IsConnected}" Value="False">
+                                                <Setter Property="Opacity" Value="0.35" />
+                                            </DataTrigger>
+
                                             <DataTrigger
                                                 Binding="{Binding State}"
                                                 TargetType="Image"

@@ -39,10 +39,8 @@ public partial class LoadingPage : ContentPage {
                     // Any other one-time startup work here (help assets, migrations, etc.)
                     await HelpService.Current.InitializeAsync(true);
 
-                    #if DEBUG
                     await ValidateBundleAsync();
                     await ValidateExtractedAsync();
-                    #endif
 
                     // Only now create Shell and replace the root
                     var shell = services.GetRequiredService<AppShell>();

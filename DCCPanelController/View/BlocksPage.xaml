@@ -4,6 +4,7 @@
     IconImageSource="route_active.png"
     Title="Blocks List"
     ios:Page.UseSafeArea="False"
+    x:Name="Page"
     x:Class="DCCPanelController.View.BlocksPage"
     x:DataType="view:BlocksViewModel"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
@@ -64,7 +65,7 @@
     <Grid>
     <StackLayout x:Name="MainStackLayout">
         <Grid
-            ColumnDefinitions="150,*,120"
+            ColumnDefinitions="150,*,120,120"
             HorizontalOptions="Fill">
             <Button
                 Command="{Binding SortByColumnCommand}"
@@ -81,8 +82,14 @@
                 Text="{Binding ColumnLabelName}"/>
             <Button
                 Command="{Binding SortByColumnCommand}"
-                CommandParameter="{Binding LabelState}"
+                CommandParameter="{Binding LabelSensor}"
                 Grid.Column="2"
+                Style="{StaticResource ColumnLabel}"
+                Text="{Binding ColumnLabelSensor}"/>
+            <Button
+                Command="{Binding SortByColumnCommand}"
+                CommandParameter="{Binding LabelState}"
+                Grid.Column="3"
                 Style="{StaticResource ColumnLabel}"
                 Text="{Binding ColumnLabelState}"/>
         </Grid>
@@ -109,7 +116,7 @@
                         <DataTemplate x:DataType="dataModel:Block">
                             <Grid Style="{StaticResource SelectableItemStyle}">
                             <StackLayout Padding="0">
-                                <Grid ColumnDefinitions="150,*,120" Margin="0,5,0,5" Padding="0">
+                                <Grid ColumnDefinitions="150,*,120,80,40" Margin="0,5,0,5" Padding="0">
                                     <Label
                                         Grid.Column="0"
                                         HorizontalOptions="Start"
@@ -128,21 +135,31 @@
                                         VerticalOptions="Center"/>
                                     <Label
                                         Grid.Column="2"
+                                        HorizontalOptions="FillAndExpand"
+                                        LineBreakMode="WordWrap"
+                                        Style="{StaticResource MediumLabel}"
+                                        Text="{Binding Sensor}"
+                                        VerticalOptions="Center"/>
+                                    <Label
+                                        Grid.Column="3"
                                         HorizontalOptions="Start"
                                         Style="{StaticResource MediumLabel}"
                                         Text="{Binding State}"
                                         VerticalOptions="Center">
                                         <Label.Triggers>
-                                            <DataTrigger
-                                                Binding="{Binding IsOccupied}"
-                                                TargetType="Label"
-                                                Value="true">
+                                            
+                                            <DataTrigger TargetType="Label" Binding="{Binding Source={RelativeSource AncestorType={x:Type view:BlocksViewModel}}, x:DataType=view:BlocksViewModel, Path=IsConnected}" Value="True">
+                                                <Setter Property="Opacity" Value="1.00" />
+                                            </DataTrigger>
+
+                                            <DataTrigger TargetType="Label" Binding="{Binding Source={RelativeSource AncestorType={x:Type view:BlocksViewModel}}, x:DataType=view:BlocksViewModel, Path=IsConnected}" Value="False">
+                                                <Setter Property="Opacity" Value="0.35" />
+                                            </DataTrigger>
+                                            
+                                            <DataTrigger Binding="{Binding IsOccupied}" TargetType="Label" Value="true">
                                                 <Setter Property="TextColor" Value="Red"/>
                                             </DataTrigger>
-                                            <DataTrigger
-                                                Binding="{Binding IsOccupied}"
-                                                TargetType="Label"
-                                                Value="false">
+                                            <DataTrigger Binding="{Binding IsOccupied}" TargetType="Label" Value="false">
                                                 <Setter Property="TextColor" Value="Green"/>
                                             </DataTrigger>
                                         </Label.Triggers>
@@ -154,12 +171,19 @@
                                         </Label.GestureRecognizers>
                                     </Label>
                                     <Image
-                                        Grid.Column="3"
+                                        Grid.Column="4"
                                         HeightRequest="32"
                                         HorizontalOptions="End"
                                         VerticalOptions="Center"
                                         WidthRequest="42">
                                         <Image.Triggers>
+                                            <DataTrigger TargetType="Image" Binding="{Binding Source={RelativeSource AncestorType={x:Type view:BlocksViewModel}}, x:DataType=view:BlocksViewModel, Path=IsConnected}" Value="True">
+                                                <Setter Property="Opacity" Value="1.00" />
+                                            </DataTrigger>
+
+                                            <DataTrigger TargetType="Image" Binding="{Binding Source={RelativeSource AncestorType={x:Type view:BlocksViewModel}}, x:DataType=view:BlocksViewModel, Path=IsConnected}" Value="False">
+                                                <Setter Property="Opacity" Value="0.35" />
+                                            </DataTrigger>
                                             <DataTrigger
                                                 Binding="{Binding IsOccupied}"
                                                 TargetType="Image"

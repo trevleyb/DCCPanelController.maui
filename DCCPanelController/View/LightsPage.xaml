@@ -6,6 +6,7 @@
     ios:Page.UseSafeArea="False"
     x:Class="DCCPanelController.View.LightsPage"
     x:DataType="view:LightsViewModel"
+    x:Name="Page"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:dataModel="clr-namespace:DCCPanelController.Models.DataModel"
     xmlns:ios="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
@@ -116,7 +117,7 @@
                             <!-- <Grid Style="{StaticResource SelectableItemStyle}"> -->
                             <Grid>
                             <StackLayout Padding="0">
-                                <Grid ColumnDefinitions="120,*,70" Margin="0,5,0,5" Padding="0">
+                                <Grid ColumnDefinitions="120,*,70,15" Margin="0,5,0,5" Padding="0">
                                     <Label
                                         Grid.Column="0"
                                         Margin="10,0,0,0"
@@ -140,6 +141,14 @@
                                         Text="{Binding State}"
                                         VerticalOptions="Center">
                                         <Label.Triggers>
+                                            <DataTrigger TargetType="Label" Binding="{Binding Source={RelativeSource AncestorType={x:Type view:LightsViewModel}}, x:DataType=view:LightsViewModel, Path=IsConnected}" Value="True">
+                                                <Setter Property="Opacity" Value="1.00" />
+                                            </DataTrigger>
+
+                                            <DataTrigger TargetType="Label" Binding="{Binding Source={RelativeSource AncestorType={x:Type view:LightsViewModel}}, x:DataType=view:LightsViewModel, Path=IsConnected}" Value="False">
+                                                <Setter Property="Opacity" Value="0.35" />
+                                            </DataTrigger>
+
                                             <DataTrigger
                                                 Binding="{Binding State}"
                                                 TargetType="Label"
@@ -169,6 +178,14 @@
                                         VerticalOptions="Center"
                                         WidthRequest="42">
                                         <Image.Triggers>
+                                            <DataTrigger TargetType="Image" Binding="{Binding Source={RelativeSource AncestorType={x:Type view:LightsViewModel}}, x:DataType=view:LightsViewModel, Path=IsConnected}" Value="True">
+                                                <Setter Property="Opacity" Value="1.00" />
+                                            </DataTrigger>
+
+                                            <DataTrigger TargetType="Image" Binding="{Binding Source={RelativeSource AncestorType={x:Type view:LightsViewModel}}, x:DataType=view:LightsViewModel, Path=IsConnected}" Value="False">
+                                                <Setter Property="Opacity" Value="0.35" />
+                                            </DataTrigger>
+
                                             <DataTrigger
                                                 Binding="{Binding State}"
                                                 TargetType="Image"

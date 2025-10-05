@@ -143,7 +143,18 @@
                                                 Margin="0,0,10,0"
                                                 State="{Binding State}"
                                                 StateChangedCommand="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, Path=SendTurnoutStateCommand, x:DataType=view:TurnoutsViewModel}"
-                                                Turnout="{Binding .}"/>
+                                                Turnout="{Binding .}">
+                                                <components:TurnoutStateControl.Triggers>
+                                                    <DataTrigger TargetType="components:TurnoutStateControl" Binding="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, x:DataType=view:TurnoutsViewModel, Path=IsConnected}" Value="True">
+                                                        <Setter Property="Opacity" Value="1.00" />
+                                                    </DataTrigger>
+
+                                                    <DataTrigger TargetType="components:TurnoutStateControl" Binding="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, x:DataType=view:TurnoutsViewModel, Path=IsConnected}" Value="False">
+                                                        <Setter Property="Opacity" Value="0.35" />
+                                                    </DataTrigger>
+                                                </components:TurnoutStateControl.Triggers>
+
+                                            </components:TurnoutStateControl>
                                         </Grid>
 
                                         <BoxView

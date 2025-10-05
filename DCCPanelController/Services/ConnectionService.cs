@@ -11,12 +11,14 @@ using Microsoft.Extensions.Logging;
 namespace DCCPanelController.Services;
 
 public partial class ConnectionService : ObservableObject {
-    private bool _hasConnected;
+    private const int  MaxServerMessages   = 100;
+    private const int  ClearServerMessages = 20;
+    private       bool _hasConnected;
 
     private readonly ILogger<ConnectionService>    _logger = LogHelper.CreateLogger<ConnectionService>();
     private readonly ProfileService.ProfileService _profileService;
 
-    [ObservableProperty] private DccClientState                        _connectionState;
+    [ObservableProperty] private DccClientState                         _connectionState;
     [ObservableProperty] private ObservableCollection<DccClientMessage> _serverMessages = [];
 
     public ConnectionService(ProfileService.ProfileService profileService) {
@@ -44,21 +46,25 @@ public partial class ConnectionService : ObservableObject {
         switch (ConnectionState) {
             case DccClientState.Initialising:
                 Debug.WriteLine("Toggle: Initialising Connection");
-                _= await DisconnectAsync();
+                _ = await DisconnectAsync();
                 return await ConnectAsync();
+
             case DccClientState.Connected:
                 Debug.WriteLine("Toggle: Connected so Disconnecting");
                 return await DisconnectAsync();
+
             case DccClientState.Disconnected:
                 Debug.WriteLine("Toggle: Disconnected so Connecting");
                 return await ConnectAsync();
+
             case DccClientState.Error:
                 Debug.WriteLine("Toggle: Error so disconnecting and connecting");
-                _= await DisconnectAsync();
+                _ = await DisconnectAsync();
                 return await ConnectAsync();
+
             case DccClientState.Reconnecting:
                 Debug.WriteLine("Toggle: Reconnecting state so disconnecting and connecting");
-                _= await DisconnectAsync();
+                _ = await DisconnectAsync();
                 return await ConnectAsync();
         }
         throw new Exception("Connection not initialized");
@@ -121,7 +127,7 @@ public partial class ConnectionService : ObservableObject {
         try {
             var lastConnectionState = ConnectionState;
             ConnectionState = e.State;
-            
+
             if (ConnectionState == DccClientState.Connected && !_hasConnected) {
                 await SetTurnoutsToDefaultState();
                 await ResetOccupancyStates();
@@ -167,6 +173,8 @@ public partial class ConnectionService : ObservableObject {
     public virtual void AddServerMessage(string message, DccClientOperation operation = DccClientOperation.System, DccClientMessageType msgType = DccClientMessageType.System) => AddServerMessage(new DccClientMessage(message, operation, msgType));
 
     public virtual void AddServerMessage(DccClientMessage message) {
+        MainThread.BeginInvokeOnMainThread(() => TrimHead(ServerMessages, MaxServerMessages, ClearServerMessages));
+
         ServerMessages.Add(message);
         #if DEBUG
         Debug.WriteLine($"SERVER: {message.MessageType.ToString()} @ {message.Operation.ToString()} => {message.Message}");
@@ -178,5 +186,11 @@ public partial class ConnectionService : ObservableObject {
     public void ClearMessages() {
         ServerMessages.Clear();
         OnPropertyChanged(nameof(ServerMessages));
+    }
+
+    void TrimHead<T>(ObservableCollection<T> items, int max, int clearItems) {
+        if (items.Count <= max) return;
+        var removeCount = Math.Min(clearItems, items.Count);
+        for (int i = 0; i < removeCount; i++) items.RemoveAt(0); 
     }
 }

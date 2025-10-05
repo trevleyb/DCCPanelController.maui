@@ -57,7 +57,7 @@ public partial class TurnoutsViewModel : ConnectionViewModel {
         _sortColumn = _labelName;
         _isAscending = true;
         var turnouts = _profileService?.ActiveProfile?.Turnouts ?? throw new ArgumentNullException(nameof(profileService), "TurnoutViewModel: Active profile is not defined.");
-        Turnouts = new ObservableCollection<Turnout>(Turnouts.OrderBy<Turnout, string>(x => x.Name ?? "").ToList());
+        Turnouts = new ObservableCollection<Turnout>(turnouts.OrderBy<Turnout, string>(x => x.Name ?? "").ToList());
 
         SetLabels();
     }

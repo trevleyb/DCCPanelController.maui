@@ -4,24 +4,30 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:progressBar="http://schemas.syncfusion.com/maui/toolkit"
              xmlns:view="clr-namespace:DCCPanelController.View"
+             xmlns:iOsSpecific="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
              Title="Loading DCC Panel Controller"
              BackgroundColor="{StaticResource Primary}"
+             iOsSpecific:Page.UseSafeArea="false"
              x:Class="DCCPanelController.View.LoadingPage">
+    
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <x:Double x:Key="SplashLogoWidth">172</x:Double> <!-- must match BaseSize -->
+            <x:Double x:Key="SplashLogoHeight">220</x:Double> <!-- must match BaseSize -->
+            <Color x:Key="SplashBg">#7CC504</Color>         <!-- must match splash background -->
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    
     <ContentPage.Content>
         <Grid>
             <Border BackgroundColor="{StaticResource Primary}" StrokeThickness="0" HorizontalOptions="Fill" VerticalOptions="Fill">
                 <Grid>
-                    <Image Source="splash.png" HorizontalOptions="Center" VerticalOptions="Center" Scale="1.5"/>
-                    <progressBar:SfLinearProgressBar
-                        IsIndeterminate="True"
-                        x:DataType="view:LoadingPage"
-                        Margin="0,300,0,0"
-                        TrackHeight="10"
-                        TrackFill="{StaticResource White}"
-                        ProgressHeight="10"
-                        ProgressFill="{StaticResource Gray400}"
-                        WidthRequest="300"
-                        HeightRequest="5"/>
+                    <Image Source="splash.png" 
+                           WidthRequest="{StaticResource SplashLogoWidth}"
+                           HeightRequest="{StaticResource SplashLogoHeight}"
+                           Aspect="AspectFit"
+                           HorizontalOptions="Center" 
+                           VerticalOptions="Center"/>
                 </Grid>
             </Border>
         </Grid>
