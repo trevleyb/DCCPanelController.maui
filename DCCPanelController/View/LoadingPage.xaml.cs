@@ -7,12 +7,23 @@ using DCCPanelController.View.TileSelectors;
 namespace DCCPanelController.View;
 
 public partial class LoadingPage : ContentPage {
-    private bool _started;
+    private bool   _started;
+    const   double Gap = 12;
 
     public LoadingPage() {
         InitializeComponent();
         BindingContext = this;
+        VersionLabel.Text = $"v{AppInfo.Current.VersionString} ({AppInfo.Current.BuildString})";
+
+        SplashLogo.SizeChanged += (_, __) => UpdateVersionOffset();
+        this.SizeChanged += (_, __) => UpdateVersionOffset();
+        
         NavigationPage.SetHasNavigationBar(this, false);
+    }
+    
+    void UpdateVersionOffset() {
+        if (SplashLogo.Height <= 0) return;
+        VersionLabel.TranslationY = (SplashLogo.Height / 2.0) + Gap;
     }
 
     protected override void OnAppearing() {
@@ -48,6 +59,8 @@ public partial class LoadingPage : ContentPage {
                     // Prebuild the Palette Cache
                     TileSelectorPaletteCache.PrebuildDefaultPalette();
 
+                    await Task.Delay(1500); // Lets just make it look like it is doing something interesting....
+                    
                     // Important: swap the root page instead of navigating
                     var window = Application.Current?.Windows[0];
                     window?.Page = shell; // Avoid Application.Current.MainPage (obsolete)

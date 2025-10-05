@@ -5,31 +5,43 @@
              xmlns:progressBar="http://schemas.syncfusion.com/maui/toolkit"
              xmlns:view="clr-namespace:DCCPanelController.View"
              xmlns:iOsSpecific="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
+             xmlns:converters="clr-namespace:DCCPanelController.View.Converters"
              Title="Loading DCC Panel Controller"
-             BackgroundColor="{StaticResource Primary}"
+             BackgroundColor="#7CC504"
              iOsSpecific:Page.UseSafeArea="false"
              x:Class="DCCPanelController.View.LoadingPage">
     
     <ContentPage.Resources>
         <ResourceDictionary>
-            <x:Double x:Key="SplashLogoWidth">172</x:Double> <!-- must match BaseSize -->
-            <x:Double x:Key="SplashLogoHeight">220</x:Double> <!-- must match BaseSize -->
-            <Color x:Key="SplashBg">#7CC504</Color>         <!-- must match splash background -->
+            <x:Double x:Key="SplashLogoWidth">172</x:Double> 
+            <x:Double x:Key="SplashLogoHeight">220</x:Double> 
+            <Color x:Key="SplashBg">#7CC504</Color>
+            <Style TargetType="Label">
+                <Setter Property="TextColor" Value="{StaticResource Gray400}" />
+            </Style>
         </ResourceDictionary>
     </ContentPage.Resources>
     
     <ContentPage.Content>
-        <Grid>
-            <Border BackgroundColor="{StaticResource Primary}" StrokeThickness="0" HorizontalOptions="Fill" VerticalOptions="Fill">
-                <Grid>
-                    <Image Source="splash.png" 
-                           WidthRequest="{StaticResource SplashLogoWidth}"
-                           HeightRequest="{StaticResource SplashLogoHeight}"
-                           Aspect="AspectFit"
-                           HorizontalOptions="Center" 
-                           VerticalOptions="Center"/>
-                </Grid>
-            </Border>
-        </Grid>
+        <!-- Layered layout: children don't affect each other's position -->
+        <AbsoluteLayout>
+
+            <!-- The splash image: same file and size as launch-screen -->
+            <Image x:Name="SplashLogo"
+                   Source="splash.png"
+                   WidthRequest="{StaticResource SplashLogoWidth}"
+                   HeightRequest="{StaticResource SplashLogoHeight}"
+                   Aspect="AspectFit"
+                   AbsoluteLayout.LayoutFlags="PositionProportional"
+                   AbsoluteLayout.LayoutBounds="0.5,0.5,AutoSize,AutoSize" />
+
+            <!-- Version text, anchored to the same center, then pushed down by half the image height + gap -->
+            <Label x:Name="VersionLabel"
+                   FontSize="12"
+                   HorizontalTextAlignment="Center"
+                   AbsoluteLayout.LayoutFlags="PositionProportional"
+                   AbsoluteLayout.LayoutBounds="0.5,0.5,-1,-1"/>
+        </AbsoluteLayout>
+        
     </ContentPage.Content>
 </ContentPage>
