@@ -15,11 +15,11 @@
     <!-- <Color x:Key="SecondaryDarkText">DarkGreen</Color> -->
     <!-- <Color x:Key="Tertiary">DarkKhaki</Color> -->
 
-    <Color x:Key="Primary">#4f8f00</Color>
+    <Color x:Key="Primary">#FF4f8f00</Color>
     <Color x:Key="PrimaryLight">#7cc504</Color>
     <Color x:Key="PrimaryDark">DarkGreen</Color>
 
-    <Color x:Key="Secondary">#4f8f00</Color>
+    <Color x:Key="Secondary">#FF4f8f00</Color>
     <Color x:Key="SecondaryDarkText">DarkGreen</Color>
     <Color x:Key="Tertiary">DarkKhaki</Color>
     

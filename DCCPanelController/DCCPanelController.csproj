@@ -132,13 +132,13 @@
         <MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)"/>
 
         <MauiIcon Include="Resources\AppIcon\appiconfg.svg"/>
-        <MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#7CC504"/>
+        <MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#FF4F8F00"/>
         <MauiFont Include="Resources\Fonts\*"/>
         <MauiImage Include="Resources\Images\*"/>
         <MauiImage Include="Resources\Splash\*"/>
 
         <!-- Splash Screen -->
-        <MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#7CC504" BaseSize="172,220"/>
+        <MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#FF4F8F00" BaseSize="172,220"/>
         <EmbeddedResource Include="Models\TileImages\draw_circle.svg"/>
         <EmbeddedResource Include="Models\TileImages\draw_line.svg"/>
         <EmbeddedResource Include="Models\TileImages\draw_rectangle.svg"/>

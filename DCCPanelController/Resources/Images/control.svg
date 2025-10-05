@@ -2,9 +2,9 @@
      class="h-full w-full">
     <rect width="24" height="24" x="0" y="0" rx="30" fill="transparent" stroke="transparent" stroke-width="0"
           stroke-opacity="100%"/>
-    <svg width="24px" height="24px" viewBox="0 0 32 32" fill="#7CC504" x="0" y="0" role="img"
+    <svg width="24px" height="24px" viewBox="0 0 32 32" fill="#FF4F8F00" x="0" y="0" role="img"
          style="display:inline-block;vertical-align:middle" xmlns="http://www.w3.org/2000/svg">
-        <g fill="#7CC504">
+        <g fill="#FF4F8F00">
             <circle cx="12" cy="21" r="1" fill="currentColor"/>
             <path fill="currentColor"
                   d="M23 25H9c-1.103 0-2-.897-2-2v-4c0-1.103.897-2 2-2h14c1.103 0 2 .897 2 2v4c0 1.103-.897 2-2 2ZM9 19v4h14v-4H9Z"/>
