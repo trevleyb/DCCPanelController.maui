@@ -6,6 +6,8 @@
     x:Name="OperateRoot"
     x:Class="DCCPanelController.View.OperatePage"
     x:DataType="view:OperateViewModel"
+    xmlns:ios="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
+    ios:Page.UseSafeArea="True"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:view="clr-namespace:DCCPanelController.View"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
@@ -92,7 +94,7 @@
                                             FontFamily="OpenSansLight"
                                             HorizontalOptions="Center"
                                             HorizontalTextAlignment="Center"
-                                            Margin="100,10,100,10"
+                                            Margin="{OnIdiom Phone='20,10,20,10', Default='100,10,100,10'}"
                                             Text="This application allows you to define layout schematics for your model railway and connect to either WiThrottle or JMRI to control your layout including turnouts and routes and show block occupancy (if supported)."
                                             VerticalOptions="Center"/>
 
@@ -103,9 +105,10 @@
                                             FontFamily="OpenSansLight"
                                             HorizontalOptions="Center"
                                             HorizontalTextAlignment="Center"
-                                            Margin="100,10,100,0"
+                                            Margin="{OnIdiom Phone='20,10,20,10', Default='100,10,100,10'}"
                                             Text="There are no panels currently defined. Use panel Editor to add a panel."
                                             VerticalOptions="Center"/>
+
                                         <Label
                                             IsVisible="{Binding HasPanels}"
                                             Style="{StaticResource MediumLabel}"
@@ -113,9 +116,10 @@
                                             FontFamily="OpenSansLight"
                                             HorizontalOptions="Center"
                                             HorizontalTextAlignment="Center"
-                                            Margin="0,10,0,0"
-                                            Text="To access panels, Swipe Left or Right or use the dots below."
+                                            Margin="{OnIdiom Phone='20,10,20,10', Default='100,10,100,10'}"
+                                            Text="To access panels, Swipe Left or Right, use the dots below, or use the arrow buttons on the toolbar."
                                             VerticalOptions="Center"/>
+                                        
                                         <Label
                                             IsVisible="{Binding HasPanels}"
                                             Style="{StaticResource MediumLabel}"
@@ -123,7 +127,7 @@
                                             FontFamily="OpenSansLightItalic"
                                             HorizontalOptions="Center"
                                             HorizontalTextAlignment="Center"
-                                            Margin="0,10,0,0"
+                                            Margin="{OnIdiom Phone='20,10,20,10', Default='100,10,100,10'}"
                                             Text="You can turn this welcome page off in settings."
                                             VerticalOptions="Center"/>
 
@@ -134,20 +138,21 @@
                                             AlignItems="Center"
                                             AlignContent="Center"
                                             HorizontalOptions="Center"
-                                            Margin="0,20,0,0"
-                                            Padding="10"
+                                            Margin="0,5,0,0"
+                                            Padding="5"
                                             VerticalOptions="End">
+                                            
                                             <Button
                                                 WidthRequest="150"
                                                 Clicked="ButtonInstructions_OnClicked"
-                                                Margin="10,10,10,10"
+                                                Margin="10,5,10,0"
                                                 Style="{StaticResource ButtonOutline}"
                                                 Text="Instructions"/>
 
                                             <Button
                                                 WidthRequest="150"
                                                 Clicked="ButtonAbout_OnClicked"
-                                                Margin="10,10,10,10"
+                                                Margin="10,5,10,0"
                                                 Style="{StaticResource ButtonOutline}"
                                                 Text="About"/>
 
@@ -155,7 +160,7 @@
                                                 IsVisible="{Binding HasPanels}"
                                                 WidthRequest="150"
                                                 Clicked="ButtonCloseInstructions"
-                                                Margin="10,10,10,10"
+                                                Margin="10,5,10,0"
                                                 Style="{StaticResource ButtonOutline}"
                                                 Text="Close"/>
 
@@ -173,7 +178,7 @@
                         ItemsSource="{Binding Panels}"
                         IndicatorsShape="Circle"
                         HideSingle="True"
-                        IndicatorSize="12"
+                        IndicatorSize="{OnIdiom Phone='10', Default='12'}"
                         IsVisible="{Binding HideWelcomePage}"
                         Position="{Binding CurrentPanelIndex}">
 

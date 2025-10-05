@@ -29,7 +29,7 @@
         <HorizontalStackLayout HeightRequest="40">
             <Label WidthRequest="175" HorizontalOptions="Start" Text="DCC Address" VerticalOptions="Center"/>
             <Border Padding="0,0,0,0" Style="{StaticResource EntryBorderStyle}" WidthRequest="60">
-                <Entry Keyboard="Numeric" Margin="5" HorizontalOptions="Fill" IsEnabled="{Binding Turnout.IsEditable}" Text="{Binding Turnout.DccAddress}">
+                <Entry Keyboard="Numeric" Margin="5" HorizontalOptions="Fill" IsEnabled="{Binding Turnout.CanEditDccAddress}" Text="{Binding Turnout.DccAddress}">
                     <Entry.Behaviors>
                         <toolkit:NumericValidationBehavior
                             Flags="ValidateOnValueChanged"

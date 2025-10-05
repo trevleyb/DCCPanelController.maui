@@ -37,6 +37,7 @@
 
             <!-- Version text, anchored to the same center, then pushed down by half the image height + gap -->
             <Label x:Name="VersionLabel"
+                   TextColor="WhiteSmoke"
                    FontSize="12"
                    HorizontalTextAlignment="Center"
                    AbsoluteLayout.LayoutFlags="PositionProportional"

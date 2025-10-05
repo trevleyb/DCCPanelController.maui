@@ -29,7 +29,7 @@
         <HorizontalStackLayout HeightRequest="40">
             <Label WidthRequest="175" HorizontalOptions="Start" Text="DCC Address" VerticalOptions="Center"/>
             <Border Padding="0,0,0,0" Style="{StaticResource EntryBorderStyle}" WidthRequest="60">
-                <Entry Keyboard="Numeric" Margin="5" HorizontalOptions="Fill" IsEnabled="{Binding Light.IsEditable}" Text="{Binding Light.DccAddress}">
+                <Entry Keyboard="Numeric" Margin="5" HorizontalOptions="Fill" IsEnabled="{Binding Light.CanEditDccAddress}" Text="{Binding Light.DccAddress}">
                     <Entry.Behaviors>
                         <toolkit:NumericValidationBehavior
                             Flags="ValidateOnValueChanged"
@@ -41,7 +41,7 @@
                 </Entry>
             </Border>
             <Label Margin="5,0,5,0" HorizontalOptions="Start" Text="Locked?" VerticalOptions="Center"/>
-            <Switch Margin="5,0,5,0" IsToggled="{Binding Light.DccAddressLocked}"/>
+            <Switch Margin="0,5,0,5" IsToggled="{Binding Light.DccAddressLocked}"/>
         </HorizontalStackLayout>
 
         <BoxView Margin="0,10,0,10"

@@ -7,11 +7,19 @@ namespace DCCPanelController.Models.DataModel;
 public partial class DccTable : ObservableObject, IDccTable, IEquatable<DccTable>, IComparable<DccTable> {
     [ObservableProperty] private string? _id;
     [ObservableProperty] private string? _name;
-    [ObservableProperty] private int     _dccAddress;
-    [ObservableProperty] private bool    _isEditable;
     [ObservableProperty] private bool    _isModified;
+
+    [NotifyPropertyChangedFor(nameof(CanEditDccAddress))]
+    [ObservableProperty] private int     _dccAddress;
+    
+    [NotifyPropertyChangedFor(nameof(CanEditDccAddress))]
+    [ObservableProperty] private bool    _isEditable;
+    
+    [NotifyPropertyChangedFor(nameof(CanEditDccAddress))]
     [ObservableProperty] private bool    _dccAddressLocked;
 
+    public bool CanEditDccAddress => IsEditable && !DccAddressLocked;
+    
     [JsonIgnore]
     public string DisplayFormat => $"{(Name ?? "Unnamed")} ({(Id ?? "—")})";
 
