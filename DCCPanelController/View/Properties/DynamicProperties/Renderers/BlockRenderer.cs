@@ -28,7 +28,7 @@ internal sealed class BlockRenderer : BaseRenderer, IPropertyRenderer {
             picker.SelectedItem = item;
         }
         picker.SelectedIndexChanged += (s2, e2) => {
-            if (picker.SelectedIndex < blocks.Count) {
+            if (picker.SelectedIndex < blocks.Count && picker.SelectedIndex >= 0) {
                 var item = blocks[picker.SelectedIndex];
                 SetValue(row, item.Id);
             }

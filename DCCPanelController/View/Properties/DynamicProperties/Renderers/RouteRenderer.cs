@@ -29,7 +29,7 @@ internal sealed class RouteRenderer : BaseRenderer, IPropertyRenderer {
             picker.SelectedItem = item;
         }
         picker.SelectedIndexChanged += (s2, e2) => {
-            if (picker.SelectedIndex < routes.Count) {
+            if (picker.SelectedIndex < routes.Count && picker.SelectedIndex >= 0) {
                 var item = routes[picker.SelectedIndex];
                 SetValue(row, item.Id);
             }

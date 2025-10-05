@@ -29,7 +29,7 @@ internal sealed class LightRenderer : BaseRenderer, IPropertyRenderer {
             picker.SelectedItem = item;
         }
         picker.SelectedIndexChanged += (s2, e2) => {
-            if (picker.SelectedIndex < lights.Count) {
+            if (picker.SelectedIndex < lights.Count && picker.SelectedIndex >= 0) {
                 var item = lights[picker.SelectedIndex];
                 SetValue(row, item.Id);
             }

@@ -30,7 +30,7 @@ internal sealed class TurnoutRenderer : BaseRenderer, IPropertyRenderer {
             picker.SelectedItem = item;
         }
         picker.SelectedIndexChanged += (s2, e2) => {
-            if (picker.SelectedIndex < turnouts.Count) {
+            if (picker.SelectedIndex < turnouts.Count && picker.SelectedIndex >= 0) {
                 var item = turnouts[picker.SelectedIndex];
                 SetValue(row, item.Id);
             }

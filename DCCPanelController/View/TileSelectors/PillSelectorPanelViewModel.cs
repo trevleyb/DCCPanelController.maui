@@ -37,7 +37,7 @@ public partial class PillSelectorPanelViewModel : TileSelectorViewModel {
 
     private void InstanceOnSelectedTileCleared() => SelectedTile = null;
 
-    partial void OnSelectedCategoryChanged(string value) => OnPropertyChanged(nameof(TilesForSelectedCategory));
+    //partial void OnSelectedCategoryChanged(string value) => OnPropertyChanged(nameof(TilesForSelectedCategory));
 
     protected override void AfterBuildAllTiles() {
         SfCategories.Clear();

@@ -30,6 +30,8 @@ public partial class LoadingPage : ContentPage {
                     DCCPanelController.Helpers.MethodTimeLogger.LogDirectory = Path.Combine(FileSystem.AppDataDirectory, "PerfLogs");
                     DCCPanelController.Helpers.MethodTimeLogger.MaxBytesBeforeRotate = 20 * 1024 * 1024; // 20 MB
 
+                    //System.Diagnostics.Debugger.Break();
+
                     // Initialize domain state
                     await profileService.InitializeAsync();
                     await connectionService.InitializeAsync();

@@ -86,7 +86,7 @@
                          Margin="0,0,0,15"/>
 
                 <Label Text="Panel Default Colors" Style="{StaticResource LargeLabel}" HorizontalOptions="Center"
-                       TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}"/>
+                       TextColor="{StaticResource Primary}"/>
 
                 <CollectionView ItemsSource="{Binding GroupedColorSettings}"
                                 VerticalScrollBarVisibility="Always"
@@ -103,7 +103,7 @@
                             <StackLayout Orientation="Vertical" Padding="0,5,10,5">
                                 <VerticalStackLayout>
                                     <Label Text="{Binding CategoryName}" FontSize="16" FontAttributes="Bold"
-                                           TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}"/>
+                                           TextColor="{StaticResource Primary}"/>
                                     <BoxView HeightRequest="1"
                                              BackgroundColor="{StaticResource Primary}"
                                              Margin="0,0,0,0"/>

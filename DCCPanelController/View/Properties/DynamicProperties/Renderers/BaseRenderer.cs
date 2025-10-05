@@ -84,6 +84,7 @@ public abstract class BaseRenderer {
 
         clearButton.Clicked += (s, e) => {
             picker.SelectedIndex = -1;
+            picker.SelectedItem = null;
             SetValue(ctx.Row, null);
         };
         findButton.Clicked += (sender, args) => picker.Focus();

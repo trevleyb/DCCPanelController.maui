@@ -38,7 +38,7 @@ internal sealed class EnumChoiceRenderer : BaseRenderer, IPropertyRenderer {
         }
 
         picker.SelectedIndexChanged += (s, e) => {
-            if (picker.SelectedIndex < 0) return;
+            if (picker.SelectedIndex < 0 || picker.SelectedIndex > items.Count-1) return;
             var selected = items[picker.SelectedIndex].Value;
             SetValue(row, selected);
         };
