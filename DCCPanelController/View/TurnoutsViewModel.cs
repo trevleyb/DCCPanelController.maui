@@ -44,17 +44,21 @@ public partial class TurnoutsViewModel : ConnectionViewModel {
         _profileService = profileService;
 
         _profileService.ActiveProfileChanged += (sender, args) => {
-            // If the profile has changed, we need to reset the Turnout Data Collection
             Turnouts = _profileService?.ActiveProfile?.Turnouts ?? throw new ArgumentNullException(nameof(profileService), "TurnoutViewModel: Active profile is not defined.");
             SetLabels();
         };
 
-        Turnouts = _profileService?.ActiveProfile?.Turnouts ?? throw new ArgumentNullException(nameof(profileService), "TurnoutViewModel: Active profile is not defined.");
         PropertyChanged += (sender, args) => {
             if (args.PropertyName == nameof(SelectedTurnout)) {
                 IsTurnoutSelected = SelectedTurnout != null;
             }
         };
+        
+        _sortColumn = _labelName;
+        _isAscending = true;
+        var turnouts = _profileService?.ActiveProfile?.Turnouts ?? throw new ArgumentNullException(nameof(profileService), "TurnoutViewModel: Active profile is not defined.");
+        Turnouts = new ObservableCollection<Turnout>(Turnouts.OrderBy<Turnout, string>(x => x.Name ?? "").ToList());
+
         SetLabels();
     }
 

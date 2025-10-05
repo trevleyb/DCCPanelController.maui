@@ -367,8 +367,7 @@
 
     <Style TargetType="RadioButton">
         <Setter Property="BackgroundColor" Value="Transparent"/>
-        <Setter Property="TextColor"
-                Value="{StaticResource Black}"/>
+        <Setter Property="TextColor" Value="{StaticResource Black}"/>
         <Setter Property="FontFamily" Value="OpenSansRegular"/>
         <Setter Property="FontSize" Value="14"/>
         <Setter Property="MinimumHeightRequest" Value="44"/>
@@ -379,8 +378,7 @@
                     <VisualState x:Name="Normal"/>
                     <VisualState x:Name="Disabled">
                         <VisualState.Setters>
-                            <Setter Property="TextColor"
-                                    Value="{StaticResource Gray300}"/>
+                            <Setter Property="TextColor" Value="{StaticResource Gray300}"/>
                         </VisualState.Setters>
                     </VisualState>
                 </VisualStateGroup>
@@ -601,13 +599,11 @@
     </Style>
 
     <Style x:Key="EntryStyle" TargetType="Entry">
-        <Setter Property="TextColor"
-                Value="{StaticResource DarkOnLightBackground}"/>
+        <Setter Property="TextColor" Value="{StaticResource DarkOnLightBackground}"/>
         <Setter Property="BackgroundColor" Value="Transparent"/>
         <Setter Property="FontFamily" Value="OpenSansRegular"/>
         <Setter Property="FontSize" Value="12"/>
-        <Setter Property="PlaceholderColor"
-                Value="{StaticResource Gray200}"/>
+        <Setter Property="PlaceholderColor" Value="{StaticResource Gray200}"/>
         <Setter Property="MinimumHeightRequest" Value="35"/>
         <Setter Property="MinimumWidthRequest" Value="35"/>
         <Setter Property="HorizontalOptions" Value="Fill"/>

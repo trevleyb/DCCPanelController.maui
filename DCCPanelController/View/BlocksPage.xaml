@@ -109,13 +109,14 @@
                         <DataTemplate x:DataType="dataModel:Block">
                             <Grid Style="{StaticResource SelectableItemStyle}">
                             <StackLayout Padding="0">
-                                <Grid ColumnDefinitions="150,*,120" Margin="10,5,0,5" Padding="0">
+                                <Grid ColumnDefinitions="150,*,120" Margin="0,5,0,5" Padding="0">
                                     <Label
                                         Grid.Column="0"
                                         HorizontalOptions="Start"
                                         LineBreakMode="NoWrap"
                                         Style="{StaticResource MediumLabel}"
                                         Text="{Binding Id}"
+                                        Margin="10,0,0,0"
                                         VerticalOptions="Center"/>
                                     <Label
                                         FontAttributes="Bold"
@@ -125,30 +126,9 @@
                                         Style="{StaticResource MediumLabel}"
                                         Text="{Binding Name}"
                                         VerticalOptions="Center"/>
-                                    <Image
-                                        Grid.Column="3"
-                                        HeightRequest="32"
-                                        HorizontalOptions="End"
-                                        VerticalOptions="Center"
-                                        WidthRequest="42">
-                                        <Image.Triggers>
-                                            <DataTrigger
-                                                Binding="{Binding IsOccupied}"
-                                                TargetType="Image"
-                                                Value="true">
-                                                <Setter Property="Source" Value="block_occupied.png"/>
-                                            </DataTrigger>
-                                            <DataTrigger
-                                                Binding="{Binding IsOccupied}"
-                                                TargetType="Image"
-                                                Value="false">
-                                                <Setter Property="Source" Value="block_free.png"/>
-                                            </DataTrigger>
-                                        </Image.Triggers>
-                                    </Image>
                                     <Label
                                         Grid.Column="2"
-                                        HorizontalOptions="Fill"
+                                        HorizontalOptions="Start"
                                         Style="{StaticResource MediumLabel}"
                                         Text="{Binding State}"
                                         VerticalOptions="Center">
@@ -173,6 +153,35 @@
                                                 x:DataType="{x:Type view:BlocksViewModel}"/>
                                         </Label.GestureRecognizers>
                                     </Label>
+                                    <Image
+                                        Grid.Column="3"
+                                        HeightRequest="32"
+                                        HorizontalOptions="End"
+                                        VerticalOptions="Center"
+                                        WidthRequest="42">
+                                        <Image.Triggers>
+                                            <DataTrigger
+                                                Binding="{Binding IsOccupied}"
+                                                TargetType="Image"
+                                                Value="true">
+                                                <Setter Property="Source" Value="block_occupied.png"/>
+                                            </DataTrigger>
+                                            <DataTrigger
+                                                Binding="{Binding IsOccupied}"
+                                                TargetType="Image"
+                                                Value="false">
+                                                <Setter Property="Source" Value="block_free.png"/>
+                                            </DataTrigger>
+                                        </Image.Triggers>
+                                        <Image.GestureRecognizers>
+                                            <TapGestureRecognizer
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type view:BlocksViewModel}}, Path=ToggleBlockStateCommand}"
+                                                CommandParameter="{Binding .}"
+                                                x:DataType="{x:Type view:BlocksViewModel}"/>
+                                        </Image.GestureRecognizers>
+
+                                    </Image>
+
                                 </Grid>
                                 <BoxView
                                     BackgroundColor="{StaticResource Primary}"

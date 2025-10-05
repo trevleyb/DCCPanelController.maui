@@ -16,7 +16,7 @@ public partial class ConnectionViewModel : BaseViewModel {
     private Profile Profile => _profileService?.ActiveProfile ?? throw new ArgumentNullException(nameof(Profile), "ConnectionViewModel: Active profile is not defined.");
 
     public bool IsConnectionAvailable => true;
-    public bool IsConnected => ConnectionState == DccClientState.Connected;
+    [ObservableProperty] private bool _isConnected;
 
     [ObservableProperty] private ObservableCollection<DccClientMessage> _serverMessages = [];
 
@@ -25,11 +25,14 @@ public partial class ConnectionViewModel : BaseViewModel {
         ConnectionService = connectionService;
         ConnectionService.ConnectionStateChanged += (sender, args) => {
             PropertiesChanged();
+            IsConnected = ConnectionState == DccClientState.Connected;
         };
         ServerMessages = ConnectionService.ServerMessages;
+        IsConnected = ConnectionState == DccClientState.Connected;
     }
 
     public void PropertiesChanged() {
+        OnPropertyChanged(nameof(IsConnected));
         OnPropertyChanged(nameof(IsConnectionAvailable));
         OnPropertyChanged(nameof(ConnectionState));
         OnPropertyChanged(nameof(ConnectionIcon));

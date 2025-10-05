@@ -117,11 +117,12 @@
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="dataModel:Turnout">
                             <!-- <SwipeView> -->
-                            <Grid Style="{StaticResource SelectableItemStyle}">
+                            <Grid Style="{StaticResource SelectableItemStyle}" InputTransparent="True">
                                     <StackLayout >
-                                        <Grid ColumnDefinitions="120,*,100" Margin="10,5,0,5" Padding="0">
+                                        <Grid ColumnDefinitions="120,*,100" Margin="0,5,0,5" Padding="0">
                                             <Label
                                                 Grid.Column="0"
+                                                Margin="10,0,0,0"
                                                 HorizontalOptions="Start"
                                                 LineBreakMode="TailTruncation"
                                                 Style="{StaticResource MediumLabel}"
@@ -135,6 +136,7 @@
                                                 Text="{Binding Name}"
                                                 VerticalOptions="Center"/>
                                             <components:TurnoutStateControl
+                                                Background="#01000000"
                                                 IsEnabled="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, Path=IsConnected, x:DataType=view:TurnoutsViewModel}"
                                                 CanToggleState="true"
                                                 Grid.Column="2"

@@ -46,7 +46,10 @@ public partial class LightsViewModel : ConnectionViewModel {
             }
         };
 
-        Lights = _profileService?.ActiveProfile?.Lights ?? throw new ArgumentNullException(nameof(profileService), "LightsViewModel: Active profile is not defined.");
+        _sortColumn = _labelName;
+        _isAscending = true;
+        var lights = _profileService?.ActiveProfile?.Lights ?? throw new ArgumentNullException(nameof(profileService), "LightsViewModel: Active profile is not defined.");
+        Lights = new ObservableCollection<Light>(lights.OrderBy<Light, string>(x => x.Name ?? "").ToList());
         IsSupported = _profileService.ActiveProfile?.Settings?.ClientSettings?.Capabilities.Contains(DccClientCapability.Lights) ?? false;
         SetLabels();
     }
@@ -67,7 +70,7 @@ public partial class LightsViewModel : ConnectionViewModel {
     }
     
     [RelayCommand]
-    private async Task SortByColumnAsync(string columnName) {
+    public async Task SortByColumnAsync(string columnName) {
         List<Light> sorted;
         if (!_isAscending) {
             sorted = columnName switch {
@@ -84,8 +87,8 @@ public partial class LightsViewModel : ConnectionViewModel {
                 _           => Lights.ToList<Light>(),
             };
         }
-
         Lights = new ObservableCollection<Light>(sorted);
+        
         _sortColumn = columnName;
         _isAscending = !_isAscending;
         OnPropertyChanged(nameof(Lights));
@@ -120,7 +123,7 @@ public partial class LightsViewModel : ConnectionViewModel {
         }
     }
     
-        [RelayCommand]
+    [RelayCommand]
     private async Task DeleteLightAsync(Light? light) {
         light ??= SelectedLight;
         if (light is { }) {

@@ -111,10 +111,11 @@
                         <DataTemplate x:DataType="dataModel:Sensor">
                             <Grid Style="{StaticResource SelectableItemStyle}">
                             <StackLayout Padding="0">
-                                <Grid ColumnDefinitions="150,*,120" Margin="10,5,0,5" Padding="0" 
+                                <Grid ColumnDefinitions="150,*,120" Margin="0,5,0,5" Padding="0" 
                                       IsEnabled="{Binding Source={RelativeSource AncestorType={x:Type view:SensorsViewModel}}, x:DataType=view:SensorsViewModel, Path=IsConnected}">
                                     <Label
                                         Grid.Column="0"
+                                        Margin="10,0,0,0"
                                         HorizontalOptions="Start"
                                         LineBreakMode="NoWrap"
                                         Style="{StaticResource MediumLabel}"
@@ -128,27 +129,6 @@
                                         Style="{StaticResource MediumLabel}"
                                         Text="{Binding Name}"
                                         VerticalOptions="Center"/>
-                                    <Image
-                                        Grid.Column="3"
-                                        HeightRequest="32"
-                                        HorizontalOptions="End"
-                                        VerticalOptions="Center"
-                                        WidthRequest="42">
-                                        <Image.Triggers>
-                                            <DataTrigger
-                                                Binding="{Binding State}"
-                                                TargetType="Image"
-                                                Value="true">
-                                                <Setter Property="Source" Value="sensor_active.png"/>
-                                            </DataTrigger>
-                                            <DataTrigger
-                                                Binding="{Binding State}"
-                                                TargetType="Image"
-                                                Value="false">
-                                                <Setter Property="Source" Value="sensor_inactive.png"/>
-                                            </DataTrigger>
-                                        </Image.Triggers>
-                                    </Image>
                                     <Label
                                         Grid.Column="2"
                                         HorizontalOptions="Fill"
@@ -178,6 +158,33 @@
                                                 x:DataType="{x:Type view:SensorsViewModel}"/>
                                         </Label.GestureRecognizers>
                                     </Label>
+                                    <Image
+                                        Grid.Column="3"
+                                        HeightRequest="32"
+                                        HorizontalOptions="End"
+                                        VerticalOptions="Center"
+                                        WidthRequest="42">
+                                        <Image.Triggers>
+                                            <DataTrigger
+                                                Binding="{Binding State}"
+                                                TargetType="Image"
+                                                Value="true">
+                                                <Setter Property="Source" Value="sensor_active.png"/>
+                                            </DataTrigger>
+                                            <DataTrigger
+                                                Binding="{Binding State}"
+                                                TargetType="Image"
+                                                Value="false">
+                                                <Setter Property="Source" Value="sensor_inactive.png"/>
+                                            </DataTrigger>
+                                        </Image.Triggers>
+                                        <Image.GestureRecognizers>
+                                            <TapGestureRecognizer
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type view:SensorsViewModel}}, Path=ToggleSensorStateCommand}"
+                                                CommandParameter="{Binding .}"
+                                                x:DataType="{x:Type view:SensorsViewModel}"/>
+                                        </Image.GestureRecognizers>
+                                    </Image>
                                 </Grid>
                                 <BoxView
                                     BackgroundColor="{StaticResource Primary}"

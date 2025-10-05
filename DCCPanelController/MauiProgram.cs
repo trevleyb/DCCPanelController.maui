@@ -8,9 +8,11 @@ using DCCPanelController.View;
 using DCCPanelController.View.Components;
 using DCCPanelController.View.TileSelectors;
 using Microsoft.Extensions.Logging;
+using Microsoft.Maui.Controls.Handlers.Items;
 using Serilog;
 using SkiaSharp.Views.Maui.Controls.Hosting;
 using Syncfusion.Maui.Toolkit.Hosting;
+using UIKit;
 #if IOS || MACCATALYST
 using Microsoft.Maui.Controls.Handlers.Items2;
 #endif
@@ -33,23 +35,6 @@ public static class MauiProgram {
                     handlers.AddHandler<CollectionView, CollectionViewHandler2>();
                     #endif
                 });
-        
-                // These are not needed because they are registered in CSPROJ 
-               // .ConfigureFonts(fonts => {
-                    // fonts.AddFont("OpenSans.ttf", "OpenSans");
-                    // fonts.AddFont("OpenSans-Bold.ttf", "OpenSansBold");
-                    // fonts.AddFont("OpenSans-BoldItalic.ttf", "OpenSansBoldItalic");
-                    // fonts.AddFont("OpenSans-ExtraBold.ttf", "OpenSansExtraBold");
-                    // fonts.AddFont("OpenSans-ExtraBoldItalic.ttf", "OpenSansExtraBoldItalic");
-                    // fonts.AddFont("OpenSans-Italic.ttf", "OpenSansItalic");
-                    // fonts.AddFont("OpenSans-Light.ttf", "OpenSansLight");
-                    // fonts.AddFont("OpenSans-LightItalic.ttf", "OpenSansLightItalic");
-                    // fonts.AddFont("OpenSans-Medium.ttf", "OpenSansMedium");
-                    // fonts.AddFont("OpenSans-MediumItalic.ttf", "OpenSansMediumItalic");
-                    // fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
-                    // fonts.AddFont("OpenSans-SemiBold.ttf", "OpenSansSemiBold");
-                    // fonts.AddFont("OpenSans-SemiBoldItalic.ttf", "OpenSansSemiBoldItalic");
-                // });
 
         FormHelper.RemoveBorders();
         builder.Services.AddLogging(loggingBuilder => loggingBuilder.ClearProviders().AddSerilog(dispose: true));
@@ -63,7 +48,7 @@ public static class MauiProgram {
         // Register the Main Entry Page that we will use 
         // --------------------------------------------------------------------------
         services.AddSingleton<AppShell>();
-        
+
         // Add dependant Services
         // --------------------------------------------------------------------------
         services.AddSingleton<ProfileService>();
@@ -95,6 +80,7 @@ public static class MauiProgram {
         Routing.RegisterRoute("help", typeof(HelpPage));
 
         var app = builder.Build();
+        
         ServiceHelper.Initialize(app.Services);
         LogHelper.Initialize(app.Services.GetRequiredService<ILoggerFactory>());
         return app;

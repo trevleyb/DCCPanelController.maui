@@ -36,7 +36,10 @@ public partial class RoutesViewModel : ConnectionViewModel {
             IsSupported = _profileService.ActiveProfile?.Settings?.ClientSettings?.Capabilities.Contains(DccClientCapability.Routes) ?? false;
             SetLabels();
         };
-        Routes = _profileService?.ActiveProfile?.Routes ?? throw new ArgumentNullException(nameof(profileService), "RoutesViewModel: Active profile is not defined.");
+        _sortColumn = _labelName;
+        _isAscending = true;
+        var routes = _profileService?.ActiveProfile?.Routes ?? throw new ArgumentNullException(nameof(profileService), "RoutesViewModel: Active profile is not defined.");
+        Routes = new ObservableCollection<Route>(routes.OrderBy<Route, string>(x => x.Name ?? "").ToList());
         IsSupported = _profileService.ActiveProfile?.Settings?.ClientSettings?.Capabilities.Contains(DccClientCapability.Routes) ?? false;
         SetLabels();
     }

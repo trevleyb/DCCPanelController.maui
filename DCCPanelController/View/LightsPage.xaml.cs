@@ -23,5 +23,4 @@ public partial class LightsPage : ContentPage {
         base.OnAppearing();
         if (BindingContext is LightsViewModel viewModel) viewModel.SetToolbarItems();
     }
-
 }

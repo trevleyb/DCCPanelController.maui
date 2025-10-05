@@ -11,6 +11,7 @@ public partial class App : Application {
     public App(ProfileService profileService, IServiceProvider serviceProvider) {
         InitializeComponent();
         BindingDiagnostics.BindingFailed += BindingDiagnosticsOnBindingFailed;
+        Application.Current?.UserAppTheme = AppTheme.Light;
     }
 
     /// <summary>

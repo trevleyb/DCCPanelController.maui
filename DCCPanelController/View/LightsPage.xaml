@@ -93,11 +93,14 @@
             BackgroundColor="{StaticResource Primary}"
             HeightRequest="1"
             HorizontalOptions="FillAndExpand"/>
+        
         <RefreshView IsRefreshing="{Binding IsBusy}" Command="{Binding RefreshLightsCommand}">
 
             <Grid VerticalOptions="FillAndExpand"
                   IsEnabled="{Binding Source={RelativeSource AncestorType={x:Type view:LightsViewModel}}, x:DataType=view:LightsViewModel, Path=IsConnected}">
-                <CollectionView ItemsSource="{Binding Lights}" SelectionMode="Single" SelectedItem="{Binding SelectedLight}">
+                
+                <!-- <CollectionView ItemsSource="{Binding Lights}" SelectionMode="None" SelectedItem="{Binding SelectedLight}"> -->
+                <CollectionView ItemsSource="{Binding Lights}" SelectionMode="None"> 
                     <CollectionView.EmptyView>
                         <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
                             <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
@@ -110,11 +113,13 @@
 
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="dataModel:Light">
-                            <Grid Style="{StaticResource SelectableItemStyle}">
+                            <!-- <Grid Style="{StaticResource SelectableItemStyle}"> -->
+                            <Grid>
                             <StackLayout Padding="0">
-                                <Grid ColumnDefinitions="120,*,70" Margin="10,5,0,5" Padding="0">
+                                <Grid ColumnDefinitions="120,*,70" Margin="0,5,0,5" Padding="0">
                                     <Label
                                         Grid.Column="0"
+                                        Margin="10,0,0,0"
                                         HorizontalOptions="Start"
                                         LineBreakMode="NoWrap"
                                         Style="{StaticResource MediumLabel}"
@@ -128,30 +133,9 @@
                                         Style="{StaticResource MediumLabel}"
                                         Text="{Binding Name}"
                                         VerticalOptions="Center"/>
-                                    <Image
-                                        Grid.Column="3"
-                                        HeightRequest="32"
-                                        HorizontalOptions="End"
-                                        VerticalOptions="Center"
-                                        WidthRequest="42">
-                                        <Image.Triggers>
-                                            <DataTrigger
-                                                Binding="{Binding State}"
-                                                TargetType="Image"
-                                                Value="true">
-                                                <Setter Property="Source" Value="light_active.png"/>
-                                            </DataTrigger>
-                                            <DataTrigger
-                                                Binding="{Binding State}"
-                                                TargetType="Image"
-                                                Value="false">
-                                                <Setter Property="Source" Value="light_inactive.png"/>
-                                            </DataTrigger>
-                                        </Image.Triggers>
-                                    </Image>
                                     <Label
                                         Grid.Column="2"
-                                        HorizontalOptions="Fill"
+                                        HorizontalOptions="Start"
                                         Style="{StaticResource MediumLabel}"
                                         Text="{Binding State}"
                                         VerticalOptions="Center">
@@ -178,6 +162,33 @@
                                                 x:DataType="{x:Type view:LightsViewModel}"/>
                                         </Label.GestureRecognizers>
                                     </Label>
+                                    <Image
+                                        Grid.Column="3"
+                                        HeightRequest="32"
+                                        HorizontalOptions="End"
+                                        VerticalOptions="Center"
+                                        WidthRequest="42">
+                                        <Image.Triggers>
+                                            <DataTrigger
+                                                Binding="{Binding State}"
+                                                TargetType="Image"
+                                                Value="true">
+                                                <Setter Property="Source" Value="light_active.png"/>
+                                            </DataTrigger>
+                                            <DataTrigger
+                                                Binding="{Binding State}"
+                                                TargetType="Image"
+                                                Value="false">
+                                                <Setter Property="Source" Value="light_inactive.png"/>
+                                            </DataTrigger>
+                                        </Image.Triggers>
+                                        <Image.GestureRecognizers>
+                                            <TapGestureRecognizer
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type view:LightsViewModel}}, Path=ToggleLightStateCommand}"
+                                                CommandParameter="{Binding .}"
+                                                x:DataType="{x:Type view:LightsViewModel}"/>
+                                        </Image.GestureRecognizers>
+                                    </Image>
                                 </Grid>
                                 <BoxView
                                     BackgroundColor="{StaticResource Primary}"

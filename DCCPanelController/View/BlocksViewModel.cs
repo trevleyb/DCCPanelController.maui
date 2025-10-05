@@ -47,7 +47,10 @@ public partial class BlocksViewModel : ConnectionViewModel {
             }
         };
 
-        Blocks = profileService?.ActiveProfile?.Blocks ?? throw new ArgumentNullException(nameof(profileService), "BlocksViewModel: Active profile is not defined.");
+        _sortColumn = _labelName;
+        _isAscending = true;
+        var blocks = profileService?.ActiveProfile?.Blocks ?? throw new ArgumentNullException(nameof(profileService), "BlocksViewModel: Active profile is not defined.");
+        Blocks = new ObservableCollection<Block>(blocks.OrderBy<Block, string>(x => x.Name ?? "").ToList());
         IsSupported = _profileService.ActiveProfile?.Settings?.ClientSettings?.Capabilities.Contains(DccClientCapability.Blocks) ?? false;
         SetLabels();
     }

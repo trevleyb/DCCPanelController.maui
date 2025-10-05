@@ -35,6 +35,7 @@ public partial class SensorsViewModel : ConnectionViewModel {
     public SensorsViewModel(ILogger<SensorsViewModel> logger, ProfileService profileService, ConnectionService connectionService) : base(profileService, connectionService) {
         _logger = logger;
         _profileService = profileService;
+        
         _profileService.ActiveProfileChanged += (sender, args) => {
             Sensors = _profileService?.ActiveProfile?.Sensors ?? throw new ArgumentNullException(nameof(profileService), "SensorsViewModel: Active profile is not defined.");
             IsSupported = false;//_profileService.ActiveProfile?.Settings?.ClientSettings?.Capabilities.Contains(DccClientCapability.Sensors) ?? false;
@@ -47,7 +48,11 @@ public partial class SensorsViewModel : ConnectionViewModel {
             }
         };
         
-        Sensors = _profileService?.ActiveProfile?.Sensors ?? throw new ArgumentNullException(nameof(profileService), "SensorsViewModel: Active profile is not defined.");
+        _sortColumn = _labelName;
+        _isAscending = true;
+        var sensors = _profileService?.ActiveProfile?.Sensors ?? throw new ArgumentNullException(nameof(profileService), "SensorsViewModel: Active profile is not defined.");
+        Sensors = new ObservableCollection<Sensor>(sensors.OrderBy<Sensor, string>(x => x.Name ?? "").ToList());
+
         IsSupported = false; //_profileService.ActiveProfile?.Settings?.ClientSettings?.Capabilities.Contains(DccClientCapability.Sensors) ?? false;
         SetLabels();
     }

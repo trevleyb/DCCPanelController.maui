@@ -98,7 +98,7 @@
                         <DataTemplate x:DataType="dataModel:Route">
                             <Grid Style="{StaticResource SelectableItemStyle}"> 
                             <StackLayout Padding="0">
-                                <Grid ColumnDefinitions="120,*,100" Margin="10,5,0,5" Padding="0" Style="{StaticResource SelectableItemStyle}">
+                                <Grid ColumnDefinitions="120,*,100" Margin="0,5,0,5" Padding="0" Style="{StaticResource SelectableItemStyle}">
                                     <Grid.GestureRecognizers>
                                         <TapGestureRecognizer
                                             Command="{Binding Source={RelativeSource AncestorType={x:Type view:RoutesViewModel}}, Path=ToggleRoutesStateCommand}"
@@ -106,6 +106,7 @@
                                             x:DataType="{x:Type view:RoutesViewModel}"/>
                                     </Grid.GestureRecognizers>
                                     <Label
+                                        Margin="10,0,0,0"
                                         Grid.Column="0"
                                         HorizontalOptions="Start"
                                         LineBreakMode="NoWrap"
@@ -120,33 +121,6 @@
                                         Style="{StaticResource MediumLabel}"
                                         Text="{Binding Name}"
                                         VerticalOptions="Center"/>
-                                    <Image
-                                        Grid.Column="2"
-                                        HeightRequest="32"
-                                        HorizontalOptions="End"
-                                        VerticalOptions="Center"
-                                        WidthRequest="32">
-                                        <Image.Triggers>
-                                            <DataTrigger
-                                                Binding="{Binding State}"
-                                                TargetType="Image"
-                                                Value="Active">
-                                                <Setter Property="Source" Value="route_active.png"/>
-                                            </DataTrigger>
-                                            <DataTrigger
-                                                Binding="{Binding State}"
-                                                TargetType="Image"
-                                                Value="Inactive">
-                                                <Setter Property="Source" Value="route_inactive.png"/>
-                                            </DataTrigger>
-                                            <DataTrigger
-                                                Binding="{Binding State}"
-                                                TargetType="Image"
-                                                Value="Unknown">
-                                                <Setter Property="Source" Value="route_unknown.png"/>
-                                            </DataTrigger>
-                                        </Image.Triggers>
-                                    </Image>
                                     <Label
                                         Grid.Column="3"
                                         HorizontalOptions="Fill"
@@ -174,6 +148,33 @@
                                             </DataTrigger>
                                         </Label.Triggers>
                                     </Label>
+                                    <Image
+                                        Grid.Column="2"
+                                        HeightRequest="32"
+                                        HorizontalOptions="End"
+                                        VerticalOptions="Center"
+                                        WidthRequest="32">
+                                        <Image.Triggers>
+                                            <DataTrigger
+                                                Binding="{Binding State}"
+                                                TargetType="Image"
+                                                Value="Active">
+                                                <Setter Property="Source" Value="route_active.png"/>
+                                            </DataTrigger>
+                                            <DataTrigger
+                                                Binding="{Binding State}"
+                                                TargetType="Image"
+                                                Value="Inactive">
+                                                <Setter Property="Source" Value="route_inactive.png"/>
+                                            </DataTrigger>
+                                            <DataTrigger
+                                                Binding="{Binding State}"
+                                                TargetType="Image"
+                                                Value="Unknown">
+                                                <Setter Property="Source" Value="route_unknown.png"/>
+                                            </DataTrigger>
+                                        </Image.Triggers>
+                                    </Image>
                                 </Grid>
                                 <BoxView
                                     BackgroundColor="{StaticResource Primary}"
