@@ -22,7 +22,7 @@ public static class ClickSounds {
     }
 
     public static async Task PlaySwitchClickSoundAsync() {
-        var clickSound = await ClickSoundPlayerAsync("Button_Light_Switch.m4a");
+        var clickSound = await ClickSoundPlayerAsync("Button_Light_Switch2.wav");
         clickSound?.Play();
     }
 

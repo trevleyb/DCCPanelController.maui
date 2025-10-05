@@ -101,7 +101,7 @@
                   IsEnabled="{Binding Source={RelativeSource AncestorType={x:Type view:LightsViewModel}}, x:DataType=view:LightsViewModel, Path=IsConnected}">
                 
                 <!-- <CollectionView ItemsSource="{Binding Lights}" SelectionMode="None" SelectedItem="{Binding SelectedLight}"> -->
-                <CollectionView ItemsSource="{Binding Lights}" SelectionMode="None"> 
+                <CollectionView ItemsSource="{Binding Lights}" SelectionMode="Single"> 
                     <CollectionView.EmptyView>
                         <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
                             <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">

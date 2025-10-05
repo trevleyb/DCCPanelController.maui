@@ -28,6 +28,7 @@ public partial class PanelEditorViewModel : ObservableObject {
     private readonly Microsoft.Maui.Controls.View _panelEditorContainer;
     private readonly ControlPanelView             _panelView;
     private readonly ProfileService               _profileService;
+    private readonly ConnectionService            _connectionService;
 
     [ObservableProperty] private EditModeEnum _editMode = EditModeEnum.Move;
     [ObservableProperty] private bool         _gridVisible;
@@ -68,8 +69,9 @@ public partial class PanelEditorViewModel : ObservableObject {
     private int    _cols;
     private int    _rows;
 
-    public PanelEditorViewModel(ILogger<PanelEditor> logger, Panel panel, ProfileService profileService, PanelEditor panelEditor, ControlPanelView panelView, Microsoft.Maui.Controls.View panelEditorContainer) {
+    public PanelEditorViewModel(ILogger<PanelEditor> logger, Panel panel, ProfileService profileService, ConnectionService connectionService, PanelEditor panelEditor, ControlPanelView panelView, Microsoft.Maui.Controls.View panelEditorContainer) {
         _profileService = profileService;
+        _connectionService = connectionService;
         _logger = logger;
         _original = panel;
         _panel = panel.Clone(false); // Make a clone so we are working on a clone

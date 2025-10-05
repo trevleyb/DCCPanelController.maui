@@ -166,7 +166,7 @@ namespace DCCPanelController.Clients.Simulator {
             if (string.IsNullOrWhiteSpace(b.Id) || string.IsNullOrWhiteSpace(b.Name))
                 return Task.FromResult<IResult>(Result.Fail("Invalid Block Id/Name"));
 
-            UpdateBlock(b.Id, b.Name, isOccupied);
+            UpdateBlock(b.Id, b.Name, isOccupied, b.Sensor ?? "");
             OnClientMessage($"Sim TX: block {b.Id} {(isOccupied ? "OCCUPIED" : "FREE")}",
                 DccClientOperation.Block, DccClientMessageType.Outbound);
             return Task.FromResult<IResult>(Result.Ok());

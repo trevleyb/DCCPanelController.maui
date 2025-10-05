@@ -22,10 +22,11 @@ using SettingsViewModel = DCCPanelController.Clients.Helpers.SettingsViewModel;
 
 namespace DCCPanelController.View;
 
-public partial class SettingsConnectionViewModel : ConnectionViewModel {
+public partial class SettingsConnectionViewModel : BaseViewModel {
     private readonly ILogger<SettingsViewModel>                    _logger;
     private readonly Dictionary<DccClientType, IDccClientSettings> _settingsCache = [];
     public readonly  ProfileService                                ProfileService;
+    public readonly  ConnectionService                             ConnectionService;
 
     [ObservableProperty] private Capabilities _capabilities = new();
     [ObservableProperty] private ContentView? _currentSettingsView;
@@ -48,10 +49,11 @@ public partial class SettingsConnectionViewModel : ConnectionViewModel {
     [ObservableProperty] private bool _supportsTurnouts;
     public                       bool IsDirty;
 
-    public SettingsConnectionViewModel(ILogger<SettingsViewModel> logger, ProfileService profileService, ConnectionService connectionService) : base(profileService, connectionService) {
+    public SettingsConnectionViewModel(ILogger<SettingsViewModel> logger, ProfileService profileService, ConnectionService connectionService) : base() {
         _logger = logger;
         _profile = new Profile("Temporary");
         ProfileService = profileService;
+        ConnectionService = connectionService;
         OnProfileChanged();
         PropertyChanged += (s, e) => { IsDirty = true; };
     }
@@ -86,10 +88,7 @@ public partial class SettingsConnectionViewModel : ConnectionViewModel {
 
     [RelayCommand]
     public async Task SaveSettingsAsync() {
-        var reconnect = ConnectionService.ConnectionState;
-        if (reconnect == DccClientState.Connected) await ConnectionService.DisconnectAsync();
         await ProfileService.SaveAsync();
-        if (Settings is { ClientSettings: { } } && reconnect == DccClientState.Connected) await ConnectionService.ConnectAsync();
         await DisplayAlertHelper.DisplayToastAlert("Success: Settings and Profile Saved");
         IsDirty = false;
     }

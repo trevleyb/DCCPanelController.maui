@@ -19,10 +19,11 @@ using SettingsViewModel = DCCPanelController.Clients.Helpers.SettingsViewModel;
 
 namespace DCCPanelController.View;
 
-public partial class SettingsPageViewModel : ConnectionViewModel {
+public partial class SettingsPageViewModel : BaseViewModel {
     private readonly             ILogger<SettingsViewModel>                    _logger;
     private readonly             Dictionary<DccClientType, IDccClientSettings> _settingsCache = [];
     public readonly              ProfileService                                ProfileService;
+    public readonly              ConnectionService                             ConnectionService;
     [ObservableProperty] private Capabilities                                  _capabilities = new();
     [ObservableProperty] private Microsoft.Maui.Controls.View?                 _currentSettingsView;
 
@@ -32,10 +33,11 @@ public partial class SettingsPageViewModel : ConnectionViewModel {
     [ObservableProperty] private Profile _profile;
     public                       bool    IsDirty;
 
-    public SettingsPageViewModel(ILogger<SettingsViewModel> logger, ProfileService profileService, ConnectionService connectionService) : base(profileService, connectionService) {
+    public SettingsPageViewModel(ILogger<SettingsViewModel> logger, ProfileService profileService, ConnectionService connectionService) : base() {
         _logger = logger;
         _profile = new Profile("Temporary");
         ProfileService = profileService;
+        ConnectionService = connectionService;
         OnProfileChanged();
     }
 

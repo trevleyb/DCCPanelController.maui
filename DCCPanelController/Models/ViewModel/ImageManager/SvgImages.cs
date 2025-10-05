@@ -41,6 +41,10 @@ public static class SvgImages {
         AddImage("LightLarge", "button_light_large");
         AddImage("LightSmall", "button_light_small");
 
+        AddImage("LightOff", "button_light_off");
+        AddImage("LightLargeOff", "button_light_large_off");
+        AddImage("LightSmallOff", "button_light_small_off");
+
         AddImage("Switch", "switch_on");
         AddImage("SwitchOn", "switch_on");
         AddImage("SwitchOff", "switch_off");

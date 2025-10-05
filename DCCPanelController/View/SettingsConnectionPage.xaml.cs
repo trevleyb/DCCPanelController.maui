@@ -37,8 +37,12 @@ public partial class SettingsConnectionPage : ContentPage, INotifyPropertyChange
     }
     
     protected override async void OnNavigatedFrom(NavigatedFromEventArgs args) {
-        base.OnNavigatedFrom(args);
-        if (_pageViewModel is { IsDirty: true } vm) await vm.SaveSettingsAsync();
+        try {
+            base.OnNavigatedFrom(args);
+            if (_pageViewModel is { IsDirty: true } vm) await vm.SaveSettingsAsync();
+        } catch (Exception ex) {
+            Debug.WriteLine($"SettingsConnectionPage: Error in OnNavigatedFrom: {ex.Message}");
+        }
     }
     
 }

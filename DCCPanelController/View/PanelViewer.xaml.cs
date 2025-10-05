@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using DCCPanelController.Services;
 using Microsoft.Extensions.Logging;
 
@@ -35,6 +36,19 @@ public partial class PanelViewer {
                 SetActiveZoomIcons();
             }
         };
+    }
+
+    protected override async void OnAppearing() {
+        try {
+            base.OnAppearing();
+            
+            // We should ensure we are NOT connected when we are editing the Panels. 
+            // ----------------------------------------------------------------------
+            if (_connectionService is { }) await _connectionService.DisconnectAsync();
+            
+        } catch (Exception ex) {
+            Debug.WriteLine($"PanelViewer: Error in OnAppearing: {ex.Message}");
+        }
     }
 
     private void OnDisplayInfoChanged(object? sender, DisplayInfoChangedEventArgs e) => Dispatcher.DispatchDelayed(TimeSpan.FromMilliseconds(200), () => { SetLayoutSpan(Width, Height); });

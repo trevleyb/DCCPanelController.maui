@@ -44,12 +44,18 @@ public class ActionSwitchTile : Tile, ITileInteractive {
 
     protected override Microsoft.Maui.Controls.View? CreateTile() {
         if (Entity is SwitchEntity button) {
+
+            var offAttr = "";
+            if (button is { SwitchStyle: SwitchStyleEnum.Light, State: ButtonStateEnum.Off }) {
+                offAttr = "Off";    
+            }
+
             SvgImage = button.SwitchStyle switch {
                 SwitchStyleEnum.Light =>
                     button.ButtonSize switch {
-                        ButtonSizeEnum.Large => SvgImages.GetImage("lightLarge", Entity.Rotation),
-                        ButtonSizeEnum.Small => SvgImages.GetImage("lightSmall", Entity.Rotation),
-                        _                    => SvgImages.GetImage("light", Entity.Rotation),
+                        ButtonSizeEnum.Large => SvgImages.GetImage($"lightLarge{offAttr}", Entity.Rotation),
+                        ButtonSizeEnum.Small => SvgImages.GetImage($"lightSmall{offAttr}", Entity.Rotation),
+                        _                    => SvgImages.GetImage($"light{offAttr}", Entity.Rotation),
                     },
                 SwitchStyleEnum.Button =>
                     button.ButtonSize switch {

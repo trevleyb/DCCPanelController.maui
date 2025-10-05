@@ -15,6 +15,7 @@ namespace DCCPanelController.View;
 public partial class PanelViewerViewModel : ConnectionViewModel {
     private readonly ILogger<PanelViewerViewModel> _logger;
     private readonly ProfileService                _profileService;
+    private readonly ConnectionService             _connectionService;
 
     [ObservableProperty] private bool   _canZoomIn;
     [ObservableProperty] private bool   _canZoomOut;
@@ -35,7 +36,8 @@ public partial class PanelViewerViewModel : ConnectionViewModel {
     public PanelViewerViewModel(ILogger<PanelViewerViewModel> logger, ProfileService profileService, ConnectionService connectionService) : base(profileService, connectionService) {
         _logger = logger;
         _profileService = profileService;
-
+        _connectionService = connectionService;
+        
         Panels = _profileService?.ActiveProfile?.Panels ?? throw new ArgumentNullException(nameof(profileService), "PanelViewerViewModel: Active profile is not defined.");
         PropertyChanged += OnPropertyChanged;
         SelectedPanel = Panels.FirstOrDefault();
@@ -141,7 +143,7 @@ public partial class PanelViewerViewModel : ConnectionViewModel {
                 StepTimer.Start();
                 await Task.Yield();
                 await Task.Delay(10);
-                var editorPage = new PanelEditor(LogHelper.CreateLogger<PanelEditor>(), panel, _profileService);
+                var editorPage = new PanelEditor(LogHelper.CreateLogger<PanelEditor>(), panel, _profileService, _connectionService);
                 await navigation.PushAsync(editorPage);
                 await editorPage.PageClosed;
             }

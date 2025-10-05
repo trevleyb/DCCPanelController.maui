@@ -17,7 +17,7 @@ public abstract partial class DccClientBase(Profile profile) : ObservableObject 
     protected void UpdateTurnout(string id, string name, TurnoutStateEnum state, int? dccAddress = null) => OnUi(() => UpdateTurnoutCore(id, name, state, dccAddress));
     protected void UpdateRoute(string id, string name, RouteStateEnum state, int? dccAddress = null) => OnUi(() => UpdateRouteCore(id, name, state, dccAddress));
     protected void UpdateSensor(string id, string name, bool isOccupied, int? dccAddress = null) => OnUi(() => UpdateSensorCore(id, name, isOccupied, dccAddress));
-    protected void UpdateBlock(string id, string name, bool isOccupied, string sensor = "", int? dccAddress = null) => OnUi(() => UpdateBlockCore(id, name, isOccupied, sensor, dccAddress));
+    protected void UpdateBlock(string id, string name, bool isOccupied, string? sensor = null, int? dccAddress = null) => OnUi(() => UpdateBlockCore(id, name, isOccupied, sensor, dccAddress));
     protected void UpdateLight(string id, string name, bool isOn, int? dccAddress = null) => OnUi(() => UpdateLightCore(id, name, isOn, dccAddress));
     protected void UpdateSignal(string id, string name, SignalAspectEnum aspect, int? dccAddress = null) => OnUi(() => UpdateSignalCore(id, name, aspect, dccAddress));
     protected void UpdateFastClock(DateTime? fastClock, FastClockStateEnum state) => OnUi(() => UpdateFastClockCore(fastClock, state));
@@ -83,20 +83,20 @@ public abstract partial class DccClientBase(Profile profile) : ObservableObject 
         }
     }
 
-    private void UpdateBlockCore(string id, string name, bool isOccupied, string sensor = "", int? dccAddress = null) {
+    private void UpdateBlockCore(string id, string name, bool isOccupied, string? sensor, int? dccAddress = null) {
         if (Profile?.Blocks is { } collection) {
             Block? entity = null;
             entity ??= Profile?.Blocks?.FirstOrDefault(x => x.Id == id) ?? null;
             entity ??= Profile?.Blocks?.FirstOrDefault(x => x.Name == name) ?? null;
             if (entity is { }) {
                 entity.IsOccupied = isOccupied;
-                entity.Sensor = sensor;
+                if (sensor is {}) entity.Sensor = sensor;
             } else {
                 entity = new Block {
                     Id = id,
                     Name = name,
                     IsOccupied = isOccupied,
-                    Sensor = sensor,
+                    Sensor = sensor ?? "",
                 };
                 collection.Add(entity);
             }

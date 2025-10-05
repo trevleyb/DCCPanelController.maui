@@ -23,14 +23,14 @@ public partial class PanelEditor : ContentPage {
 
     private TileSelectorDockSide? _currentState;
 
-    public PanelEditor(ILogger<PanelEditor> logger, Panel panel, ProfileService profileService) {
+    public PanelEditor(ILogger<PanelEditor> logger, Panel panel, ProfileService profileService, ConnectionService connectionService) : base() {
         _logger = logger;
 
         InitializeComponent();
         if (panel.Cols <= 0) panel.Cols = 18;
         if (panel.Rows <= 0) panel.Rows = 10;
 
-        _viewModel = new PanelEditorViewModel(_logger, panel, profileService, this, PanelView, PanelEditorContainer) {
+        _viewModel = new PanelEditorViewModel(_logger, panel, profileService, connectionService, this, PanelView, PanelEditorContainer) {
             GridVisible = true,
             EditMode = EditModeEnum.Move,
         };

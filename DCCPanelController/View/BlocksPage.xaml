@@ -233,6 +233,7 @@
         <!-- Bottom Sheet for editing the Connection Details -->
         <bottomSheet:SfBottomSheet
             x:Name="BottomSheet"
+              
             CornerRadius="15, 15, 0, 0"
             HalfExpandedRatio="0.50" 
             ContentPadding="10"/>

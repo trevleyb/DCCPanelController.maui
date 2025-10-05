@@ -122,7 +122,7 @@ public partial class ConnectionService : ObservableObject {
         OnConnectionChanged(DccClientState.Disconnected);
         return Result.Ok();
     }
-
+    
     private async void ClientOnClientMessage(object? sender, DccClientEvent e) {
         try {
             var lastConnectionState = ConnectionState;

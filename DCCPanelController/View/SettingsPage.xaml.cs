@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.Diagnostics;
 using DCCPanelController.Clients;
 using DCCPanelController.View.Helpers;
 using Microsoft.Extensions.Logging;
@@ -19,6 +20,15 @@ public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
         _pageViewModel.IsDirty = false;
     }
 
+    protected override async void OnAppearing() {
+        try {
+            base.OnAppearing();
+            if (_pageViewModel is not null) await _pageViewModel.ConnectionService.DisconnectAsync();
+        } catch (Exception ex) {
+            Debug.WriteLine($"SettingsPage: Error in OnAppearing: {ex.Message}");
+        }
+    }
+    
     protected override async void OnNavigatedFrom(NavigatedFromEventArgs args) {
         base.OnNavigatedFrom(args);
         if (_pageViewModel is { IsDirty: true } vm) await vm.SaveSettingsAsync();
