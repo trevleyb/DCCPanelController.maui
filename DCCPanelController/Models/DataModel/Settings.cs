@@ -9,8 +9,8 @@ namespace DCCPanelController.Models.DataModel;
 public partial class Settings : ObservableObject {
 
     [ObservableProperty] private IDccClientSettings? _clientSettings  = new SimulatorSettings();
-    [ObservableProperty] private Color               _foregroundColor = StyleHelper.FromStyle("White");
-    [ObservableProperty] private Color               _backgroundColor = StyleHelper.FromStyle("Primary");
+    [ObservableProperty] private Color               _foregroundColor = (Color)App.Current.Resources["White"] ?? Colors.White;
+    [ObservableProperty] private Color               _backgroundColor = (Color)App.Current.Resources["Primary"] ?? Colors.Green;
     [ObservableProperty] private string              _logLevel        = "Info";
     [ObservableProperty] private double              _selectorWidth   = 72;
     [ObservableProperty] private bool                _connectOnStartup;

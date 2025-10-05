@@ -55,11 +55,11 @@ public partial class ConnectionViewModel : BaseViewModel {
 
     public Color ConnectionColor =>
         ConnectionState switch {
-            DccClientState.Connected    => Colors.LightGreen,
+            DccClientState.Connected    => Colors.Green,
             DccClientState.Disconnected => Colors.Black,
             DccClientState.Error        => Colors.Red,
             DccClientState.Initialising => Colors.Blue,
-            DccClientState.Reconnecting => Colors.Yellow,
+            DccClientState.Reconnecting => Colors.DarkOrchid,
             _                           => Colors.Red
         };
 

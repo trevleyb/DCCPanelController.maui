@@ -29,7 +29,7 @@ public partial class OperatePage : ContentPage, INotifyPropertyChanged {
         _viewModel.PropertyChanged += ViewModelOnPropertyChanged;
 
         BindingContext = _viewModel;
-        SetTabBarState(!(_profileService?.ActiveProfile?.Settings?.StartFullScreen ?? true));
+        SetChromeVisible(!( _profileService?.ActiveProfile?.Settings?.StartFullScreen ?? false ));
     }
 
     private void ConnectionServiceOnConnectionStateChanged(object? sender, DccClientState e) { }
@@ -104,22 +104,41 @@ public partial class OperatePage : ContentPage, INotifyPropertyChanged {
             Debug.WriteLine($"Unable to close the Help Welcome page: {ex.Message}");
         }
     }
-
-    private void HideUnHideTabBar(object? sender, EventArgs e) {
-        if (BindingContext is OperateViewModel viewModel) {
-            SetTabBarState(!viewModel.IsMaximized);
-        }
+    
+    // Replace your HideUnHideTabBar and SetTabBarState with this:
+    private void ToggleChrome(object? sender, EventArgs e) {
+        SetChromeVisible(show: _viewModel?.IsMaximized == true);
     }
 
-    private void SetTabBarState(bool state) {
-        if (state) {
-            Shell.SetTabBarIsVisible(this, true);
-            HideUnHide.IconImageSource = "maximize_2_active.png";
-        } else {
-            Shell.SetTabBarIsVisible(this, false);
-            HideUnHide.IconImageSource = "minimize_2_active.png";
-        }
-        if (_viewModel is { } viewModel) viewModel.IsMaximized = state;
+    private void SetChromeVisible(bool show) {
+        Shell.SetTabBarIsVisible(this, show);
+        Shell.SetNavBarIsVisible(this, show);
+        _viewModel.IsMaximized = !show;
+
+        HideUnHide?.IconImageSource = show ? "maximize_2_active.png" : "minimize_2_active.png";
+        UnmaximizeFab?.IsVisible = !show;
         InvalidateMeasure();
     }
+
+    // wire the FAB
+    private void UnmaximizeFab_Clicked(object? sender, EventArgs e) => SetChromeVisible(true);
+    private void HideUnHideTabBar(object? sender, EventArgs e) => ToggleChrome(sender, e);
+
+    // private void HideUnHideTabBar(object? sender, EventArgs e) {
+    //     if (BindingContext is OperateViewModel viewModel) {
+    //         SetTabBarState(!viewModel.IsMaximized);
+    //     }
+    // }
+
+    // private void SetTabBarState(bool state) {
+    //     if (state) {
+    //         Shell.SetTabBarIsVisible(this, true);
+    //         HideUnHide.IconImageSource = "maximize_2_active.png";
+    //     } else {
+    //         Shell.SetTabBarIsVisible(this, false);
+    //         HideUnHide.IconImageSource = "minimize_2_active.png";
+    //     }
+    //     if (_viewModel is { } viewModel) viewModel.IsMaximized = state;
+    //     InvalidateMeasure();
+    // }
 }

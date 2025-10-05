@@ -31,6 +31,10 @@ public partial class OperateViewModel : ConnectionViewModel {
     [NotifyPropertyChangedFor(nameof(HideWelcomePage))]
     [ObservableProperty] private bool _showWelcomePage;
 
+    public Color IndicatorColor => (Color)App.Current.Resources["Gray300"];
+    public Color IndicatorSelectedColor => (Color)App.Current.Resources["Primary"];
+    public Color ProfileNameColor => (Color)App.Current.Resources["Primary"];
+    
     public bool   HaveClosedWelcome;
 
     public OperateViewModel(ILogger<OperateViewModel> logger, ProfileService profileService, ConnectionService connectionService) : base(profileService, connectionService) {

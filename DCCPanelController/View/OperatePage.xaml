@@ -17,6 +17,8 @@
     <ContentPage.Resources>
         <ResourceDictionary>
             <converters:ColorFallbackConverter x:Key="ColorFallbackConverter"/>
+            <converters:ContrastToBackgroundConverter x:Key="ContrastToBg" MinContrast="4.5"/>
+            <converters:ContrastToBackgroundMultiConverter x:Key="ContrastToBgMulti" MinContrast="4.5"/>
         </ResourceDictionary>
     </ContentPage.Resources>
 
@@ -43,169 +45,238 @@
     </ContentPage.ToolbarItems>
 
     <ContentPage.Content>
-        <Grid RowDefinitions="*,auto" HorizontalOptions="Fill" VerticalOptions="Fill">
-            <Grid Grid.Row="0" x:Name="MainGrid" HorizontalOptions="Fill" VerticalOptions="Fill">
-                <Grid
-                    BackgroundColor="{Binding PanelBackgroundColor, Converter={StaticResource ColorFallbackConverter}}">
-                    <Grid.GestureRecognizers>
-                        <SwipeGestureRecognizer Direction="Left" Command="{Binding SwipeLeftCommand}"/>
-                        <SwipeGestureRecognizer Direction="Right" Command="{Binding SwipeRightCommand}"/>
-                    </Grid.GestureRecognizers>
+        <Grid>
+            <Grid RowDefinitions="*,auto,auto" HorizontalOptions="Fill" VerticalOptions="Fill">
+                <Grid Grid.Row="0" x:Name="MainGrid" HorizontalOptions="Fill" VerticalOptions="Fill">
+                    <Grid
+                        BackgroundColor="{Binding PanelBackgroundColor, Converter={StaticResource ColorFallbackConverter}}">
+                        <Grid.GestureRecognizers>
+                            <SwipeGestureRecognizer Direction="Left" Command="{Binding SwipeLeftCommand}"/>
+                            <SwipeGestureRecognizer Direction="Right" Command="{Binding SwipeRightCommand}"/>
+                        </Grid.GestureRecognizers>
 
-                    <!-- Active Panel View -->
-                    <controlPanel:ControlPanelView
-                        TileTapped="PanelViewOnTileTapped"
-                        HorizontalOptions="Fill"
-                        VerticalOptions="Fill"
-                        Interactive="True"
-                        DesignMode="False"
-                        ShowGrid="false"
-                        IsVisible="{Binding HideWelcomePage}"
-                        Panel="{Binding ActivePanel}"
-                        x:Name="PanelView"/>
+                        <!-- Active Panel View -->
+                        <controlPanel:ControlPanelView
+                            TileTapped="PanelViewOnTileTapped"
+                            HorizontalOptions="Fill"
+                            VerticalOptions="Fill"
+                            Interactive="True"
+                            DesignMode="False"
+                            ShowGrid="false"
+                            IsVisible="{Binding HideWelcomePage}"
+                            Panel="{Binding ActivePanel}"
+                            x:Name="PanelView"/>
 
-                    <!-- Empty View when no panels -->
-                    <ContentView HorizontalOptions="Fill" VerticalOptions="Fill" IsVisible="{Binding ShowWelcomePage}">
-                        <ScrollView>
-                            <Grid ColumnDefinitions="*">
-                                <StackLayout Grid.Column="0" HorizontalOptions="Center" VerticalOptions="Center">
-                                    <Image Source="splash.png" WidthRequest="200" HeightRequest="200" Margin="0,10,0,0"/>
-                                    <Label Text="{Binding VersionNumber}" HorizontalOptions="Center"
-                                           Style="{StaticResource SmallLabel}" FontFamily="OpenSansLightItalic"/>
-                                    <Label
-                                        FontSize="18"
-                                        FontFamily="OpenSansLightBold"
-                                        HorizontalOptions="Center"
-                                        LineBreakMode="WordWrap"
-                                        HorizontalTextAlignment="Center"
-                                        Margin="0,20,0,10"
-                                        Text="Welcome to the DCC Model Layout Panel Controller"
-                                        VerticalOptions="Center"/>
-                                    <Label
-                                        Style="{StaticResource MediumLabel}"
-                                        LineBreakMode="WordWrap"
-                                        FontFamily="OpenSansLight"
-                                        HorizontalOptions="Center"
-                                        HorizontalTextAlignment="Center"
-                                        Margin="100,10,100,10"
-                                        Text="This application allows you to define layout schematics for your model railway and connect to either WiThrottle or JMRI to control your layout including turnouts and routes and show block occupancy (if supported)."
-                                        VerticalOptions="Center"/>
+                        <!-- Empty View when no panels -->
+                        <ContentView HorizontalOptions="Fill" VerticalOptions="Fill"
+                                     IsVisible="{Binding ShowWelcomePage}">
+                            <ScrollView>
+                                <Grid ColumnDefinitions="*">
+                                    <StackLayout Grid.Column="0" HorizontalOptions="Center" VerticalOptions="Center">
+                                        <Image Source="splash.png" WidthRequest="200" HeightRequest="200"
+                                               Margin="0,10,0,0"/>
+                                        <Label Text="{Binding VersionNumber}" HorizontalOptions="Center"
+                                               Style="{StaticResource SmallLabel}" FontFamily="OpenSansLightItalic"/>
+                                        <Label
+                                            FontSize="18"
+                                            FontFamily="OpenSansLightBold"
+                                            HorizontalOptions="Center"
+                                            LineBreakMode="WordWrap"
+                                            HorizontalTextAlignment="Center"
+                                            Margin="0,20,0,10"
+                                            Text="Welcome to the DCC Model Layout Panel Controller"
+                                            VerticalOptions="Center"/>
+                                        <Label
+                                            Style="{StaticResource MediumLabel}"
+                                            LineBreakMode="WordWrap"
+                                            FontFamily="OpenSansLight"
+                                            HorizontalOptions="Center"
+                                            HorizontalTextAlignment="Center"
+                                            Margin="100,10,100,10"
+                                            Text="This application allows you to define layout schematics for your model railway and connect to either WiThrottle or JMRI to control your layout including turnouts and routes and show block occupancy (if supported)."
+                                            VerticalOptions="Center"/>
 
-                                    <Label
-                                        IsVisible="{Binding HasNoPanels}"
-                                        Style="{StaticResource MediumLabel}"
-                                        LineBreakMode="WordWrap"
-                                        FontFamily="OpenSansLight"
-                                        HorizontalOptions="Center"
-                                        HorizontalTextAlignment="Center"
-                                        Margin="100,10,100,0"
-                                        Text="There are no panels currently defined. Use panel Editor to add a panel."
-                                        VerticalOptions="Center"/>
-                                    <Label
-                                        IsVisible="{Binding HasPanels}"
-                                        Style="{StaticResource MediumLabel}"
-                                        LineBreakMode="WordWrap"
-                                        FontFamily="OpenSansLight"
-                                        HorizontalOptions="Center"
-                                        HorizontalTextAlignment="Center"
-                                        Margin="0,10,0,0"
-                                        Text="To access panels, Swipe Left or Right or use the dots below."
-                                        VerticalOptions="Center"/>
-                                    <Label
-                                        IsVisible="{Binding HasPanels}"
-                                        Style="{StaticResource MediumLabel}"
-                                        LineBreakMode="WordWrap"
-                                        FontFamily="OpenSansLightItalic"
-                                        HorizontalOptions="Center"
-                                        HorizontalTextAlignment="Center"
-                                        Margin="0,10,0,0"
-                                        Text="You can turn this welcome page off in settings."
-                                        VerticalOptions="Center"/>
-
-                                    <FlexLayout
-                                        Direction="Row"
-                                        Wrap="Wrap"
-                                        JustifyContent="Center"
-                                        AlignItems="Center"
-                                        AlignContent="Center"
-                                        HorizontalOptions="Center"
-                                        Margin="0,20,0,0"
-                                        Padding="10"
-                                        VerticalOptions="End">
-                                        <Button
-                                            WidthRequest="150"
-                                            Clicked="ButtonInstructions_OnClicked"
-                                            Margin="10,10,10,10"
-                                            Style="{StaticResource ButtonOutline}"
-                                            Text="Instructions"/>
-
-                                        <Button
-                                            WidthRequest="150"
-                                            Clicked="ButtonAbout_OnClicked"
-                                            Margin="10,10,10,10"
-                                            Style="{StaticResource ButtonOutline}"
-                                            Text="About"/>
-
-                                        <Button
+                                        <Label
+                                            IsVisible="{Binding HasNoPanels}"
+                                            Style="{StaticResource MediumLabel}"
+                                            LineBreakMode="WordWrap"
+                                            FontFamily="OpenSansLight"
+                                            HorizontalOptions="Center"
+                                            HorizontalTextAlignment="Center"
+                                            Margin="100,10,100,0"
+                                            Text="There are no panels currently defined. Use panel Editor to add a panel."
+                                            VerticalOptions="Center"/>
+                                        <Label
                                             IsVisible="{Binding HasPanels}"
-                                            WidthRequest="150"
-                                            Clicked="ButtonCloseInstructions"
-                                            Margin="10,10,10,10"
-                                            Style="{StaticResource ButtonOutline}"
-                                            Text="Close"/>
+                                            Style="{StaticResource MediumLabel}"
+                                            LineBreakMode="WordWrap"
+                                            FontFamily="OpenSansLight"
+                                            HorizontalOptions="Center"
+                                            HorizontalTextAlignment="Center"
+                                            Margin="0,10,0,0"
+                                            Text="To access panels, Swipe Left or Right or use the dots below."
+                                            VerticalOptions="Center"/>
+                                        <Label
+                                            IsVisible="{Binding HasPanels}"
+                                            Style="{StaticResource MediumLabel}"
+                                            LineBreakMode="WordWrap"
+                                            FontFamily="OpenSansLightItalic"
+                                            HorizontalOptions="Center"
+                                            HorizontalTextAlignment="Center"
+                                            Margin="0,10,0,0"
+                                            Text="You can turn this welcome page off in settings."
+                                            VerticalOptions="Center"/>
 
-                                    </FlexLayout>
-                                </StackLayout>
-                            </Grid>
-                        </ScrollView>
-                    </ContentView>
+                                        <FlexLayout
+                                            Direction="Row"
+                                            Wrap="Wrap"
+                                            JustifyContent="Center"
+                                            AlignItems="Center"
+                                            AlignContent="Center"
+                                            HorizontalOptions="Center"
+                                            Margin="0,20,0,0"
+                                            Padding="10"
+                                            VerticalOptions="End">
+                                            <Button
+                                                WidthRequest="150"
+                                                Clicked="ButtonInstructions_OnClicked"
+                                                Margin="10,10,10,10"
+                                                Style="{StaticResource ButtonOutline}"
+                                                Text="Instructions"/>
+
+                                            <Button
+                                                WidthRequest="150"
+                                                Clicked="ButtonAbout_OnClicked"
+                                                Margin="10,10,10,10"
+                                                Style="{StaticResource ButtonOutline}"
+                                                Text="About"/>
+
+                                            <Button
+                                                IsVisible="{Binding HasPanels}"
+                                                WidthRequest="150"
+                                                Clicked="ButtonCloseInstructions"
+                                                Margin="10,10,10,10"
+                                                Style="{StaticResource ButtonOutline}"
+                                                Text="Close"/>
+
+                                        </FlexLayout>
+                                    </StackLayout>
+                                </Grid>
+                            </ScrollView>
+                        </ContentView>
+                    </Grid>
                 </Grid>
+
+                <Grid Grid.Row="1">
+                    <IndicatorView
+                        x:Name="Indicators"
+                        ItemsSource="{Binding Panels}"
+                        IndicatorsShape="Circle"
+                        HideSingle="True"
+                        IndicatorSize="12"
+                        IsVisible="{Binding HideWelcomePage}"
+                        Position="{Binding CurrentPanelIndex}">
+
+                        <IndicatorView.IndicatorColor>
+                            <MultiBinding Converter="{StaticResource ContrastToBgMulti}">
+                                <Binding Path="IndicatorColor"/>
+                                <Binding Path="PanelBackgroundColor"
+                                         Converter="{StaticResource ColorFallbackConverter}"/>
+                            </MultiBinding>
+                        </IndicatorView.IndicatorColor>
+
+                        <IndicatorView.SelectedIndicatorColor>
+                            <MultiBinding Converter="{StaticResource ContrastToBgMulti}">
+                                <Binding Path="IndicatorSelectedColor"/>
+                                <Binding Path="PanelBackgroundColor"
+                                         Converter="{StaticResource ColorFallbackConverter}"/>
+                            </MultiBinding>
+                        </IndicatorView.SelectedIndicatorColor>
+                    </IndicatorView>
+                </Grid>
+
+                <Grid Grid.Row="2" VerticalOptions="Center">
+                    <HorizontalStackLayout HeightRequest="16" HorizontalOptions="Start" VerticalOptions="Center" Margin="5,0,0,5" Opacity="0.50">
+                        <Image Source="{Binding ConnectionIconPng}" VerticalOptions="Center">
+                            <Image.Behaviors>
+                                <toolkit:IconTintColorBehavior TintColor="{Binding ConnectionColor, Mode=OneWay}"/>
+                            </Image.Behaviors>
+                            <Image.Triggers>
+                                <DataTrigger TargetType="Image" Binding="{Binding Path=IsMaximized}" Value="True">
+                                    <Setter Property="Margin" Value="5,0,0,-20" />
+                                </DataTrigger>
+
+                                <DataTrigger TargetType="Image" Binding="{Binding Path=IsMaximized}" Value="False">
+                                    <Setter Property="Margin" Value="5,0,0,0" />
+                                </DataTrigger>
+                            </Image.Triggers>
+
+                        </Image>
+                        <Label Margin="5,0,0,0" FontSize="10" Text="{Binding ConnectionTextWithSystem}"
+                               HorizontalOptions="Start" VerticalOptions="Center"
+                               BackgroundColor="Transparent">
+
+                            <Label.Triggers>
+                                <DataTrigger TargetType="Label" Binding="{Binding Path=IsMaximized}" Value="True">
+                                    <Setter Property="Margin" Value="5,0,0,-20" />
+                                </DataTrigger>
+
+                                <DataTrigger TargetType="Label" Binding="{Binding Path=IsMaximized}" Value="False">
+                                    <Setter Property="Margin" Value="5,0,0,0" />
+                                </DataTrigger>
+                            </Label.Triggers>
+                            
+                            <Label.TextColor>
+                                <MultiBinding Converter="{StaticResource ContrastToBgMulti}">
+                                    <Binding Path="ConnectionColor"/>
+                                    <Binding Path="PanelBackgroundColor"
+                                             Converter="{StaticResource ColorFallbackConverter}"/>
+                                </MultiBinding>
+                            </Label.TextColor>
+
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding ToggleConnectionCommand}"/>
+                            </Label.GestureRecognizers>
+                        </Label>
+                    </HorizontalStackLayout>
+                    
+                    <HorizontalStackLayout HeightRequest="16" HorizontalOptions="End" Margin="0,0,5,5" Opacity="0.50" IsVisible="{Binding IsNotMaximized}">
+                        <Label FontSize="10"
+                               Text="{Binding ProfileName}"
+                               HorizontalOptions="End"
+                               VerticalOptions="End"
+                               BackgroundColor="Transparent" >
+
+                            <Label.TextColor>
+                                <MultiBinding Converter="{StaticResource ContrastToBgMulti}">
+                                    <Binding Path="ProfileNameColor"/>
+                                    <Binding Path="PanelBackgroundColor"
+                                             Converter="{StaticResource ColorFallbackConverter}"/>
+                                </MultiBinding>
+                            </Label.TextColor>
+
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding SwitchActiveProfileCommand}"/>
+                            </Label.GestureRecognizers>
+                        </Label>
+                    </HorizontalStackLayout>
+                </Grid>
+
             </Grid>
-
-            <Grid Grid.Row="1" HeightRequest="32">
-
-                <IndicatorView
-                    x:Name="Indicators"
-                    ItemsSource="{Binding Panels}"
-                    IndicatorColor="{StaticResource Gray300}"
-                    SelectedIndicatorColor="{StaticResource Primary}"
-                    IndicatorsShape="Circle"
-                    HideSingle="True"
-                    IndicatorSize="12"
-                    IsVisible="{Binding HideWelcomePage}"
-                    Position="{Binding CurrentPanelIndex}"/>
-
-                <HorizontalStackLayout HorizontalOptions="Start" HeightRequest="16">
-                    <Image Source="{Binding ConnectionIconPng}" VerticalOptions="Center" IsVisible="{Binding IsMaximized}">
-                        <Image.Behaviors>
-                            <toolkit:IconTintColorBehavior TintColor="{Binding ConnectionColor, Mode=OneWay}"/>
-                        </Image.Behaviors>
-                    </Image>
-                    <Label Margin="5,0,0,0"
-                           FontSize="10"
-                           Text="{Binding ConnectionTextWithSystem}"
-                           HorizontalOptions="Start"
-                           VerticalOptions="Center" IsVisible="{Binding IsMaximized}"
-                           BackgroundColor="Transparent" TextColor="{Binding ConnectionColor}">
-                        <Label.GestureRecognizers>
-                            <TapGestureRecognizer Command="{Binding ToggleConnectionCommand}"/>
-                        </Label.GestureRecognizers>
-                    </Label>
-                </HorizontalStackLayout>
-
-                <HorizontalStackLayout HorizontalOptions="End" HeightRequest="16">
-                    <Label Margin="0,0,5,0"
-                           FontSize="10"
-                           Text="{Binding ProfileName}"
-                           HorizontalOptions="End"
-                           VerticalOptions="End" IsVisible="{Binding IsMaximized}"
-                           BackgroundColor="Transparent" TextColor="Gainsboro">
-                        <Label.GestureRecognizers>
-                            <TapGestureRecognizer Command="{Binding SwitchActiveProfileCommand}"/>
-                        </Label.GestureRecognizers>
-                    </Label>
-                </HorizontalStackLayout>
-            </Grid>
+            <ImageButton x:Name="UnmaximizeFab"
+                         Source="minimize_2_active.png"
+                         BackgroundColor="#99000000"
+                         CornerRadius="20"
+                         WidthRequest="40"
+                         HeightRequest="40"
+                         Padding="12"
+                         HorizontalOptions="End"
+                         VerticalOptions="End"
+                         Margin="8,8,8,-12"
+                         ZIndex="1000"
+                         Opacity="0.50"
+                         IsVisible="{Binding IsMaximized}"
+                         Clicked="UnmaximizeFab_Clicked"/>
         </Grid>
     </ContentPage.Content>
 </ContentPage>
