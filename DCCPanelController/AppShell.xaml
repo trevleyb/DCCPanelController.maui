@@ -65,20 +65,11 @@
             <!-- <ShellContent ContentTemplate="{DataTemplate view:SensorsPage}" Title="Sensors"/> -->
         </Tab>
 
-        <Tab Icon="settings.png"
-             Title="UnifiedSettings"
-             IsEnabled="{Binding Source={x:Static services:AppStateService.Instance}, Path=IsNavigationAllowed}">
-            <ShellContent ContentTemplate="{DataTemplate view:UnifiedSettingsPage}"/>
-        </Tab>
-
         <Tab Title="Settings" Icon="settings.png"
              IsEnabled="{Binding Source={x:Static services:AppStateService.Instance},Path=IsNavigationAllowed}">
             <ShellContent
-                ContentTemplate="{DataTemplate view:SettingsPage}"
+                ContentTemplate="{DataTemplate view:UnifiedSettingsPage}"
                 Title="Settings"/>
-            <ShellContent
-                ContentTemplate="{DataTemplate view:SettingsConnectionPage}"
-                Title="Connection Details"/>
             <ShellContent
                 ContentTemplate="{DataTemplate view:ServerMessagesPage}"
                 Title="Server Messages"/>

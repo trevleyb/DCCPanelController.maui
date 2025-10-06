@@ -3,6 +3,8 @@ using System.ComponentModel;
 using System.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
+using DCCPanelController.Clients;
 using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Services;
@@ -45,7 +47,7 @@ public partial class OperateViewModel : ConnectionViewModel {
         PropertyChanged += OnPropertyChanged;
         OnProfileChanged();
     }
-
+    
     private async void SettingsOnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
         try {
             Console.WriteLine($"SettingsOnPropertyChanged: {e.PropertyName}");

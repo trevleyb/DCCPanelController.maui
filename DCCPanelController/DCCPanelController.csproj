@@ -493,6 +493,9 @@
           <DependentUpon>WiThrottleSettingsView.xaml</DependentUpon>
           <SubType>Code</SubType>
         </Compile>
+        <Compile Update="View\UnifiedSettingsViewModel.cs">
+          <DependentUpon>UnifiedSettingsPage.xaml</DependentUpon>
+        </Compile>
     </ItemGroup>
 
     <ItemGroup Condition="'$(TargetFramework)' == 'net9.0-ios'">

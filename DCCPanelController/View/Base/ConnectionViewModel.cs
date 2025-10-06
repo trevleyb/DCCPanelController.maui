@@ -1,6 +1,8 @@
 ﻿using System.Collections.ObjectModel;
+using System.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using DCCPanelController.Clients;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Services;
@@ -27,8 +29,26 @@ public partial class ConnectionViewModel : BaseViewModel {
             PropertiesChanged();
             IsConnected = ConnectionState == DccClientState.Connected;
         };
+
+        WeakReferenceMessenger.Default.Register<ClientTypeChangedMessage>(this, (r, m) => {
+            OnClientTypeChanged(m.Value);
+        });
+
         ServerMessages = ConnectionService.ServerMessages;
         IsConnected = ConnectionState == DccClientState.Connected;
+    }
+
+    private void OnClientTypeChanged(DccClientType type) {
+        MainThread.BeginInvokeOnMainThread(async void () => {
+            try {
+                Console.WriteLine($"OnClientTypeChanged: {type}");
+                await ConnectionService.DisconnectAsync();
+                IsConnected = ConnectionState == DccClientState.Connected;
+                PropertiesChanged();
+            } catch (Exception e) {
+                Debug.WriteLine($"Error in OnClientTypeChanged: {e.Message}");
+            }
+        });
     }
 
     public void PropertiesChanged() {
