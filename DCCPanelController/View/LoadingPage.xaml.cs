@@ -105,14 +105,15 @@ public partial class LoadingPage : ContentPage, INotifyPropertyChanged {
             });
 
             await StepAsync("Playing startup sound…", 0.86, async () => {
-                if (profileService.ActiveProfile?.Settings?.PlayStartupSound == true)
-                    await ClickSounds.PlayStartupSoundAsync();
+                if (profileService.ActiveProfile?.Settings?.PlayStartupSound == true) {}
+                    // Removed this as it was annoying
+                    //await ClickSounds.PlayStartupSoundAsync();
             });
 
             await StepAsync("Starting UI…", 0.94, async () => {
                 await MainThread.InvokeOnMainThreadAsync(() => {
                     var shell = services.GetRequiredService<AppShell>();
-                    var window = Application.Current?.Windows.FirstOrDefault();
+                    var window = Application.Current?.Windows[0];
                     if (window is not null) window.Page = shell;
                 });
             });
