@@ -1,48 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:progressBar="http://schemas.syncfusion.com/maui/toolkit"
-             xmlns:view="clr-namespace:DCCPanelController.View"
-             xmlns:iOsSpecific="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
-             xmlns:converters="clr-namespace:DCCPanelController.View.Converters"
-             Title="Loading DCC Panel Controller"
-             BackgroundColor="#FF4F8F00"
-             iOsSpecific:Page.UseSafeArea="false"
-             x:Class="DCCPanelController.View.LoadingPage">
-    
-    <ContentPage.Resources>
-        <ResourceDictionary>
-            <x:Double x:Key="SplashLogoWidth">172</x:Double> 
-            <x:Double x:Key="SplashLogoHeight">220</x:Double> 
-            <Color x:Key="SplashBg">#FF4F8F00</Color>
-            <Style TargetType="Label">
-                <Setter Property="TextColor" Value="{StaticResource Gray400}" />
-            </Style>
-        </ResourceDictionary>
-    </ContentPage.Resources>
-    
-    <ContentPage.Content>
-        <!-- Layered layout: children don't affect each other's position -->
-        <AbsoluteLayout>
+<ContentPage
+    x:Class="DCCPanelController.View.LoadingPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:view="clr-namespace:DCCPanelController.View"
+    x:DataType="view:LoadingPage"
+    ios:Page.UseSafeArea="True"
+    BackgroundColor="#FF4F8F00"
+    xmlns:ios="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls">
 
-            <!-- The splash image: same file and size as launch-screen -->
-            <Image x:Name="SplashLogo"
-                   Source="splash.png"
-                   WidthRequest="{StaticResource SplashLogoWidth}"
-                   HeightRequest="{StaticResource SplashLogoHeight}"
-                   Aspect="AspectFit"
-                   AbsoluteLayout.LayoutFlags="PositionProportional"
-                   AbsoluteLayout.LayoutBounds="0.5,0.5,AutoSize,AutoSize" />
+    <AbsoluteLayout>
+        <!-- Your splash logo sits dead center (unchanged). -->
+        <Image x:Name="SplashLogo"
+               Source="splash.png"
+               Aspect="AspectFit"
+               AbsoluteLayout.LayoutFlags="PositionProportional"
+               AbsoluteLayout.LayoutBounds="0.5,0.4,-1,-1"/>
 
-            <!-- Version text, anchored to the same center, then pushed down by half the image height + gap -->
-            <Label x:Name="VersionLabel"
-                   TextColor="WhiteSmoke"
-                   FontSize="12"
-                   HorizontalTextAlignment="Center"
-                   AbsoluteLayout.LayoutFlags="PositionProportional"
-                   AbsoluteLayout.LayoutBounds="0.5,0.5,-1,-1"/>
-        </AbsoluteLayout>
-        
-    </ContentPage.Content>
+        <!-- Version text positioned directly under SplashLogo from code-behind. -->
+        <Grid x:Name="VersionGrid"
+            AbsoluteLayout.LayoutFlags="PositionProportional"
+            AbsoluteLayout.LayoutBounds="0.5,0.5,-1,-1">
+            
+            <VerticalStackLayout>
+            <Label
+                x:Name="VersionLabel"
+                FontSize="12"
+                TextColor="White"
+                HorizontalTextAlignment="Center"/>
+
+            <Label
+                Text="{Binding StatusText}"
+                FontSize="14"
+                Margin="0,50,0,0"
+                LineBreakMode="TailTruncation"
+                TextColor="WhiteSmoke"
+                HorizontalTextAlignment="Center"/>
+
+            <ProgressBar
+                Margin="0,20,0,0"
+                Progress="{Binding Progress}"
+                IsVisible="{Binding IsBusy}"
+                HeightRequest="4"/>
+            </VerticalStackLayout>
+        </Grid>
+    </AbsoluteLayout>
 </ContentPage>

@@ -17,6 +17,7 @@ public partial class Settings : ObservableObject {
     [ObservableProperty] private bool                _setTurnoutStatesOnStartup;
     [ObservableProperty] private bool                _showWelcomePage = true;
     [ObservableProperty] private bool                _useClickSounds  = true;
+    [ObservableProperty] private bool                _playStartupSound  = true;
     [ObservableProperty] private bool                _startFullScreen = false;
 
     [ObservableProperty] private TitleBarTextDisplayEnum _titleBarDisplay  = TitleBarTextDisplayEnum.PanelName;

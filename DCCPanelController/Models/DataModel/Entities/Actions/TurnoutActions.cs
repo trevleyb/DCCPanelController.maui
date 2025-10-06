@@ -20,41 +20,14 @@ public class TurnoutActions : ObservableCollection<TurnoutAction>, ICloneable {
         return turnoutActions;
     }
 
-    public async void Apply(TurnoutEntity turnout, ConnectionService connectionService, ActionExecutionContext context) {
-        var logger = LogHelper.CreateLogger("TurnoutActionsApply");
+    public async Task ApplyAsync(TurnoutEntity turnout, ConnectionService connectionService, ActionExecutionContext context) {
         try {
-            foreach (var action in turnout.ButtonPanelActions) {
-                if (turnout.Parent?.GetButtonEntity(action.ActionID) is { } actionButton) {
-                    var newState = turnout.State switch {
-                        TurnoutStateEnum.Closed => action.WhenOn,
-                        TurnoutStateEnum.Thrown => action.WhenOff,
-                        _                       => ButtonStateEnum.Unknown,
-                    };
-                    if (newState != ButtonStateEnum.Unknown) {
-                        //actionButton.SetState(newState, StateChangeSource.Internal, context);
-                        actionButton.State = newState;
-                    }
-                }
-            }
-
-            foreach (var action in turnout.TurnoutPanelActions) {
-                if (turnout.Parent?.GetTurnoutEntity(action.ActionID) is { } actionTurnout) {
-                    var newState = turnout.State switch {
-                        TurnoutStateEnum.Closed => action.WhenClosed,
-                        TurnoutStateEnum.Thrown => action.WhenThrown,
-                        _                       => TurnoutStateEnum.Unknown,
-                    };
-                    if (newState != TurnoutStateEnum.Unknown) {
-                        //actionTurnout.SetState(newState, StateChangeSource.Internal, context);
-                        actionTurnout.State = newState;
-                        if (connectionService.Client is { } client && actionTurnout.Turnout != null) {
-                            await client.SendTurnoutCmdAsync(actionTurnout.Turnout, newState != TurnoutStateEnum.Closed);
-                        }
-                    }
-                }
-            }
+            var plan = ActionPlanner.PlanForTurnoutChange(turnout);
+            await ActionExecutor.ExecuteAsync(plan, connectionService, context);
         } catch (Exception ex) {
-            logger.LogError("Error in Async Void function: TurnoutActions:Apply => {Message}", ex.Message);
+            var logger = LogHelper.CreateLogger("TurnoutActionsApply");
+            logger.LogError(ex, "TurnoutActions.ApplyAsync failed");
+            throw;
         }
     }
 }

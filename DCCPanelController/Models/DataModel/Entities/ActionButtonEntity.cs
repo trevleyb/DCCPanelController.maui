@@ -68,17 +68,20 @@ public partial class ActionButtonEntity : BaseClasses.ButtonEntity, IEntityGener
     public event EventHandler<ButtonStateEnum>? StateChanged;
     partial void OnStateChanged(ButtonStateEnum value) => StateChanged?.Invoke(this, value);
 
-    public void SetState(ButtonStateEnum newState, StateChangeSource source, ActionExecutionContext? context = null) {
+    public void SetState(ButtonStateEnum newState, StateChangeSource source, ActionExecutionContext? context = null)
+    {
         if (State == newState) return;
-
         State = newState;
 
-        // Only trigger cascading if this is an external change or we're not already cascading this entity
         if (source == StateChangeSource.External || context?.CanCascade(Id) == true) {
             context ??= new ActionExecutionContext();
             using (context.BeginCascade(Id)) {
-                ButtonPanelActions.Apply(this, ConnectionService.Instance, context);
+                var task = ButtonPanelActions.ApplyAsync(this, ConnectionService.Instance, context);
+                _ = task.ContinueWith(t => {
+                    System.Diagnostics.Debug.WriteLine(t.Exception);
+                }, TaskContinuationOptions.OnlyOnFaulted);
             }
         }
     }
+
 }

@@ -20,42 +20,15 @@ public class ButtonActions : ObservableCollection<ButtonAction>, ICloneable {
         return buttonActions;
     }
 
-    public async void Apply(ActionButtonEntity button, ConnectionService connectionService, ActionExecutionContext context) {
-        var logger = LogHelper.CreateLogger("ButtonActionsApply");
+    // replace current Apply with:
+    public async Task ApplyAsync(ActionButtonEntity button, ConnectionService connectionService, ActionExecutionContext context) {
         try {
-            foreach (var action in button.ButtonPanelActions) {
-                if (button.Parent?.GetButtonEntity(action.ActionID) is { } actionButton) {
-                    var newState = button.State switch {
-                        ButtonStateEnum.On  => action.WhenOn,
-                        ButtonStateEnum.Off => action.WhenOff,
-                        _                   => ButtonStateEnum.Unknown,
-                    };
-                    if (newState != ButtonStateEnum.Unknown) {
-                        //actionButton.SetState(newState, StateChangeSource.Internal, context);
-                        actionButton.State = newState;
-                    }
-                }
-            }
-
-            foreach (var action in button.TurnoutPanelActions) {
-                if (button.Parent?.GetTurnoutEntity(action.ActionID) is { } actionTurnout) {
-                    var newState = button.State switch {
-                        ButtonStateEnum.On  => action.WhenClosed,
-                        ButtonStateEnum.Off => action.WhenThrown,
-                        _                   => TurnoutStateEnum.Unknown,
-                    };
-                    if (newState != TurnoutStateEnum.Unknown) {
-                        // actionTurnout.SetState(newState, StateChangeSource.Internal, context);
-                        // Removed Cascade as it causes issues
-                        actionTurnout.State = newState;
-                        if (connectionService.Client is { } client && actionTurnout.Turnout != null) {
-                            await client.SendTurnoutCmdAsync(actionTurnout.Turnout, newState != TurnoutStateEnum.Closed);
-                        }
-                    }
-                }
-            }
+            var plan = ActionPlanner.PlanForButtonChange(button);
+            await ActionExecutor.ExecuteAsync(plan, connectionService, context);
         } catch (Exception ex) {
-            logger.LogError("Error in Async Void function: ButtonActions:Apply =>{Message}", ex.Message);
+            var logger = LogHelper.CreateLogger("ButtonActionsApply");
+            logger.LogError(ex, "ButtonActions.ApplyAsync failed");
+            throw;
         }
     }
 }

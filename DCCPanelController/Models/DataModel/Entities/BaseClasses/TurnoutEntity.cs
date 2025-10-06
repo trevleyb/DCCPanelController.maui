@@ -59,7 +59,7 @@ public abstract partial class TurnoutEntity : TrackEntity, IEntityGeneratingID, 
     }
 
     public override string ToString() => TurnoutID;
-    
+
     public void SetState(TurnoutStateEnum newState, StateChangeSource source, ActionExecutionContext? context = null) {
         if (State == newState) return;
 
@@ -70,9 +70,13 @@ public abstract partial class TurnoutEntity : TrackEntity, IEntityGeneratingID, 
         // Only trigger cascading if this is an external change or we're not already cascading this entity
         if (source == StateChangeSource.External || context?.CanCascade(TurnoutID) == true) {
             context ??= new ActionExecutionContext();
-            using (context.BeginCascade(TurnoutID)) {
-                TurnoutPanelActions.Apply(this, ConnectionService.Instance, context);
+            using (context.BeginCascade(Id)) {
+                var task =TurnoutPanelActions.ApplyAsync(this, ConnectionService.Instance, context);
+                _ = task.ContinueWith(t => {
+                    System.Diagnostics.Debug.WriteLine(t.Exception);
+                }, TaskContinuationOptions.OnlyOnFaulted);
             }
+
         }
     }
 
