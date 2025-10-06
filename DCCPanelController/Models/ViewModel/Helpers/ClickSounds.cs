@@ -30,6 +30,7 @@ public static class ClickSounds {
             _ = await GetOrCreateAsync(f).ConfigureAwait(false);
     }
 
+    public static Task PlayStartupSoundAsync() => PlayAsync("startupSound.wav");
     public static Task PlayError2SoundAsync() => PlayAsync("beep1.m4a");
     public static Task PlayError1SoundAsync() => PlayAsync("beep2.m4a");
     public static Task PlayRouteClickSoundAsync() => PlayAsync("Button_Click_Quick.m4a");

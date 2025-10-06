@@ -4,6 +4,7 @@ using DCCPanelController.Services;
 using DCCPanelController.Services.ProfileService;
 using DCCPanelController.View.TileSelectors;
 using AVFoundation;
+using DCCPanelController.Models.ViewModel.Helpers;
 
 namespace DCCPanelController.View;
 
@@ -59,6 +60,8 @@ public partial class LoadingPage : ContentPage {
                         Debug.WriteLine($"Error setting up audio: {ex.Message}");
                     }
                     #endif
+                    
+                    await ClickSounds.PlayStartupSoundAsync();
                     
                     // Any other one-time startup work here (help assets, migrations, etc.)
                     await HelpService.Current.InitializeAsync(true);
