@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage
+    Title="Settings"
+    x:Class="DCCPanelController.View.UnifiedSettingsPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:view="clr-namespace:DCCPanelController.View"
+    xmlns:converters="clr-namespace:DCCPanelController.View.Converters"
+    xmlns:components="clr-namespace:DCCPanelController.View.Components"
+    xmlns:entities="clr-namespace:DCCPanelController.Models.DataModel.Entities"
+    xmlns:helpers="clr-namespace:DCCPanelController.View.Helpers"
+    x:DataType="view:UnifiedSettingsViewModel"
+    BackgroundColor="{AppThemeBinding Light=White, Dark=Black}">
+
+    <ContentPage.Resources>
+        <converters:BoolToSpanConverter x:Key="BoolToSpanConverter"/>
+        <converters:BoolToRowConverter x:Key="BoolToRowConverter"/>
+        <converters:BoolToRightColumnConverter x:Key="BoolToRightColumnConverter"/>
+        <helpers:TitleBarEnumConverter x:Key="TitleBarEnumConverter"/>
+    </ContentPage.Resources>
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Command="{Binding ShowAboutCommand}" IconImageSource="info_active.png"/>
+        <ToolbarItem Command="{Binding UploadSettingsCommand}" IconImageSource="upload_active.png"/>
+        <ToolbarItem Command="{Binding DownloadSettingsCommand}" IconImageSource="download_active.png"/>
+        <ToolbarItem Command="{Binding SwitchProfileCommand}" IconImageSource="repeat_active.png"/>
+        <ToolbarItem Command="{Binding DeleteProfileCommand}"
+                     IconImageSource="{Binding CanDeleteProfile, Converter={StaticResource BoolToIcon}, ConverterParameter=minus_circle}"/>
+        <ToolbarItem Command="{Binding AddProfileCommand}" IconImageSource="plus_circle_active.png"/>
+    </ContentPage.ToolbarItems>
+
+    <Grid Padding="16" RowDefinitions="Auto,*">
+        <Label Margin="5" Text="{Binding Profile.ProfileName}" FontAttributes="Bold" FontSize="18"/>
+        <BoxView
+            BackgroundColor="{StaticResource Primary}"
+            HeightRequest="1"
+            VerticalOptions="End"
+            HorizontalOptions="FillAndExpand"/>
+
+        <!-- Profile core settings (left on wide, top on narrow) -->
+        <ScrollView Grid.Row="1">
+            <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto">
+                <Grid ColumnDefinitions="Auto,*" Padding="5" RowSpacing="5"
+                      RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto"
+                      Grid.Row="0"
+                      Grid.Column="0"
+                      Grid.ColumnSpan="{Binding IsWide, Converter={StaticResource BoolToSpanConverter}}">
+
+                    <Label Grid.Column="0" Grid.Row="1" Margin="0,0,5,0" Text="Profile Name" Style="{StaticResource MediumLabel}" VerticalOptions="Center"/>
+                    <Border Grid.Column="1" Grid.Row="1" Padding="0,0,0,0" HeightRequest="35"
+                            Style="{StaticResource EntryBorderStyle}">
+                        <Entry Margin="8,0,0,0" Text="{Binding Profile.ProfileName}" HorizontalOptions="Fill"/>
+                    </Border>
+
+                    <Label Grid.Column="0" Grid.Row="2" Margin="0,0,5,0" Text="Background Color?" Style="{StaticResource MediumLabel}"
+                           VerticalOptions="Center"/>
+                    <components:ColorPickerButton
+                        Grid.Column="1" Grid.Row="2"
+                        AllowsNoColor="true"
+                        HeightRequest="35"
+                        BorderColor="{StaticResource Primary}"
+                        BorderWidth="1"
+                        WidthRequest="175"
+                        SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type view:SettingsPageViewModel}}, Path=Settings.BackgroundColor, Mode=TwoWay}"
+                        VerticalOptions="Center"
+                        HorizontalOptions="Start"/>
+
+                    <Label Grid.Column="0" Grid.Row="3" Margin="0,0,5,0" Text="Foreground Color?" Style="{StaticResource MediumLabel}" VerticalOptions="Center"/>
+                    <components:ColorPickerButton
+                        Grid.Column="1"
+                        Grid.Row="3"
+                        AllowsNoColor="true"
+                        HeightRequest="35"
+                        BorderColor="{StaticResource Primary}"
+                        BorderWidth="1"
+                        WidthRequest="175"
+                        SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type view:SettingsPageViewModel}}, Path=Settings.ForegroundColor, Mode=TwoWay}"
+                        VerticalOptions="Center"
+                        HorizontalOptions="Start"/>
+
+                    <Label Grid.Column="0" Grid.Row="4" Margin="0,0,5,0" Text="Show Welcome Page?" Style="{StaticResource MediumLabel}" VerticalOptions="Center"/>
+                    <Switch Grid.Column="1" Grid.Row="4"
+                            IsToggled="{Binding Settings.ShowWelcomePage}"
+                            OnColor="{StaticResource Primary}"
+                            ThumbColor="{StaticResource Gray200}"/>
+
+                    <Label Grid.Column="0" Grid.Row="5" Margin="0,0,5,0" Text="Connect on Startup?" Style="{StaticResource MediumLabel}" VerticalOptions="Center"/>
+                    <Switch Grid.Column="1" Grid.Row="5"
+                            IsToggled="{Binding Settings.ConnectOnStartup}"
+                            OnColor="{StaticResource Primary}"
+                            ThumbColor="{StaticResource Gray200}"/>
+
+                    <Label Grid.Column="0" Grid.Row="6" Margin="0,0,5,0" Text="Set Turnouts on Connect?" Style="{StaticResource MediumLabel}" VerticalOptions="Center"/>
+                    <Switch Grid.Column="1" Grid.Row="6"
+                            IsToggled="{Binding Settings.SetTurnoutStatesOnStartup}"
+                            OnColor="{StaticResource Primary}"
+                            ThumbColor="{StaticResource Gray200}"/>
+
+                    <Label Grid.Column="0" Grid.Row="7" Margin="0,0,5,0" Text="Enable Click Sounds?" Style="{StaticResource MediumLabel}" VerticalOptions="Center"/>
+                    <Switch Grid.Column="1" Grid.Row="7"
+                            IsToggled="{Binding Settings.UseClickSounds}"
+                            OnColor="{StaticResource Primary}"
+                            ThumbColor="{StaticResource Gray200}"/>
+
+                    <Label Grid.Column="0" Grid.Row="8" Margin="0,0,5,0" Text="Startup Sound?" Style="{StaticResource MediumLabel}" VerticalOptions="Center"/>
+                    <Switch Grid.Column="1" Grid.Row="8"
+                            IsToggled="{Binding Settings.PlayStartupSound}"
+                            OnColor="{StaticResource Primary}"
+                            ThumbColor="{StaticResource Gray200}"/>
+
+                    <Label Grid.Column="0" Grid.Row="9" Margin="0,0,5,0" Text="Start Full Screen?" Style="{StaticResource MediumLabel}" VerticalOptions="Center"/>
+                    <Switch Grid.Column="1" Grid.Row="9"
+                            IsToggled="{Binding Settings.StartFullScreen}"
+                            OnColor="{StaticResource Primary}"
+                            ThumbColor="{StaticResource Gray200}"/>
+
+                    <Label Grid.Column="0" Grid.Row="10" Margin="0,0,5,0" Text="Title Bar Shows?" Style="{StaticResource MediumLabel}" VerticalOptions="Center"/>
+                    <FlexLayout Grid.Column="1" Grid.Row="10" Wrap="Wrap" AlignItems="Start" Padding="0">
+                        <RadioButton Content="Panel"
+                                     IsChecked="{Binding Settings.TitleBarDisplay, 
+                                                         Converter={StaticResource TitleBarEnumConverter}, 
+                                                         ConverterParameter={x:Static entities:TitleBarTextDisplayEnum.PanelName}}"
+                                     GroupName="TitleBarType"/>
+                        <RadioButton Content="Profile"
+                                     IsChecked="{Binding Settings.TitleBarDisplay, 
+                                                         Converter={StaticResource TitleBarEnumConverter}, 
+                                                         ConverterParameter={x:Static entities:TitleBarTextDisplayEnum.ProfileName}}"
+                                     GroupName="TitleBarType"/>
+                        <RadioButton Content="Blank"
+                                     IsChecked="{Binding Settings.TitleBarDisplay, 
+                                                         Converter={StaticResource TitleBarEnumConverter}, 
+                                                         ConverterParameter={x:Static entities:TitleBarTextDisplayEnum.Blank}}"
+                                     GroupName="TitleBarType"/>
+                    </FlexLayout>
+
+                </Grid>
+                
+                <Grid BackgroundColor="#80ebebeb" 
+                      ColumnDefinitions="Auto,*" Margin="0,10,0,0" Padding="5" RowSpacing="5"
+                      Grid.Row="{Binding IsWide, Converter={StaticResource BoolToRowConverter}}"
+                      Grid.Column="{Binding IsWide, Converter={StaticResource BoolToRightColumnConverter}}"
+                      Grid.ColumnSpan="{Binding IsWide, Converter={StaticResource BoolToSpanConverter}}"
+                      RowDefinitions="35,Auto,*">
+                    
+                    <Label Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Text="Connection Settings:" FontSize="18"/>
+                    <BoxView Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2"
+                             BackgroundColor="{StaticResource Primary}"
+                             HeightRequest="1"
+                             VerticalOptions="End"
+                             HorizontalOptions="FillAndExpand" Margin="0,0,0,5"/>
+
+                    <Label Grid.Column="0" Grid.Row="1" WidthRequest="150" Margin="0,0,5,0" Text="Connection Type" Style="{StaticResource MediumLabel}" VerticalOptions="Center"/>
+                    <Border Grid.Column="1" Grid.Row="1" Padding="0,0,0,0" HeightRequest="35" Style="{StaticResource EntryBorderStyle}">
+                        <Picker Margin="5" Title="Connection Type" SelectedIndex="{Binding SelectedSegmentIndex}">
+                            <Picker.Items>
+                                <x:String>Simulator</x:String>
+                                <x:String>JMRI</x:String>
+                                <x:String>WiThrottle</x:String>
+                            </Picker.Items>
+                        </Picker>
+                    </Border>
+
+                    <ContentView Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2" Margin="5">
+                        <ContentPresenter Content="{Binding CurrentSettingsView}" />
+                    </ContentView>
+                </Grid>
+            </Grid>
+        </ScrollView>
+    </Grid>
+</ContentPage>

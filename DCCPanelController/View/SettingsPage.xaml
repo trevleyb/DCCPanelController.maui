@@ -21,7 +21,6 @@
         <ResourceDictionary>
             <converters1:BoolToChevronConverter x:Key="BoolToChevronConverter"/>
             <helpers1:TitleBarEnumConverter x:Key="TitleBarEnumConverter"/>
-
         </ResourceDictionary>
     </ContentPage.Resources>
 

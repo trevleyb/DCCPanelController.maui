@@ -31,8 +31,8 @@
     </ContentView.Resources>
 
 
-    <VerticalStackLayout Margin="10,0,10,0">
-        <VerticalStackLayout Margin="10,0,10,0">
+    <VerticalStackLayout Margin="0,0,10,0">
+        <VerticalStackLayout Margin="0,0,10,0">
             <Label Style="{StaticResource MediumLabel}" HorizontalOptions="Start" VerticalOptions="Start"
                    Text="Device Name (unique name for this Device)"/>
             <HorizontalStackLayout>
@@ -50,7 +50,7 @@
             </HorizontalStackLayout>
         </VerticalStackLayout>
 
-        <HorizontalStackLayout Margin="10,0,10,10">
+        <HorizontalStackLayout Margin="0,0,10,10">
             <Label Text="Auto Set Connection Details?" HorizontalOptions="Start" Style="{StaticResource MediumLabel}"
                    VerticalOptions="Center" WidthRequest="260"/>
             <Switch IsToggled="{Binding SetAutomatically, Mode=TwoWay}"
@@ -58,7 +58,7 @@
                     ThumbColor="{StaticResource Gray200}"/>
         </HorizontalStackLayout>
 
-        <VerticalStackLayout Margin="10,0,10,0" IsVisible="{Binding WiThrottleSettings.SetManually}">
+        <VerticalStackLayout Margin="0,0,10,0" IsVisible="{Binding WiThrottleSettings.SetManually}">
             <Label Style="{StaticResource MediumLabel}"
                    HorizontalOptions="Start" VerticalOptions="Start"
                    Text="WiThrottle Address and Port"/>
@@ -124,7 +124,7 @@
 
         <Button
             Command="{Binding ConnectClickedCommand}"
-            HorizontalOptions="Start"
+            HorizontalOptions="Center"
             IsEnabled="{Binding IsNotBusy}"
             Margin="20,0,20,20"
             Style="{StaticResource ButtonOutline}"
