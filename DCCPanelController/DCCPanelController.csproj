@@ -310,9 +310,6 @@
         <MauiXaml Update="View\SensorsEditView.xaml">
           <SubType>Designer</SubType>
         </MauiXaml>
-        <MauiXaml Update="View\SettingsConnectionPage.xaml">
-          <SubType>Designer</SubType>
-        </MauiXaml>
         <MauiXaml Update="Clients\Jmri\View\JmriSettingsView.xaml">
           <SubType>Designer</SubType>
         </MauiXaml>
@@ -372,9 +369,6 @@
         </Compile>
         <Compile Update="View\TurnoutsViewModel.cs">
             <DependentUpon>TurnoutsPage.xaml</DependentUpon>
-        </Compile>
-        <Compile Update="View\SettingsViewModel.cs">
-            <DependentUpon>SettingsPage.xaml</DependentUpon>
         </Compile>
         <Compile Update="View\BlocksPage.xaml.cs">
             <DependentUpon>BlocksPage.xaml</DependentUpon>
@@ -470,13 +464,6 @@
         </Compile>
         <Compile Update="View\BlocksEditViewModel.cs">
           <DependentUpon>BlocksEditView.xaml</DependentUpon>
-        </Compile>
-        <Compile Update="View\SettingsConnectionPage.xaml.cs">
-          <DependentUpon>SettingsConnectionPage.xaml</DependentUpon>
-          <SubType>Code</SubType>
-        </Compile>
-        <Compile Update="View\SettingsConnectionViewModel.cs">
-          <DependentUpon>SettingsConnectionPage.xaml</DependentUpon>
         </Compile>
         <Compile Update="View\DccClientTestViewModel.cs">
           <DependentUpon>DccClientTestView.xaml</DependentUpon>
