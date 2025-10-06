@@ -26,6 +26,10 @@ public sealed class ClientTypeChangedMessage : ValueChangedMessage<DccClientType
     public ClientTypeChangedMessage(DccClientType value) : base(value) { }
 }
 
+public sealed class ProfileChangedMessage : ValueChangedMessage<Profile> {
+    public ProfileChangedMessage(Profile value) : base(value) { }
+}
+
 public partial class UnifiedSettingsViewModel : BaseViewModel {
     private readonly Dictionary<DccClientType, IDccClientSettings> _settingsCache = [];
 

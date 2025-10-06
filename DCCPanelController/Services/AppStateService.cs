@@ -2,11 +2,13 @@ using System.ComponentModel;
 using System.Globalization;
 using CommunityToolkit.Maui.Markup;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Messaging;
 using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.ViewModel.Interfaces;
 using DCCPanelController.Resources.Styles;
 using DCCPanelController.Services.ProfileService;
+using DCCPanelController.View;
 using DCCPanelController.View.Converters;
 
 namespace DCCPanelController.Services;
@@ -35,6 +37,11 @@ public partial class AppStateService : ObservableObject, INotifyPropertyChanged 
         #if DEBUG
         DebugMode = true;
         #endif
+        
+        WeakReferenceMessenger.Default.Register<ProfileChangedMessage>(this, (r, m) => {
+            Console.WriteLine("ProfileChangedMessage: IGNORED");
+        });
+
     }
 
     public static AppStateService Instance => MauiProgram.ServiceHelper.GetService<AppStateService>();
@@ -68,8 +75,13 @@ public partial class AppStateService : ObservableObject, INotifyPropertyChanged 
     public event Action<ITile>? SelectedTileSet;
     public event Action? SelectedTileCleared;
 
-    private void OnActiveProfileDataChanged(object? sender, ProfileDataChangedEventArgs e) => SetShellDefault(e.Profile);
-    private void OnActiveProfileChanged(object? sender, ProfileChangedEventArgs e) => SetShellDefault(e.NewProfile);
+    private void OnActiveProfileDataChanged(object? sender, ProfileDataChangedEventArgs e) {
+        SetShellDefault(e.Profile);
+    }
+
+    private void OnActiveProfileChanged(object? sender, ProfileChangedEventArgs e) {
+        SetShellDefault(e.NewProfile);
+    }
 
     private void SetShellDefault(Profile? profile) {
         if (_profileService.ActiveProfile == profile) {

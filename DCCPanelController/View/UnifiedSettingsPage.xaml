@@ -70,7 +70,7 @@
                         BorderColor="{StaticResource Primary}"
                         BorderWidth="1"
                         WidthRequest="175"
-                        SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type view:SettingsPageViewModel}}, Path=Settings.BackgroundColor, Mode=TwoWay}"
+                        SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type view:UnifiedSettingsViewModel}}, Path=Settings.BackgroundColor, Mode=TwoWay}"
                         VerticalOptions="Center"
                         HorizontalOptions="Start"/>
 
@@ -84,7 +84,7 @@
                         BorderColor="{StaticResource Primary}"
                         BorderWidth="1"
                         WidthRequest="175"
-                        SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type view:SettingsPageViewModel}}, Path=Settings.ForegroundColor, Mode=TwoWay}"
+                        SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type view:UnifiedSettingsViewModel}}, Path=Settings.ForegroundColor, Mode=TwoWay}"
                         VerticalOptions="Center"
                         HorizontalOptions="Start"/>
 
@@ -165,7 +165,7 @@
                                 IsEnabled="{Binding IsNotBusy}"
                                 Margin="5,0,5,0"
                                 Style="{StaticResource ButtonOutline}"
-                                Text="{OnIdiom Phone='Save', Tablet='Save Profile', Desktop='Save Profile'}"
+                                Text="{OnIdiom Phone='Save', Tablet='Save', Desktop='Save'}"
                                 FontSize="{OnIdiom Phone=14, Tablet=18, Desktop=20}"
                                 WidthRequest="{OnIdiom Phone=110, Tablet=150, Desktop=150}">
                             <Button.Behaviors>
@@ -180,7 +180,7 @@
                             VerticalOptions="Center"
                             Margin="5,0,5,0"
                             Style="{StaticResource ButtonOutline}"
-                            Text="{OnIdiom Phone='Switch', Tablet='Switch Profile', Desktop='Switch Profile'}"
+                            Text="{OnIdiom Phone='Switch', Tablet='Switch', Desktop='Switch'}"
                             FontSize="{OnIdiom Phone=14, Tablet=18, Desktop=20}"
                             WidthRequest="{OnIdiom Phone=110, Tablet=150, Desktop=150}">
                             <Button.Behaviors>
@@ -195,7 +195,7 @@
                             IsEnabled="{Binding IsProfileNotDefault}"
                             Margin="5,0,5,0"
                             Style="{StaticResource ButtonOutline}"
-                            Text="{OnIdiom Phone='Default', Tablet='Set Default', Desktop='Set Default'}"
+                            Text="{OnIdiom Phone='Default', Tablet='Default', Desktop='Default'}"
                             FontSize="{OnIdiom Phone=14, Tablet=18, Desktop=20}"
                             WidthRequest="{OnIdiom Phone=110, Tablet=150, Desktop=150}">
                             <Button.Behaviors>
@@ -217,8 +217,9 @@
                     Grid.ColumnSpan="{Binding IsWide, Converter={StaticResource BoolToSpanConverter}}">
 
                     <Grid
+                        Margin="5,5,0,0"
                         ColumnDefinitions="Auto,*" RowSpacing="5"
-                        RowDefinitions="35,Auto,*">
+                        RowDefinitions="40,Auto,*">
 
                         <Label Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Text="Connection Settings:"
                                FontSize="18"/>
@@ -241,9 +242,11 @@
                             </Picker>
                         </Border>
 
-                        <ContentView Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2" Margin="5">
-                            <ContentPresenter Content="{Binding CurrentSettingsView}"/>
-                        </ContentView>
+                        <Border StrokeThickness="0" BackgroundColor="White" StrokeShape="RoundRectangle 15"  Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2" Margin="0,10,5,10" Padding="10" >
+                            <ContentView Margin="5">
+                                <ContentPresenter Content="{Binding CurrentSettingsView}"/>
+                            </ContentView>
+                        </Border>
                     </Grid>
                 </Border>
             </Grid>
