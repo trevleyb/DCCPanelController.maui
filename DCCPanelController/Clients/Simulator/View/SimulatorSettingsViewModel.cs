@@ -22,6 +22,14 @@ public partial class SimulatorSettingsViewModel : SettingsViewModel {
 
     [RelayCommand]
     private async Task TurnOffAllSettingsAsync() {
+        SimulatorSettings.SimulateHeatbeat = false;
+        SimulatorSettings.SimulateFastClock = false;
+        SimulatorSettings.SimulateDisconnect = false;
+        
+        SimulatorSettings.ToggleBlocks = false;
+        SimulatorSettings.ToggleTurnouts = false;
+        SimulatorSettings.ToggleLights = false;
+        
         SimulatorSettings.FastClockRate = 0;
         SimulatorSettings.DisconnectEvery = 0;
         SimulatorSettings.HeartbeatSeconds = 0;
@@ -30,10 +38,18 @@ public partial class SimulatorSettingsViewModel : SettingsViewModel {
 
     [RelayCommand]
     private async Task ResetSettingsAsync() {
-        SimulatorSettings.FastClockRate = 1.2;
-        SimulatorSettings.DisconnectEvery = 90;
+        SimulatorSettings.SimulateHeatbeat = true;
+        SimulatorSettings.SimulateFastClock = true;
+        SimulatorSettings.SimulateDisconnect = false;
+        
+        SimulatorSettings.ToggleBlocks = true;
+        SimulatorSettings.ToggleTurnouts = true;
+        SimulatorSettings.ToggleLights = true;
+        
+        SimulatorSettings.FastClockRate = 1.5;
+        SimulatorSettings.DisconnectEvery = 300;
         SimulatorSettings.HeartbeatSeconds = 15;
-        SimulatorSettings.RandomFlipSeconds = 30;
+        SimulatorSettings.RandomFlipSeconds = 5;
     }
 
 }

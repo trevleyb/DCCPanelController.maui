@@ -69,7 +69,7 @@
                     <Entry HorizontalOptions="Fill" Focused="OnEntryFocused" HorizontalTextAlignment="Center"
                            Text="{Binding IpAddress1, Mode=TwoWay}">
                         <Entry.Behaviors>
-                            <helpers:EntryValidationBehavior/>
+                            <helpers:EntryIntValidationBehavior Min="0" Max="255" IsRequired="True"/>
                         </Entry.Behaviors>
                     </Entry>
                 </Border>
@@ -81,7 +81,7 @@
                         HorizontalOptions="Fill"
                         HorizontalTextAlignment="Center" Text="{Binding IpAddress2, Mode=TwoWay}">
                         <Entry.Behaviors>
-                            <helpers:EntryValidationBehavior/>
+                            <helpers:EntryIntValidationBehavior Min="0" Max="255" IsRequired="True"/>
                         </Entry.Behaviors>
                     </Entry>
                 </Border>
@@ -94,7 +94,7 @@
                         HorizontalOptions="Fill"
                         HorizontalTextAlignment="Center" Text="{Binding IpAddress3, Mode=TwoWay}">
                         <Entry.Behaviors>
-                            <helpers:EntryValidationBehavior/>
+                            <helpers:EntryIntValidationBehavior Min="0" Max="255" IsRequired="True"/>
                         </Entry.Behaviors>
                     </Entry>
                 </Border>
@@ -106,7 +106,7 @@
                         HorizontalOptions="Fill"
                         HorizontalTextAlignment="Center" Text="{Binding IpAddress4, Mode=TwoWay}">
                         <Entry.Behaviors>
-                            <helpers:EntryValidationBehavior/>
+                            <helpers:EntryIntValidationBehavior Min="0" Max="255" IsRequired="True"/>
                         </Entry.Behaviors>
                     </Entry>
                 </Border>

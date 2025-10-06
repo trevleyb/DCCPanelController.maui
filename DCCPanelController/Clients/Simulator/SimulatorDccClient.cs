@@ -43,7 +43,7 @@ namespace DCCPanelController.Clients.Simulator {
 
             // read optional knobs from settings via reflection (no breaking changes to your class)
             _heartbeatSecs = GetInt(_settings, "HeartbeatSeconds", 15);
-            _randomFlipsSecs = GetInt(_settings, "RandomFlipSeconds", 0); // 0 = Disabled, 1000 = 1 sec
+            _randomFlipsSecs = GetInt(_settings, "RandomFlipSeconds", 0);   // 0 = Disabled, 1000 = 1 sec
             _disconnectEverySecs = GetInt(_settings, "DisconnectEvery", 0); // 0 = disabled
 
             var clockRateD = GetDouble(_settings, "FastClockRate", 12.0); // 12x sim time by default
@@ -205,7 +205,7 @@ namespace DCCPanelController.Clients.Simulator {
         // -------------------- Internals --------------------
 
         private void StartHeartbeat() {
-            if (_heartbeatSecs <= 0) return;
+            if (_heartbeatSecs <= 0 || !_settings.SimulateHeatbeat) return;
             _heartbeat = new System.Timers.Timer(Math.Max(1, _heartbeatSecs) * 1000);
             _heartbeat.Elapsed += (_, _) => {
                 OnClientMessage("SIM HB", DccClientOperation.System, DccClientMessageType.Inbound);
@@ -216,7 +216,7 @@ namespace DCCPanelController.Clients.Simulator {
         }
 
         private void StartFastClock() {
-            if (_clockRate <= 0) return;
+            if (_clockRate <= 0 || !_settings.SimulateFastClock) return;
             _simClock = DateTime.Today.AddHours(9); // arbitrary starting time
             _fastClock = new System.Timers.Timer(1000);
             _fastClock.AutoReset = true;
@@ -229,7 +229,7 @@ namespace DCCPanelController.Clients.Simulator {
         }
 
         private void StartRandomFlips() {
-            if (_randomFlipsSecs <= 0) return;
+            if (_randomFlipsSecs <= 0 || !_settings.SimulateToggles) return;
             _randomFlips = new System.Timers.Timer(_randomFlipsSecs * 1000);
             _randomFlips.AutoReset = true;
             _randomFlips.Elapsed += (_, _) => FlipRandomOnce();
@@ -237,7 +237,7 @@ namespace DCCPanelController.Clients.Simulator {
         }
 
         private void StartFailureInjection() {
-            if (_disconnectEverySecs <= 0) return;
+            if (_disconnectEverySecs <= 0 || !_settings.SimulateDisconnect) return;
             _failureInjector = new System.Timers.Timer(_disconnectEverySecs * 1000);
             _failureInjector.AutoReset = true;
             _failureInjector.Elapsed += (_, _) => {
@@ -317,41 +317,22 @@ namespace DCCPanelController.Clients.Simulator {
         private void FlipRandomOnce() {
             if (State != DccClientState.Connected) return;
 
-            var pick = _rand.Next(6);
+            var pick = _rand.Next(3);
             switch (pick) {
                 case 0: {
+                    if (!_settings.ToggleTurnouts) break;
                     var (id, name) = Pick(Profile.Turnouts);
                     if (id is { } && name is { }) {
                         var thrown = _rand.Next(2) == 0;
                         UpdateTurnout(id, name, thrown ? TurnoutStateEnum.Thrown : TurnoutStateEnum.Closed);
                         OnClientMessage($"Sim flip: {id} {(thrown ? "THROWN" : "CLOSED")}", DccClientOperation.Turnout, DccClientMessageType.Inbound);
                     }
+
                     break;
                 }
 
                 case 1: {
-                    var (id, name) = Pick(Profile.Routes);
-                    if (id is { } && name is { }) {
-                        var active = _rand.Next(2) == 0;
-                        UpdateRoute(id, name, active ? RouteStateEnum.Active : RouteStateEnum.Inactive);
-                        OnClientMessage($"Sim flip: {id} {(active ? "ACTIVE" : "INACTIVE")}", DccClientOperation.Route, DccClientMessageType.Inbound);
-                    }
-
-                    break;
-                }
-
-                case 2: {
-                    var (id, name) = Pick(Profile.Sensors);
-                    if (id is { } && name is { }) {
-                        var occ = _rand.Next(2) == 0;
-                        UpdateSensor(id, name, occ);
-                        OnClientMessage($"Sim flip: {id} {(occ ? "ON" : "OFF")}", DccClientOperation.Sensor, DccClientMessageType.Inbound);
-                    }
-
-                    break;
-                }
-
-                case 3: {
+                    if (!_settings.ToggleLights) break;
                     var (id, name) = Pick(Profile.Lights);
                     if (id is { } && name is { }) {
                         var on = _rand.Next(2) == 0;
@@ -362,31 +343,52 @@ namespace DCCPanelController.Clients.Simulator {
                     break;
                 }
 
-                case 4: {
+                case 2: {
+                    if (!_settings.ToggleBlocks) break;
                     var (id, name) = Pick(Profile.Blocks);
                     if (id is { } && name is { }) {
                         var occ = _rand.Next(2) == 0;
                         UpdateBlock(id, name, occ);
                         OnClientMessage($"Sim flip: {id} {(occ ? "OCCUPIED" : "FREE")}", DccClientOperation.Block, DccClientMessageType.Inbound);
                     }
-
                     break;
                 }
 
-                case 5: {
-                    var (id, name) = Pick(Profile.Signals);
-                    if (id is { } && name is { }) {
-                        var aspect = _rand.Next(3) switch {
-                            0 => SignalAspectEnum.Clear,
-                            1 => SignalAspectEnum.Approach,
-                            _ => SignalAspectEnum.Stop
-                        };
-                        UpdateSignal(id, name, aspect);
-                        OnClientMessage($"Sim flip: {id} → {aspect}", DccClientOperation.Signal, DccClientMessageType.Inbound);
-                    }
+                // case 1: {
+                //     var (id, name) = Pick(Profile.Routes);
+                //     if (id is { } && name is { }) {
+                //         var active = _rand.Next(2) == 0;
+                //         UpdateRoute(id, name, active ? RouteStateEnum.Active : RouteStateEnum.Inactive);
+                //         OnClientMessage($"Sim flip: {id} {(active ? "ACTIVE" : "INACTIVE")}", DccClientOperation.Route, DccClientMessageType.Inbound);
+                //     }
+                //
+                //     break;
+                // }
 
-                    break;
-                }
+                // case 2: {
+                //     var (id, name) = Pick(Profile.Sensors);
+                //     if (id is { } && name is { }) {
+                //         var occ = _rand.Next(2) == 0;
+                //         UpdateSensor(id, name, occ);
+                //         OnClientMessage($"Sim flip: {id} {(occ ? "ON" : "OFF")}", DccClientOperation.Sensor, DccClientMessageType.Inbound);
+                //     }
+                //
+                //     break;
+                // }
+
+                // case 5: {
+                //     var (id, name) = Pick(Profile.Signals);
+                //     if (id is { } && name is { }) {
+                //         var aspect = _rand.Next(3) switch {
+                //             0 => SignalAspectEnum.Clear,
+                //             1 => SignalAspectEnum.Approach,
+                //             _ => SignalAspectEnum.Stop
+                //         };
+                //         UpdateSignal(id, name, aspect);
+                //         OnClientMessage($"Sim flip: {id} → {aspect}", DccClientOperation.Signal, DccClientMessageType.Inbound);
+                //     }
+                //
+                //     break;
             }
         }
 
