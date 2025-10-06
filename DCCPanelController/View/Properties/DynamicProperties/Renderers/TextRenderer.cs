@@ -8,6 +8,7 @@ internal sealed class TextRenderer : BaseRenderer, IPropertyRenderer {
     public object CreateView(PropertyContext ctx) {
         var row = ctx.Row;
         var entry = new Entry {
+            TextColor = Colors.Black,
             Text = row.OriginalValue as string ?? string.Empty,
             Placeholder = MixedPlaceholder(row),
             Margin = new Thickness(5, 0, 5, 0),

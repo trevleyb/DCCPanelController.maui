@@ -17,6 +17,7 @@ internal sealed class OpacityRenderer : BaseRenderer, IPropertyRenderer {
         var grid = new Grid { ColumnDefinitions = [new ColumnDefinition(GridLength.Star), new ColumnDefinition(stepperWidth)] };
         var entry = new Entry {
             Keyboard = Keyboard.Numeric,
+            TextColor = Colors.Black,
             Text = row.OriginalValue != null ? ConvertOpacityToPercentage(row.OriginalValue) : string.Empty,
             Placeholder = MixedPlaceholderInt(row),
             HorizontalOptions = LayoutOptions.Fill,

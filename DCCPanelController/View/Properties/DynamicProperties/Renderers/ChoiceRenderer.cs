@@ -8,9 +8,10 @@ internal sealed class ChoiceRenderer : BaseRenderer, IPropertyRenderer {
         var row = ctx.Row;
         var picker = new Picker {
             // BUG: If you have title, it doesn't work.
-            //Title = (row.HasMixedValues ? "— mixed —" : null) ?? row.Field.Meta.Label,
+            Title = (row.HasMixedValues ? "— mixed —" : null) ?? row.Field.Meta.Label,
             WidthRequest = GetFieldWidth(ctx),
             FontSize = FieldFontSize,
+            TextColor = Colors.Black,
             HorizontalOptions = LayoutOptions.Start,
             VerticalOptions = LayoutOptions.Center,
             Margin = new Thickness(5, 0, 5, 0),

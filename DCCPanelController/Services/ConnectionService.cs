@@ -13,11 +13,14 @@ namespace DCCPanelController.Services;
 public partial class ConnectionService : ObservableObject {
     private const int  MaxServerMessages   = 100;
     private const int  ClearServerMessages = 20;
-    private       bool _hasConnected;
+
+    private int     _initOnceFlag = 0;
+    private string? _currentClientKind;
 
     private readonly ILogger<ConnectionService>    _logger = LogHelper.CreateLogger<ConnectionService>();
     private readonly ProfileService.ProfileService _profileService;
-
+    static string GetClientKind(IDccClientSettings s) => $"{s.GetType().FullName}";
+    
     [ObservableProperty] private DccClientState                         _connectionState;
     [ObservableProperty] private ObservableCollection<DccClientMessage> _serverMessages = [];
 
@@ -78,7 +81,6 @@ public partial class ConnectionService : ObservableObject {
     }
 
     public async Task<IResult> ConnectAsync(IDccClientSettings settings) {
-        _hasConnected = false;
         try {
             if (Client is { State: DccClientState.Connected }) await DisconnectAsync();
             if (_profileService.ActiveProfile is { } activeProfile) {
@@ -89,6 +91,14 @@ public partial class ConnectionService : ObservableObject {
                     _logger.LogDebug("Unable to create a Client instance.");
                     return Result.Fail("Unable to create a Client instance.");
                 }
+                
+                // Capture what connection type we are using sop we know if we need to reset
+                // --------------------------------------------------------------------------
+                var newKind = GetClientKind(settings);
+                if (!string.Equals(_currentClientKind, newKind, StringComparison.Ordinal)) {
+                    Interlocked.Exchange(ref _initOnceFlag, 0); // reset run-once
+                    _currentClientKind = newKind;
+                }
 
                 var connectResult = await Client.ConnectAsync();
                 if (connectResult.IsFailure) {
@@ -96,10 +106,7 @@ public partial class ConnectionService : ObservableObject {
                     _logger.LogDebug("Unable to connect to the specified server.");
                     return Result.Fail("Unable to connect to the specified server.");
                 }
-
-                //OnConnectionChanged(true);
-                //await SetTurnoutsToDefaultState();
-                //await ResetOccupancyStates();
+                ConnectionStateChanged += OnConnectionStateChanged;
                 return connectResult;
             }
         } catch (Exception ex) {
@@ -111,8 +118,21 @@ public partial class ConnectionService : ObservableObject {
         return Result.Fail("Unable to connect to the server.");
     }
 
+    private async void OnConnectionStateChanged(object? sender, DccClientState state)
+    {
+        if (state != DccClientState.Connected) return;
+
+        // Run exactly once for this connection kind.
+        if (Interlocked.Exchange(ref _initOnceFlag, 1) != 0) return;
+        try {
+            await SetTurnoutsToDefaultState();
+            await ResetOccupancyStates();
+        }  catch (Exception ex) {
+            _logger.LogError(ex, "Post-connect initialization failed.");
+        }
+    }
+
     public async Task<IResult> DisconnectAsync() {
-        _hasConnected = false;
         if (Client is { }) {
             await ResetOccupancyStates();
             if (Client.State == DccClientState.Connected) await Client.DisconnectAsync();
@@ -120,19 +140,14 @@ public partial class ConnectionService : ObservableObject {
             Client = null;
         }
         OnConnectionChanged(DccClientState.Disconnected);
+        ConnectionStateChanged -= OnConnectionStateChanged;
         return Result.Ok();
     }
-    
+
     private async void ClientOnClientMessage(object? sender, DccClientEvent e) {
         try {
             var lastConnectionState = ConnectionState;
             ConnectionState = e.State;
-
-            if (ConnectionState == DccClientState.Connected && !_hasConnected) {
-                await SetTurnoutsToDefaultState();
-                await ResetOccupancyStates();
-                _hasConnected = true;
-            }
 
             ConnectionEvent?.Invoke(this, e);
             if (lastConnectionState != ConnectionState) OnConnectionChanged(ConnectionState);
@@ -191,6 +206,6 @@ public partial class ConnectionService : ObservableObject {
     void TrimHead<T>(ObservableCollection<T> items, int max, int clearItems) {
         if (items.Count <= max) return;
         var removeCount = Math.Min(clearItems, items.Count);
-        for (int i = 0; i < removeCount; i++) items.RemoveAt(0); 
+        for (int i = 0; i < removeCount; i++) items.RemoveAt(0);
     }
 }

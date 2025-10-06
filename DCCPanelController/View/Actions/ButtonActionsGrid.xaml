@@ -44,6 +44,7 @@
             <Grid Grid.Row="1" IsVisible="{Binding IsGridVisible}">
                 <ListView
                     x:Name="ListView"
+                    BackgroundColor="WhiteSmoke"
                     WidthRequest="{OnIdiom Phone='360', Default='550'}"
                     HorizontalOptions="Start"
                     ItemsSource="{Binding ButtonPanelActions}"

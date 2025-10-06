@@ -16,6 +16,7 @@ internal sealed class BlockRenderer : BaseRenderer, IPropertyRenderer {
 
         var row = ctx.Row;
         var picker = new Picker {
+            TextColor = Colors.Black,
             FontSize = FieldFontSize,
             Margin = new Thickness(5, 0, 0, 0),
             HorizontalOptions = LayoutOptions.Fill,

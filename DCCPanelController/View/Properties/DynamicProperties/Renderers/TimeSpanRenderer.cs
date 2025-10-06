@@ -5,7 +5,7 @@ internal sealed class TimeSpanRenderer : BaseRenderer, IPropertyRenderer {
 
     public object CreateView(PropertyContext ctx) {
         var row = ctx.Row;
-        var entry = new Entry { Placeholder = row.HasMixedValues ? "— mixed —" : "hh:mm:ss" };
+        var entry = new Entry { Placeholder = row.HasMixedValues ? "— mixed —" : "hh:mm:ss", TextColor = Colors.Black, };
         if (row.OriginalValue is TimeSpan ts) entry.Text = ts.ToString();
         entry.TextChanged += (s, e) => {
             if (TimeSpan.TryParse(e.NewTextValue, out var v)) SetValue(row, v);

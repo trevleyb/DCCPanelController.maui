@@ -10,6 +10,7 @@ internal sealed class NumberRenderer : BaseRenderer, IPropertyRenderer {
     public object CreateView(PropertyContext ctx) {
         var row = ctx.Row;
         var entry = new Entry {
+            TextColor = Colors.Black,
             Keyboard = Keyboard.Numeric,
             Text = row.OriginalValue?.ToString() ?? "0", Placeholder = MixedPlaceholder(row),
             Margin = new Thickness(5, 0, 5, 0),

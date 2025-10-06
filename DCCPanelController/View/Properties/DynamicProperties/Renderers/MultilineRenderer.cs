@@ -8,6 +8,7 @@ internal sealed class MultilineTextRenderer : BaseRenderer, IPropertyRenderer {
     public object CreateView(PropertyContext ctx) {
         var row = ctx.Row;
         var editor = new Editor {
+            TextColor = Colors.Black,
             Text = row.OriginalValue as string, AutoSize = EditorAutoSizeOption.TextChanges, Placeholder = MixedPlaceholder(row), HeightRequest = 120, Margin = new Thickness(5, 0, 5, 0),
         };
         editor.TextChanged += (s, e) => SetValue(row, e.NewTextValue);

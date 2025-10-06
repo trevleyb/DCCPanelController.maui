@@ -8,7 +8,7 @@ internal sealed class ToggleRenderer : BaseRenderer, IPropertyRenderer {
         var sw = new Switch { IsToggled = row.OriginalValue as bool? ?? false };
         if (row.HasMixedValues) {
             var stack = new Grid();
-            var label = new Label { Text = "— mixed —", VerticalTextAlignment = TextAlignment.Center, HorizontalTextAlignment = TextAlignment.Start, Opacity = 0.6 };
+            var label = new Label { Text = "— mixed —", VerticalTextAlignment = TextAlignment.Center, HorizontalTextAlignment = TextAlignment.Start, Opacity = 0.6, TextColor = Colors.Black };
             stack.Add(sw);
             stack.Add(label);
             sw.Toggled += (s, e) => {

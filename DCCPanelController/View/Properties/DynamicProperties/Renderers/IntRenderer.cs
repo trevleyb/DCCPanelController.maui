@@ -17,6 +17,7 @@ internal sealed class IntRenderer : BaseRenderer, IPropertyRenderer {
 
         var grid = new Grid { ColumnDefinitions = [new ColumnDefinition(GridLength.Star), new ColumnDefinition(stepperWidth)] };
         var entry = new Entry {
+            TextColor = Colors.Black,
             Keyboard = Keyboard.Numeric,
             Text = row.OriginalValue?.ToString() ?? string.Empty,
             Placeholder = MixedPlaceholderInt(row),

@@ -11,7 +11,7 @@ internal sealed class UniqueIDRenderer : BaseRenderer, IPropertyRenderer {
         if (entity == null) return new InvalidRenderer("Cant find owning Object: UniqueID Renderer").CreateView(ctx);
 
         var row = ctx.Row;
-        var entry = new Entry { Text = row.OriginalValue as string ?? string.Empty, Placeholder = MixedPlaceholder(row) };
+        var entry = new Entry { Text = row.OriginalValue as string ?? string.Empty, Placeholder = MixedPlaceholder(row), TextColor = Colors.Black, };
         entry.TextChanged += (s, e) => {
             if (IsIDValid(e.NewTextValue, entity)) {
                 SetValue(row, e.NewTextValue);

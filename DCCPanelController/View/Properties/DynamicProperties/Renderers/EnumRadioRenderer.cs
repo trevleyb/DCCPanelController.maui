@@ -34,6 +34,7 @@ internal sealed class EnumRadioRenderer : BaseRenderer, IPropertyRenderer {
             var rb = new RadioButton {
                 Content = it.Text,
                 FontSize = FieldFontSize,
+                TextColor = Colors.Black,
                 GroupName = groupName,
                 Margin = new Thickness(0, 0, 0, 0),
                 IsEnabled = !row.Field.Meta.IsReadOnlyInRunMode,

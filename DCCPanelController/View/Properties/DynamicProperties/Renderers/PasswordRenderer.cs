@@ -9,6 +9,7 @@ internal sealed class PasswordRenderer : BaseRenderer, IPropertyRenderer {
         var row = ctx.Row;
         var entry = new Entry {
             IsPassword = true,
+            TextColor = Colors.Black,
             Text = row.OriginalValue as string, Placeholder = MixedPlaceholder(row),
             Margin = new Thickness(5, 0, 5, 0),
         };

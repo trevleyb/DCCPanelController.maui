@@ -23,6 +23,7 @@ internal sealed class EnumChoiceRenderer : BaseRenderer, IPropertyRenderer {
 
         var picker = new Picker {
             Title = (row.HasMixedValues ? "— mixed —" : null) ?? string.Empty,
+            TextColor = Colors.Black,
             FontSize = FieldFontSize,
             WidthRequest = GetFieldWidth(ctx),
             HorizontalOptions = LayoutOptions.Start,

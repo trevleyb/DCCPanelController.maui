@@ -10,9 +10,9 @@ public class EntryDoubleValidationBehavior : EntryValidationBehavior<double> { }
 public class EntryValidationBehavior<T> : Behavior<Entry> 
     where T : struct, IParsable<T>, IComparable<T>
 {
-    public static readonly BindableProperty MinProperty = BindableProperty.Create(nameof(Min), typeof(T), typeof(EntryValidationBehavior<T>), 0);
-    public static readonly BindableProperty MaxProperty = BindableProperty.Create(nameof(Max), typeof(T), typeof(EntryValidationBehavior<T>), 99);
-    public static readonly BindableProperty PatternProperty = BindableProperty.Create(nameof(Pattern), typeof(string), typeof(EntryValidationBehavior<T>), null);
+    public static readonly BindableProperty MinProperty        = BindableProperty.Create(nameof(Min), typeof(T), typeof(EntryValidationBehavior<T>), default(T));
+    public static readonly BindableProperty MaxProperty        = BindableProperty.Create(nameof(Max), typeof(T), typeof(EntryValidationBehavior<T>), default(T));
+    public static readonly BindableProperty PatternProperty    = BindableProperty.Create(nameof(Pattern), typeof(string), typeof(EntryValidationBehavior<T>), null);
     public static readonly BindableProperty IsRequiredProperty = BindableProperty.Create(nameof(IsRequired), typeof(bool), typeof(EntryValidationBehavior<T>), false);
 
     public T Min {

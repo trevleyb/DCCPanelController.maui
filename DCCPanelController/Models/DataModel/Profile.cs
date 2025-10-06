@@ -6,9 +6,10 @@ using DCCPanelController.View.Helpers;
 namespace DCCPanelController.Models.DataModel;
 
 public partial class Profile : ObservableObject {
-    [ObservableProperty] private string _filename;
-    [ObservableProperty] private string _profileName;
-
+    [ObservableProperty] private string                          _filename;
+    [ObservableProperty] private string                          _profileName;
+    [ObservableProperty] private string                          _profileNotes;
+    
     [ObservableProperty] private Panels                          _panels;
     [ObservableProperty] private Settings                        _settings;
     [ObservableProperty] private UiObservableCollection<Light>   _lights;
@@ -22,9 +23,12 @@ public partial class Profile : ObservableObject {
     [ObservableProperty] private PowerStateEnum     _powerState;
     [ObservableProperty] private FastClockStateEnum _fastClockState;
 
+    
+    
     public Profile(string profileName, string? fileName = null) {
         _filename = string.IsNullOrWhiteSpace(fileName) ? Guid.NewGuid().ToString() : fileName;
         _profileName = profileName;
+        _profileNotes = "";
         Panels = new Panels { Profile = this };
         Settings = new Settings();
         Blocks = [];

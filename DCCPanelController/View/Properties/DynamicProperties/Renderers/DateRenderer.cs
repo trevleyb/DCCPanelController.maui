@@ -7,6 +7,7 @@ internal sealed class DateRenderer : BaseRenderer, IPropertyRenderer {
     public object CreateView(PropertyContext ctx) {
         var row = ctx.Row;
         var dp = new DatePicker {
+            TextColor = Colors.Black,
             FontSize = FieldFontSize,
             FontAttributes = FontAttributes.None,
             HorizontalOptions = LayoutOptions.Fill,

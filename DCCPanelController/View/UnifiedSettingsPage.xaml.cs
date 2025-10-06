@@ -26,4 +26,8 @@ public partial class UnifiedSettingsPage : ContentPage {
         base.OnNavigatedFrom(args);
         if (BindingContext is UnifiedSettingsViewModel { IsDirty: true } vm) await vm.SaveAsync();
     }
+
+    private async void ShowHelpPage(object? sender, EventArgs e) {
+        await Navigation.PushAsync(new HelpPage());
+    }
 }

@@ -35,10 +35,13 @@ public partial class UnifiedSettingsViewModel : BaseViewModel {
     [ObservableProperty] private Profile _profile = new("Temp");
     [ObservableProperty] private bool    _isDirty;
     [ObservableProperty] private bool    _isWide;               // for responsive layout
+    [ObservableProperty] private bool    _hasNotes;             // for responsive layout
     [ObservableProperty] private int     _selectedSegmentIndex; // 0 Sim, 1 JMRI, 2 WiThrottle
 
     [ObservableProperty] private Microsoft.Maui.Controls.View? _currentSettingsView;
 
+    public bool IsProfileDefault => ProfileService.IsDefault(Profile);
+    public bool IsProfileNotDefault => !IsProfileDefault;
     public Settings? Settings => Profile?.Settings;
     public bool CanDeleteProfile => ProfileService.NumberOfProfiles > 1;
 
@@ -68,7 +71,11 @@ public partial class UnifiedSettingsViewModel : BaseViewModel {
 
         SetActiveSettings(IndexToType(SelectedSegmentIndex), notify: false);
         IsDirty = false;
+        HasNotes = !string.IsNullOrEmpty(Profile.ProfileNotes);
         OnPropertyChanged(nameof(Settings));
+        OnPropertyChanged(nameof(IsProfileDefault));
+        OnPropertyChanged(nameof(IsProfileNotDefault));
+        OnPropertyChanged(nameof(CanDeleteProfile));
     }
 
     private void MarkDirty(object? s, System.ComponentModel.PropertyChangedEventArgs e) => IsDirty = true;
@@ -132,6 +139,13 @@ public partial class UnifiedSettingsViewModel : BaseViewModel {
         if (index is{ } selectedProfile and>= 0) await ProfileService.SwitchProfileByIndexAsync(selectedProfile);
         OnProfileChanged();
         await DisplayAlertHelper.DisplayToastAlert("Switched Active Profile");
+    }
+
+    [RelayCommand] public async Task ActiveProfileChangedAsync() { /* same logic you already have */
+        await MarkActiveProfileDefault();
+        await SaveAsync();
+        OnProfileChanged();
+        await DisplayAlertHelper.DisplayToastAlert("Profile is now Default");
     }
 
     [RelayCommand] public async Task AddProfileAsync() { /* same logic you already have */
