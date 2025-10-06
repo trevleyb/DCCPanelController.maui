@@ -3,6 +3,7 @@ using System.Text.Json;
 using DCCPanelController.Services;
 using DCCPanelController.Services.ProfileService;
 using DCCPanelController.View.TileSelectors;
+using AVFoundation;
 
 namespace DCCPanelController.View;
 
@@ -46,6 +47,18 @@ public partial class LoadingPage : ContentPage {
                     // Initialize domain state
                     await profileService.InitializeAsync();
                     await connectionService.InitializeAsync();
+                    
+                    // Setup the Audio
+                    #if IOS
+                    try {
+                        var session = AVAudioSession.SharedInstance();
+                        session.SetCategory(AVAudioSessionCategory.Playback, AVAudioSessionCategoryOptions.MixWithOthers, out var catErr);
+                        session.SetMode(AVAudioSessionMode.Default, out var modeErr);
+                        session.SetActive(true, out var actErr);
+                    } catch (Exception ex) {
+                        Debug.WriteLine($"Error setting up audio: {ex.Message}");
+                    }
+                    #endif
                     
                     // Any other one-time startup work here (help assets, migrations, etc.)
                     await HelpService.Current.InitializeAsync(true);
