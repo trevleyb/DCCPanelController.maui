@@ -64,11 +64,8 @@ public sealed class FastClockTile : Tile, ITileDrawable {
         e.PropertyChanged += OnEntityPropertyChanged;
         this.PropertyChanged += OnSelfPropertyChanged;
 
-        // Hook profile time & start ticking only if NOT in design mode
-        if (!IsDesignMode &&_profile?.FastClockState == FastClockStateEnum.On) {
-            SubscribeProfile();
-            EnsureTickerRunning();
-        }
+        SubscribeProfile();
+        UpdateRunningState();
 
         return _root;
     }
@@ -86,6 +83,38 @@ public sealed class FastClockTile : Tile, ITileDrawable {
         _profile = null;
     }
 
+    private bool IsLive => !IsDesignMode && _profile?.FastClockState == FastClockStateEnum.On;
+
+    private void UpdateRunningState()
+    {
+        if (_profile is null) return;
+
+        if (IsLive)
+        {
+            // Snap to current fast time and start ticking
+            var snap = _profile.FastClock;
+            _displayTime     = snap;
+            _targetTime      = snap;
+            _lastProfileFast = snap;
+            _lastProfileReal = DateTime.UtcNow;
+
+            EnsureTickerRunning();
+        }
+        else
+        {
+            // Pause and render static snapshot
+            var snap = _profile.FastClock;
+            _displayTime     = snap;
+            _targetTime      = snap;
+            _lastProfileFast = snap;
+            _lastProfileReal = DateTime.UtcNow;
+
+            StopTicker();
+            _gv?.Invalidate();
+        }
+    }
+
+    
     // ---------------------------
     // Event handlers
     // ---------------------------
@@ -104,37 +133,7 @@ public sealed class FastClockTile : Tile, ITileDrawable {
     }
 
     private void OnSelfPropertyChanged(object? sender, PropertyChangedEventArgs e) {
-        if (e.PropertyName == nameof(IsDesignMode) || e.PropertyName == nameof(_profile.FastClockState)) {
-            HandleDesignModeChanged();
-        }
-    }
-
-    private void HandleDesignModeChanged() {
-        if (IsDesignMode && _profile?.FastClockState == FastClockStateEnum.On ) {
-            // Freeze: snapshot to the latest profile time, then stop updates
-            if (_profile is not null) {
-                var snap = _profile.FastClock;
-                _displayTime = snap;
-                _targetTime  = snap;
-                _lastProfileFast = snap;
-                _lastProfileReal = DateTime.UtcNow;
-            }
-            StopTicker();
-            UnsubscribeProfile();
-            _gv?.Invalidate(); // show static face
-        } else {
-            // Resume live updates
-            if (_profile is not null) {
-                var snap = _profile.FastClock;
-                _displayTime = snap;
-                _targetTime  = snap;
-                _lastProfileFast = snap;
-                _lastProfileReal = DateTime.UtcNow;
-            }
-            SubscribeProfile();
-            EnsureTickerRunning();
-            _gv?.Invalidate();
-        }
+        if (e.PropertyName == nameof(IsDesignMode)) UpdateRunningState();
     }
 
     // ---------------------------
@@ -153,39 +152,63 @@ public sealed class FastClockTile : Tile, ITileDrawable {
         _profileSubscribed = false;
     }
 
-    private void OnProfilePropertyChanged(object? sender, PropertyChangedEventArgs e) {
-        if (IsDesignMode) return; // guard: ignore updates in design mode
-        if (e.PropertyName != nameof(Profile.FastClock)) return; // only care about fast clock
+    private void OnProfilePropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (_profile is null) return;
 
-        var nowReal = DateTime.UtcNow;
-        var nowFast = _profile!.FastClock; // authoritative time
+        if (e.PropertyName == nameof(Profile.FastClockState))
+        {
+            UpdateRunningState(); // this starts/stops the timer and snaps the display
+            return;
+        }
 
-        // Update target and estimate fast ratio
-        _targetTime = nowFast;
+        if (e.PropertyName == nameof(Profile.FastClock))
+        {
+            if (!IsLive)
+            {
+                // Paused: keep static face accurate
+                var snap = _profile.FastClock;
+                _displayTime = snap;
+                _targetTime  = snap;
+                _gv?.Invalidate();
+                return;
+            }
 
-        if (_lastProfileFast is { } lastFast && _lastProfileReal is { } lastReal) {
-            var dFast = (nowFast - lastFast).TotalSeconds;
-            var dReal = (nowReal - lastReal).TotalSeconds;
-            if (dReal > 0.005) {
-                var est = dFast / dReal;
-                if (!double.IsNaN(est) && !double.IsInfinity(est)) {
-                    _ratio = Math.Clamp(est, MinRatio, MaxRatio);
-                    UpdateTimerIntervalFromRatio();
+            // Live: update target and ratio estimation
+            var nowReal = DateTime.UtcNow;
+            var nowFast = _profile.FastClock;
+
+            _targetTime = nowFast;
+
+            if (_lastProfileFast is { } lastFast && _lastProfileReal is { } lastReal)
+            {
+                var dFast = (nowFast - lastFast).TotalSeconds;
+                var dReal = (nowReal - lastReal).TotalSeconds;
+                if (dReal > 0.005)
+                {
+                    var est = dFast / dReal;
+                    if (!double.IsNaN(est) && !double.IsInfinity(est))
+                    {
+                        _ratio = Math.Clamp(est, MinRatio, MaxRatio);
+                        UpdateTimerIntervalFromRatio();
+                    }
                 }
             }
+
+            _lastProfileFast = nowFast;
+            _lastProfileReal = nowReal;
+
+            // If we’re far behind, snap to stay in sync
+            if (_displayTime is { } disp && _targetTime is { } tgt)
+            {
+                var gap = Math.Abs((tgt - disp).TotalSeconds);
+                if (gap >= 15) _displayTime = tgt;
+            }
+
+            _gv?.Invalidate();
         }
-
-        _lastProfileFast = nowFast;
-        _lastProfileReal = nowReal;
-
-        // If we’re far behind, snap to stay in sync
-        if (_displayTime is { } disp && _targetTime is { } tgt) {
-            var gap = Math.Abs((tgt - disp).TotalSeconds);
-            if (gap >= 15) _displayTime = tgt;
-        }
-
-        _gv?.Invalidate();
     }
+
 
     private void EnsureTickerRunning() {
         if (IsDesignMode) return; // don’t run timer in design mode
@@ -270,8 +293,10 @@ public sealed class FastClockTile : Tile, ITileDrawable {
             var inset = area.Inflate(new SizeF(-border / 2f));
             canvas.DrawRectangle(inset);
 
-            var pad   = Math.Max(inset.Width, inset.Height) * 0.08f;
-            var inner = inset.Inflate(new SizeF(-pad, -pad));
+            var pad   = Math.Max(inset.Width, inset.Height) * 0.05f; // was 0.08f
+            var padW  = inset.Width * 0.05f; // was 0.08f
+            var padH  = inset.Height * 0.05f; // was 0.08f
+            var inner = inset.Inflate(new SizeF(-padW, -padH));
 
             var t = _time();
             var text = t.ToString("HH:mm:ss"); // 8 glyphs
@@ -280,7 +305,8 @@ public sealed class FastClockTile : Tile, ITileDrawable {
             var cellW = inner.Width / cols;
             var cellH = inner.Height;
 
-            var fontSize = (float)Math.Min(cellW * 0.9f, cellH * 0.85f);
+            // var fontSize = (float)Math.Min(cellW * 0.9f, cellH * 0.85f);
+            var fontSize = (float)Math.Min(cellW * 1.0f, cellH * 1.0f);
 
             for (int i = 0; i < text.Length && i < 8; i++) {
                 var ch = text[i].ToString();

@@ -31,7 +31,7 @@ public class ScriptButtonTile : Tile, ITileInteractive {
                 break;
 
             case"set all turnouts to default":
-                connectionService?.SetTurnoutsToDefaultState();
+                connectionService?.SetTurnoutsToDefaultState(true);
                 break;
             }
 

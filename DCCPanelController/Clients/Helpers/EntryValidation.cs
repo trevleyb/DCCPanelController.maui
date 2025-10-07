@@ -1,19 +1,24 @@
 using System;
-using Microsoft.Maui.Controls;
 using System.Text.RegularExpressions;
+using Microsoft.Maui.Controls;
 
 namespace DCCPanelController.Clients.Helpers;
 
-public class EntryIntValidationBehavior : EntryValidationBehavior<int> { };
-public class EntryDoubleValidationBehavior : EntryValidationBehavior<double> { };
+// Convenience specializations
+public class EntryIntValidationBehavior : EntryValidationBehavior<int> { }
 
-public class EntryValidationBehavior<T> : Behavior<Entry> 
-    where T : struct, IParsable<T>, IComparable<T>
-{
-    public static readonly BindableProperty MinProperty        = BindableProperty.Create(nameof(Min), typeof(T), typeof(EntryValidationBehavior<T>), default(T));
-    public static readonly BindableProperty MaxProperty        = BindableProperty.Create(nameof(Max), typeof(T), typeof(EntryValidationBehavior<T>), default(T));
-    public static readonly BindableProperty PatternProperty    = BindableProperty.Create(nameof(Pattern), typeof(string), typeof(EntryValidationBehavior<T>), null);
+public class EntryDoubleValidationBehavior : EntryValidationBehavior<double> { }
+
+public class EntryValidationBehavior<T> : Behavior<Entry>
+    where T : struct, IParsable<T>, IComparable<T> {
+    public static readonly BindableProperty MinProperty = BindableProperty.Create(nameof(Min), typeof(T), typeof(EntryValidationBehavior<T>), default(T));
+    public static readonly BindableProperty MaxProperty = BindableProperty.Create(nameof(Max), typeof(T), typeof(EntryValidationBehavior<T>), default(T));
+    public static readonly BindableProperty PatternProperty = BindableProperty.Create(nameof(Pattern), typeof(string), typeof(EntryValidationBehavior<T>), null);
     public static readonly BindableProperty IsRequiredProperty = BindableProperty.Create(nameof(IsRequired), typeof(bool), typeof(EntryValidationBehavior<T>), false);
+
+    // Flags to indicate whether Min/Max should be enforced
+    // public bool HasMin => Min != null;
+    // public bool HasMax => Max != null;
 
     public T Min {
         get => (T)GetValue(MinProperty);
@@ -35,7 +40,7 @@ public class EntryValidationBehavior<T> : Behavior<Entry>
         set => SetValue(IsRequiredProperty, value);
     }
 
-    Entry? _entry;
+    private Entry? _entry;
 
     protected override void OnAttachedTo(Entry bindable) {
         base.OnAttachedTo(bindable);
@@ -53,47 +58,27 @@ public class EntryValidationBehavior<T> : Behavior<Entry>
         _entry = null;
     }
 
-    void OnTextChanged(object? sender, TextChangedEventArgs e) {
+    private void OnTextChanged(object? sender, TextChangedEventArgs e) {
         var isValid = Validate(e.NewTextValue);
-        _entry?.TextColor = isValid ? Colors.Black : Colors.Red;
+        _entry!.TextColor = isValid ? Colors.Black : Colors.Red;
     }
 
     private bool Validate(string? text) {
-        var ok = !(IsRequired && string.IsNullOrWhiteSpace(text));
+        // Required check
+        if (IsRequired && string.IsNullOrWhiteSpace(text)) return false;
 
-        // if (ok && Pattern is { Length: > 0 })
-        //     ok = Regex.IsMatch(text ?? string.Empty, Pattern);
-        //
-        // if (ok && T.TryParse(text, null, out var value)) {
-        //     if (Min is { } min && value.CompareTo(min) < 0) ok = false;
-        //     if (Max is { } max && value.CompareTo(max) > 0) ok = false;
-        // } else if (ok && (Min != null || Max != null) && !string.IsNullOrWhiteSpace(text)) {
-        //     ok = false;
-        // }
-      
-        return ok;
-    }
-}
+        // Pattern check
+        if (!string.IsNullOrEmpty(Pattern) && !Regex.IsMatch(text ?? string.Empty, Pattern)) return false;
 
+        // Empty text past here is OK if not required
+        if (string.IsNullOrWhiteSpace(text)) return true;
 
-public class FastClockValidationBehavior : Behavior<Entry> {
-    protected override void OnAttachedTo(Entry entry) {
-        entry.TextChanged += OnEntryTextChanged;
-        base.OnAttachedTo(entry);
-    }
+        // TryParse gate
+        if (!T.TryParse(text, null, out var value)) return false;
 
-    protected override void OnDetachingFrom(Entry entry) {
-        entry.TextChanged -= OnEntryTextChanged;
-        base.OnDetachingFrom(entry);
-    }
-
-    private void OnEntryTextChanged(object? sender, TextChangedEventArgs args) {
-        if (sender is Entry entry) {
-            if (!string.IsNullOrEmpty(args.NewTextValue)) {
-                if (double.TryParse(args.NewTextValue, out var result)) {
-                    entry.TextColor = result is>= 0 and<= 12 ? Colors.Black : Colors.Red;
-                }
-            }
-        }
+        // Range checks only if the flags are set
+        if (value.CompareTo((T)Min) < 0) return false;
+        if (value.CompareTo((T)Max) > 0) return false;
+        return true;
     }
 }

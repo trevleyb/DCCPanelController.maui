@@ -26,14 +26,14 @@
 
         <!-- FastClock -->
         <Label  Grid.Row="1" Grid.Column="0" Text="Simulate Fastclock?" VerticalOptions="Center"/>
-        <Label  Grid.Row="1" Grid.Column="3" Text="Multiple (ie: 1.5x)" Margin="10,0,0,0" VerticalOptions="Center"/>
+        <Label  Grid.Row="1" Grid.Column="3" Text="Ratio (X:1)" Margin="10,0,0,0" VerticalOptions="Center"/>
         <Switch Grid.Row="1" Grid.Column="1" IsToggled="{Binding SimulatorSettings.SimulateFastClock}" VerticalOptions="Center"
                 OnColor="{StaticResource Primary}"
                 ThumbColor="{StaticResource Gray200}"/>
         <Border Grid.Row="1" Grid.Column="2" WidthRequest="50" Padding="0" HeightRequest="30" Style="{StaticResource EntryBorderStyle}">
             <Entry Text="{Binding SimulatorSettings.FastClockRate, Mode=TwoWay}" HorizontalOptions="Fill" HorizontalTextAlignment="Center">
                 <Entry.Behaviors>
-                    <helpers:EntryDoubleValidationBehavior Min="0.25" Max="5.0"/>
+                    <helpers:EntryDoubleValidationBehavior Min="1.0" Max="12.0"/>
                 </Entry.Behaviors>
             </Entry>
         </Border>

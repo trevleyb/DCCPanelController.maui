@@ -76,8 +76,12 @@ public partial class LoadingPage : ContentPage, INotifyPropertyChanged {
             MethodTimeLogger.LogDirectory = Path.Combine(FileSystem.AppDataDirectory, "PerfLogs");
             MethodTimeLogger.MaxBytesBeforeRotate = 20 * 1024 * 1024;
 
+            double step = 0.0;
+            double steps = 9.0;
+            
             #if IOS
-            await StepAsync("Configuring audio…", 0.06, async () => {
+            steps++;
+            await StepAsync("Configuring audio…", ++step/steps, async () => {
                 try {
                     var session = AVAudioSession.SharedInstance();
                     session.SetCategory(AVAudioSessionCategory.Playback, AVAudioSessionCategoryOptions.MixWithOthers, out _);
@@ -89,29 +93,40 @@ public partial class LoadingPage : ContentPage, INotifyPropertyChanged {
                 await Task.CompletedTask;
             });
             #endif
+            
+            // 1)
+            await StepAsync("Loading profile…", ++step/steps, () => profileService.InitializeAsync());
+            
+            // 2)
+            await StepAsync("Validating catalog…", ++step/steps, () => profileService.ValidateCatalog());
+            
+            // 3)
+            await StepAsync("Initialising connection service…", ++step/steps, () => connectionService.InitializeAsync());
 
-            await StepAsync("Loading profile…", 0.18, () => profileService.InitializeAsync());
+            // 4)
+            await StepAsync("Preparing help system…",++step/steps, () => HelpService.Current.InitializeAsync(true));
 
-            await StepAsync("Initialising connection service…", 0.30, () => connectionService.InitializeAsync());
+            // 5)
+            await StepAsync("Validating bundled content…", ++step/steps, ValidateBundleAsync);
 
-            await StepAsync("Preparing help system…", 0.40, () => HelpService.Current.InitializeAsync(true));
+            // 6)
+            await StepAsync("Checking extracted content…", ++step/steps, ValidateExtractedAsync);
 
-            await StepAsync("Validating bundled content…", 0.52, ValidateBundleAsync);
-
-            await StepAsync("Checking extracted content…", 0.64, ValidateExtractedAsync);
-
-            await StepAsync("Building palette cache…", 0.78, async () => {
+            // 7)
+            await StepAsync("Building palette cache…", ++step/steps, async () => {
                 TileSelectorPaletteCache.PrebuildDefaultPalette();
                 await Task.CompletedTask;
             });
 
-            await StepAsync("Playing startup sound…", 0.86, async () => {
+            // 8)
+            await StepAsync("Playing startup sound…", ++step/steps, async () => {
                 if (profileService.ActiveProfile?.Settings?.PlayStartupSound == true) {}
                     // Removed this as it was annoying
                     //await ClickSounds.PlayStartupSoundAsync();
             });
 
-            await StepAsync("Starting UI…", 0.94, async () => {
+            // 9)
+            await StepAsync("Starting UI…", ++step/steps, async () => {
                 await MainThread.InvokeOnMainThreadAsync(() => {
                     var shell = services.GetRequiredService<AppShell>();
                     var window = Application.Current?.Windows[0];
@@ -135,6 +150,7 @@ public partial class LoadingPage : ContentPage, INotifyPropertyChanged {
     /// Runs an initialization step, updating status + progress safely on the UI thread.
     /// </summary>
     private async Task StepAsync(string message, double progressAfter, Func<Task> step) {
+        if (progressAfter > 1.00) progressAfter = 1.00;
         await SetStatusAsync(message, progressAfter);
         await step();
     }

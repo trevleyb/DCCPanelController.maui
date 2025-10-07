@@ -12,6 +12,7 @@ public class DccClientMessage(string message, DccClientOperation operation = Dcc
             DccClientMessageType.Outbound => "OUT",
             DccClientMessageType.System   => "SYS",
             DccClientMessageType.Error    => "ERR",
+            DccClientMessageType.Warning  => "WRN",
             _                             => "???",
         };
     
@@ -20,6 +21,7 @@ public class DccClientMessage(string message, DccClientOperation operation = Dcc
             DccClientMessageType.Inbound  => Colors.Blue,
             DccClientMessageType.Outbound => Colors.Green,
             DccClientMessageType.System   => Colors.Gray,
+            DccClientMessageType.Warning  => Colors.HotPink,
             DccClientMessageType.Error    => Colors.Red,
             _                             => Colors.Yellow,
         };
@@ -29,6 +31,7 @@ public class DccClientMessage(string message, DccClientOperation operation = Dcc
             DccClientMessageType.Inbound  => "message_in.png",
             DccClientMessageType.Outbound => "message_out.png",
             DccClientMessageType.System   => "message_system.png",
+            DccClientMessageType.Warning  => "message_warning.png",
             DccClientMessageType.Error    => "message_error.png",
             _                             => "message_system.png",
         };

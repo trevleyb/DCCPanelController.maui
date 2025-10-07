@@ -145,6 +145,7 @@ public abstract partial class DccClientBase(Profile profile) : ObservableObject 
 
     private void UpdateFastClockCore(DateTime? fastClock, FastClockStateEnum state) {
         if (fastClock is { } clock && Profile?.FastClock is { }) {
+            Profile?.FastClockState = state;
             Profile?.FastClock = clock;
         }
     }

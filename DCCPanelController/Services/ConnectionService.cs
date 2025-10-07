@@ -11,8 +11,8 @@ using Microsoft.Extensions.Logging;
 namespace DCCPanelController.Services;
 
 public partial class ConnectionService : ObservableObject {
-    private const int  MaxServerMessages   = 100;
-    private const int  ClearServerMessages = 20;
+    private const int MaxServerMessages   = 100;
+    private const int ClearServerMessages = 20;
 
     private int     _initOnceFlag = 0;
     private string? _currentClientKind;
@@ -20,7 +20,7 @@ public partial class ConnectionService : ObservableObject {
     private readonly ILogger<ConnectionService>    _logger = LogHelper.CreateLogger<ConnectionService>();
     private readonly ProfileService.ProfileService _profileService;
     static string GetClientKind(IDccClientSettings s) => $"{s.GetType().FullName}";
-    
+
     [ObservableProperty] private DccClientState                         _connectionState;
     [ObservableProperty] private ObservableCollection<DccClientMessage> _serverMessages = [];
 
@@ -47,29 +47,30 @@ public partial class ConnectionService : ObservableObject {
 
     public async Task<IResult> ToggleConnectionAsync() {
         switch (ConnectionState) {
-            case DccClientState.Initialising:
-                Debug.WriteLine("Toggle: Initialising Connection");
-                _ = await DisconnectAsync();
-                return await ConnectAsync();
+        case DccClientState.Initialising:
+            Debug.WriteLine("Toggle: Initialising Connection");
+            _ = await DisconnectAsync();
+            return await ConnectAsync();
 
-            case DccClientState.Connected:
-                Debug.WriteLine("Toggle: Connected so Disconnecting");
-                return await DisconnectAsync();
+        case DccClientState.Connected:
+            Debug.WriteLine("Toggle: Connected so Disconnecting");
+            return await DisconnectAsync();
 
-            case DccClientState.Disconnected:
-                Debug.WriteLine("Toggle: Disconnected so Connecting");
-                return await ConnectAsync();
+        case DccClientState.Disconnected:
+            Debug.WriteLine("Toggle: Disconnected so Connecting");
+            return await ConnectAsync();
 
-            case DccClientState.Error:
-                Debug.WriteLine("Toggle: Error so disconnecting and connecting");
-                _ = await DisconnectAsync();
-                return await ConnectAsync();
+        case DccClientState.Error:
+            Debug.WriteLine("Toggle: Error so disconnecting and connecting");
+            _ = await DisconnectAsync();
+            return await ConnectAsync();
 
-            case DccClientState.Reconnecting:
-                Debug.WriteLine("Toggle: Reconnecting state so disconnecting and connecting");
-                _ = await DisconnectAsync();
-                return await ConnectAsync();
+        case DccClientState.Reconnecting:
+            Debug.WriteLine("Toggle: Reconnecting state so disconnecting and connecting");
+            _ = await DisconnectAsync();
+            return await ConnectAsync();
         }
+
         throw new Exception("Connection not initialized");
     }
 
@@ -77,6 +78,7 @@ public partial class ConnectionService : ObservableObject {
         if (_profileService.ActiveProfile?.Settings.ClientSettings is { } settings) {
             return await ConnectAsync(settings);
         }
+
         return Result.Fail("Unable to connect to the server.");
     }
 
@@ -91,21 +93,21 @@ public partial class ConnectionService : ObservableObject {
                     _logger.LogDebug("Unable to create a Client instance.");
                     return Result.Fail("Unable to create a Client instance.");
                 }
-                
-                // Capture what connection type we are using sop we know if we need to reset
-                // --------------------------------------------------------------------------
+
+                // … unchanged below …
                 var newKind = GetClientKind(settings);
                 if (!string.Equals(_currentClientKind, newKind, StringComparison.Ordinal)) {
-                    Interlocked.Exchange(ref _initOnceFlag, 0); // reset run-once
+                    Interlocked.Exchange(ref _initOnceFlag, 0);
                     _currentClientKind = newKind;
                 }
 
-                var connectResult = await Client.ConnectAsync();
+                var connectResult = await Client.ConnectAsync(); // wraps inner.ConnectAsync()
                 if (connectResult.IsFailure) {
                     OnConnectionChanged(DccClientState.Error);
                     _logger.LogDebug("Unable to connect to the specified server.");
                     return Result.Fail("Unable to connect to the specified server.");
                 }
+
                 ConnectionStateChanged += OnConnectionStateChanged;
                 return connectResult;
             }
@@ -114,12 +116,12 @@ public partial class ConnectionService : ObservableObject {
             OnConnectionChanged(DccClientState.Error);
             return Result.Fail(ex, "Unable to connect to the server.");
         }
+
         _logger.LogDebug("Unable to connect to the specified server.");
         return Result.Fail("Unable to connect to the server.");
     }
 
-    private async void OnConnectionStateChanged(object? sender, DccClientState state)
-    {
+    private async void OnConnectionStateChanged(object? sender, DccClientState state) {
         if (state != DccClientState.Connected) return;
 
         // Run exactly once for this connection kind.
@@ -127,7 +129,7 @@ public partial class ConnectionService : ObservableObject {
         try {
             await SetTurnoutsToDefaultState();
             await ResetOccupancyStates();
-        }  catch (Exception ex) {
+        } catch (Exception ex) {
             _logger.LogError(ex, "Post-connect initialization failed.");
         }
     }
@@ -139,6 +141,8 @@ public partial class ConnectionService : ObservableObject {
             Client.ClientMessage -= ClientOnClientMessage;
             Client = null;
         }
+
+        _profileService.ActiveProfile?.FastClockState = FastClockStateEnum.Off;
         OnConnectionChanged(DccClientState.Disconnected);
         ConnectionStateChanged -= OnConnectionStateChanged;
         return Result.Ok();
@@ -172,13 +176,14 @@ public partial class ConnectionService : ObservableObject {
         }
     }
 
-    public async Task SetTurnoutsToDefaultState() {
+    public async Task SetTurnoutsToDefaultState(bool force = false) {
         var profile = _profileService.ActiveProfile;
-        if (profile?.Settings.SetTurnoutStatesOnStartup ?? false) {
+        if ( profile is {} && (force || profile?.Settings.SetTurnoutStatesOnStartup == true)) {
             if (Client is { State: DccClientState.Connected }) {
                 foreach (var turnout in profile.Turnouts) {
                     if (turnout.Default != TurnoutStateEnum.Unknown && !string.IsNullOrEmpty(turnout.Id)) {
-                        await Client.SendTurnoutCmdAsync(turnout, turnout.State == TurnoutStateEnum.Thrown);
+                        await Client.SendTurnoutCmdAsync(turnout, turnout.Default == TurnoutStateEnum.Thrown);
+                        await Task.Delay(10);   // A short delay to allow messages to send
                     }
                 }
             }

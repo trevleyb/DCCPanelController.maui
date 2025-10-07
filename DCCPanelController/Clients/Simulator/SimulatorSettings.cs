@@ -25,7 +25,7 @@ public partial class SimulatorSettings : DccClientSettings, IDccClientSettings {
     [ObservableProperty] private int    _randomFlipSeconds = 30; // Every 10 Seconds
     [ObservableProperty] private int    _disconnectEvery   = 90;
     [ObservableProperty] private int    _seedCount         = 2;
-    [ObservableProperty] private double _fastClockRate     = 1.2;
+    [ObservableProperty] private double _fastClockRate     = 3;
 
 
 }

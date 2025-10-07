@@ -1,6 +1,8 @@
+using System.Diagnostics;
 using System.IO.Compression;
 using System.Reflection.PortableExecutable;
 using System.Text;
+using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Repository;
 
@@ -25,6 +27,21 @@ public class ProfileService {
         ActiveProfile ??= await CreateAsync("Default");
         ActiveProfileChanged?.Invoke(this, new ProfileChangedEventArgs(null, ActiveProfile));
     }
+
+    public async Task ValidateCatalog() => await ValidateCatalog(_catalog);
+
+    public async Task ValidateCatalog(ProfileCatalog? catalog) {
+        if (catalog is null) throw new ApplicationException("Failed to load profile catalog.");
+        
+        var report = await ProfileRepair.ValidateCatalogAsync(catalog);
+        Console.WriteLine(report.SummaryString());  // or display in UI
+
+        if (report.HasDifferences) {
+            var (removed, added) = await ProfileRepair.RepairCatalogAsync(catalog, report);
+            Console.WriteLine($"Repaired catalog: removed {removed}, added {added}");
+        } 
+    }
+    
     #endregion
 
     #region Events
@@ -42,11 +59,11 @@ public class ProfileService {
         ArgumentNullException.ThrowIfNull(_catalog);
         var active = ActiveProfile?.Filename;
         return _catalog.Profiles.Select(p => {
-                            var name = p.ProfileName;
-                            if (p.IsDefault) name += " (default)";
-                            if (!string.IsNullOrWhiteSpace(active) && p.FileName == active) name += " (active)";
-                            return name;
-                        })
+                           var name = p.ProfileName;
+                           if (p.IsDefault) name += " (default)";
+                           if (!string.IsNullOrWhiteSpace(active) && p.FileName == active) name += " (active)";
+                           return name;
+                       })
                        .ToList();
     }
 
@@ -102,6 +119,7 @@ public class ProfileService {
             using var writer = new StreamWriter(entryStream, Encoding.UTF8, leaveOpen: true);
             writer.Write(json);
         }
+
         return mem.ToArray();
     }
 
@@ -116,6 +134,7 @@ public class ProfileService {
             await using var writer = new StreamWriter(entryStream, Encoding.UTF8, leaveOpen: true);
             await writer.WriteAsync(json);
         }
+
         return mem.ToArray();
     }
 
@@ -155,6 +174,7 @@ public class ProfileService {
             } else {
                 RaiseDataChanged(ProfileDataChangeType.ProfileSaved, uploaded);
             }
+
             return uploaded;
         } finally {
             _gate.Release();
@@ -194,6 +214,7 @@ public class ProfileService {
             "PiedmontSouthern"  => await LoadTemplateAsync("Templates/PiedmontSouthern.json"),
             _                   => await CreateAsync(templateName, false)
         };
+
         return profile ?? await CreateAsync(templateName, false);
     }
 
@@ -207,7 +228,7 @@ public class ProfileService {
             return null;
         }
     }
-    
+
     public async Task<Profile> CreateAsync(string? profileName = null, bool setActive = true) {
         ArgumentNullException.ThrowIfNull(_catalog);
         await _gate.WaitAsync();
@@ -268,10 +289,12 @@ public class ProfileService {
             profile = await CreateAsync("Profile", false);
             if (profile is null) throw new ApplicationException($"Failed to load profile: {fileName}");
         }
+
         SetActive(profile, markAsDefault);
         return profile;
     }
 
     public Task<Profile> LoadAsync(ProfileRef item, bool markAsDefault = false) => LoadAsync(item.FileName, markAsDefault);
     #endregion
+    
 }
