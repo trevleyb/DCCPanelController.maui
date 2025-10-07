@@ -31,8 +31,8 @@ public partial class ImageEntity : DrawingEntity, IDrawingEntity {
 
     [JsonIgnore] protected override int RotationFactor => 90;
 
-    public override string EntityName => "Image";
-    public override string EntityDescription => "Selectable Image";
+    [JsonIgnore] public override string EntityName => "Image";
+    [JsonIgnore] public override string EntityName => "Selectable Image";
     public override string EntityInformation => 
         "This is an **image** which can be selected from either a jpg file on the local device or from your photos. The system makes a copy of the image and stores it in the Panel definition.";
 

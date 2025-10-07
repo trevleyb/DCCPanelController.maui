@@ -22,8 +22,8 @@ public partial class LineEntity : DrawingEntity, IDrawingEntity {
 
     [JsonIgnore] protected override int RotationFactor => 90;
 
-    public override string EntityName => "Line";
-    public override string EntityDescription => "Straight Line";
+    [JsonIgnore] public override string EntityName => "Line";
+    [JsonIgnore] public override string EntityName => "Straight Line";
     public override string EntityInformation =>
         "This is a **drawable** line. The line can be used to mark between 2 points and is either centered left-to-right or top-to-bottom or if you rotate it then it will be corner-to-corner. You can set the color and opacity of the line.";
 

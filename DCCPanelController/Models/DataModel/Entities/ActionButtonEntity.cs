@@ -41,8 +41,8 @@ public partial class ActionButtonEntity : BaseClasses.ButtonEntity, IEntityGener
     public ActionButtonEntity(ActionButtonEntity entity) : base(entity) { }
 
     [JsonIgnore] protected override int RotationFactor => 90;
-    public override string EntityName => "A-Button";
-    public override string EntityDescription => "Trigger Actions Button";
+    [JsonIgnore] public override string EntityName => "A-Button";
+    [JsonIgnore] public override string EntityName => "Trigger Actions Button";
 
     public override string EntityInformation =>
         "This button allows you to trigger actions on the click of the **button**. " +

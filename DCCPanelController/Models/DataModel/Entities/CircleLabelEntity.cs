@@ -52,8 +52,8 @@ public partial class CircleLabelEntity : DrawingEntity, ITextEntity, IDrawingEnt
 
     [JsonIgnore] protected override int RotationFactor => 90;
 
-    public override string EntityName => "Label";
-    public override string EntityDescription => "Circle Label";
+    [JsonIgnore] public override string EntityName => "Label";
+    [JsonIgnore] public override string EntityName => "Circle Label";
     public override string EntityInformation =>
         "A **circle label** is a special circle object that supports an internal text block. This is often used to indicate turnout numbers or references.";
 

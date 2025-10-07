@@ -40,8 +40,8 @@ public partial class TurnoutButtonEntity : BaseClasses.ButtonEntity, IInteractiv
     public Turnout? Turnout => Parent?.Turnout(TurnoutID);
 
     [JsonIgnore] protected override int RotationFactor => 90;
-    public override string EntityName => "T-Button";
-    public override string EntityDescription => "Turnout Toggle Switch";
+    [JsonIgnore] public override string EntityName => "T-Button";
+    [JsonIgnore] public override string EntityName => "Turnout Toggle Switch";
 
     public override string EntityInformation =>
         "The `turnout button` is a special button where the button is directly tied to " +

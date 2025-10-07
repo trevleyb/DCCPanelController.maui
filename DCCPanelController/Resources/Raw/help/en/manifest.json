@@ -3,8 +3,12 @@
   "Files": [
     "index.json",
     "getting-started.md",
-    "turnouts.md",
-    "images/overview.png",
-    "images/turnouts.png"
+    "images/welcome-page.png",
+    "operate.md",
+    "connections.md",
+    "editor.md",
+    "profiles.md",
+    "settings.md",
+    "turnouts.md"
   ]
 }

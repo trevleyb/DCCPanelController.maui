@@ -13,8 +13,8 @@ public class CrossingEntity : TrackEntity, ITrackEntity {
     public CrossingEntity(CrossingEntity entity) : base(entity) { }
 
     [JsonIgnore] public override EntityConnections Connections => EntityConnections.TrackPatterns.CrossingTrack;
-    public override string EntityName => "Crossing";
-    public override string EntityDescription => "90-degree Crossing Track";
+    [JsonIgnore] public override string EntityName => "Crossing";
+    [JsonIgnore] public override string EntityName => "90-degree Crossing Track";
     public override string EntityInformation => 
         "A **crossing** is a 4-way crossing track that can be straight or angled. ";
     

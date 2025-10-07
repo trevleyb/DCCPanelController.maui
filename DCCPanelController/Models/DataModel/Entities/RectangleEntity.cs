@@ -28,8 +28,8 @@ public partial class RectangleEntity : DrawingEntity, IDrawingEntity {
 
     [JsonIgnore] protected override int RotationFactor => 90;
 
-    public override string EntityName => "Rectangle";
-    public override string EntityDescription => "Adjustable Box";
+    [JsonIgnore] public override string EntityName => "Rectangle";
+    [JsonIgnore] public override string EntityName => "Adjustable Box";
     public override string EntityInformation =>
         "This is a **drawable** rectangle which allows you to draw squares and rectangles with a border and internal color. You can set the *opacity* and show it underneath other tracks and objects.";
 

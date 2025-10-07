@@ -22,8 +22,6 @@ public partial class Profile : ObservableObject {
     [ObservableProperty] private DateTime           _fastClock;
     [ObservableProperty] private PowerStateEnum     _powerState;
     [ObservableProperty] private FastClockStateEnum _fastClockState;
-
-    
     
     public Profile(string profileName, string? fileName = null) {
         _filename = string.IsNullOrWhiteSpace(fileName) ? Guid.NewGuid().ToString() : fileName;

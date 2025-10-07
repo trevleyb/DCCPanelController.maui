@@ -10,8 +10,8 @@ public class CompassEntity : Entity {
     public CompassEntity(CompassEntity entity) : base(entity) { }
 
     [JsonIgnore] protected override int RotationFactor => 90;
-    public override string EntityName => "Compass";
-    public override string EntityDescription => "Directional Compass";
+    [JsonIgnore] public override string EntityName => "Compass";
+    [JsonIgnore] public override string EntityName => "Directional Compass";
     public override string EntityInformation =>
         "A simple compass which shows the direction of travel";
     

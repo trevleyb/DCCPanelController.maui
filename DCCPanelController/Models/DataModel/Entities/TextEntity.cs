@@ -36,8 +36,8 @@ public partial class TextEntity : DrawingEntity, ITextEntity, IDrawingEntity {
     
     [JsonIgnore] protected override int RotationFactor => 90;
 
-    public override string EntityName => "Text";
-    public override string EntityDescription => "Text Label";
+    [JsonIgnore] public override string EntityName => "Text";
+    [JsonIgnore] public override string EntityName => "Text Label";
     public override string EntityInformation =>
         "The **text** is a label that can be used to display text on the layout." ;
 

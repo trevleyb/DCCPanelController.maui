@@ -6,6 +6,8 @@ public enum PowerStateEnum { On, Off, Unknown }
 
 public enum FastClockStateEnum { On, Off, Unknown }
 
+public enum FastClockTypeEnum { Analog, Digital }
+
 public enum SwitchStyleEnum { Switch, Light, Button }
 
 public enum ButtonStateEnum { Unknown, On, Off }

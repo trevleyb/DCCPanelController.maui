@@ -33,8 +33,8 @@ public partial class StraightEntity : TrackEntity, ITrackEntity {
             _                         => EntityConnections.TrackPatterns.StraightTrack,
         };
     
-    public override string EntityName => "Track";
-    public override string EntityDescription => "Straight Track";
+    [JsonIgnore] public override string EntityName => "Track";
+    [JsonIgnore] public override string EntityName => "Straight Track";
     public override string EntityInformation =>
         "The **straight** is a straight piece of track .";
 
