@@ -48,6 +48,11 @@ public static class TileSelectorPaletteCache {
                 new SwitchEntity(panel) { SwitchStyle = SwitchStyleEnum.Light, State = ButtonStateEnum.On },
             ]);
 
+            Add("Special", [
+                new FastClockEntity(panel) { FastclockType = FastClockTypeEnum.Analog },
+                new ScriptButtonEntity(panel) { State = ButtonStateEnum.On },
+            ]);
+
             Add("Mainline", [
                 new StraightEntity(panel) { TrackType = TrackTypeEnum.MainLine, TrackStyle = TrackStyleEnum.Normal },
                 new StraightEntity(panel) { TrackType = TrackTypeEnum.MainLine, TrackStyle = TrackStyleEnum.Terminator },
