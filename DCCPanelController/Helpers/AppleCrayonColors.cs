@@ -58,7 +58,7 @@ public static class AppleCrayonColors {
     }
 
     // Cache the colors list to avoid recreation
-    private static readonly Lazy<IReadOnlyList<Color>>      _colors     = new(() => Crayons.Select(crayon => crayon.Color).ToList());
+    private static readonly Lazy<IReadOnlyList<Color>>      _appleColors     = new(() => Crayons.Select(crayon => crayon.Color).ToList());
     private static readonly Lazy<Dictionary<Color, string>> ColorToName = new(() => Crayons.ToDictionary(c => c.Color, c => c.Name));
     private static readonly Lazy<Dictionary<string, Color>> NameToColor = new(() => Crayons.ToDictionary(c => c.Name, c => c.Color, StringComparer.OrdinalIgnoreCase));
 
@@ -118,20 +118,28 @@ public static class AppleCrayonColors {
             new(nameof(AppleCrayonColorsEnum.Carnation), EnumToColor(AppleCrayonColorsEnum.Carnation)),
         });
 
-    public static IReadOnlyList<Color> Colors => _colors.Value;
+    public static IReadOnlyList<Color> Colors => _appleColors.Value;
     public static IReadOnlyList<AppleCrayonColor> Crayons => _crayons.Value;
     public static IReadOnlyList<AppleCrayonColor> Lazy => _crayons.Value;
 
-    public static string Name(Color color) => ColorToName.Value.GetValueOrDefault(color, "Unknown");
+    public static string Name(Color color) {
+        if (Equals(color, Microsoft.Maui.Graphics.Colors.Transparent)) return "Transparent";    
+        return ColorToName.Value.GetValueOrDefault(color, "Unknown");
+    }
 
-    public static Color Value(string name) => NameToColor.Value.TryGetValue(name, out var color) ? color : Microsoft.Maui.Graphics.Colors.White;
+    public static Color Value(string name) {
+        if (name.Equals("Transparent", StringComparison.OrdinalIgnoreCase)) return Microsoft.Maui.Graphics.Colors.Transparent;
+        return NameToColor.Value.TryGetValue(name, out var color) ? color : Microsoft.Maui.Graphics.Colors.White;
+    }
 
     public static bool IsColorLight(Color color) {
+        if (Equals(color, Microsoft.Maui.Graphics.Colors.Transparent)) return true;
         var luminance = 0.299 * color.Red + 0.587 * color.Green + 0.114 * color.Blue;
         return luminance > 0.5;
     }
 
     public static Color GetContrastingTextColor(Color backgroundColor) {
+        if (Equals(backgroundColor, Microsoft.Maui.Graphics.Colors.Transparent)) return EnumToColor(AppleCrayonColorsEnum.Licorice);
         var luminance = 0.299 * backgroundColor.Red + 0.587 * backgroundColor.Green + 0.114 * backgroundColor.Blue;
         return luminance > 0.5 ? EnumToColor(AppleCrayonColorsEnum.Licorice) : EnumToColor(AppleCrayonColorsEnum.Snow);
     }

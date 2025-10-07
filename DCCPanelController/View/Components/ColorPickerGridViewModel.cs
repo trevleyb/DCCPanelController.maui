@@ -38,4 +38,8 @@ public partial class ColorPickerGridViewModel : ObservableObject {
 
     [RelayCommand]
     private async Task OnSave() => ColorSelectionCompleted?.Invoke(SelectedColor);
+    
+    [RelayCommand]
+    private async Task OnNone() => ColorSelectionCompleted?.Invoke(Colors.Transparent);
+
 }
