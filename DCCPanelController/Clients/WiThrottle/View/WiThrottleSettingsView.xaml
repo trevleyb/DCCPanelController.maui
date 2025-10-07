@@ -64,7 +64,7 @@
                    Text="WiThrottle Address and Port"/>
 
             <HorizontalStackLayout HorizontalOptions="Start" Margin="0,-25,0,0">
-                <Border WidthRequest="45" Padding="0" HeightRequest="35" Style="{StaticResource EntryBorderStyle}">
+                <Border WidthRequest="45" Padding="0" HeightRequest="30" Style="{StaticResource EntryBorderStyle}">
                     <Entry Focused="OnEntryFocused"
                            HorizontalOptions="Fill"
                            HorizontalTextAlignment="Center" Text="{Binding IpAddress1, Mode=TwoWay}">
@@ -75,7 +75,7 @@
                 </Border>
                 <Label FontSize="48" Margin="2,2,2,30" Text="." TextColor="{StaticResource Primary}"
                        VerticalOptions="Center"/>
-                <Border WidthRequest="45" Padding="0" HeightRequest="35" Style="{StaticResource EntryBorderStyle}">
+                <Border WidthRequest="45" Padding="0" HeightRequest="30" Style="{StaticResource EntryBorderStyle}">
                     <Entry
                         Focused="OnEntryFocused"
                         HorizontalOptions="Fill"
@@ -87,7 +87,7 @@
                 </Border>
                 <Label FontSize="48" Margin="2,2,2,30" Text="." TextColor="{StaticResource Primary}"
                        VerticalOptions="Center"/>
-                <Border WidthRequest="45" Padding="0" HeightRequest="35" Style="{StaticResource EntryBorderStyle}">
+                <Border WidthRequest="45" Padding="0" HeightRequest="30" Style="{StaticResource EntryBorderStyle}">
                     <Entry
                         Focused="OnEntryFocused"
                         HorizontalOptions="Fill"
@@ -99,7 +99,7 @@
                 </Border>
                 <Label FontSize="48" Margin="2,2,2,30" Text="." TextColor="{StaticResource Primary}"
                        VerticalOptions="Center"/>
-                <Border WidthRequest="45" Padding="0" HeightRequest="35" Style="{StaticResource EntryBorderStyle}">
+                <Border WidthRequest="45" Padding="0" HeightRequest="30" Style="{StaticResource EntryBorderStyle}">
                     <Entry
                         Focused="OnEntryFocused"
                         HorizontalOptions="Fill"
@@ -112,7 +112,7 @@
                 <Label FontSize="48" HorizontalOptions="Center" Margin="2,2,2,10" Text=":"
                        TextColor="{StaticResource Primary}" VerticalOptions="Center"/>
 
-                <Border WidthRequest="90" Padding="0" HeightRequest="35" Style="{StaticResource EntryBorderStyle}">
+                <Border WidthRequest="90" Padding="0" HeightRequest="30" Style="{StaticResource EntryBorderStyle}">
                     <Entry
                         Focused="OnEntryFocused"
                         HorizontalTextAlignment="Center"

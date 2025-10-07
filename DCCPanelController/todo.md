@@ -10,7 +10,7 @@
 ## Bugs and Issues
 - [X] The Save and Load Dialogs need to be corrected - not right
 - [X] EntityInformation and EntityDescription should not be stored as JSON
-- [ ] Add Entity Descriptions for Every Entity
+- [X] Add Entity Descriptions for Every Entity
 - [X] When restoring a Profile, Notes is not being restored - not being CLONED?
 - [ ] On upload of a panel, while the Connection type is set, it is not reflected in the UI
 - [ ] The delete profile option should be disabled when only 1 profile is present

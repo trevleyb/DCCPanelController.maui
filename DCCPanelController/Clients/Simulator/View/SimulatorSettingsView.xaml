@@ -80,7 +80,7 @@
         <Switch Grid.Row="6" Grid.Column="1" IsToggled="{Binding SimulatorSettings.ToggleLights}" VerticalOptions="Center" IsEnabled="{Binding SimulatorSettings.SimulateToggles}"
                 OnColor="{StaticResource Primary}" ThumbColor="{StaticResource Gray200}"/>
 
-        <HorizontalStackLayout Margin="0,10,0,10" Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="4" HorizontalOptions="Center">
+        <HorizontalStackLayout Margin="0,10,0,10" Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="4" HorizontalOptions="Start">
             <Button Text="All Off" Margin="0,0,5,0" WidthRequest="90"
                     Command="{Binding TurnOffAllSettingsCommand}" Style="{StaticResource ButtonOutline}"/>
             <Button Text="Defaults" Margin="5,0,5,0" WidthRequest="100"

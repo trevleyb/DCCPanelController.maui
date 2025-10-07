@@ -96,6 +96,7 @@ public partial class PanelViewerViewModel : ConnectionViewModel {
             if (SelectedPanel is { } panel) {
                 var result = await DisplayAlertHelper.DisplayAlertAsync("Download Panel", "This allows you to download a single Panel to local storage.", "Continue", "Cancel");
                 if (result) {
+                    IsBusy = true;
                     var panelAsJson = panel.DownloadPanel();
                     var fileName = string.IsNullOrEmpty(panel.Id) ? "Panel.panel.json" : $"{panel.Id}.panel.json";
                     var saveResult = await FileHelper.SaveFileAsync("Save Panel", panelAsJson, fileName);
@@ -109,6 +110,8 @@ public partial class PanelViewerViewModel : ConnectionViewModel {
             }
         } catch (Exception ex) {
             _logger.LogCritical("Unable to save the panel: " + ex.Message);
+        } finally {
+            IsBusy = false;
         }
     }
 
@@ -120,6 +123,7 @@ public partial class PanelViewerViewModel : ConnectionViewModel {
             if (result) {
                 var loadResult = await FileHelper.LoadFileAsync("Select a Panel File to upload");
                 if (loadResult is { IsOk: true, Value: { } jsonString }) {
+                    IsBusy = true;
                     if (!string.IsNullOrEmpty(jsonString)) {
                         var panel = Panels.UploadPanel(jsonString);
                         if (panel is { }) {
@@ -133,6 +137,8 @@ public partial class PanelViewerViewModel : ConnectionViewModel {
             }
         } catch (Exception ex) {
             _logger.LogCritical("Unable to upload the panel: " + ex.Message);
+        } finally {
+            IsBusy = false;
         }
     }
 

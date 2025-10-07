@@ -65,7 +65,7 @@
                    Text="JMRI Server Address and Port"/>
 
             <HorizontalStackLayout HorizontalOptions="Start" Margin="0,-25,0,0">
-                <Border WidthRequest="45" Padding="0" HeightRequest="35" Style="{StaticResource EntryBorderStyle}">
+                <Border WidthRequest="45" Padding="0" HeightRequest="30" Style="{StaticResource EntryBorderStyle}">
                     <Entry HorizontalOptions="Fill" Focused="OnEntryFocused" HorizontalTextAlignment="Center"
                            Text="{Binding IpAddress1, Mode=TwoWay}">
                         <Entry.Behaviors>
@@ -75,7 +75,7 @@
                 </Border>
                 <Label FontSize="48" Margin="2,2,2,30" Text="." TextColor="{StaticResource Primary}"
                        VerticalOptions="Center"/>
-                <Border WidthRequest="45" Padding="0" HeightRequest="35" Style="{StaticResource EntryBorderStyle}">
+                <Border WidthRequest="45" Padding="0" HeightRequest="30" Style="{StaticResource EntryBorderStyle}">
                     <Entry
                         Focused="OnEntryFocused"
                         HorizontalOptions="Fill"
@@ -88,7 +88,7 @@
                 <Label FontSize="48" Margin="2,2,2,30" Text="." TextColor="{StaticResource Primary}"
                        VerticalOptions="Center"/>
 
-                <Border WidthRequest="45" Padding="0" HeightRequest="35" Style="{StaticResource EntryBorderStyle}">
+                <Border WidthRequest="45" Padding="0" HeightRequest="30" Style="{StaticResource EntryBorderStyle}">
                     <Entry
                         Focused="OnEntryFocused"
                         HorizontalOptions="Fill"
@@ -100,7 +100,7 @@
                 </Border>
                 <Label FontSize="48" Margin="2,2,2,30" Text="." TextColor="{StaticResource Primary}"
                        VerticalOptions="Center"/>
-                <Border WidthRequest="45" Padding="0" HeightRequest="35" Style="{StaticResource EntryBorderStyle}">
+                <Border WidthRequest="45" Padding="0" HeightRequest="30" Style="{StaticResource EntryBorderStyle}">
                     <Entry
                         Focused="OnEntryFocused"
                         HorizontalOptions="Fill"
@@ -113,7 +113,7 @@
                 <Label FontSize="48" HorizontalOptions="Center" Margin="2,-5,2,2" Text=":"
                        TextColor="{StaticResource Primary}" VerticalOptions="Center"/>
 
-                <Border WidthRequest="90" Padding="0" HeightRequest="35" Style="{StaticResource EntryBorderStyle}">
+                <Border WidthRequest="90" Padding="0" HeightRequest="30" Style="{StaticResource EntryBorderStyle}">
                     <Entry
                         Focused="OnEntryFocused"
                         HorizontalOptions="Fill"
@@ -151,7 +151,7 @@
             HeightRequest="2"
             HorizontalOptions="FillAndExpand"/>
 
-        <Grid RowDefinitions="auto,2,*">
+        <Grid RowDefinitions="auto,2,*" Margin="0">
             <StackLayout>
                 <Grid ColumnDefinitions="*,150">
                     <Label
@@ -172,12 +172,13 @@
                         TextColor="{StaticResource Primary}"
                         VerticalOptions="Center"/>
                 </Grid>
+                
                 <BoxView
                     BackgroundColor="{StaticResource Primary}"
                     HeightRequest="1"
                     HorizontalOptions="FillAndExpand"/>
 
-                <RefreshView VerticalOptions="Start" HeightRequest="100"
+                <RefreshView VerticalOptions="Start" HeightRequest="75"
                              Command="{Binding RefreshServersClickedCommand}"
                              IsRefreshing="{Binding IsRefreshing}">
                     <Grid>

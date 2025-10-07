@@ -189,25 +189,30 @@ public partial class UnifiedSettingsViewModel : BaseViewModel {
             var result = await DisplayAlertHelper.DisplayAlertAsync("Upload Profile?", "This will upload and add a profile from a previously stored profile.", "Continue", "Cancel");
             if (result) {
                 await ProfileService.SaveAsync();
-                
+
                 if (result) {
                     var loadResult = await FileHelper.LoadFileAsync("Select a Profile to upload", "profile.json");
+                    IsBusy = true;
                     if (loadResult is { IsOk: true, Value: { } jsonString }) {
                         if (!string.IsNullOrEmpty(jsonString)) {
-                            var profile = await ProfileService.UploadProfileAsync(jsonString);
+                            var profile = await ProfileService.UploadProfileAsync(jsonString, setActive: true);
                             if (profile.IsOk) {
                                 await DisplayAlertHelper.DisplayToastAlert("Success: Profile Loaded");
                             } else {
                                 await DisplayAlertHelper.DisplayToastAlert($"Unable to upload the profile: {profile.Message}");
                             }
                         }
+
+                        OnProfileChanged();
                     } else {
-                        await DisplayAlertHelper.DisplayToastAlert("Error: Unable to Upload Profile");    
+                        await DisplayAlertHelper.DisplayToastAlert("Error: Unable to Upload Profile");
                     }
                 }
             }
         } catch (Exception ex) {
             await DisplayAlertHelper.DisplayOkAlertAsync("Error", $"An error occurred: {ex.Message}");
+        } finally {
+            IsBusy = false;
         }
     }
 
@@ -215,6 +220,7 @@ public partial class UnifiedSettingsViewModel : BaseViewModel {
         try {
             var result = await DisplayAlertHelper.DisplayAlertAsync("Download Profile?", "This will replace the active profile with a previously stored profile.", "Continue", "Cancel");
             if (result) {
+                IsBusy = true;
                 await ProfileService.SaveAsync();
                 var saveFile = $"{Profile?.ProfileName}.profile.json";
                 var jsonBytes = await ProfileService.DownloadProfileAsync(Profile);
@@ -232,6 +238,8 @@ public partial class UnifiedSettingsViewModel : BaseViewModel {
             }
         } catch (Exception ex) {
             await DisplayAlertHelper.DisplayOkAlertAsync("Error", $"An error occurred: {ex.Message}");
+        } finally {
+            IsBusy = false;
         }
     }
 
