@@ -185,7 +185,7 @@
                      IconImageSource="{Binding CanZoomOut, Converter={StaticResource BoolToIcon}, ConverterParameter=zoom_out}"/>
         <ToolbarItem Text="ZoomIn" Clicked="OnZoomInClicked" IsEnabled="{Binding CanZoomIn}" x:Name="ZoomInIcon"
                      IconImageSource="{Binding CanZoomIn,  Converter={StaticResource BoolToIcon}, ConverterParameter=zoom_in}"/>
-        <ToolbarItem Text="Add" Command="{Binding Path=AddPanelCommand}" IconImageSource="plus_active"/>
+        <ToolbarItem Text="Add" Command="{Binding Path=AddPanelCommand}" IconImageSource="plus_active.png"/>
         <ToolbarItem Text="Duplicate" Command="{Binding Path=DuplicatePanelCommand}"
                      IsEnabled="{Binding IsPanelSelected}"
                      IconImageSource="{Binding IsPanelSelected, Converter={StaticResource BoolToIcon}, ConverterParameter=copy}"/>
@@ -193,7 +193,7 @@
                      IconImageSource="{Binding IsPanelSelected, Converter={StaticResource BoolToIcon}, ConverterParameter=trash_2}"/>
         <ToolbarItem Text="Edit" Command="{Binding Path=EditPanelCommand}" IsEnabled="{Binding IsPanelSelected}"
                      IconImageSource="{Binding IsPanelSelected, Converter={StaticResource BoolToIcon}, ConverterParameter=edit_3}"/>
-        <ToolbarItem Text="Upload" Command="{Binding UploadPanelCommand}" IconImageSource="upload_active"/>
+        <ToolbarItem Text="Upload" Command="{Binding UploadPanelCommand}" IconImageSource="upload_active.png"/>
         <ToolbarItem Text="Download" Command="{Binding DownloadPanelCommand}" IsEnabled="{Binding IsPanelSelected}"
                      x:Name="DownloadToolbarItem"
                      IconImageSource="{Binding IsPanelSelected, Converter={StaticResource BoolToIcon}, ConverterParameter=download}"/>
