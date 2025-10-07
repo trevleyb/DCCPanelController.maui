@@ -15,21 +15,24 @@ public partial class FastClockEntity : Entity, IDrawingEntity {
     [ObservableProperty] [property: Editable("Type", "", 0, "Fastclock")]
     private FastClockTypeEnum _fastclockType = FastClockTypeEnum.Digital;
     
-    [ObservableProperty] [property: Editable("Background", "", 0, "Fastclock")]
+    [ObservableProperty] [property: Editable("Background", "", 1, "Fastclock")]
     private Color _backgroundColor = Colors.White;
 
-    [ObservableProperty] [property: Editable("Border", "", 0, "Fastclock")]
+    [ObservableProperty] [property: Editable("Border", "", 2, "Fastclock")]
     private Color _borderColor = Colors.Black;
 
-    [ObservableProperty] [property: Editable("Hours", "", 0, "Fastclock")]
-    private Color _hoursColor = Colors.Black;
+    [ObservableProperty] [property: Editable("Border Width", "", 3, Group = "Fastclock")]
+    private int _borderWidth = 1;
 
-    [ObservableProperty] [property: Editable("Time", "", 0, "Fastclock")]
+    [ObservableProperty] [property: Editable("Hours:Min", "", 10, "Fastclock")]
     private Color _timeColor = Colors.Black;
 
-    [ObservableProperty] [property: Editable("SecondHand", "", 0, "Fastclock")]
+    [ObservableProperty] [property: Editable("Seconds", "", 11, "Fastclock")]
     private Color _secondHandColor = Colors.Black;
-    
+
+    [ObservableProperty] [property: Editable("Ticks", "", 12, "Fastclock")]
+    private Color _ticksColor = Colors.Black;
+
     [JsonIgnore] protected override int RotationFactor => 0;
     
     [JsonIgnore] public override string EntityName => "Fastclock";
