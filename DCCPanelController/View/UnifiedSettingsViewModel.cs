@@ -186,7 +186,7 @@ public partial class UnifiedSettingsViewModel : BaseViewModel {
 
     [RelayCommand] public async Task UploadSettingsAsync() { /* same logic you already have */
         try {
-            var result = await DisplayAlertHelper.DisplayAlertAsync("Upload Profile?", "This will replace the active profile with a previously stored profile.", "Continue", "Cancel");
+            var result = await DisplayAlertHelper.DisplayAlertAsync("Upload Profile?", "This will upload and add a profile from a previously stored profile.", "Continue", "Cancel");
             if (result) {
                 await ProfileService.SaveAsync();
                 var fileName = await PromptUserForConfigFile();
@@ -195,7 +195,8 @@ public partial class UnifiedSettingsViewModel : BaseViewModel {
                     await ProfileService.UploadProfileAsync(loadedJson);
                     await DisplayAlertHelper.DisplayToastAlert("Success: File Loaded");
                 } else {
-                    throw new Exception("File could not be loaded.");
+                    await DisplayAlertHelper.DisplayToastAlert("Error: Unable to Upload Profile");
+
                 }
             }
         } catch (Exception ex) {
@@ -209,10 +210,14 @@ public partial class UnifiedSettingsViewModel : BaseViewModel {
             if (result) {
                 await ProfileService.SaveAsync();
                 var saveFile = $"{Profile?.ProfileName}.profile.json";
-                var jsonBytes = await ProfileService.DownloadProfileZipAsync(Profile);
-                var location = await FileHelper.ShareFileAsync("Save Profile", jsonBytes, saveFile);
-                await DisplayAlertHelper.DisplayToastAlert("Success: Profile Downloaded");
-                Debug.WriteLine($"Profile Saved to: {saveFile}");
+                var jsonBytes = await ProfileService.DownloadProfileAsync(Profile);
+                if (jsonBytes is { }) {
+                    var location = await FileHelper.ShareFileAsync("Save Profile", jsonBytes, saveFile);
+                    await DisplayAlertHelper.DisplayToastAlert("Success: Profile Downloaded");
+                    Debug.WriteLine($"Profile Saved to: {saveFile}");
+                } else {
+                    await DisplayAlertHelper.DisplayToastAlert("Error: Unable to download the Profile");
+                }
             }
         } catch (Exception ex) {
             await DisplayAlertHelper.DisplayOkAlertAsync("Error", $"An error occurred: {ex.Message}");
