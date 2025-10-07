@@ -1,4 +1,5 @@
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using Microsoft.Maui;
 using Microsoft.Maui.Dispatching;
 using Microsoft.Maui.Media; // ScreenshotFormat
@@ -26,7 +27,7 @@ public static class CleanCapture {
                 var uiView = view.Handler?.PlatformView as UIKit.UIView;
                 if (uiView is null) return null;
 
-// Round to whole pixels to avoid half-pixel slivers
+                // Round to whole pixels to avoid half-pixel slivers
                 var rawBounds = uiView.Bounds;
                 var x = Math.Floor(rawBounds.X);
                 var y = Math.Floor(rawBounds.Y);
@@ -64,7 +65,7 @@ public static class CleanCapture {
                     uiView.DrawViewHierarchy(bounds, true);
                 });
 
-// pixel metadata
+                // pixel metadata
                 var pixelWidth = (int)Math.Round(bounds.Width * uiImage.CurrentScale);
                 var pixelHeight = (int)Math.Round(bounds.Height * uiImage.CurrentScale);
                 var density = (double)uiImage.CurrentScale;
@@ -138,7 +139,7 @@ public static class CleanCapture {
                 break;
 
                 case ScreenshotFormat.Jpeg:
-                    var q = (nfloat)Math.Clamp(quality / 100f, 0f, 1f);
+                    var q = (NFloat)Math.Clamp(quality / 100f, 0f, 1f);
                     data = _image.AsJPEG(q);
                 break;
 

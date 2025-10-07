@@ -497,4 +497,8 @@
         <PackageReference Include="SkiaSharp.NativeAssets.Android" Version="3.119.0" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Resources\Raw\help\en\images\" />
+    </ItemGroup>
+
 </Project>
