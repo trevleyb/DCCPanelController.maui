@@ -41,9 +41,9 @@ public partial class TurnoutButtonEntity : BaseClasses.ButtonEntity, IInteractiv
 
     [JsonIgnore] protected override int RotationFactor => 90;
     [JsonIgnore] public override string EntityName => "T-Button";
-    [JsonIgnore] public override string EntityName => "Turnout Toggle Switch";
+    [JsonIgnore] public override string EntityDescription => "Turnout Toggle Switch";
 
-    public override string EntityInformation =>
+    [JsonIgnore] public override string EntityInformation =>
         "The `turnout button` is a special button where the button is directly tied to " +
         "a specified turnout. The state of the turnout on the panel is only changed if a turnout " +
         "message is recieved from the controller. So you may find you click the button and nothing happens." +

@@ -14,8 +14,8 @@ public class CornerEntity : TrackEntity, ITrackEntity {
 
     [JsonIgnore] public override EntityConnections Connections => EntityConnections.TrackPatterns.CornerTrack;
     [JsonIgnore] public override string EntityName => "Corner";
-    [JsonIgnore] public override string EntityName => "Corner Track";
-    public override string EntityInformation =>
+    [JsonIgnore] public override string EntityDescription => "Corner Track";
+    [JsonIgnore] public override string EntityInformation =>
         "The **corner** is a track that turns 45 degrees (2 to turn 90). ";
 
     public override Entity Clone() => new CornerEntity(this);

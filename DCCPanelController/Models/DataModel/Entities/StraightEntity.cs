@@ -34,8 +34,8 @@ public partial class StraightEntity : TrackEntity, ITrackEntity {
         };
     
     [JsonIgnore] public override string EntityName => "Track";
-    [JsonIgnore] public override string EntityName => "Straight Track";
-    public override string EntityInformation =>
+    [JsonIgnore] public override string EntityDescription => "Straight Track";
+    [JsonIgnore] public override string EntityInformation =>
         "The **straight** is a straight piece of track .";
 
     [JsonIgnore] protected override int RotationFactor => 45;

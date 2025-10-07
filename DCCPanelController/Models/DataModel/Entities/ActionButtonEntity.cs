@@ -42,9 +42,8 @@ public partial class ActionButtonEntity : BaseClasses.ButtonEntity, IEntityGener
 
     [JsonIgnore] protected override int RotationFactor => 90;
     [JsonIgnore] public override string EntityName => "A-Button";
-    [JsonIgnore] public override string EntityName => "Trigger Actions Button";
-
-    public override string EntityInformation =>
+    [JsonIgnore] public override string EntityDescription => "Trigger Actions Button";
+    [JsonIgnore] public override string EntityInformation =>
         "This button allows you to trigger actions on the click of the **button**. " +
         "These actions can include setting other __buttons__, turning on and off __lights__ or switches, " +
         "triggering a __route__, or throwing a __turnout__. When other __buttons__ or __turnouts__ are triggered " +
