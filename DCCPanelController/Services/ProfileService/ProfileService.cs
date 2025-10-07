@@ -94,7 +94,7 @@ public class ProfileService {
     public byte[] DownloadProfileZip(Profile? profile = null) {
         var p = profile ?? ActiveProfile ?? throw new ApplicationException("No active profile to download.");
         var json = JsonRepository.DownloadProfile(p);
-        var entryName = string.IsNullOrWhiteSpace(p.Filename) ? "Profile.json" : p.Filename;
+        var entryName = string.IsNullOrWhiteSpace(p.ProfileName) ? "Profile.json" : p.Filename;
         using var mem = new MemoryStream();
         using (var zip = new ZipArchive(mem, ZipArchiveMode.Create, true)) {
             var entry = zip.CreateEntry(entryName, CompressionLevel.Optimal);
@@ -108,7 +108,7 @@ public class ProfileService {
     public async Task<byte[]> DownloadProfileZipAsync(Profile? profile = null) {
         var p = profile ?? ActiveProfile ?? throw new ApplicationException("No active profile to download.");
         var json = JsonRepository.DownloadProfile(p);
-        var entryName = string.IsNullOrWhiteSpace(p.Filename) ? "Profile.json" : p.Filename;
+        var entryName = string.IsNullOrWhiteSpace(p.ProfileName) ? "Profile.json" : p.Filename;
         using var mem = new MemoryStream();
         using (var zip = new ZipArchive(mem, ZipArchiveMode.Create, true)) {
             var entry = zip.CreateEntry(entryName, CompressionLevel.Optimal);
