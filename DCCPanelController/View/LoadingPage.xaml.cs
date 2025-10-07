@@ -2,11 +2,13 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
-using AVFoundation;
 using DCCPanelController.Helpers;
 using DCCPanelController.Services;
 using DCCPanelController.Services.ProfileService;
 using DCCPanelController.View.TileSelectors;
+#if IOS
+using AVFoundation;
+#endif
 
 namespace DCCPanelController.View;
 

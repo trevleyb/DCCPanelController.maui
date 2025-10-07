@@ -39,10 +39,12 @@
                 HorizontalTextAlignment="Center"/>
 
             <ProgressBar
-                Margin="0,20,0,0"
+                ProgressColor="DarkGray"
+                BackgroundColor="WhiteSmoke"
+                Margin="0,10,0,0"
                 Progress="{Binding Progress}"
                 IsVisible="{Binding IsBusy}"
-                HeightRequest="4"/>
+                HeightRequest="10"/>
             </VerticalStackLayout>
         </Grid>
     </AbsoluteLayout>
