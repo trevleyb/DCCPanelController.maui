@@ -4,7 +4,6 @@ using System.Runtime.CompilerServices;
 using System.Text.Json;
 using AVFoundation;
 using DCCPanelController.Helpers;
-using DCCPanelController.Models.ViewModel.Helpers;
 using DCCPanelController.Services;
 using DCCPanelController.Services.ProfileService;
 using DCCPanelController.View.TileSelectors;

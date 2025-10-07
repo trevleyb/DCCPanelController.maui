@@ -6,14 +6,12 @@ using DCCPanelController.Services;
 using DCCPanelController.Services.ProfileService;
 using DCCPanelController.View;
 using DCCPanelController.View.Components;
-using DCCPanelController.View.TileSelectors;
 using Microsoft.Extensions.Logging;
-using Microsoft.Maui.Controls.Handlers.Items;
 using Serilog;
 using SkiaSharp.Views.Maui.Controls.Hosting;
 using Syncfusion.Maui.Toolkit.Hosting;
-using UIKit;
 #if IOS || MACCATALYST
+using UIKit;
 using Microsoft.Maui.Controls.Handlers.Items2;
 #endif
 
