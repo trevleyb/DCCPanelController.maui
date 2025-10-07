@@ -1,14 +1,16 @@
 using System.ComponentModel;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
+using DCCPanelController.Models.ViewModel.Helpers;
 using DCCPanelController.Models.ViewModel.Interfaces;
 using DCCPanelController.Models.ViewModel.TileCache;
+using DCCPanelController.Services;
 using Microsoft.Maui.Controls;
 using Microsoft.Maui.Graphics;
 
 namespace DCCPanelController.Models.ViewModel.Tiles;
 
-public sealed class FastClockTile : Tile, ITileDrawable {
+public sealed class FastClockTile : Tile, ITileDrawable, ITileInteractive {
     public FastClockTile(FastClockEntity entity, double gridSize) : base(entity, gridSize) { }
 
     private Profile? _profile;
@@ -156,8 +158,7 @@ public sealed class FastClockTile : Tile, ITileDrawable {
     {
         if (_profile is null) return;
 
-        if (e.PropertyName == nameof(Profile.FastClockState))
-        {
+        if (e.PropertyName == nameof(Profile.FastClockState)) {
             UpdateRunningState(); // this starts/stops the timer and snaps the display
             return;
         }
@@ -415,4 +416,22 @@ public sealed class FastClockTile : Tile, ITileDrawable {
             canvas.FillEllipse(cx - size * 0.02f, cy - size * 0.02f, size * 0.04f, size * 0.04f);
         }
     }
+
+    public async Task<bool> Interact(ConnectionService? connectionService) {
+
+        switch (_profile?.FastClockState) {
+        case FastClockStateEnum.On:
+            if (UseClickSounds) await ClickSounds.PlayButtonClickSoundAsync();
+            _profile?.FastClockState = FastClockStateEnum.Off;
+            return true;
+        case FastClockStateEnum.Off:
+            if (UseClickSounds) await ClickSounds.PlayButtonClickSoundAsync();
+            _profile?.FastClockState = FastClockStateEnum.On;
+            return true;
+        default:
+            return false;
+        } 
+    }
+
+    public async Task<bool> Secondary(ConnectionService? connectionService) => false;
 }

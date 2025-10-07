@@ -39,7 +39,7 @@ public partial class TextEntity : DrawingEntity, ITextEntity, IDrawingEntity {
     [JsonIgnore] public override string EntityName => "Text";
     [JsonIgnore] public override string EntityDescription => "Text Label";
     [JsonIgnore]  public override string EntityInformation =>
-        "The **text** is a label that can be used to display text on the layout." ;
+        "The Text Tile is a label that can be used to display text on the layout. You can size it using ther size tool and set the color and opacity." ;
 
     public override void RotateLeft() {
         base.RotateLeft();

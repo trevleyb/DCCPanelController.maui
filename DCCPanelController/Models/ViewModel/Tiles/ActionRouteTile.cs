@@ -10,6 +10,8 @@ using DCCPanelController.Services;
 namespace DCCPanelController.Models.ViewModel.Tiles;
 
 public class ActionRouteTile : Tile, ITileInteractive {
+    private bool _isActionRunning = false;
+
     public ActionRouteTile(RouteEntity entity, double gridSize) : base(entity, gridSize) {
         Watch
            .Track(nameof(RouteEntity.State), () => entity.State)
@@ -24,22 +26,24 @@ public class ActionRouteTile : Tile, ITileInteractive {
     public SvgImage? SvgImage { get; protected set; }
 
     public async Task<bool> Interact(ConnectionService? connectionService) {
-        if (connectionService?.Client is { } client) {
-            if (UseClickSounds) await ClickSounds.PlayRouteClickSoundAsync();
+        if (connectionService?.Client is { } client && !_isActionRunning) {
+            _isActionRunning = true;
             if (Entity is RouteEntity route) {
+                if (UseClickSounds) await ClickSounds.PlayRouteClickSoundAsync();
                 route.State = route.State switch {
                     RouteStateEnum.Unknown  => RouteStateEnum.Active,
                     RouteStateEnum.Active   => RouteStateEnum.Inactive,
                     RouteStateEnum.Inactive => RouteStateEnum.Active,
                     _                       => RouteStateEnum.Unknown,
                 };
-
                 if (Entity is RouteEntity { Route.Id: { } id } routeEntity) {
                     await client.SendRouteCmdAsync(routeEntity.Route, routeEntity.State != RouteStateEnum.Inactive);
                 }
+                _isActionRunning = false;
                 return true;
             }
         }
+        _isActionRunning = false;
         return false;
     }
 

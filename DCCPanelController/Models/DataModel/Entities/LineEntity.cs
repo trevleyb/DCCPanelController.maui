@@ -25,7 +25,7 @@ public partial class LineEntity : DrawingEntity, IDrawingEntity {
     [JsonIgnore] public override string EntityName => "Line";
     [JsonIgnore] public override string EntityDescription => "Straight Line";
     [JsonIgnore] public override string EntityInformation =>
-        "This is a **drawable** line. The line can be used to mark between 2 points and is either centered left-to-right or top-to-bottom or if you rotate it then it will be corner-to-corner. You can set the color and opacity of the line.";
+        "The Line tile is a straight line. The line can be used to draw a line between 2 points and is either centered left-to-right or top-to-bottom or if you rotate it then it will be corner-to-corner. You can set the color and opacity of the line.";
 
     public override Entity Clone() => new LineEntity(this);
 }

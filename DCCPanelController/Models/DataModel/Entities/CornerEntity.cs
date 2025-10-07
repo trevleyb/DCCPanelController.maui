@@ -16,7 +16,7 @@ public class CornerEntity : TrackEntity, ITrackEntity {
     [JsonIgnore] public override string EntityName => "Corner";
     [JsonIgnore] public override string EntityDescription => "Corner Track";
     [JsonIgnore] public override string EntityInformation =>
-        "The **corner** is a track that turns 45 degrees (2 to turn 90). ";
+        "The Corner Track is a track to turn a 45 degree corner. You need to connect 2 corner tracks for a 90 degree turn. ";
 
     public override Entity Clone() => new CornerEntity(this);
 }

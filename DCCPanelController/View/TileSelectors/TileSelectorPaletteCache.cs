@@ -92,6 +92,7 @@ public static class TileSelectorPaletteCache {
             Add("Special", [
                 new FastClockEntity(panel) { FastclockType = FastClockTypeEnum.Analog },
                 new ScriptButtonEntity(panel) { State = ButtonStateEnum.On },
+                new CompassEntity(panel) { },
             ]);
 
             // Return read-only views to prevent accidental mutation of the cache

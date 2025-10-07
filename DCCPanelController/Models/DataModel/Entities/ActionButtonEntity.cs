@@ -44,7 +44,7 @@ public partial class ActionButtonEntity : BaseClasses.ButtonEntity, IEntityGener
     [JsonIgnore] public override string EntityName => "A-Button";
     [JsonIgnore] public override string EntityDescription => "Trigger Actions Button";
     [JsonIgnore] public override string EntityInformation =>
-        "This button allows you to trigger actions on the click of the **button**. " +
+        "The Action Button (**A-Button**) allows you to trigger actions when you click the button and set a button state. " +
         "These actions can include setting other __buttons__, turning on and off __lights__ or switches, " +
         "triggering a __route__, or throwing a __turnout__. When other __buttons__ or __turnouts__ are triggered " +
         "by this button, the actions will cascade down to the __buttons__ and __turnouts__ that are connected to it.";

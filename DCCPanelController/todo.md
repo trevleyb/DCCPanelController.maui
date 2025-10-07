@@ -8,7 +8,7 @@
 - [X] Write a quick validator, and call, that validates the files in the panels folder and the files listed in the index
 
 ## Bugs and Issues
-- [ ] The Save and Load Dialogs need to be corrected - not right
+- [X] The Save and Load Dialogs need to be corrected - not right
 - [X] EntityInformation and EntityDescription should not be stored as JSON
 - [ ] Add Entity Descriptions for Every Entity
 - [X] When restoring a Profile, Notes is not being restored - not being CLONED?

@@ -32,7 +32,8 @@ public partial class SwitchEntity : BaseClasses.ButtonEntity, IInteractiveEntity
     [JsonIgnore] protected override int RotationFactor => 90;
     [JsonIgnore] public override string EntityName => "Switch";
     [JsonIgnore] public override string EntityDescription => "On/Off Switch";
-    [JsonIgnore] public override string EntityInformation => "This button turns on or off a __switch__ normally controlling a light on the layout. ";
+    [JsonIgnore] public override string EntityInformation => 
+        "The On/Off Switch is used to control any pre-defined Lights on your DCC system. Currently it can only control a single light per switch. ";
 
     public override Entity Clone() => new SwitchEntity(this);
 

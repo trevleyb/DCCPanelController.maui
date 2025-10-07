@@ -16,7 +16,7 @@ public class CrossingEntity : TrackEntity, ITrackEntity {
     [JsonIgnore] public override string EntityName => "Crossing";
     [JsonIgnore] public override string EntityDescription => "90-degree Crossing Track";
     [JsonIgnore] public override string EntityInformation => 
-        "A **crossing** is a 4-way crossing track that can be straight or angled. ";
+        "The Crossing Track (**Crossing**) is a track that crosses in the middle and is at 90 degrees. ";
     
     public override Entity Clone() => new CrossingEntity(this);
 }

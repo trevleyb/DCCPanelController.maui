@@ -34,7 +34,9 @@ public partial class ImageEntity : DrawingEntity, IDrawingEntity {
     [JsonIgnore] public override string EntityName => "Image";
     [JsonIgnore] public override string EntityDescription => "Selectable Image";
     [JsonIgnore] public override string EntityInformation => 
-        "This is an **image** which can be selected from either a jpg file on the local device or from your photos. The system makes a copy of the image and stores it in the Panel definition.";
+        "The Image Tile allows you to place an image on your canvas. This is either a file from the local device, or if you grant permission, the file can come from your Photo Library. "+ 
+        "The image itself is stored inside the panel as a copy and so changed to the original will not be reflected unless you change the image in the properties. " +
+        "An image can have opacity and can be scaled so you can place it below or above other objkects on your panel.";
 
     public override Entity Clone() => new ImageEntity(this);
 }

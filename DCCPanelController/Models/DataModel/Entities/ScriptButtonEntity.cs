@@ -34,7 +34,7 @@ public partial class ScriptButtonEntity : ButtonEntity, IInteractiveEntity {
     [JsonIgnore] public override string EntityName => "S-Button";
     [JsonIgnore] public override string EntityDescription => "Script Actions Button";
     [JsonIgnore] public override string EntityInformation =>
-        "This button allows you to execute pre-defined scripts and actions such as reseting all Turnouts to the default state. ";
+        "The Script Button allows you to execute a number of pre-defined Scripts such as resetting all Turnouts to the default state. ";
 
     public ActionsContext Context => ActionsContext.Button;
     public override Entity Clone() => new ScriptButtonEntity(this);

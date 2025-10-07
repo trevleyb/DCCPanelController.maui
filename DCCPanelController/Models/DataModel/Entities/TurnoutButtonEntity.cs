@@ -44,9 +44,9 @@ public partial class TurnoutButtonEntity : BaseClasses.ButtonEntity, IInteractiv
     [JsonIgnore] public override string EntityDescription => "Turnout Toggle Switch";
 
     [JsonIgnore] public override string EntityInformation =>
-        "The `turnout button` is a special button where the button is directly tied to " +
+        "The Turnout Button (*T-Button*) is a special button where the button is directly tied to " +
         "a specified turnout. The state of the turnout on the panel is only changed if a turnout " +
-        "message is recieved from the controller. So you may find you click the button and nothing happens." +
+        "message is recevied from the controller. So you may find you click the button and nothing happens." +
         "This is because while a message to change the turnout has been sent to the controller,  " +
         "no response has yet been processed so the state will not change. ";
 
