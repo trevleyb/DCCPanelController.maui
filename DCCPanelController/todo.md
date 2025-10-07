@@ -1,8 +1,8 @@
 # 📝 Project TODOs
 
 ## Tiles and Ideas
-- [ ] Add a fast clock tile for both Digital and Analog
-- [ ] Add a scripts button tile with a list of scripts
+- [X] Add a fast clock tile for both Digital and Analog
+- [X] Add a scripts button tile with a list of scripts
   - [ ] Allow it to be a Push and Release not Toggle State 
   - [ ] Reset all Turnout States tile
 - [ ] Write a quick validator, and call, that validates the files in the panels folder and the files listed in the index
