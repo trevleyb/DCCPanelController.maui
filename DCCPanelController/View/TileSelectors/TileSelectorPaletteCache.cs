@@ -48,11 +48,6 @@ public static class TileSelectorPaletteCache {
                 new SwitchEntity(panel) { SwitchStyle = SwitchStyleEnum.Light, State = ButtonStateEnum.On },
             ]);
 
-            Add("Special", [
-                new FastClockEntity(panel) { FastclockType = FastClockTypeEnum.Analog },
-                new ScriptButtonEntity(panel) { State = ButtonStateEnum.On },
-            ]);
-
             Add("Mainline", [
                 new StraightEntity(panel) { TrackType = TrackTypeEnum.MainLine, TrackStyle = TrackStyleEnum.Normal },
                 new StraightEntity(panel) { TrackType = TrackTypeEnum.MainLine, TrackStyle = TrackStyleEnum.Terminator },
@@ -84,7 +79,7 @@ public static class TileSelectorPaletteCache {
                 new AngleCrossingEntity(panel) { TrackType = TrackTypeEnum.BranchLine },
                 new CornerEntity(panel) { TrackType = TrackTypeEnum.BranchLine },
             ]);
-
+            
             Add("Shapes", [
                 new TextEntity(panel),
                 new CircleLabelEntity(panel),
@@ -92,6 +87,11 @@ public static class TileSelectorPaletteCache {
                 new LineEntity(panel) { Height = 1, Width = 1, LineColor = Colors.Black, LineWidth = 4 },
                 new CircleEntity(panel) { BackgroundColor = Colors.Silver, BorderColor = Colors.Black },
                 new ImageEntity(panel),
+            ]);
+            
+            Add("Special", [
+                new FastClockEntity(panel) { FastclockType = FastClockTypeEnum.Analog },
+                new ScriptButtonEntity(panel) { State = ButtonStateEnum.On },
             ]);
 
             // Return read-only views to prevent accidental mutation of the cache

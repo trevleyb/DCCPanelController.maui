@@ -1,11 +1,19 @@
 using System.Collections.ObjectModel;
+using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Models.DataModel.Entities;
+using DCCPanelController.Models.DataModel.Repository;
 using DCCPanelController.View.Helpers;
 
 namespace DCCPanelController.Models.DataModel;
 
+
 public partial class Profile : ObservableObject {
+    
+    [JsonPropertyOrder(-100)]
+    [JsonPropertyName(JsonTagValidator.TagPropertyName)]
+    public string Type => nameof(Profile);
+    
     [ObservableProperty] private string                          _filename;
     [ObservableProperty] private string                          _profileName;
     [ObservableProperty] private string                          _profileNotes;

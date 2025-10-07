@@ -98,12 +98,12 @@ public partial class PanelViewerViewModel : ConnectionViewModel {
                 if (result) {
                     var panelAsJson = panel.DownloadPanel();
                     var fileName = string.IsNullOrEmpty(panel.Id) ? "Panel.panel.json" : $"{panel.Id}.panel.json";
-                    var location = await FileHelper.ShareFileAsync("Save Panel", panelAsJson, fileName);
-
-                    //var location = await FileHelper.SaveFileAsync("Save Panel", panelAsJson, fileName);
-                    if (!string.IsNullOrEmpty(location)) {
+                    var saveResult = await FileHelper.SaveFileAsync("Save Panel", panelAsJson, fileName);
+                    if (saveResult.IsOk) {
                         await DisplayAlertHelper.DisplayToastAlert("Panel Downloaded");
-                        Debug.WriteLine($"Panel Saved to: {location}");
+                        Debug.WriteLine($"Panel Saved to: {saveResult.Value}");
+                    } else {
+                        await DisplayAlertHelper.DisplayToastAlert($"{saveResult.Message}");
                     }
                 }
             }
@@ -118,14 +118,16 @@ public partial class PanelViewerViewModel : ConnectionViewModel {
         try {
             var result = await DisplayAlertHelper.DisplayAlertAsync("Upload Panel", "This allows you to upload a previously downloaded panel.", "Continue", "Cancel");
             if (result) {
-                var jsonString = await FileHelper.LoadFileAsync("Select a Panel File to upload");
-                if (!string.IsNullOrEmpty(jsonString)) {
-                    var panel = Panels.UploadPanel(jsonString);
-                    if (panel is { }) {
-                        await DisplayAlertHelper.DisplayToastAlert($"Uploaded Panel: {panel.Id ?? ""}");
-                        await _profileService.SaveAsync();
-                    } else {
-                        await DisplayAlertHelper.DisplayOkAlertAsync("Error", "Unable to upload the provided file as a Panel.");
+                var loadResult = await FileHelper.LoadFileAsync("Select a Panel File to upload");
+                if (loadResult is { IsOk: true, Value: { } jsonString }) {
+                    if (!string.IsNullOrEmpty(jsonString)) {
+                        var panel = Panels.UploadPanel(jsonString);
+                        if (panel is { }) {
+                            await DisplayAlertHelper.DisplayToastAlert($"Uploaded Panel: {panel.Id ?? ""}");
+                            await _profileService.SaveAsync();
+                        } else {
+                            await DisplayAlertHelper.DisplayOkAlertAsync("Error", "Unable to upload the provided file as a Panel.");
+                        }
                     }
                 }
             }

@@ -18,21 +18,25 @@ public sealed class Panels : ObservableCollection<Panel> {
 
     public Panel CreatePanelFrom(Panel panel) => panel.Clone();
 
-    new private Panel Add(Panel panel) {
+    private new Panel Add(Panel panel) {
         base.Add(panel);
         return panel;
     }
 
     public Panel? UploadPanel(string panelAsJson) {
         try {
-            var panel = JsonSerializer.Deserialize<Panel?>(panelAsJson, JsonOptions.Options);
-            if (panel != null) {
-                Add(panel);
-                panel.Panels = this;
+            if (JsonTagValidator.HasTypeTag<Panel>(panelAsJson)) {
+                var panel = JsonSerializer.Deserialize<Panel?>(panelAsJson, JsonOptions.Options);
+                if (panel != null) {
+                    Add(panel);
+                    panel.Panels = this;
+                }
+
+                return panel;
             }
-            return panel;
         } catch {
             return null;
         }
+        return null;
     }
 }

@@ -141,31 +141,26 @@ public class ProfileService {
     public void ExportProfileToFile(string filePath, Profile? profile = null) => File.WriteAllText(filePath, DownloadProfile(profile));
     public void ExportProfileZipToFile(string filePath, Profile? profile = null) => File.WriteAllBytes(filePath, DownloadProfileZip(profile));
 
-    public Task<Profile?> UploadProfileAsync(byte[] content, bool setActive = true, string? displayName = null) {
+    public async Task<Profile?> UploadProfileAsync(byte[] content, bool setActive = true, string? displayName = null) {
         if (content == null || content.Length == 0) throw new ArgumentException("Empty content.", nameof(content));
         var json = IsZip(content) ? ExtractJsonFromZipBytes(content) : Encoding.UTF8.GetString(content);
-        return UploadProfileAsync(json, setActive, displayName);
+        var result = await UploadProfileAsync(json, setActive, displayName);
+        return result.Value;
     }
 
-    public async Task<Profile?> UploadProfileAsync(string json, bool setActive = true, string? displayName = null) {
+    public async Task<IResult<Profile?>> UploadProfileAsync(string json, bool setActive = true, string? displayName = null) {
         ArgumentNullException.ThrowIfNull(_catalog);
-        await _gate.WaitAsync();
+        if (!JsonTagValidator.HasTypeTag<Profile>(json)) return Result<Profile?>.Fail("Not a valid Profile defintion file.");
+        
         try {
+            await _gate.WaitAsync();
             var uploaded = await JsonRepository.UploadProfile(json);
-            if (uploaded is null) return null;
+            if (uploaded is null) return Result<Profile?>.Fail("Unable to upload the Profile.");
 
-            if (!string.IsNullOrWhiteSpace(displayName)) {
-                uploaded.ProfileName = displayName;
-            }
-
-            if (string.IsNullOrWhiteSpace(uploaded.ProfileName)) {
-                uploaded.ProfileName = _catalog.GetUniqueProfileName("Profile");
-            }
-
-            if (string.IsNullOrWhiteSpace(uploaded.Filename)) {
-                uploaded.Filename = $"DCCPanelController.{Guid.NewGuid()}.json";
-            }
-
+            if (!string.IsNullOrWhiteSpace(displayName)) uploaded.ProfileName = displayName;
+            if (string.IsNullOrWhiteSpace(uploaded.ProfileName)) uploaded.ProfileName = _catalog.GetUniqueProfileName("Profile");
+            if (string.IsNullOrWhiteSpace(uploaded.Filename)) uploaded.Filename = $"DCCPanelController.{Guid.NewGuid()}.json";
+            
             await JsonRepository.SaveAsync(uploaded);
             _catalog.Upsert(uploaded);
 
@@ -174,8 +169,7 @@ public class ProfileService {
             } else {
                 RaiseDataChanged(ProfileDataChangeType.ProfileSaved, uploaded);
             }
-
-            return uploaded;
+            return Result<Profile?>.Ok(uploaded);
         } finally {
             _gate.Release();
         }
@@ -223,7 +217,8 @@ public class ProfileService {
             await using var stream = await FileSystem.OpenAppPackageFileAsync(filename);
             using var reader = new StreamReader(stream);
             var json = await reader.ReadToEndAsync();
-            return await UploadProfileAsync(json);
+            var profile = await UploadProfileAsync(json);
+            return profile.Value;
         } catch {
             return null;
         }

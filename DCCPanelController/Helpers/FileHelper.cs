@@ -5,69 +5,45 @@ using CommunityToolkit.Maui.Storage;
 namespace DCCPanelController.Helpers;
 
 public static class FileHelper {
-    public static async Task<string?> ShareFileAsync(string? text, string content, string fileName, Microsoft.Maui.Controls.View? parent = null) => await ShareFileAsync(text, Encoding.UTF8.GetBytes(content ?? ""), fileName, parent);
-    public static async Task<string?> ShareFileAsync(string? text, byte[] content, string fileName, Microsoft.Maui.Controls.View? parent = null) => await ShareFileAsync(text, content, fileName, parent?.Bounds ?? Rect.Zero);
 
-    public static async Task<string?> ShareFileAsync(string? text, byte[] content, string fileName, Rect bounds) {
-        try {
-            var tempPath = Path.Combine(FileSystem.CacheDirectory, fileName);
-            await using (var fs = File.Open(tempPath, FileMode.Create, FileAccess.Write, FileShare.None)) {
-                using var stream = new MemoryStream(content);
-                if (stream.CanSeek) stream.Position = 0;
-                await stream.CopyToAsync(fs);
-            }
+    public static async Task<IResult<string?>> SaveFileAsync(string title, string content, string filename, CancellationToken ct = default) {
+        if (string.IsNullOrWhiteSpace(filename)) filename = "data.json";
+        if (!Path.HasExtension(filename)) filename += ".json";
 
-            var shareTitle = text ?? "Export File";
-            var shareFile = new ShareFile(tempPath);
-            var shareRequest = new ShareFileRequest(shareTitle, shareFile);
-            if (bounds != Rect.Zero) shareRequest.PresentationSourceBounds = bounds;
-            await Share.RequestAsync(shareRequest);
-            return tempPath;
-        } catch (Exception ex) {
-            Debug.WriteLine($"Error saving file: {ex.Message}");
-            return null;
-        }
+        // put content into a stream
+        var bytes = Encoding.UTF8.GetBytes(content);
+        using var mem = new MemoryStream(bytes);
+
+        var res = await FileSaver.Default.SaveAsync(filename, mem, ct);
+        return res.IsSuccessful ? Result<string?>.Ok(res.FilePath) : Result<string?>.Fail(res.Exception, "Unable to save file.");
     }
+    
+    public static async Task<IResult<string?>> LoadFileAsync(string title, string filetype = ".json", CancellationToken ct = default) {
+        if (string.IsNullOrWhiteSpace(filetype)) filetype = "json";
+        var fileTypes = new FilePickerFileType(new Dictionary<DevicePlatform, IEnumerable<string>> {
+            
+            // iOS / Mac Catalyst: Uniform Type Identifiers (UTType)
+            { DevicePlatform.iOS, [$"public.{filetype}", "public.text"] },
+            { DevicePlatform.MacCatalyst, [$"public.{filetype}", "public.text"] },
 
-    /// <summary>
-    ///     Prompts the user to choose a location to save the file and writes the specified content to that location.
-    /// </summary>
-    public static async Task<string?> SaveFileAsync(string? text, string? content, string fileName) {
-        try {
-            // Convert the content into a MemoryStream
-            if (content is { }) {
-                using var stream = new MemoryStream(Encoding.UTF8.GetBytes(content));
-                stream.Position = 0;
-                var fileResult = await FileSaver.SaveAsync(fileName, stream, CancellationToken.None);
-                return fileResult.FilePath;
-            }
-            return null;
-        } catch (Exception ex) {
-            Debug.WriteLine($"Error saving file: {ex.Message}");
-            return null;
-        }
-    }
+            // Android: MIME types
+            { DevicePlatform.Android, [$"application/{filetype}", $"text/{filetype}", "text/plain"] },
 
-    public static async Task<string?> LoadFileAsync(string? text) {
-        try {
-            var fileResult = await FilePicker.PickAsync(new PickOptions {
-                PickerTitle = text ?? "Select a File to Upload",
-                FileTypes = new FilePickerFileType(new Dictionary<DevicePlatform, IEnumerable<string>> {
-                    { DevicePlatform.iOS, new[] { "public.json" } },
-                    { DevicePlatform.MacCatalyst, new[] { "public.json" } },
-                    { DevicePlatform.Android, new[] { "application/json" } },
-                    { DevicePlatform.WinUI, new[] { ".json" } },
-                }),
-            });
-            if (fileResult == null) return null;
+            // Windows: extensions
+            { DevicePlatform.WinUI, [$".{filetype}", ".txt"] }
+        });
 
-            // Read and return the file's content as a string
-            await using var fileStream = await fileResult.OpenReadAsync();
-            using var reader = new StreamReader(fileStream);
-            return await reader.ReadToEndAsync();
-        } catch (Exception ex) {
-            Debug.WriteLine($"Error opening file: {ex.Message}");
-            return null;
-        }
+        if (string.IsNullOrEmpty(title)) title = "Select a Panel file";
+        var result = await FilePicker.PickAsync(new PickOptions {
+            PickerTitle = title,
+            FileTypes   = fileTypes,
+        });
+
+        if (result is null) return Result<string?>.Fail("Load Canceled by User.");
+
+        await using var stream = await result.OpenReadAsync();
+        using var reader = new StreamReader(stream, Encoding.UTF8, leaveOpen:false);
+        var data = await reader.ReadToEndAsync(ct);
+        return Result<string?>.Ok(data);
     }
 }

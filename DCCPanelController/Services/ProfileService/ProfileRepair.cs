@@ -1,3 +1,4 @@
+using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Repository;
 
 namespace DCCPanelController.Services.ProfileService {
@@ -101,8 +102,10 @@ namespace DCCPanelController.Services.ProfileService {
 
                 if (catalogFiles.Contains(file)) continue;
 
-                var loaded = await JsonRepository.LoadAsync(file);
-                if (loaded is not null) orphans.Add(file);
+                if (await JsonTagValidator.HasTypeTagInFileAsync<Profile>(file)) {
+                    var loaded = await JsonRepository.LoadAsync(file);
+                    if (loaded is { }) orphans.Add(file);
+                }
             }
 
             return new CatalogValidationReport(missing, orphans, catalog.Profiles.Count, diskCandidates.Count);
@@ -114,7 +117,7 @@ namespace DCCPanelController.Services.ProfileService {
         /// - Adds loadable orphan files on disk into the catalog.
         /// Does NOT change the active/default selection beyond what ProfileCatalog already enforces.
         /// </summary>
-        public static async Task<(int removed, int added)> RepairCatalogAsync(ProfileCatalog catalog, CatalogValidationReport report) {
+        public static async Task<(int removed, int added)> RepairCatalogAsync(ProfileCatalog catalog, CatalogValidationReport? report) {
             ArgumentNullException.ThrowIfNull(catalog);
             if (report is null || !report.HasDifferences) return(0, 0);
 

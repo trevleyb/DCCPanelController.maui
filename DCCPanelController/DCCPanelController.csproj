@@ -71,7 +71,8 @@
     </PropertyGroup>
     <PropertyGroup Condition="'$(PublicRelease)' != 'true'">
         <!-- e.g., 1.0.103-beta (gabc1234) -->
-        <AssemblyInformationalVersion>$(NBGV_SemVer2) (g$(NBGV_GitCommitIdShort))</AssemblyInformationalVersion>
+        <!-- <AssemblyInformationalVersion>$(NBGV_SemVer2) (g$(NBGV_GitCommitIdShort))</AssemblyInformationalVersion>-->
+        <AssemblyInformationalVersion>$(NBGV_SemVer2)</AssemblyInformationalVersion>
     </PropertyGroup>
 
 

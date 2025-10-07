@@ -15,6 +15,11 @@ namespace DCCPanelController.Models.DataModel;
 /// </summary>
 [DebuggerDisplay("Panel: {Id}")]
 public partial class Panel : ObservableObject, IEntityGeneratingID {
+
+    [JsonPropertyOrder(-100)]
+    [JsonPropertyName(JsonTagValidator.TagPropertyName)]
+    public string Type => nameof(Panel);
+
     [ObservableProperty] [NotifyPropertyChangedFor(nameof(PanelRatio))] private int                          _cols     = 27;
     [ObservableProperty]                                                private ObservableCollection<Entity> _entities = [];
     [ObservableProperty] [NotifyPropertyChangedFor(nameof(Title))]      private string                       _id       = string.Empty;
