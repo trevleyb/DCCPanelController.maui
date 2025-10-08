@@ -22,13 +22,9 @@ using DCCPanelController.View.Helpers;
 namespace DCCPanelController.View;
 
 // Message the OperateView can listen to
-public sealed class ClientTypeChangedMessage : ValueChangedMessage<DccClientType> {
-    public ClientTypeChangedMessage(DccClientType value) : base(value) { }
-}
+public sealed class ClientTypeChangedMessage(DccClientType value) : ValueChangedMessage<DccClientType>(value);
 
-public sealed class ProfileChangedMessage : ValueChangedMessage<Profile> {
-    public ProfileChangedMessage(Profile value) : base(value) { }
-}
+public sealed class ProfileChangedMessage(Profile value) : ValueChangedMessage<Profile>(value);
 
 public partial class UnifiedSettingsViewModel : BaseViewModel {
     private readonly Dictionary<DccClientType, IDccClientSettings> _settingsCache = [];
@@ -73,6 +69,8 @@ public partial class UnifiedSettingsViewModel : BaseViewModel {
             _                        => 0
         };
 
+        // Clear the Cache. It is only to cache if we switch between settings for the same profile
+        _settingsCache.Clear();
         SetActiveSettings(IndexToType(SelectedSegmentIndex), notify: false);
         IsDirty = false;
         HasNotes = !string.IsNullOrEmpty(Profile.ProfileNotes);
@@ -134,6 +132,7 @@ public partial class UnifiedSettingsViewModel : BaseViewModel {
         await ProfileService.SaveAsync();
         await DisplayAlertHelper.DisplayToastAlert("Settings saved");
         IsDirty = false;
+        OnPropertyChanged(nameof(CanDeleteProfile));
     }
 
     [RelayCommand] public async Task SwitchProfileAsync() { /* same logic you already have */
@@ -166,6 +165,7 @@ public partial class UnifiedSettingsViewModel : BaseViewModel {
             OnProfileChanged();
             await DisplayAlertHelper.DisplayToastAlert("New Profile Created");
         }
+        OnPropertyChanged(nameof(CanDeleteProfile));
     }
 
     [RelayCommand] public async Task DeleteProfileAsync() { /* same logic you already have */
@@ -182,6 +182,7 @@ public partial class UnifiedSettingsViewModel : BaseViewModel {
             OnProfileChanged();
         }
         await ProfileService.SaveAsync();
+        OnPropertyChanged(nameof(CanDeleteProfile));
     }
 
     [RelayCommand] public async Task UploadSettingsAsync() { /* same logic you already have */
@@ -193,6 +194,9 @@ public partial class UnifiedSettingsViewModel : BaseViewModel {
                 if (result) {
                     var loadResult = await FileHelper.LoadFileAsync("Select a Profile to upload", "profile.json");
                     IsBusy = true;
+                    await Task.Yield();
+                    await Task.Delay(10);
+
                     if (loadResult is { IsOk: true, Value: { } jsonString }) {
                         if (!string.IsNullOrEmpty(jsonString)) {
                             var profile = await ProfileService.UploadProfileAsync(jsonString, setActive: true);
@@ -221,6 +225,9 @@ public partial class UnifiedSettingsViewModel : BaseViewModel {
             var result = await DisplayAlertHelper.DisplayAlertAsync("Download Profile?", "This will replace the active profile with a previously stored profile.", "Continue", "Cancel");
             if (result) {
                 IsBusy = true;
+                await Task.Yield();
+                await Task.Delay(10);
+                
                 await ProfileService.SaveAsync();
                 var saveFile = $"{Profile?.ProfileName}.profile.json";
                 var jsonBytes = await ProfileService.DownloadProfileAsync(Profile);

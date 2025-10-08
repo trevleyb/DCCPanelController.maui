@@ -37,9 +37,9 @@ public partial class DccClientTestViewModel : ObservableObject {
         ClientTypes = new ObservableCollection<DccClientType>(new[] {
             DccClientType.Jmri, DccClientType.WiThrottle, DccClientType.Simulator
         });
-
-        // default: Simulator to be safe
+        
         SelectedClientType = DccClientType.Simulator;
+        OnSelectedClientTypeChanged(SelectedClientType);
 
         // seed pickers
         TurnoutStates = new ObservableCollection<TurnoutStateEnum>(new[] { TurnoutStateEnum.Closed, TurnoutStateEnum.Thrown });
@@ -53,12 +53,12 @@ public partial class DccClientTestViewModel : ObservableObject {
         ConnectionState = DccClientState.Disconnected;
 
         RefreshCurrentStates();
-        HookMessageStream(); // see method body — designed to work with your existing patterns
+        HookMessageStream(); 
     }
 
     // ---------- Client selection + settings ----------
     public ObservableCollection<DccClientType> ClientTypes { get; }
-    [ObservableProperty] private DccClientType _selectedClientType;
+    [ObservableProperty] private DccClientType _selectedClientType = DccClientType.Simulator;
 
     // Inline settings view models (yours)
     [ObservableProperty] private ContentView?                 _settingsView;
@@ -134,6 +134,8 @@ public partial class DccClientTestViewModel : ObservableObject {
         OnPropertyChanged(nameof(IsJmri));
         OnPropertyChanged(nameof(IsWiThrottle));
         OnPropertyChanged(nameof(IsSimulator));
+        OnPropertyChanged(nameof(SettingsView));
+        
         IsConnected = false;
         IsConnectButtonAvailable = true;
         IsDisconnectButtonAvailable = false;
@@ -357,7 +359,6 @@ public partial class DccClientTestViewModel : ObservableObject {
 
     // ---------- State lookup ----------
     private IDccClient? GetClientOrNull() {
-        // Adjust if your service exposes a different property name for the live client
         var prop = _svc.GetType().GetProperty("DccClient") ?? _svc.GetType().GetProperty("Client");
         return prop?.GetValue(_svc) as IDccClient;
     }

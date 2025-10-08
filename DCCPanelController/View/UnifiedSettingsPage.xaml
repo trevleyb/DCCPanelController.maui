@@ -27,12 +27,13 @@
         <ToolbarItem Command="{Binding UploadSettingsCommand}" IconImageSource="upload_active.png"/>
         <ToolbarItem Command="{Binding DownloadSettingsCommand}" IconImageSource="download_active.png"/>
         <ToolbarItem Command="{Binding SwitchProfileCommand}" IconImageSource="repeat_active.png"/>
-        <ToolbarItem Command="{Binding DeleteProfileCommand}"
-                     IconImageSource="{Binding CanDeleteProfile, Converter={StaticResource BoolToIcon}, ConverterParameter=minus_circle}"/>
+        <ToolbarItem Command="{Binding DeleteProfileCommand}" IsEnabled="{Binding CanDeleteProfile}" IconImageSource="{Binding CanDeleteProfile, Converter={StaticResource BoolToIcon}, ConverterParameter=minus_circle}"/>
         <ToolbarItem Command="{Binding AddProfileCommand}" IconImageSource="plus_circle_active.png"/>
     </ContentPage.ToolbarItems>
 
+    
     <Grid Padding="16" RowDefinitions="Auto,*">
+        <ActivityIndicator Grid.Row="1" IsRunning="{Binding IsBusy}" HorizontalOptions="Center" VerticalOptions="Center"/>
         <Grid ColumnDefinitions="*,*">
             <Label Margin="5" Text="{Binding Profile.ProfileName}" FontAttributes="Bold" FontSize="18"/>
             <BoxView
@@ -46,6 +47,16 @@
 
         <!-- Profile core settings (left on wide, top on narrow) -->
         <ScrollView Grid.Row="1">
+            
+            <ScrollView.Triggers>
+                <DataTrigger TargetType="ScrollView" Binding="{Binding IsBusy}" Value="True">
+                    <Setter Property="Opacity" Value="0.50" />
+                </DataTrigger>
+                <DataTrigger TargetType="ScrollView" Binding="{Binding IsBusy}" Value="False">
+                    <Setter Property="Opacity" Value="1.00" />
+                </DataTrigger>
+            </ScrollView.Triggers>
+            
             <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto">
                 <Grid ColumnDefinitions="Auto,*" Padding="5" RowSpacing="5"
                       RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto"

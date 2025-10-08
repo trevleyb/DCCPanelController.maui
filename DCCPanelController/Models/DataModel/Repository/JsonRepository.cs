@@ -4,6 +4,7 @@ using System.Text.Json;
 using System.Text.RegularExpressions;
 using DCCPanelController.Helpers;
 using DCCPanelController.Helpers.Logging;
+using DCCPanelController.Services.ProfileService;
 using Microsoft.Extensions.Logging;
 
 namespace DCCPanelController.Models.DataModel.Repository;
@@ -17,7 +18,6 @@ public static class JsonRepository {
         try {
             var jsonString = JsonSerializer.Serialize(profile, JsonOptions.Options);
             if (string.IsNullOrEmpty(jsonString)) return;
-
             var fileName = GetStorageFilePath(profile.Filename);
             if (string.IsNullOrWhiteSpace(fileName)) throw new ArgumentNullException(nameof(profile.Filename));
             await File.WriteAllTextAsync(fileName, jsonString);
@@ -145,6 +145,7 @@ public static class JsonRepository {
     public static async Task<Profile?> UploadProfile(string jsonString) {
         try {
             var profile = JsonSerializer.Deserialize<Profile?>(jsonString, JsonOptions.Options) ?? throw new ApplicationException("Could not deserialize settings.");
+            
             profile.Filename = Guid.NewGuid().ToString();
             profile.FixLoadedPanels();
             await SaveAsync(profile);

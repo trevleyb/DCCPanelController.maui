@@ -10,14 +10,16 @@
     xmlns:system="clr-namespace:System;assembly=System.Runtime"
     xmlns:dataModel="clr-namespace:DCCPanelController.Models.DataModel"
     xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
-    xmlns:helpers="clr-namespace:DCCPanelController.View.Helpers">
+    xmlns:helpers="clr-namespace:DCCPanelController.View.Helpers"
+    xmlns:markdig="clr-namespace:Markdig;assembly=Markdig"
+    xmlns:components="clr-namespace:DCCPanelController.View.Components">
 
     <ContentPage.ToolbarItems>
         <ToolbarItem>
             <ToolbarItem.IconImageSource>
                 <MultiBinding Converter="{StaticResource ConnectionIconConverter}">
-                    <Binding Path="IsConnectButtonAvailable"/>     <!-- Parameter 1: bool for _active/_inactive -->
-                    <Binding Path="ConnectionState"/>           <!-- Parameter 2: bool for name selection -->
+                    <Binding Path="IsConnectButtonAvailable" />     <!-- Parameter 1: bool for _active/_inactive -->
+                    <Binding Path="ConnectionState" />           <!-- Parameter 2: bool for name selection -->
                 </MultiBinding>
             </ToolbarItem.IconImageSource>
         </ToolbarItem>
@@ -26,35 +28,42 @@
     <Grid RowDefinitions="auto,*,auto">
         <VerticalStackLayout>
             <Grid Padding="12" Row="0" Column="0" ColumnDefinitions="*,Auto">
+                <VerticalStackLayout>
                     <HorizontalStackLayout Grid.Column="0" Spacing="12" IsEnabled="{Binding IsNotConnected}">
-                        <Picker
-                            FontSize="15"
-                            Title="Select DCC Client"
-                            ItemsSource="{Binding ClientTypes}"
-                            ItemDisplayBinding="{Binding ., x:DataType=clients:DccClientType}"
-                            SelectedItem="{Binding SelectedClientType}"/>
+                        <Label WidthRequest="140" Margin="0,0,5,0" Text="Connection Type :"
+                               Style="{StaticResource MediumLabel}" VerticalOptions="Center" />
+                        <Border Padding="0,0,0,0" HeightRequest="35" Style="{StaticResource EntryBorderStyle}">
+                            <Picker Margin="5" Title="Select DCC Client"
+                                    ItemsSource="{Binding ClientTypes}"
+                                    ItemDisplayBinding="{Binding ., x:DataType=clients:DccClientType}"
+                                    SelectedItem="{Binding SelectedClientType}" />
+                        </Border>
                     </HorizontalStackLayout>
-
-                    <VerticalStackLayout Grid.Column="1" Margin="10,0,0,0">
-                        <HorizontalStackLayout HorizontalOptions="Center">
-                            <Button Text="Connect" Margin="10,0,10,0" StyleClass="Primary"
-                                    MinimumHeightRequest="30"
-                                    WidthRequest="120"
-                                    HeightRequest="30"
-                                    Command="{Binding ConnectCommand}" IsEnabled="{Binding IsConnectButtonAvailable}"/>
-                            <Button Text="Disconnect" Margin="10,5,10,5" Command="{Binding DisconnectCommand}"
-                                    MinimumHeightRequest="30"
-                                    HeightRequest="30"
-                                    WidthRequest="120"
-                                    IsEnabled="{Binding IsDisconnectButtonAvailable}"/>
-                        </HorizontalStackLayout>
-                        
-                        <HorizontalStackLayout Spacing="6" VerticalOptions="Center" HorizontalOptions="Center">
-                            <BoxView WidthRequest="10" HeightRequest="10" CornerRadius="5"
-                                     Color="{Binding ConnectionIndicatorColor}"/>
-                            <Label Text="{Binding ConnectionStatusText}"/>
-                        </HorizontalStackLayout>
-                    </VerticalStackLayout>
+                    <HorizontalStackLayout Margin="0,5,5,5" VerticalOptions="Center">
+                        <BoxView WidthRequest="10" HeightRequest="10" CornerRadius="5" Margin="0,0,0,0"
+                                 Color="{Binding ConnectionIndicatorColor}" VerticalOptions="Center" />
+                        <Label Text="{Binding ConnectionStatusText}" VerticalOptions="Center" Margin="10,0,0,0" TextColor="{Binding ConnectionIndicatorColor}"/>
+                    </HorizontalStackLayout>
+                    
+                    <components:MarkdownLabel
+                        Margin="0,10,10,0"
+                        Text ="This screen is a utility that allows testing of various **DCC systems** by allowing commands to be sent to the DCC System and the responses will show in the Messages box below. **FastClock** and **HeartBeat** messages will also appear in the messages box."/>
+                    
+                </VerticalStackLayout>
+                <FlexLayout Grid.Column="1" Margin="0,0,0,0">
+                    <Button Text="Connect" Margin="5,5,5,5" StyleClass="Primary"
+                            MinimumHeightRequest="30"
+                            WidthRequest="120"
+                            HeightRequest="30"
+                            VerticalOptions="Center"
+                            Command="{Binding ConnectCommand}" IsEnabled="{Binding IsConnectButtonAvailable}" />
+                    <Button Text="Disconnect" Margin="5,5,5,5" Command="{Binding DisconnectCommand}"
+                            MinimumHeightRequest="30"
+                            HeightRequest="30"
+                            WidthRequest="120"
+                            VerticalOptions="Center"
+                            IsEnabled="{Binding IsDisconnectButtonAvailable}" />
+                </FlexLayout>
             </Grid>
 
             <BoxView
@@ -62,53 +71,64 @@
                 BackgroundColor="{StaticResource Primary}"
                 HeightRequest="1"
                 VerticalOptions="Center"
-                HorizontalOptions="FillAndExpand"/>
+                HorizontalOptions="FillAndExpand" />
         </VerticalStackLayout>
 
         <Grid Grid.Row="1" HorizontalOptions="Fill" VerticalOptions="Fill" Margin="0,5,0,0">
             <Grid RowDefinitions="Auto,Auto,Auto,*" ColumnDefinitions="*">
                 <Grid Row="0" x:Name="ClientSettingsView" IsVisible="{Binding IsNotConnected}">
-                    <toolkit:Expander x:Name="MyExpander" IsExpanded="True" Margin="12,0,0,0">
+                    <toolkit:Expander x:Name="MyExpander" IsExpanded="True" Margin="12,0,10,0">
                         <toolkit:Expander.Header>
-                            <Grid ColumnDefinitions="Auto,Auto" VerticalOptions="Center"
-                                  HeightRequest="30">
-                                <Label Grid.Column="1" VerticalOptions="Center"
-                                       Style="{StaticResource MediumLabel}">
+                            <Grid ColumnDefinitions="Auto,Auto" VerticalOptions="Center" HeightRequest="40">
+                                <Label Grid.Column="1" VerticalOptions="Center" Style="{StaticResource MediumLabel}">
                                     <Label.Triggers>
                                         <DataTrigger TargetType="Label"
                                                      Binding="{Binding Source={x:Reference MyExpander}, Path=IsExpanded, x:DataType=toolkit:Expander}"
                                                      Value="True">
-                                            <Setter Property="Text" Value="Client Settings (click to Hide)"/>
+                                            <Setter Property="Text" Value="Client Settings (click to Hide)" />
                                         </DataTrigger>
                                         <DataTrigger TargetType="Label"
                                                      Binding="{Binding Source={x:Reference MyExpander}, Path=IsExpanded, x:DataType=toolkit:Expander}"
                                                      Value="False">
-                                            <Setter Property="Text" Value="Client Settings (click to show)"/>
+                                            <Setter Property="Text" Value="Client Settings (click to show)" />
                                         </DataTrigger>
                                     </Label.Triggers>
                                 </Label>
 
                                 <!-- Optional: chevron that flips -->
                                 <Image HeightRequest="24" WidthRequest="24" Grid.Column="0"
-                                       Source="chevron_circle_right" VerticalOptions="Center" Margin="-5,0,5,0">
+                                       Source="chevron_circle_right.png" VerticalOptions="Center" Margin="-5,0,5,0">
                                     <Image.Triggers>
                                         <DataTrigger TargetType="Image"
                                                      Binding="{Binding Source={x:Reference MyExpander}, Path=IsExpanded, x:DataType=toolkit:Expander}"
                                                      Value="False">
-                                            <Setter Property="Source" Value="chevron_circle_right"/>
+                                            <Setter Property="Source" Value="chevron_circle_right.png" />
                                         </DataTrigger>
                                         <DataTrigger TargetType="Image"
                                                      Binding="{Binding Source={x:Reference MyExpander}, Path=IsExpanded, x:DataType=toolkit:Expander}"
                                                      Value="True">
-                                            <Setter Property="Source" Value="chevron_circle_down"/>
+                                            <Setter Property="Source" Value="chevron_circle_down.png" />
                                         </DataTrigger>
                                     </Image.Triggers>
                                 </Image>
                             </Grid>
                         </toolkit:Expander.Header>
                         <toolkit:Expander.Content>
-
-                            <ContentView Content="{Binding SettingsView}"/>
+                            <!-- <ContentView Content="{Binding SettingsView}" Margin="25,0,0,0"/> -->
+                            <Border
+                                Margin="25,0,25,0"
+                                Padding="2"
+                                Stroke="{StaticResource Primary}"
+                                StrokeThickness="1"
+                                StrokeShape="RoundRectangle 10"
+                                BackgroundColor="#80ebebeb">
+                            
+                                <Border StrokeThickness="0" BackgroundColor="White" StrokeShape="RoundRectangle 10" Margin="5,5,5,5" Padding="5">
+                                    <ContentView Margin="5">
+                                        <ContentView Content="{Binding SettingsView, Mode=OneWay}" />
+                                    </ContentView>
+                                </Border>
+                            </Border>
                         </toolkit:Expander.Content>
                     </toolkit:Expander>
                 </Grid>
@@ -123,58 +143,65 @@
                                     <DataTrigger TargetType="Label"
                                                  Binding="{Binding Source={x:Reference Commands}, Path=IsExpanded, x:DataType=toolkit:Expander}"
                                                  Value="True">
-                                        <Setter Property="Text" Value="Commands (click to hide)"/>
+                                        <Setter Property="Text" Value="Commands (click to hide)" />
                                     </DataTrigger>
                                     <DataTrigger TargetType="Label"
                                                  Binding="{Binding Source={x:Reference Commands}, Path=IsExpanded, x:DataType=toolkit:Expander}"
                                                  Value="False">
-                                        <Setter Property="Text" Value="Commands (click to show)"/>
+                                        <Setter Property="Text" Value="Commands (click to show)" />
                                     </DataTrigger>
                                 </Label.Triggers>
                             </Label>
 
-                            <!-- Optional: chevron that flips -->
                             <Image HeightRequest="24" WidthRequest="24" Grid.Column="0"
-                                   Source="chevron_circle_right" VerticalOptions="Center" Margin="-5,0,5,0">
+                                   Source="chevron_circle_right.png" VerticalOptions="Center" Margin="-5,0,5,0">
                                 <Image.Triggers>
                                     <DataTrigger TargetType="Image"
                                                  Binding="{Binding Source={x:Reference Commands}, Path=IsExpanded, x:DataType=toolkit:Expander}"
                                                  Value="False">
-                                        <Setter Property="Source" Value="chevron_circle_right"/>
+                                        <Setter Property="Source" Value="chevron_circle_right.png" />
                                     </DataTrigger>
                                     <DataTrigger TargetType="Image"
                                                  Binding="{Binding Source={x:Reference Commands}, Path=IsExpanded, x:DataType=toolkit:Expander}"
                                                  Value="True">
-                                        <Setter Property="Source" Value="chevron_circle_down"/>
+                                        <Setter Property="Source" Value="chevron_circle_down.png" />
                                     </DataTrigger>
                                 </Image.Triggers>
                             </Image>
                         </Grid>
                     </toolkit:Expander.Header>
                     <toolkit:Expander.Content>
-                        <VerticalStackLayout Spacing="5">
+                        <Border
+                            Margin="25,0,25,0"
+                            Padding="2"
+                            Stroke="{StaticResource Primary}"
+                            StrokeThickness="1"
+                            StrokeShape="RoundRectangle 10"
+                            BackgroundColor="#80ebebeb">
+
+                        <VerticalStackLayout Spacing="5" Margin="5,5,5,5">
 
                             <!-- TURNOUT -->
                             <Border BackgroundColor="White" Padding="5" StrokeThickness="2" HeightRequest="50"
                                     IsVisible="{Binding SupportsTurnouts}">
                                 <Grid ColumnDefinitions="100,100,auto,Auto,Auto" ColumnSpacing="8" RowSpacing="4">
                                     <Button Grid.Column="0" Text="Send" Command="{Binding SendTurnoutCommand}"
-                                            IsEnabled="{Binding IsConnected}"/>
-                                    <Label Grid.Column="1" Text="Turnout Id:" VerticalOptions="Center"/>
+                                            IsEnabled="{Binding IsConnected}" />
+                                    <Label Grid.Column="1" Text="Turnout Id:" VerticalOptions="Center" />
                                     <Border Grid.Column="2" Style="{StaticResource EntryBorderStyle}">
                                         <Picker ItemsSource="{Binding Profile.Turnouts}"
                                                 SelectedItem="{Binding Turnout}"
-                                                ItemDisplayBinding="{Binding DisplayFormat, x:DataType='dataModel:Turnout'}"/>
+                                                ItemDisplayBinding="{Binding DisplayFormat, x:DataType='dataModel:Turnout'}" />
                                         <!-- <Entry Placeholder="e.g. NT101" Text="{Binding TurnoutId}" /> -->
                                     </Border>
                                     <Border Grid.Column="3" Style="{StaticResource EntryBorderStyle}">
-                                        <Picker Grid.Column="3" WidthRequest="140"
+                                        <Picker WidthRequest="140"
                                                 ItemsSource="{Binding TurnoutStates}"
-                                                SelectedItem="{Binding TurnoutDesired}"/>
+                                                SelectedItem="{Binding TurnoutDesired}" />
                                     </Border>
                                     <Label Grid.Column="4" VerticalOptions="Center"
                                            Text="{Binding TurnoutCurrentText}"
-                                           TextColor="{Binding TurnoutCurrentColor}"/>
+                                           TextColor="{Binding TurnoutCurrentColor}" />
                                 </Grid>
                             </Border>
 
@@ -183,21 +210,21 @@
                                     IsVisible="{Binding SupportsRoutes}">
                                 <Grid ColumnDefinitions="100,100,auto,Auto,Auto" ColumnSpacing="8" RowSpacing="4">
                                     <Button Grid.Column="0" Text="Send" Command="{Binding SendRouteCommand}"
-                                            IsEnabled="{Binding IsConnected}"/>
-                                    <Label Grid.Column="1" Text="Route Id:" VerticalOptions="Center"/>
+                                            IsEnabled="{Binding IsConnected}" />
+                                    <Label Grid.Column="1" Text="Route Id:" VerticalOptions="Center" />
                                     <Border Grid.Column="2" Style="{StaticResource EntryBorderStyle}">
                                         <Picker ItemsSource="{Binding Profile.Routes}" SelectedItem="{Binding Route}"
-                                                ItemDisplayBinding="{Binding DisplayFormat, x:DataType='dataModel:Route'}"/>
+                                                ItemDisplayBinding="{Binding DisplayFormat, x:DataType='dataModel:Route'}" />
                                         <!-- <Entry Grid.Column="2" Placeholder="e.g. RT201" Text="{Binding RouteId}" /> -->
                                     </Border>
                                     <Border Grid.Column="3" Style="{StaticResource EntryBorderStyle}">
-                                        <Picker Grid.Column="3" WidthRequest="140"
+                                        <Picker WidthRequest="140"
                                                 ItemsSource="{Binding RouteStates}"
-                                                SelectedItem="{Binding RouteDesired}"/>
+                                                SelectedItem="{Binding RouteDesired}" />
                                     </Border>
                                     <Label Grid.Column="4" VerticalOptions="Center"
                                            Text="{Binding RouteCurrentText}"
-                                           TextColor="{Binding RouteCurrentColor}"/>
+                                           TextColor="{Binding RouteCurrentColor}" />
                                 </Grid>
                             </Border>
 
@@ -206,21 +233,21 @@
                                     IsVisible="{Binding SupportsSensors}">
                                 <Grid ColumnDefinitions="100,100,auto,Auto,Auto" ColumnSpacing="8" RowSpacing="4">
                                     <Button Grid.Column="0" Text="Send" Command="{Binding SendSensorCommand}"
-                                            IsEnabled="{Binding IsConnected}"/>
-                                    <Label Grid.Column="1" Text="Sensor Id:" VerticalOptions="Center"/>
+                                            IsEnabled="{Binding IsConnected}" />
+                                    <Label Grid.Column="1" Text="Sensor Id:" VerticalOptions="Center" />
                                     <Border Grid.Column="2" Style="{StaticResource EntryBorderStyle}">
                                         <Picker ItemsSource="{Binding Profile.Sensors}" SelectedItem="{Binding Sensor}"
-                                                ItemDisplayBinding="{Binding DisplayFormat, x:DataType='dataModel:Sensor'}"/>
+                                                ItemDisplayBinding="{Binding DisplayFormat, x:DataType='dataModel:Sensor'}" />
                                         <!-- <Entry Grid.Column="2" Placeholder="e.g. SN301" Text="{Binding SensorId}" /> -->
                                     </Border>
                                     <Border Grid.Column="3" Style="{StaticResource EntryBorderStyle}">
-                                        <Picker Grid.Column="3" WidthRequest="140"
+                                        <Picker WidthRequest="140"
                                                 ItemsSource="{Binding BinaryStates}"
-                                                SelectedItem="{Binding SensorDesired}"/>
+                                                SelectedItem="{Binding SensorDesired}" />
                                     </Border>
                                     <Label Grid.Column="4" VerticalOptions="Center"
                                            Text="{Binding SensorCurrentText}"
-                                           TextColor="{Binding SensorCurrentColor}"/>
+                                           TextColor="{Binding SensorCurrentColor}" />
                                 </Grid>
                             </Border>
 
@@ -229,21 +256,21 @@
                                     IsVisible="{Binding SupportsLights}">
                                 <Grid ColumnDefinitions="100,100,auto,Auto,Auto" ColumnSpacing="8" RowSpacing="4">
                                     <Button Grid.Column="0" Text="Send" Command="{Binding SendLightCommand}"
-                                            IsEnabled="{Binding IsConnected}"/>
-                                    <Label Grid.Column="1" Text="Light Id:" VerticalOptions="Center"/>
+                                            IsEnabled="{Binding IsConnected}" />
+                                    <Label Grid.Column="1" Text="Light Id:" VerticalOptions="Center" />
                                     <Border Grid.Column="2" Style="{StaticResource EntryBorderStyle}">
                                         <Picker ItemsSource="{Binding Profile.Lights}" SelectedItem="{Binding Light}"
-                                                ItemDisplayBinding="{Binding DisplayFormat, x:DataType='dataModel:Light'}"/>
+                                                ItemDisplayBinding="{Binding DisplayFormat, x:DataType='dataModel:Light'}" />
                                         <!-- <Entry Grid.Column="2" Placeholder="e.g. LT401" Text="{Binding LightId}" /> -->
                                     </Border>
                                     <Border Grid.Column="3" Style="{StaticResource EntryBorderStyle}">
-                                        <Picker Grid.Column="3" WidthRequest="140"
+                                        <Picker WidthRequest="140"
                                                 ItemsSource="{Binding BinaryStates}"
-                                                SelectedItem="{Binding LightDesired}"/>
+                                                SelectedItem="{Binding LightDesired}" />
                                     </Border>
                                     <Label Grid.Column="4" VerticalOptions="Center"
                                            Text="{Binding LightCurrentText}"
-                                           TextColor="{Binding LightCurrentColor}"/>
+                                           TextColor="{Binding LightCurrentColor}" />
                                 </Grid>
                             </Border>
 
@@ -252,21 +279,21 @@
                                     IsVisible="{Binding SupportsBlocks}">
                                 <Grid ColumnDefinitions="100,100,auto,Auto,Auto" ColumnSpacing="8" RowSpacing="4">
                                     <Button Grid.Column="0" Text="Send" Command="{Binding SendBlockCommand}"
-                                            IsEnabled="{Binding IsConnected}"/>
-                                    <Label Grid.Column="1" Text="Block Id:" VerticalOptions="Center"/>
+                                            IsEnabled="{Binding IsConnected}" />
+                                    <Label Grid.Column="1" Text="Block Id:" VerticalOptions="Center" />
                                     <Border Grid.Column="2" Style="{StaticResource EntryBorderStyle}">
                                         <Picker ItemsSource="{Binding Profile.Blocks}" SelectedItem="{Binding Block}"
-                                                ItemDisplayBinding="{Binding DisplayFormat, x:DataType='dataModel:Block'}"/>
+                                                ItemDisplayBinding="{Binding DisplayFormat, x:DataType='dataModel:Block'}" />
                                         <!-- <Entry Grid.Column="2" Placeholder="e.g. BK501" Text="{Binding BlockId}" /> -->
                                     </Border>
                                     <Border Grid.Column="3" Style="{StaticResource EntryBorderStyle}">
-                                        <Picker Grid.Column="3" WidthRequest="140"
+                                        <Picker WidthRequest="140"
                                                 ItemsSource="{Binding OccupancyStates}"
-                                                SelectedItem="{Binding BlockDesired}"/>
+                                                SelectedItem="{Binding BlockDesired}" />
                                     </Border>
                                     <Label Grid.Column="4" VerticalOptions="Center"
                                            Text="{Binding BlockCurrentText}"
-                                           TextColor="{Binding BlockCurrentColor}"/>
+                                           TextColor="{Binding BlockCurrentColor}" />
                                 </Grid>
                             </Border>
 
@@ -275,25 +302,25 @@
                                     IsVisible="{Binding SupportsSignals}">
                                 <Grid ColumnDefinitions="100,100,auto,Auto,Auto" ColumnSpacing="8" RowSpacing="4">
                                     <Button Grid.Column="0" Text="Send" Command="{Binding SendSignalCommand}"
-                                            IsEnabled="{Binding IsConnected}"/>
-                                    <Label Grid.Column="1" Text="Signal Id:" VerticalOptions="Center"/>
+                                            IsEnabled="{Binding IsConnected}" />
+                                    <Label Grid.Column="1" Text="Signal Id:" VerticalOptions="Center" />
                                     <Border Grid.Column="2" Style="{StaticResource EntryBorderStyle}">
                                         <Picker ItemsSource="{Binding Profile.Signals}" SelectedItem="{Binding Signal}"
-                                                ItemDisplayBinding="{Binding DisplayFormat, x:DataType='dataModel:Signal'}"/>
+                                                ItemDisplayBinding="{Binding DisplayFormat, x:DataType='dataModel:Signal'}" />
                                         <!-- <Entry Grid.Column="2" Placeholder="e.g. SG601" Text="{Binding SignalId}" /> -->
                                     </Border>
                                     <Border Grid.Column="3" Style="{StaticResource EntryBorderStyle}">
                                         <Picker Grid.Column="3" WidthRequest="160"
                                                 ItemsSource="{Binding SignalAspects}"
-                                                SelectedItem="{Binding SignalDesired}"/>
+                                                SelectedItem="{Binding SignalDesired}" />
                                     </Border>
                                     <Label Grid.Column="4" VerticalOptions="Center"
                                            Text="{Binding SignalCurrentText}"
-                                           TextColor="{Binding SignalCurrentColor}"/>
+                                           TextColor="{Binding SignalCurrentColor}" />
                                 </Grid>
                             </Border>
-
                         </VerticalStackLayout>
+                            </Border>
                     </toolkit:Expander.Content>
                 </toolkit:Expander>
 
@@ -304,20 +331,20 @@
                         BackgroundColor="{StaticResource Primary}"
                         HeightRequest="1"
                         VerticalOptions="Center"
-                        HorizontalOptions="FillAndExpand"/>
+                        HorizontalOptions="FillAndExpand" />
 
                     <HorizontalStackLayout Padding="5" Spacing="2" Margin="0,0,0,10">
                         <Label Text="Messages:" Margin="5,0,10,0" Style="{StaticResource MediumLabel}"
                                FontAttributes="Bold"
-                               VerticalOptions="Center"/>
+                               VerticalOptions="Center" />
                         <Button Text="Clear"
                                 HeightRequest="30" WidthRequest="80" Margin="5,0,5,0" MinimumHeightRequest="20"
                                 Padding="5"
-                                VerticalOptions="Center" Command="{Binding ClearMessagesCommand}"/>
+                                VerticalOptions="Center" Command="{Binding ClearMessagesCommand}" />
                         <Button Text="Copy"
                                 HeightRequest="30" WidthRequest="80" Margin="5,0,5,0" MinimumHeightRequest="20"
                                 Padding="5"
-                                VerticalOptions="Center" Command="{Binding CopyMessagesCommand}"/>
+                                VerticalOptions="Center" Command="{Binding CopyMessagesCommand}" />
                         <Button Text="Scroll"
                                 HeightRequest="30" WidthRequest="80" Margin="5,0,5,0" MinimumHeightRequest="20"
                                 Padding="5"
@@ -325,10 +352,10 @@
 
                             <Button.Triggers>
                                 <DataTrigger TargetType="Button" Binding="{Binding AutoScroll}" Value="True">
-                                    <Setter Property="Text" Value="Pause"/>
+                                    <Setter Property="Text" Value="Pause" />
                                 </DataTrigger>
                                 <DataTrigger TargetType="Button" Binding="{Binding AutoScroll}" Value="False">
-                                    <Setter Property="Text" Value="Scroll"/>
+                                    <Setter Property="Text" Value="Scroll" />
                                 </DataTrigger>
                             </Button.Triggers>
 
@@ -340,7 +367,7 @@
                         BackgroundColor="{StaticResource Primary}"
                         HeightRequest="1"
                         VerticalOptions="Center"
-                        HorizontalOptions="FillAndExpand"/>
+                        HorizontalOptions="FillAndExpand" />
 
                 </VerticalStackLayout>
 
@@ -351,12 +378,12 @@
                         <CollectionView.ItemTemplate>
                             <DataTemplate x:DataType="clients:DccClientMessage">
                                 <Grid ColumnDefinitions="Auto,Auto,*" Padding="0,2">
-                                    <Label Text="{Binding TimeStamp}" FontAttributes="Italic" FontSize="12"/>
+                                    <Label Text="{Binding TimeStamp}" FontAttributes="Italic" FontSize="12" />
                                     <Label Margin="10,0,0,0" Grid.Column="1" Text="{Binding MessageTypeCode}"
                                            FontSize="12"
-                                           TextColor="{Binding MessageTypeColor}"/>
+                                           TextColor="{Binding MessageTypeColor}" />
                                     <Label Margin="10,0,0,0" Grid.Column="2" Text="{Binding Message}"
-                                           LineBreakMode="WordWrap"/>
+                                           LineBreakMode="WordWrap" />
                                 </Grid>
                             </DataTemplate>
                         </CollectionView.ItemTemplate>
@@ -367,7 +394,5 @@
 
             </Grid>
         </Grid>
-        <Label Grid.Row="3" Padding="12" FontSize="12" Opacity="0.7"
-               Text="This page is used for testing connections to DCC Systems and generally should not be used."/>
     </Grid>
 </ContentPage>

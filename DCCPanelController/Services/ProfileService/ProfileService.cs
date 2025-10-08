@@ -158,8 +158,8 @@ public class ProfileService {
             if (uploaded is null) return Result<Profile?>.Fail("Unable to upload the Profile.");
 
             if (!string.IsNullOrWhiteSpace(displayName)) uploaded.ProfileName = displayName;
-            if (string.IsNullOrWhiteSpace(uploaded.ProfileName)) uploaded.ProfileName = _catalog.GetUniqueProfileName("Profile");
             if (string.IsNullOrWhiteSpace(uploaded.Filename)) uploaded.Filename = $"DCCPanelController.{Guid.NewGuid()}.json";
+            uploaded.ProfileName = _catalog.GetUniqueProfileName(uploaded.ProfileName ?? "Profile");
             
             await JsonRepository.SaveAsync(uploaded);
             _catalog.Upsert(uploaded);
