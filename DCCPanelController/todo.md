@@ -15,8 +15,8 @@
 - [X] On upload of a panel, while the Connection type is set, it is not reflected in the UI
 - [X] The delete profile option should be disabled when only 1 profile is present
 - [X] Uploading a new profile should change the name if it clashes with an existing profile name
-- [ ] We post a Disconnect Message even when there is nothing to disconnect - so each upload makes the disconnect call - wrong
-- [ ] Check - in simulator test, when I disconnect it calls disconnect 2x
+- [X] We post a Disconnect Message even when there is nothing to disconnect - so each upload makes the disconnect call - wrong
+- [X] Check - in simulator test, when I disconnect it calls disconnect 2x
 - [X] Fix the UI for the DCC System Selector on the Test Page
 - [X] Test Page can be left in the system but add comments and warnings
 
