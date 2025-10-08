@@ -6,7 +6,7 @@ using DCCPanelController.View.Properties.DynamicProperties;
 
 namespace DCCPanelController.Models.DataModel.Entities;
 
-public partial class FastClockEntity : Entity, IDrawingEntity {
+public partial class FastClockEntity : Entity, IDrawingEntity, IInteractiveEntity {
     [JsonConstructor]
     public FastClockEntity() { }
     public FastClockEntity(Panel panel) : this() => Parent = panel;
