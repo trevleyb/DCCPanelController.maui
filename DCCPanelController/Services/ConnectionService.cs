@@ -39,38 +39,32 @@ public partial class ConnectionService : ObservableObject {
         ConnectionState = DccClientState.Disconnected;
         try {
             if (_profileService.ActiveProfile?.Settings.ConnectOnStartup ?? false) await ConnectAsync();
-            _logger.LogInformation("Initialised Connection");
+            _logger.LogInformation("Initialised Connection Service");
         } catch (Exception ex) {
-            _logger.LogError("Initialisation connection error: {Message}", ex.Message);
+            _logger.LogError("Initialisation of Connection Service error: {Message}", ex.Message);
         }
     }
 
     public async Task<IResult> ToggleConnectionAsync() {
         switch (ConnectionState) {
         case DccClientState.Initialising:
-            Debug.WriteLine("Toggle: Initialising Connection");
             _ = await DisconnectAsync();
             return await ConnectAsync();
 
         case DccClientState.Connected:
-            Debug.WriteLine("Toggle: Connected so Disconnecting");
             return await DisconnectAsync();
 
         case DccClientState.Disconnected:
-            Debug.WriteLine("Toggle: Disconnected so Connecting");
             return await ConnectAsync();
 
         case DccClientState.Error:
-            Debug.WriteLine("Toggle: Error so disconnecting and connecting");
             _ = await DisconnectAsync();
             return await ConnectAsync();
 
         case DccClientState.Reconnecting:
-            Debug.WriteLine("Toggle: Reconnecting state so disconnecting and connecting");
             _ = await DisconnectAsync();
             return await ConnectAsync();
         }
-
         throw new Exception("Connection not initialized");
     }
 
@@ -139,12 +133,10 @@ public partial class ConnectionService : ObservableObject {
             await ResetOccupancyStates();
             if (Client.State == DccClientState.Connected) await Client.DisconnectAsync();
             Client.ClientMessage -= ClientOnClientMessage;
+            ConnectionStateChanged -= OnConnectionStateChanged;
             Client = null;
         }
-
         _profileService.ActiveProfile?.FastClockState = FastClockStateEnum.Off;
-        OnConnectionChanged(DccClientState.Disconnected);
-        ConnectionStateChanged -= OnConnectionStateChanged;
         return Result.Ok();
     }
 
@@ -157,7 +149,7 @@ public partial class ConnectionService : ObservableObject {
             if (lastConnectionState != ConnectionState) OnConnectionChanged(ConnectionState);
             AddServerMessage(e.Message ?? new DccClientMessage("Unknown Event."));
         } catch (Exception ex) {
-            Debug.WriteLine("Client Message Error: " + ex.Message);
+            _logger.LogWarning("Client Message Error: " + ex.Message);
         }
     }
 
@@ -197,7 +189,7 @@ public partial class ConnectionService : ObservableObject {
 
         ServerMessages.Add(message);
         #if DEBUG
-        Debug.WriteLine($"SERVER: {message.MessageType.ToString()} @ {message.Operation.ToString()} => {message.Message}");
+        _logger.LogDebug($"SERVER: {message.MessageType.ToString()} @ {message.Operation.ToString()} => {message.Message}");
         #endif
         OnPropertyChanged(nameof(ServerMessages));
     }
