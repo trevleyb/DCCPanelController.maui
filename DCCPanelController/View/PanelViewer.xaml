@@ -181,10 +181,6 @@
     </ContentPage.Resources>
 
     <ContentPage.ToolbarItems>
-        <ToolbarItem Text="ZoomOut" Clicked="OnZoomOutClicked" IsEnabled="{Binding CanZoomOut}" x:Name="ZoomOutIcon"
-                     IconImageSource="{Binding CanZoomOut, Converter={StaticResource BoolToIcon}, ConverterParameter=zoom_out}"/>
-        <ToolbarItem Text="ZoomIn" Clicked="OnZoomInClicked" IsEnabled="{Binding CanZoomIn}" x:Name="ZoomInIcon"
-                     IconImageSource="{Binding CanZoomIn,  Converter={StaticResource BoolToIcon}, ConverterParameter=zoom_in}"/>
         <ToolbarItem Text="Add" Command="{Binding Path=AddPanelCommand}" IconImageSource="plus_active.png"/>
         <ToolbarItem Text="Duplicate" Command="{Binding Path=DuplicatePanelCommand}"
                      IsEnabled="{Binding IsPanelSelected}"
