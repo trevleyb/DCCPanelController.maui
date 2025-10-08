@@ -102,7 +102,7 @@ public partial class PanelViewerViewModel : ConnectionViewModel {
                     var saveResult = await FileHelper.SaveFileAsync("Save Panel", panelAsJson, fileName);
                     if (saveResult.IsOk) {
                         await DisplayAlertHelper.DisplayToastAlert("Panel Downloaded");
-                        Debug.WriteLine($"Panel Saved to: {saveResult.Value}");
+                        _logger.LogInformation($"Panel Saved to: {saveResult.Value}");
                     } else {
                         await DisplayAlertHelper.DisplayToastAlert($"{saveResult.Message}");
                     }

@@ -1,9 +1,11 @@
 // UnifiedSettingsPage.xaml.cs
 
+using Microsoft.Extensions.Logging;
+
 namespace DCCPanelController.View;
 
 public partial class UnifiedSettingsPage : ContentPage {
-    public UnifiedSettingsPage(UnifiedSettingsViewModel vm) {
+    public UnifiedSettingsPage(ILogger<UnifiedSettingsPage> logger, UnifiedSettingsViewModel vm) {
         InitializeComponent();
         BindingContext = vm;
     }

@@ -2,10 +2,12 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Text;
+using DCCPanelController.Helpers.Logging;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.ViewModel.Helpers;
 using DCCPanelController.Models.ViewModel.Interfaces;
 using MethodTimer;
+using Microsoft.Extensions.Logging;
 
 namespace DCCPanelController.Models.ViewModel.Tiles;
 
@@ -84,7 +86,6 @@ public abstract class Tile : ContentView, ITile, IDisposable {
 
     public void ForceRedraw([CallerMemberName] string memberName = "",
         [CallerLineNumber] int sourceLineNumber = 0) {
-        //Console.WriteLine($"Force Redraw Called: {memberName}@{sourceLineNumber}");
         HaveDimensionsChanged = false;
         HaveVisualPropertiesChanged = true;
         RebuildIfNecessary();
@@ -162,7 +163,7 @@ public abstract class Tile : ContentView, ITile, IDisposable {
                      HaveDimensionsChanged = false;       // Reset flag
                      HaveVisualPropertiesChanged = false; // Reset flag
                  } catch (Exception ex) {
-                     Debug.WriteLine($"Error rebuilding tile: {ex.Message}");
+                     LogHelper.Logger.LogWarning($"Error rebuilding tile: {ex.Message}");
                  }
              }, token, TaskContinuationOptions.OnlyOnRanToCompletion, TaskScheduler.Default);
     }

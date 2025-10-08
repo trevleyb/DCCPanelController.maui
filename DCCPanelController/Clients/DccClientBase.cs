@@ -1,13 +1,16 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Clients.Helpers;
 using DCCPanelController.Helpers;
+using DCCPanelController.Helpers.Logging;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
+using Microsoft.Extensions.Logging;
 
 namespace DCCPanelController.Clients;
 
 public abstract partial class DccClientBase(Profile profile) : ObservableObject {
-    protected const int ReconnectDelayMs = 5000;
+    protected       ILogger _logger          = LogHelper.Logger;
+    protected const int     ReconnectDelayMs = 5000;
 
     public event EventHandler<DccClientEvent>? ClientMessage;
     [ObservableProperty] private DccClientState _state;

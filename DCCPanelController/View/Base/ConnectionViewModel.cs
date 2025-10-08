@@ -4,9 +4,11 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using DCCPanelController.Clients;
+using DCCPanelController.Helpers.Logging;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Services;
 using DCCPanelController.Services.ProfileService;
+using Microsoft.Extensions.Logging;
 
 namespace DCCPanelController.View.Base;
 
@@ -41,12 +43,11 @@ public partial class ConnectionViewModel : BaseViewModel {
     private void OnClientTypeChanged(DccClientType type) {
         MainThread.BeginInvokeOnMainThread(async void () => {
             try {
-                Console.WriteLine($"OnClientTypeChanged: {type}");
                 await ConnectionService.DisconnectAsync();
                 IsConnected = ConnectionState == DccClientState.Connected;
                 PropertiesChanged();
             } catch (Exception e) {
-                Debug.WriteLine($"Error in OnClientTypeChanged: {e.Message}");
+                LogHelper.Logger.LogWarning($"Error in OnClientTypeChanged: {e.Message}");
             }
         });
     }

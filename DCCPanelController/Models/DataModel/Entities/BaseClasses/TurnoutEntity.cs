@@ -1,11 +1,13 @@
 using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
+using DCCPanelController.Helpers.Logging;
 using DCCPanelController.Models.DataModel.Entities.Actions;
 using DCCPanelController.Models.DataModel.Entities.Interfaces;
 using DCCPanelController.Models.DataModel.Helpers;
 using DCCPanelController.Services;
 using DCCPanelController.View.Actions;
 using DCCPanelController.View.Properties.DynamicProperties;
+using Microsoft.Extensions.Logging;
 
 // ReSharper disable once CheckNamespace
 namespace DCCPanelController.Models.DataModel.Entities;
@@ -73,7 +75,7 @@ public abstract partial class TurnoutEntity : TrackEntity, IEntityGeneratingID, 
             using (context.BeginCascade(Id)) {
                 var task =TurnoutPanelActions.ApplyAsync(this, ConnectionService.Instance, context);
                 _ = task.ContinueWith(t => {
-                    System.Diagnostics.Debug.WriteLine(t.Exception);
+                    LogHelper.Logger.LogError(t.Exception, "TurnoutActions.ApplyAsync failed");
                 }, TaskContinuationOptions.OnlyOnFaulted);
             }
 

@@ -47,7 +47,7 @@ public partial class PanelViewer {
             if (_connectionService is { }) await _connectionService.DisconnectAsync();
             
         } catch (Exception ex) {
-            Debug.WriteLine($"PanelViewer: Error in OnAppearing: {ex.Message}");
+            _logger.LogError(ex,$"PanelViewer: Error in OnAppearing: {ex.Message}");
         }
     }
 

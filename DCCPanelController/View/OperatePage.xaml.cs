@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using DCCPanelController.Clients;
+using DCCPanelController.Helpers.Logging;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.ViewModel.Interfaces;
@@ -40,7 +41,7 @@ public partial class OperatePage : ContentPage, INotifyPropertyChanged {
             _viewModel.PropertiesChanged(); // Make sure all icons and things are refreshed
             await _viewModel.ReselectActivePanelAsync();
         } catch (Exception ex) {
-            Console.WriteLine($"Exception in OnAppearing: {ex}");
+            _logger.LogError($"Exception in OnAppearing: {ex}");
         }
     }
 
@@ -83,7 +84,7 @@ public partial class OperatePage : ContentPage, INotifyPropertyChanged {
             await HelpService.Current.InitializeAsync();
             await Navigation.PushAsync(new HelpPage());
         } catch (Exception ex) {
-            Debug.WriteLine($"Unable to load the Help system: {ex.Message}");
+            _logger.LogError(ex,$"Unable to load the Help system: {ex.Message}");
         }
     }
 
@@ -101,7 +102,7 @@ public partial class OperatePage : ContentPage, INotifyPropertyChanged {
                 await viewModel.SelectPanelAsync(0);
             }
         } catch (Exception ex) {
-            Debug.WriteLine($"Unable to close the Help Welcome page: {ex.Message}");
+            _logger.LogError(ex, $"Unable to close the Help Welcome page: {ex.Message}");
         }
     }
     

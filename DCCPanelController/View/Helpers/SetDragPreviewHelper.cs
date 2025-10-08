@@ -15,16 +15,11 @@ public static class SetDragPreviewHelper {
         e.PlatformArgs?.SetPreviewProvider(() => {
             try {
                 if ((sender as VisualElement)?.Handler?.PlatformView is not UIView sourceView || sourceView.Window is null) {
-                    Debug.WriteLine("Error setting drag preview: No source view found.");
                     return null;
                 }
 
-                var image = UIImage.FromBundle(Path.GetFileNameWithoutExtension(imageName))
-                         ?? UIImage.FromFile(imageName);
-                if (image is null) {
-                    Debug.WriteLine("Error setting drag preview: Image not found.");
-                    return null;
-                }
+                var image = UIImage.FromBundle(Path.GetFileNameWithoutExtension(imageName)) ?? UIImage.FromFile(imageName);
+                if (image is null) return null;
 
                 var iv = new UIImageView(image) {
                     ContentMode = UIViewContentMode.ScaleAspectFit,
@@ -32,8 +27,7 @@ public static class SetDragPreviewHelper {
                 };
 
                 var target = new UIDragPreview(iv);
-            } catch (Exception ex) {
-                Debug.WriteLine($"Error setting drag preview: {ex.Message}");
+            } catch {
                 return null;
             }
             return null;

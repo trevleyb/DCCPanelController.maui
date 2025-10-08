@@ -9,7 +9,8 @@ using DCCPanelController.Clients.Helpers;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Clients.Jmri.Events;
-using DCCPanelController.Helpers; // JMRI event args
+using DCCPanelController.Helpers;
+using Microsoft.Extensions.Logging; // JMRI event args
 
 namespace DCCPanelController.Clients.Jmri;
 
@@ -383,7 +384,7 @@ public sealed class JmriDccClient : DccClientBase, IDccClient, IDisposable {
         };
 
         if (!handled) {
-            Debug.WriteLine($"Unknown/invalid JMRI JSON: {type} => {item}");
+            _logger.LogInformation($"JMRI Client: Unknown/invalid JMRI JSON: {type} => {item}");
         }
     }
 
@@ -520,7 +521,7 @@ public sealed class JmriDccClient : DccClientBase, IDccClient, IDisposable {
         try {
             await SendMessageAsync(JsonSerializer.Serialize(new { type = "ping" }));
         } catch (Exception ex) {
-            Debug.WriteLine($"JMRI heartbeat send failed: {ex.Message}");
+            _logger.LogInformation($"JMRI Client : heartbeat send failed: {ex.Message}");
         }
     }
 
@@ -531,7 +532,7 @@ public sealed class JmriDccClient : DccClientBase, IDccClient, IDisposable {
             try {
                 if (State == DccClientState.Connected) await SubscribeToUpdatesAsync();
             } catch (Exception ex) {
-                Debug.WriteLine($"JMRI refresh failed: {ex.Message}");
+                _logger.LogInformation($"JMRI Client : refresh failed: {ex.Message}");
             }
         }, null, refreshMs, refreshMs);
     }
@@ -628,7 +629,7 @@ public sealed class JmriDccClient : DccClientBase, IDccClient, IDisposable {
                 await _ws.SendAsync(new ArraySegment<byte>(bytes), WebSocketMessageType.Text, true, CancellationToken.None);
             }
         } catch (Exception ex) {
-            Debug.WriteLine($"JMRI send failed: {ex.Message}");
+            _logger.LogError($"JMRI Client : send failed: {ex.Message}");
             throw;
         }
     }

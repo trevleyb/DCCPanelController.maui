@@ -6,6 +6,7 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using DCCPanelController.Clients;
 using DCCPanelController.Helpers;
+using DCCPanelController.Helpers.Logging;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Services;
 using DCCPanelController.Services.ProfileService;
@@ -50,13 +51,12 @@ public partial class OperateViewModel : ConnectionViewModel {
     
     private async void SettingsOnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
         try {
-            Console.WriteLine($"SettingsOnPropertyChanged: {e.PropertyName}");
             if (e.PropertyName == nameof(Settings.ClientSettings.Type)) {
                 await ConnectionService.DisconnectAsync();
                 PropertiesChanged();
             }
         } catch (Exception ex) {
-            Debug.WriteLine($"Error in SettingsOnPropertyChanged: {ex.Message}");
+            _logger.LogError(ex, $"Error in SettingsOnPropertyChanged: {ex.Message}");
         }
     }
 
@@ -77,7 +77,7 @@ public partial class OperateViewModel : ConnectionViewModel {
                 await SelectPanelAsync(CurrentPanelIndex);
             }
         } catch (Exception ex) {
-            Debug.WriteLine($"Error in OnPropertyChanged '{e.PropertyName}:{ex.Message}");
+            _logger.LogError(ex, $"Error in OnPropertyChanged '{e.PropertyName}:{ex.Message}");
         }
     }
 
@@ -111,8 +111,8 @@ public partial class OperateViewModel : ConnectionViewModel {
             _profileService?.ActiveProfile?.PropertyChanged -= SettingsOnPropertyChanged;
             _profileService?.ActiveProfile?.Settings.PropertyChanged -= SettingsOnPropertyChanged;
 
-        } catch (Exception e) {
-            Debug.WriteLine("Error loading profile: " + e.Message);
+        } catch (Exception ex) {
+            _logger.LogError(ex, "Error loading profile: " + ex.Message);
         }
     }
 
@@ -132,7 +132,7 @@ public partial class OperateViewModel : ConnectionViewModel {
         try {
             await SelectPanelAsync(CurrentPanelIndex);
         } catch {
-            Debug.WriteLine("Error reselecting panel:  probably should never happen.");
+            _logger.LogError("Error reselecting panel:  probably should never happen.");
         }
     }
 
@@ -166,7 +166,7 @@ public partial class OperateViewModel : ConnectionViewModel {
             ShowWelcomePage = Panels?.Count <= 0 || !HaveClosedWelcome;
             RaiseAllProperties();
         } catch (Exception ex) {
-            Debug.WriteLine("Error selecting panel: " + ex.Message);
+            _logger.LogError(ex, "Error selecting panel: " + ex.Message);
         }
     }
 

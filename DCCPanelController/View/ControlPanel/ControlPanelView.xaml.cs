@@ -5,6 +5,7 @@ using System.Runtime.CompilerServices;
 using CommunityToolkit.Maui.Core;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Helpers;
+using DCCPanelController.Helpers.Logging;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.DataModel.Entities.Interfaces;
@@ -924,7 +925,7 @@ public partial class ControlPanelView {
             ClearAllSelectedTiles();
             var tile = e.Data.Properties["Tile"] as ITile ?? null;
             if (tile is null) {
-                Debug.WriteLine("Got a Drop but Tile is not set?");
+                LogHelper.Logger.LogWarning("Got a Drop but Tile is not set?");
                 return;
             }
             if (Panel is { } panel) {
@@ -1007,7 +1008,7 @@ public partial class ControlPanelView {
                 await panel.DrawPanel();
             }
         } catch (Exception ex) {
-            Debug.WriteLine($"ERROR: OnDesignModeChanged: {ex.Message}");
+            LogHelper.Logger.LogWarning($"ERROR: OnDesignModeChanged: {ex.Message}");
         }
     }
 
@@ -1033,7 +1034,7 @@ public partial class ControlPanelView {
                 await control.ForceRefreshAsync();
             }
         } catch (Exception e) {
-            Debug.WriteLine($"ERROR: OnPanelChanged: {e.Message}");
+            LogHelper.Logger.LogWarning($"ERROR: OnPanelChanged: {e.Message}");
         }
     }
 

@@ -1,7 +1,9 @@
 using System.Collections;
 using System.Diagnostics;
+using DCCPanelController.Helpers.Logging;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.DataModel.Entities.Actions;
+using Microsoft.Extensions.Logging;
 
 namespace DCCPanelController.View.Properties.DynamicProperties;
 
@@ -72,7 +74,7 @@ public sealed class EditableExtractorResolver : IEditorKindResolver {
         }
 
         // 5) fallback
-        Debug.WriteLine($"No editor kind found for {t.Name}");
+        LogHelper.Logger.LogWarning($"No editor kind found for {t.Name}");
         return EditorKinds.Text;
     }
 

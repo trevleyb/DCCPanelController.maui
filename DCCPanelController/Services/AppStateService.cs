@@ -37,11 +37,6 @@ public partial class AppStateService : ObservableObject, INotifyPropertyChanged 
         #if DEBUG
         DebugMode = true;
         #endif
-        
-        WeakReferenceMessenger.Default.Register<ProfileChangedMessage>(this, (r, m) => {
-            Console.WriteLine("ProfileChangedMessage: IGNORED");
-        });
-
     }
 
     public static AppStateService Instance => MauiProgram.ServiceHelper.GetService<AppStateService>();

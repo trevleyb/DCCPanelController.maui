@@ -1,10 +1,12 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using CommunityToolkit.Maui.Core;
+using DCCPanelController.Helpers.Logging;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.ViewModel.Interfaces;
 using DCCPanelController.Services;
 using DCCPanelController.View.Helpers;
+using Microsoft.Extensions.Logging;
 #if IOS || MACCATALYST
 #endif
 
@@ -128,7 +130,7 @@ public partial class SideSelectorPanel {
             }
             e.Cancel = true;
         } catch (Exception ex) {
-            Debug.WriteLine("Error selecting tile: " + ex.Message);
+            LogHelper.Logger.LogWarning("Error selecting tile: " + ex.Message);
         }
     }
 

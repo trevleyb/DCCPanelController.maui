@@ -1,11 +1,13 @@
 using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
+using DCCPanelController.Helpers.Logging;
 using DCCPanelController.Models.DataModel.Entities.Actions;
 using DCCPanelController.Models.DataModel.Entities.Interfaces;
 using DCCPanelController.Models.DataModel.Helpers;
 using DCCPanelController.Services;
 using DCCPanelController.View.Actions;
 using DCCPanelController.View.Properties.DynamicProperties;
+using Microsoft.Extensions.Logging;
 
 namespace DCCPanelController.Models.DataModel.Entities;
 
@@ -77,7 +79,7 @@ public partial class ActionButtonEntity : BaseClasses.ButtonEntity, IEntityGener
             using (context.BeginCascade(Id)) {
                 var task = ButtonPanelActions.ApplyAsync(this, ConnectionService.Instance, context);
                 _ = task.ContinueWith(t => {
-                    System.Diagnostics.Debug.WriteLine(t.Exception);
+                    LogHelper.Logger.LogError(t.Exception, "ButtonActions.ApplyAsync failed");
                 }, TaskContinuationOptions.OnlyOnFaulted);
             }
         }

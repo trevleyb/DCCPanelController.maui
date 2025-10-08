@@ -4,7 +4,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using DCCPanelController.Helpers.Logging;
 using DCCPanelController.Services;
+using Microsoft.Extensions.Logging;
 
 namespace DCCPanelController.Models.DataModel.Entities.Actions;
 
@@ -20,8 +22,6 @@ public static class ActionExecutor {
         foreach (var a in actions) {
             using var _ = context.BeginCascade(a.EntityId);
             if (!context.CanCascade(a.EntityId)) continue;
-
-            //Console.WriteLine($"Executing action {a.EntityId} ({a.Kind})");
             
             switch (a.Kind) {
                 case ActionTargetKind.Button:
@@ -41,12 +41,11 @@ public static class ActionExecutor {
         // 2) EXTERNAL COMMANDS (network) – only for turnouts and only once per entity
         if (connectionService.Client is { } client) {
             foreach (var a in actions.Where(x => x.Kind == ActionTargetKind.Turnout)) {
-                //Console.WriteLine($"Sending turnout command for {a.EntityId}");
                 if (a is { Target: TurnoutEntity { Turnout: { } turnout } t, NewState: TurnoutStateEnum ts }) {
                     try {
                         await client.SendTurnoutCmdAsync(turnout, ts != TurnoutStateEnum.Closed);
                     } catch (Exception ex) {
-                        Debug.WriteLine($"Turnout command failed for {t.Id}: {ex.Message}");
+                        LogHelper.Logger.LogWarning($"Turnout command failed for {t.Id}: {ex.Message}");
                     }
                 }
             }

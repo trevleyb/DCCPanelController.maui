@@ -1,7 +1,9 @@
 using System.Diagnostics;
 using CommunityToolkit.Maui.Behaviors;
 using CommunityToolkit.Maui.Core;
+using DCCPanelController.Helpers.Logging;
 using DCCPanelController.Models.ViewModel.Interfaces;
+using Microsoft.Extensions.Logging;
 
 namespace DCCPanelController.View.ControlPanel;
 
@@ -194,7 +196,7 @@ public class GridGestureHelper : IDisposable {
             if (_lpInvokedThisPress) return;
             _longPressDetected = true;
         } catch (Exception ex) {
-            Debug.WriteLine("Error in long press handler: " + ex.Message);
+            LogHelper.Logger.LogWarning("Error in long press handler: " + ex.Message);
         }
     }
     #endregion

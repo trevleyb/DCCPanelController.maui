@@ -3,8 +3,10 @@ using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
+using DCCPanelController.Helpers.Logging;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Repository;
+using Microsoft.Extensions.Logging;
 
 namespace DCCPanelController.Services.ProfileService;
 
@@ -123,7 +125,7 @@ public sealed partial class ProfileCatalog {
         var json = JsonSerializer.Serialize(this, JsonOptions.Options);
         var path = JsonRepository.GetStorageFilePath(FileNameOnDisk);
         File.WriteAllText(path, json);
-        Debug.WriteLine($"Saved ProfileCatalog {member}@{line}: {path}");
+        LogHelper.Logger.LogInformation($"Saved ProfileCatalog {member}@{line}: {path}");
     }
 
     [GeneratedRegex(@"^(.*?)(\s*)(\d+)$")]

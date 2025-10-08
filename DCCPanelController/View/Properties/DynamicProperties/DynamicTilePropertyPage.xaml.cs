@@ -5,10 +5,12 @@ using CommunityToolkit.Maui.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Helpers;
+using DCCPanelController.Helpers.Logging;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Resources.Styles;
 using DCCPanelController.Services;
 using DCCPanelController.View.Converters;
+using Microsoft.Extensions.Logging;
 using Microsoft.Maui.Controls.Shapes;
 using Syncfusion.Maui.Toolkit.Popup;
 
@@ -105,7 +107,7 @@ public partial class DynamicTilePropertyPage {
             var view = (DynamicTilePropertyPage)bindable;
             view.State = await view.RebuildAsync(view.PropertyHost);
         } catch (Exception ex) {
-            Debug.WriteLine($"Error rebuilding DynamicTilePropertyPopupContent: {ex.Message}");
+            LogHelper.Logger.LogError(ex, $"Error rebuilding DynamicTilePropertyPopupContent: {ex.Message}");
         }
     }
     #endregion
@@ -126,7 +128,7 @@ public partial class DynamicTilePropertyPage {
             };
             return content;
         } catch (Exception ex) {
-            Debug.WriteLine($"Error Launching DynamicTilePropertyPopupContent: {ex.Message}");
+            LogHelper.Logger.LogError(ex, $"Error Launching DynamicTilePropertyPopupContent: {ex.Message}");
         }
         return null;
     }
@@ -153,7 +155,7 @@ public partial class DynamicTilePropertyPage {
             };
             page.Popup.Show();
         } catch (Exception ex) {
-            Debug.WriteLine($"Error Launching DynamicTilePropertyPopupContent: {ex.Message}");
+            LogHelper.Logger.LogError(ex, $"Error Launching DynamicTilePropertyPopupContent: {ex.Message}");
         }
     }
 
@@ -213,7 +215,7 @@ public partial class DynamicTilePropertyPage {
                 page.ClosePropertyPage();
             }
         } catch (Exception ex) {
-            Debug.WriteLine($"Error Applying DynamicTilePropertyPopupContent: {ex.Message}");
+            LogHelper.Logger.LogError(ex, $"Error Applying DynamicTilePropertyPopupContent: {ex.Message}");
         }
     }
 
@@ -225,7 +227,7 @@ public partial class DynamicTilePropertyPage {
                 page.ClosePropertyPage();
             }
         } catch (Exception ex) {
-            Debug.WriteLine($"Error Cancelling DynamicTilePropertyPopupContent: {ex.Message}");
+            LogHelper.Logger.LogError(ex, $"Error Cancelling DynamicTilePropertyPopupContent: {ex.Message}");
         }
     }
     #endregion

@@ -3,9 +3,11 @@ using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
 using DCCPanelController.Helpers;
+using DCCPanelController.Helpers.Logging;
 using DCCPanelController.Services;
 using DCCPanelController.Services.ProfileService;
 using DCCPanelController.View.TileSelectors;
+using Microsoft.Extensions.Logging;
 #if IOS
 using AVFoundation;
 #endif
@@ -55,7 +57,7 @@ public partial class LoadingPage : ContentPage, INotifyPropertyChanged {
         _started = true;
 
         _startupTask = InitializeOnceAsync();
-        _ = _startupTask.ContinueWith(t => { Debug.WriteLine(t.Exception); }, TaskContinuationOptions.OnlyOnFaulted);
+        _ = _startupTask.ContinueWith(t => { LogHelper.Logger.LogError(t.Exception,"DynamicTileProperty Form : OnAppearing Error"); }, TaskContinuationOptions.OnlyOnFaulted);
     }
 
     private async Task InitializeOnceAsync() {
@@ -88,7 +90,7 @@ public partial class LoadingPage : ContentPage, INotifyPropertyChanged {
                     session.SetMode(AVAudioSessionMode.Default, out _);
                     session.SetActive(true, out _);
                 } catch (Exception ex) {
-                    Debug.WriteLine($"Audio init warning: {ex.Message}");
+                    LogHelper.Logger.LogWarning(ex, $"Audio init warning.");
                 }
                 await Task.CompletedTask;
             });
@@ -200,7 +202,7 @@ public partial class LoadingPage : ContentPage, INotifyPropertyChanged {
             try {
                 await using var _ = await FileSystem.OpenAppPackageFileAsync($"{HelpService.PackedRoot}/{file}");
             } catch (Exception ex) {
-                Debug.WriteLine($"❌ Bundled '{file}' missing/inaccessible: {ex.Message}");
+                LogHelper.Logger.LogError(ex, $"❌ Bundled '{file}' missing/inaccessible: {ex.Message}");
             }
         }
     }
@@ -214,7 +216,7 @@ public partial class LoadingPage : ContentPage, INotifyPropertyChanged {
         foreach (var file in manifest.Files) {
             var p = Path.Combine(HelpService.InstalledRoot, file);
             if (!File.Exists(p))
-                Debug.WriteLine($"❌ Extracted '{file}' missing at {p}");
+                LogHelper.Logger.LogWarning($"❌ Extracted '{file}' missing at {p}");
         }
     }
 }

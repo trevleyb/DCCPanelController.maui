@@ -5,12 +5,14 @@ using System.Text;
 using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Repository;
+using Microsoft.Extensions.Logging;
 
 namespace DCCPanelController.Services.ProfileService;
 
-public class ProfileService {
-    private readonly SemaphoreSlim   _gate = new(1, 1);
-    private          ProfileCatalog? _catalog;
+public class ProfileService(ILogger<ProfileService> logger) {
+    private readonly ILogger<ProfileService> _logger = logger;
+    private readonly SemaphoreSlim           _gate = new(1, 1);
+    private          ProfileCatalog?         _catalog;
 
     public Profile? ActiveProfile { get; private set; }
 
@@ -34,11 +36,11 @@ public class ProfileService {
         if (catalog is null) throw new ApplicationException("Failed to load profile catalog.");
         
         var report = await ProfileRepair.ValidateCatalogAsync(catalog);
-        Console.WriteLine(report.SummaryString());  // or display in UI
+        _logger.LogInformation(report.SummaryString());  // or display in UI
 
         if (report.HasDifferences) {
             var (removed, added) = await ProfileRepair.RepairCatalogAsync(catalog, report);
-            Console.WriteLine($"Repaired catalog: removed {removed}, added {added}");
+            _logger.LogWarning($"Repaired catalog: removed {removed}, added {added}");
         } 
     }
     

@@ -71,7 +71,7 @@ public partial class PanelEditor : ContentPage {
         base.OnNavigatedFrom(args);
 
         if (!_viewModel.ExitViaBackButton) {
-            Debug.WriteLine("WARNING! Exiting Editor NOT via Back Button. No SAVE");
+            _logger.LogCritical("WARNING! Exiting Editor NOT via Back Button. No SAVE");
         }
 
         PanelView.TileSelected -= PanelViewOnTileSelected;
@@ -115,7 +115,7 @@ public partial class PanelEditor : ContentPage {
                 }
             }
         } catch (Exception ex) {
-            Debug.WriteLine($"Exception in PanelViewOnTileTapped: {ex.Message}");
+            _logger.LogError(ex, $"Exception in PanelViewOnTileTapped: {ex.Message}");
         }
     }
 

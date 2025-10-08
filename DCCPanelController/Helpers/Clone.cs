@@ -3,7 +3,9 @@ using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Reflection;
 using DCCPanelController.Helpers.Attributes;
+using DCCPanelController.Helpers.Logging;
 using DCCPanelController.Models.DataModel.Entities.Actions;
+using Microsoft.Extensions.Logging;
 
 namespace DCCPanelController.Helpers;
 
@@ -63,7 +65,7 @@ public static class ObjectCloner {
                 var clonedValue = CloneObject(value, new Dictionary<object, object>(), exclusions);
                 property.SetValue(target, clonedValue);
             } catch (Exception ex) {
-                Debug.WriteLine($"Failed to clone property {property.Name}: {ex.Message}");
+                LogHelper.Logger.LogWarning($"Failed to clone property {property.Name}: {ex.Message}");
             }
         }
     }
@@ -206,7 +208,7 @@ public static class ObjectCloner {
 
             return copy;
         } catch (Exception ex) {
-            Debug.WriteLine($"Unable to clone generic collection '{type}': {ex.Message}");
+            LogHelper.Logger.LogWarning($"Unable to clone generic collection '{type}': {ex.Message}");
             throw;
         }
     }
@@ -223,7 +225,7 @@ public static class ObjectCloner {
 
             return copy;
         } catch (Exception ex) {
-            Debug.WriteLine($"Unable to clone list '{sourceList.GetType()}': {ex.Message}");
+            LogHelper.Logger.LogWarning($"Unable to clone list '{sourceList.GetType()}': {ex.Message}");
             throw;
         }
     }
@@ -241,7 +243,7 @@ public static class ObjectCloner {
 
             return copy;
         } catch (Exception ex) {
-            Debug.WriteLine($"Unable to clone dictionary '{sourceDictionary.GetType()}': {ex.Message}");
+            LogHelper.Logger.LogWarning($"Unable to clone dictionary '{sourceDictionary.GetType()}': {ex.Message}");
             throw;
         }
     }
@@ -262,7 +264,7 @@ public static class ObjectCloner {
 
             return copy;
         } catch (Exception ex) {
-            Debug.WriteLine($"Unable to clone reference type '{type}': {ex.Message}");
+            LogHelper.Logger.LogWarning($"Unable to clone reference type '{type}': {ex.Message}");
             throw;
         }
     }
@@ -351,7 +353,7 @@ public static class ObjectCloner {
                     UpdateObject(originalValue, modifiedValue, visited, exclusions);
                 }
             } catch (Exception ex) {
-                Debug.WriteLine($"Failed to update property {property.Name}: {ex.Message}");
+                LogHelper.Logger.LogWarning($"Failed to update property {property.Name}: {ex.Message}");
             }
         }
     }

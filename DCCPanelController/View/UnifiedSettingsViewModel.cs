@@ -18,6 +18,7 @@ using DCCPanelController.Services.ProfileService;
 using DCCPanelController.View.Base;
 using DCCPanelController.View.Components;
 using DCCPanelController.View.Helpers;
+using Microsoft.Extensions.Logging;
 
 namespace DCCPanelController.View;
 
@@ -27,6 +28,7 @@ public sealed class ClientTypeChangedMessage(DccClientType value) : ValueChanged
 public sealed class ProfileChangedMessage(Profile value) : ValueChangedMessage<Profile>(value);
 
 public partial class UnifiedSettingsViewModel : BaseViewModel {
+    private          ILogger<UnifiedSettingsViewModel>             _logger;
     private readonly Dictionary<DccClientType, IDccClientSettings> _settingsCache = [];
 
     public readonly ProfileService    ProfileService;
@@ -45,7 +47,8 @@ public partial class UnifiedSettingsViewModel : BaseViewModel {
     public Settings? Settings => Profile?.Settings;
     public bool CanDeleteProfile => ProfileService.NumberOfProfiles > 1;
 
-    public UnifiedSettingsViewModel(ProfileService profileService, ConnectionService connectionService) {
+    public UnifiedSettingsViewModel(ILogger<UnifiedSettingsViewModel> logger, ProfileService profileService, ConnectionService connectionService) {
+        _logger = logger;
         ProfileService = profileService;
         ConnectionService = connectionService;
         OnProfileChanged();
@@ -235,7 +238,7 @@ public partial class UnifiedSettingsViewModel : BaseViewModel {
                     var saveResult = await FileHelper.SaveFileAsync("Save Profile", jsonBytes, saveFile);
                     if (saveResult.IsOk) {
                         await DisplayAlertHelper.DisplayToastAlert("Success: Profile Downloaded");
-                        Debug.WriteLine($"Profile Saved to: {saveResult.Value}");
+                        _logger.LogInformation($"Profile Saved to: {saveResult.Value}");
                     } else {
                         await DisplayAlertHelper.DisplayToastAlert($"{saveResult.Message}");    
                     }

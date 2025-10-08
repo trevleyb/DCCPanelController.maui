@@ -6,6 +6,8 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Concurrent;
+using DCCPanelController.Helpers.Logging;
+using Microsoft.Extensions.Logging;
 
 namespace DCCPanelController.Helpers;
 
@@ -54,8 +56,7 @@ public static class MethodTimeLogger {
     private static string Suffix(string? msg) => string.IsNullOrWhiteSpace(msg) ? "" : $"  | {msg}";
 
     private static void Write(string line) {
-        Debug.WriteLine(line);
-        Console.WriteLine(line);
+        LogHelper.Logger.LogInformation(line);
     }
 
     // ---- CSV Writer (internal) ------------------------------------------
@@ -149,7 +150,7 @@ public static class MethodTimeLogger {
                 }
             } catch (OperationCanceledException) { /* normal on shutdown */
             } catch (Exception ex) {
-                Debug.WriteLine($"CsvLogger error: {ex}");
+                LogHelper.Logger.LogWarning($"CsvLogger error: {ex}");
             } finally {
                 try {
                     _writer?.Flush();

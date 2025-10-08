@@ -2,11 +2,14 @@ using System.Collections;
 using System.Collections.Specialized;
 using DCCPanelController.Services;
 using DCCPanelController.Services.ProfileService;
+using Microsoft.Extensions.Logging;
 
 namespace DCCPanelController.View;
 
 public partial class DccClientTestView : ContentPage {
-    public DccClientTestView(ProfileService prf, ConnectionService svc) {
+    private ILogger<DccClientTestView> _logger;
+    public DccClientTestView(ILogger<DccClientTestView> logger, ProfileService prf, ConnectionService svc) {
+        _logger = logger;
         InitializeComponent();
         BindingContext = new DccClientTestViewModel(prf,svc);
         
@@ -41,14 +44,13 @@ public partial class DccClientTestView : ContentPage {
         if (e.Action != NotifyCollectionChangedAction.Add) return;
         if (BindingContext is DccClientTestViewModel { AutoScroll: false }) return;
         
-        // UI thread + defer until the CollectionView has processed the add
         MainThread.BeginInvokeOnMainThread(async void () => {
             try {
                 await Task.Yield();
                 if (MessagesCollectionView.ItemsSource is IList { Count: > 0 } list)
                     MessagesCollectionView.ScrollTo(list.Count - 1, position: ScrollToPosition.End, animate: true);
             } catch (Exception ex) {
-                Console.WriteLine($"Exception scrolling UI: {ex.Message}");
+                _logger.LogError($"Exception scrolling UI: {ex.Message}");
             }
         });
     }
