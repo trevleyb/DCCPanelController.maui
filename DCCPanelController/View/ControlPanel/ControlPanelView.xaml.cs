@@ -1053,7 +1053,6 @@ public partial class ControlPanelView {
         if (e.NewItems is { }) {
             ITile? lastTile = null;
             foreach (var newEntity in e.NewItems.Cast<Entity>()) {
-                _logger.LogDebug("Adding Item to Grid: {item}@{col},{row}", newEntity.EntityName, newEntity.Col, newEntity.Row);
                 lastTile = AddEntityToGrid(newEntity);
             }
 

@@ -86,13 +86,13 @@
                   IsEnabled="{Binding Source={RelativeSource AncestorType={x:Type view:RoutesViewModel}}, x:DataType=view:RoutesViewModel, Path=IsConnected}">
                 <CollectionView ItemsSource="{Binding Routes}" SelectionMode="None">
                     <CollectionView.EmptyView>
-                        <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
-                            <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
-                                <Label IsVisible="{Binding IsSupported}" Text="No Routes available."/>
+                        <Border WidthRequest="350" HeightRequest="100" StrokeShape="RoundRectangle 15" BackgroundColor="WhiteSmoke">
+                            <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" >
+                                <Label IsVisible="{Binding IsSupported}" Text="No Routes available." VerticalOptions="Center" HorizontalOptions="Center"/>
                                 <Label IsVisible="{Binding IsNotSupported}"
-                                       Text="The current server type does not support Routes."/>
-                            </StackLayout>
-                        </Grid>
+                                       Text="The current server type does not support Routes." VerticalOptions="Center" HorizontalOptions="Center"/>
+                            </Grid>
+                        </Border>
                     </CollectionView.EmptyView>
 
                     <CollectionView.ItemTemplate>

@@ -103,11 +103,13 @@
                 <CollectionView ItemsSource="{Binding Lights}" SelectionMode="Single" SelectedItem="{Binding SelectedLight}">
                     <CollectionView.EmptyView>
                         <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
-                            <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
-                                <Label IsVisible="{Binding IsSupported}" Text="No Lights available."/>
-                                <Label IsVisible="{Binding IsNotSupported}"
-                                       Text="The current server type does not support Lights."/>
-                            </StackLayout>
+                            <Border WidthRequest="350" HeightRequest="100" StrokeShape="RoundRectangle 15" BackgroundColor="WhiteSmoke">
+                                <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" >
+                                    <Label IsVisible="{Binding IsSupported}" Text="No Lights data available." VerticalOptions="Center" HorizontalOptions="Center"/>
+                                    <Label IsVisible="{Binding IsNotSupported}"
+                                           Text="The current server type does not support Lights." VerticalOptions="Center" HorizontalOptions="Center"/>
+                                </Grid>
+                            </Border>
                         </Grid>
                     </CollectionView.EmptyView>
 

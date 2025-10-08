@@ -67,7 +67,8 @@ public partial class TurnoutsViewModel : ConnectionViewModel {
     public string LabelState => _labelState;
     public string LabelAddress => _labelAddress;
 
-    public bool IsSupported { get; set; }
+    [NotifyPropertyChangedFor(nameof(IsNotSupported))]
+    [ObservableProperty] private bool _isSupported;
     public bool IsNotSupported => !IsSupported;
 
     private SfBottomSheet? _bottomSheet;

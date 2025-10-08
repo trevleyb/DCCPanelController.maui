@@ -105,18 +105,17 @@
                     </CollectionView.Header>
 
                     <CollectionView.EmptyView>
-                        <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
-                            <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
-                                <Label IsVisible="{Binding IsSupported}" Text="No Turnouts available."/>
+                        <Border WidthRequest="350" HeightRequest="100" StrokeShape="RoundRectangle 15" BackgroundColor="WhiteSmoke">
+                            <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" >
+                                <Label IsVisible="{Binding IsSupported}" Text="No Turnouts are available." VerticalOptions="Center" HorizontalOptions="Center"/>
                                 <Label IsVisible="{Binding IsNotSupported}"
-                                       Text="The current server type does not support Turnouts."/>
-                            </StackLayout>
-                        </Grid>
+                                       Text="The current server type does not support Turnouts." VerticalOptions="Center" HorizontalOptions="Center"/>
+                            </Grid>
+                        </Border>
                     </CollectionView.EmptyView>
 
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="dataModel:Turnout">
-                            <!-- <SwipeView> -->
                             <Grid Style="{StaticResource SelectableItemStyle}" InputTransparent="True">
                                     <StackLayout >
                                         <Grid ColumnDefinitions="120,*,100" Margin="0,5,0,5" Padding="0">
@@ -163,26 +162,6 @@
                                             HorizontalOptions="FillAndExpand"/>
                                     </StackLayout>
                             </Grid>    
-                                <!-- <SwipeView.RightItems> -->
-                                <!--     <SwipeItems Mode="Reveal" SwipeBehaviorOnInvoked="Close"> -->
-                                <!--         <SwipeItem -->
-                                <!--             BackgroundColor="Red" -->
-                                <!--             Command="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, x:DataType='view:TurnoutsViewModel', Path=DeleteTurnoutCommand}" -->
-                                <!--             CommandParameter="{Binding .}" -->
-                                <!--             IsEnabled="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, x:DataType='view:TurnoutsViewModel',Path=IsTurnoutSelected}" -->
-                                <!--             IconImageSource="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, x:DataType='view:TurnoutsViewModel',Path=IsTurnoutSelected, Converter={StaticResource BoolToIcon}, ConverterParameter=minus_circle}"/> -->
-                                <!-- -->
-                                <!--         <SwipeItem -->
-                                <!--             BackgroundColor="Green" -->
-                                <!--             Command="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, x:DataType='view:TurnoutsViewModel',Path=EditTurnoutCommand}" -->
-                                <!--             CommandParameter="{Binding .}" -->
-                                <!--             IsEnabled="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, x:DataType='view:TurnoutsViewModel',Path=IsTurnoutSelected}" -->
-                                <!--             IconImageSource="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, x:DataType='view:TurnoutsViewModel',Path=IsTurnoutSelected, Converter={StaticResource BoolToIcon}, ConverterParameter=edit}"/> -->
-                                <!-- -->
-                                <!--     </SwipeItems> -->
-                                <!-- </SwipeView.RightItems> -->
-
-                            <!-- </SwipeView> -->
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                 </CollectionView>
