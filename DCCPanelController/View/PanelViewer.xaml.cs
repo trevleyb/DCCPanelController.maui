@@ -75,9 +75,6 @@ public partial class PanelViewer {
             _minSpan = 1;
             _maxSpan = 1;
             SetItemTemplate("HorizontalTemplate");
-
-            ToolbarItems.Remove(ZoomOutIcon);
-            ToolbarItems.Remove(ZoomInIcon);
         } else {
             SetWideScreenLayout(width);
             SetZoomLevel();
