@@ -40,6 +40,8 @@ public partial class CircleLabelEntity : DrawingEntity, ITextEntity, IDrawingEnt
     [ObservableProperty] [property: Editable("Font Style", "", 4, "Text")]
     private TextAttributeEnum _fontStyle = TextAttributeEnum.Regular;
 
+    [ObservableProperty] [property: Editable("Font Style", "", 2, "Text", EditorKind = EditorKinds.FontAlias)]
+    private string _fontAlias = "OpenSansRegular";
 
     [JsonConstructor]
     public CircleLabelEntity() { }

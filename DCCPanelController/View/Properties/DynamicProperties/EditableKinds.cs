@@ -7,6 +7,7 @@ public static class EditorKinds {
     public const string Text      = "text";
     public const string Multiline = "multiline";
     public const string Password  = "password";
+    public const string FontAlias = "fontalias";
 
     public const string Int     = "int";
     public const string Number  = "number";
@@ -39,6 +40,7 @@ public static class EditorKinds {
     public static void RegisterDefaults(IPropertyRendererRegistry registry) {
         registry.Register(UniqueID, new UniqueIDRenderer());
         registry.Register(Text, new TextRenderer());
+        registry.Register(FontAlias, new FontAliasRenderer());
         registry.Register(Multiline, new MultilineTextRenderer());
         registry.Register(Password, new PasswordRenderer());
 

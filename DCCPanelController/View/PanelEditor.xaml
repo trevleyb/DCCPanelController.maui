@@ -10,7 +10,7 @@
              xmlns:components="clr-namespace:DCCPanelController.View.Components"
              ios:Page.UseSafeArea="false"
              x:DataType="view:PanelEditorViewModel"
-             Title="{Binding Title}"
+             Title="{Binding Panel.Title}"
              x:Class="DCCPanelController.View.PanelEditor">
 
     <Shell.BackButtonBehavior>

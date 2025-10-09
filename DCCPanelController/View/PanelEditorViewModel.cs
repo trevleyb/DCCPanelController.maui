@@ -7,12 +7,10 @@ using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.ViewModel.Interfaces;
 using DCCPanelController.Services;
 using DCCPanelController.Services.ProfileService;
-using DCCPanelController.View.Components;
 using DCCPanelController.View.ControlPanel;
 using DCCPanelController.View.Helpers;
 using DCCPanelController.View.Properties.DynamicProperties;
 using DCCPanelController.View.Properties.PanelProperties;
-using MethodTimer;
 using Microsoft.Extensions.Logging;
 using Syncfusion.Maui.Toolkit.Popup;
 using PanelPropertyViewModel = DCCPanelController.View.Properties.PanelProperties.PanelPropertyViewModel;
@@ -43,7 +41,6 @@ public partial class PanelEditorViewModel : ObservableObject {
     [ObservableProperty] private bool _isNavigationDrawerOpen;
     [ObservableProperty] private bool _isProcessing;
 
-    [NotifyPropertyChangedFor(nameof(Title))]
     [ObservableProperty] private Panel _panel;
 
     private PanelPropertyViewModel? _propertyPage;
@@ -90,7 +87,6 @@ public partial class PanelEditorViewModel : ObservableObject {
     public PopupAction LastAction { get; set; } = PopupAction.None;
     public bool AcceptIsValid { get; set; } = true; // assume true by default
 
-    public string Title => Panel.Title;
     public Entity? SelectedEntity => SelectedEntities.FirstOrDefault();
     public List<Entity> SelectedEntities => SelectedTiles.Select(x => x.Entity).ToList();
 
@@ -270,7 +266,6 @@ public partial class PanelEditorViewModel : ObservableObject {
             EditMode = EditMode switch {
                 EditModeEnum.Move => EditModeEnum.Copy,
                 EditModeEnum.Copy => EditModeEnum.Size,
-                EditModeEnum.Size => EditModeEnum.Move,
                 _                 => EditModeEnum.Move,
             };
         } else {

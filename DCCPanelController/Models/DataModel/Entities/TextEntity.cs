@@ -13,6 +13,9 @@ public partial class TextEntity : DrawingEntity, ITextEntity, IDrawingEntity {
     [ObservableProperty] [property: Editable("Font Size", "", 1, "Text")]
     private int _fontSize = 12;
 
+    [ObservableProperty] [property: Editable("Font Style", "", 2, "Text", EditorKind = EditorKinds.FontAlias)]
+    private string _fontAlias = "OpenSansRegular";
+    
     [ObservableProperty] [property: Editable("Font Style", "", 2, "Text")]
     private TextAttributeEnum _fontStyle = TextAttributeEnum.Regular;
 
@@ -34,7 +37,7 @@ public partial class TextEntity : DrawingEntity, ITextEntity, IDrawingEntity {
     public TextEntity(Panel panel) : this() => Parent = panel;
     public TextEntity(TextEntity entity) : base(entity) { }
     
-    [JsonIgnore] protected override int RotationFactor => 90;
+    [JsonIgnore] protected override int RotationFactor => 45;
 
     [JsonIgnore] public override string EntityName => "Text";
     [JsonIgnore] public override string EntityDescription => "Text Label";

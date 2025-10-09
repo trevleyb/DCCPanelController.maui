@@ -99,6 +99,7 @@ public partial class Panel : ObservableObject, IEntityGeneratingID {
 
     public T CreateEntityFrom<T>(T entity, Panel? realParent = null, bool generateNextID = true) where T : Entity {
         var cloned = entity.Clone() as T ?? throw new InvalidOperationException();
+        if (cloned.Layer < 0) cloned.Layer = EntityPresets.DefaultLayer(cloned);
         if (realParent != null) cloned.Parent = realParent; // Set the Panel that owns this entity
         if (cloned is IEntityGeneratingID clonedID && entity is IEntityGeneratingID entityID) {
             clonedID.Id = generateNextID ? clonedID.NextID(realParent) : entityID.Id;

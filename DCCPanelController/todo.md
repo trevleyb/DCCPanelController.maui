@@ -23,8 +23,8 @@
 - [X] ~~Test Page can be left in the system but add comments and warnings~~
 
 - [ ] Changing the font type of Text is not having any impact
-- [ ] Layer is getting set to -1???
-- [ ] When you change the Panel Name in properties it is not reflected in the title of the editor
+- [X] Layer is getting set to -1???
+- [X] When you change the Panel Name in properties it is not reflected in the title of the editor
 - [ ] Select Many is slow 
 - [ ] Move lots does not seem to work
 

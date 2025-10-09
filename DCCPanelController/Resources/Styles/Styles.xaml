@@ -14,7 +14,7 @@
         <Setter Property="IndicatorColor" Value="{StaticResource Gray200}"/>
         <Setter Property="SelectedIndicatorColor" Value="{StaticResource Gray950}"/>
     </Style>
-
+    
     <Style TargetType="Border">
         <Setter Property="Stroke" Value="{StaticResource Gray200}"/>
         <Setter Property="StrokeShape" Value="Rectangle"/>

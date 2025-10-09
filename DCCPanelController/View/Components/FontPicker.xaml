@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ContentView
+    x:Name="Self"
+    x:DataType="components:FontPicker"
+    x:Class="DCCPanelController.View.Components.FontPicker"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:components="clr-namespace:DCCPanelController.View.Components">
+
+    <Grid ColumnDefinitions="Auto,Auto,Auto" ColumnSpacing="8">
+        <Picker x:Name="FamilyPicker"
+                x:DataType="components:FontPicker"
+                Grid.Column="0"
+                Margin="5,5,0,5"
+                Title="Font Family"
+                SelectedIndexChanged="FamilyPicker_OnSelectedIndexChanged"
+                TextColor="{Binding Source={x:Reference Self}, Path=FontColor}"
+                FontSize="{Binding Source={x:Reference Self}, Path=FontSize}"
+                FontFamily="{Binding Source={x:Reference Self}, Path=SelectedFontAlias}"
+                ItemsSource="{Binding Source={x:Reference Self}, Path=Families}"
+                SelectedItem="{Binding Source={x:Reference Self}, Path=SelectedFamily}">
+        </Picker>
+
+        <Label
+            Grid.Column="1"
+            Text="▶︎" FontSize="16" VerticalOptions="Center" Margin="5" />
+ 
+        <Picker x:Name="StylePicker"
+                x:DataType="components:FontPicker"
+                Grid.Column="2" Margin="0,5,5,5"
+                SelectedIndexChanged="StylePicker_OnSelectedIndexChanged"
+                Title="Font Style"
+                FontSize="{Binding Source={x:Reference Self}, Path=FontSize}"
+                FontFamily="{Binding Source={x:Reference Self}, Path=SelectedFontAlias}"
+                ItemsSource="{Binding Source={x:Reference Self}, Path=Styles}"
+                SelectedItem="{Binding Source={x:Reference Self}, Path=SelectedStyle}" />
+    </Grid>
+</ContentView>

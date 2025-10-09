@@ -384,7 +384,7 @@ public sealed class JmriDccClient : DccClientBase, IDccClient, IDisposable {
         };
 
         if (!handled) {
-            _logger.LogInformation($"JMRI Client: Unknown/invalid JMRI JSON: {type} => {item}");
+            Logger.LogInformation($"JMRI Client: Unknown/invalid JMRI JSON: {type} => {item}");
         }
     }
 
@@ -521,7 +521,7 @@ public sealed class JmriDccClient : DccClientBase, IDccClient, IDisposable {
         try {
             await SendMessageAsync(JsonSerializer.Serialize(new { type = "ping" }));
         } catch (Exception ex) {
-            _logger.LogInformation($"JMRI Client : heartbeat send failed: {ex.Message}");
+            Logger.LogInformation($"JMRI Client : heartbeat send failed: {ex.Message}");
         }
     }
 
@@ -532,7 +532,7 @@ public sealed class JmriDccClient : DccClientBase, IDccClient, IDisposable {
             try {
                 if (State == DccClientState.Connected) await SubscribeToUpdatesAsync();
             } catch (Exception ex) {
-                _logger.LogInformation($"JMRI Client : refresh failed: {ex.Message}");
+                Logger.LogInformation($"JMRI Client : refresh failed: {ex.Message}");
             }
         }, null, refreshMs, refreshMs);
     }
@@ -629,7 +629,7 @@ public sealed class JmriDccClient : DccClientBase, IDccClient, IDisposable {
                 await _ws.SendAsync(new ArraySegment<byte>(bytes), WebSocketMessageType.Text, true, CancellationToken.None);
             }
         } catch (Exception ex) {
-            _logger.LogError($"JMRI Client : send failed: {ex.Message}");
+            Logger.LogError($"JMRI Client : send failed: {ex.Message}");
             throw;
         }
     }

@@ -6,6 +6,7 @@ using DCCPanelController.Helpers;
 using DCCPanelController.Helpers.Logging;
 using DCCPanelController.Services;
 using DCCPanelController.Services.ProfileService;
+using DCCPanelController.View.Helpers;
 using DCCPanelController.View.TileSelectors;
 using Microsoft.Extensions.Logging;
 #if IOS
@@ -79,7 +80,7 @@ public partial class LoadingPage : ContentPage, INotifyPropertyChanged {
             MethodTimeLogger.MaxBytesBeforeRotate = 20 * 1024 * 1024;
 
             double step = 0.0;
-            double steps = 9.0;
+            double steps = 10.0;
             
             #if IOS
             steps++;
@@ -101,6 +102,10 @@ public partial class LoadingPage : ContentPage, INotifyPropertyChanged {
             
             // 2)
             await StepAsync("Validating catalog…", ++step/steps, () => profileService.ValidateCatalog());
+            
+            // 2.5)
+            var mauiContext = Handler?.MauiContext;
+            await StepAsync("Validating installed fonts…", ++step/steps, await ValidateFontsAsync(mauiContext));
             
             // 3)
             await StepAsync("Initialising connection service…", ++step/steps, () => connectionService.InitializeAsync());
@@ -190,6 +195,21 @@ public partial class LoadingPage : ContentPage, INotifyPropertyChanged {
         if (EqualityComparer<T>.Default.Equals(backing, value)) return;
         backing = value;
         OnPropertyChanged(name);
+    }
+
+    private static async Task<Func<Task>> ValidateFontsAsync(IMauiContext? mauiContext) {
+        if (mauiContext is null) return () => Task.CompletedTask;
+        _ = FontValidationService.ValidateAsync(FontCatalog.RegisteredFonts, mauiContext).ContinueWith(t => {
+            foreach (var r in t.Result) {
+                if (!r.FileExists || !r.PlatformResolved) {
+                    LogHelper.Logger.LogInformation($"❌[FONT] {r.Font.Alias} INVALID: {r.Detail}");
+                }
+                else {
+                    LogHelper.Logger.LogInformation($"✅[FONT] {r.Font.Alias} OK: {r.Detail}");
+                }
+            }
+        });
+        return () => Task.CompletedTask;
     }
 
     private static async Task ValidateBundleAsync() {

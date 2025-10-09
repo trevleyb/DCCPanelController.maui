@@ -27,69 +27,69 @@ public class DrawableCircleLabelTile : Tile, ITileDrawable {
         return gv;
     }
 
-    private sealed class CircleLabelDrawable : IDrawable {
-        private readonly CircleLabelEntity e;
-        public CircleLabelDrawable(CircleLabelEntity e) => this.e = e;
-
+    private sealed class CircleLabelDrawable(CircleLabelEntity e) : IDrawable {
         public void Draw(ICanvas canvas, RectF r) {
+            if (string.IsNullOrWhiteSpace(e.Label))
+                return;
+
             canvas.SaveState();
             canvas.Antialias = true;
 
-            // Outer stroke
-            var outerStroke = (float)Math.Max(0, e.BorderWidth);
-            if (outerStroke > 0f) {
-                canvas.StrokeColor = e.BorderColor;
-                canvas.StrokeSize = outerStroke;
-                canvas.DrawEllipse(r.Inflate(new SizeF(-outerStroke / 2f)));
+            // --- Background ---
+            if (e.BackgroundColor is { } bg) {
+                canvas.FillColor = bg;
+                canvas.FillRectangle(r);
             }
 
-            // Gap ring (white stroke inside)
-            var gap = (float)Math.Max(0, e.BorderInnerGap);
-            if (gap > 0f) {
-                var gapRect = r.Inflate(new SizeF(-outerStroke - gap / 2f));
-                canvas.StrokeColor = Colors.White;
-                canvas.StrokeSize = gap;
-                canvas.DrawEllipse(gapRect);
+            // --- Font setup ---
+            var alias = e.FontAlias ?? "OpenSansRegular";
+            var font = new Microsoft.Maui.Graphics.Font(alias);
+            var text = e.Label;
+
+            float requestedSize = e.FontSize <= 0 ? 14f : e.FontSize;
+            canvas.Font = font;
+            canvas.FontColor = e.TextColor;
+
+            // --- Measure text size at requested font size ---
+            var measured = canvas.GetStringSize(text, font, requestedSize);
+            if (measured.Width <= 0 || measured.Height <= 0) {
+                canvas.RestoreState();
+                return;
             }
 
-            // Inner circle (fill + inner border)
-            var innerInset = outerStroke + gap;
-            var innerRect = r.Inflate(new SizeF(-innerInset));
-            if (e.BackgroundColor is { } fill) {
-                canvas.FillColor = fill;
-                canvas.FillEllipse(innerRect);
-            }
+            // --- Compute rotated bounding box for scaling ---
+            var radians = (float)(Math.Abs(e.Rotation % 360) * Math.PI / 180.0);
+            var cos = Math.Abs((float)Math.Cos(radians));
+            var sin = Math.Abs((float)Math.Sin(radians));
+            var rotatedW = measured.Width * cos + measured.Height * sin;
+            var rotatedH = measured.Width * sin + measured.Height * cos;
 
-            var innerStroke = (float)Math.Max(0, e.BorderInnerWidth);
-            if (innerStroke > 0f) {
-                canvas.StrokeColor = e.BorderInnerColor;
-                canvas.StrokeSize = innerStroke;
-                canvas.DrawEllipse(innerRect.Inflate(new SizeF(-innerStroke / 2f)));
-            }
+            const float pad = 2f;
+            var scale = Math.Min(
+                (r.Width - pad * 2) / rotatedW,
+                (r.Height - pad * 2) / rotatedH);
 
-            // Centered text
-            if (!string.IsNullOrWhiteSpace(e.Label)) {
-                var font = e.FontStyle switch {
-                    TextAttributeEnum.Regular         => "OpenSansRegular",
-                    TextAttributeEnum.Bold            => "OpenSansBold",
-                    TextAttributeEnum.BoldItalic      => "OpenSansBoldItalic",
-                    TextAttributeEnum.ExtraBold       => "OpenSansExtraBold",
-                    TextAttributeEnum.ExtraBoldItalic => "OpenSansExtraBoldItalic",
-                    TextAttributeEnum.Italic          => "OpenSansItalic",
-                    TextAttributeEnum.Light           => "OpenSansLight",
-                    TextAttributeEnum.LightItalic     => "OpenSansLightItalic",
-                    TextAttributeEnum.Medium          => "OpenSansMedium",
-                    TextAttributeEnum.MediumItalic    => "OpenSansMediumItalic",
-                    TextAttributeEnum.SemiBold        => "OpenSansSemiBold",
-                    TextAttributeEnum.SemiBoldItalic  => "OpenSansSemiBoldItalic",
-                    _                                 => "OpenSans",
-                };
+            // Apply scale if needed
+            float finalFontSize = requestedSize * Math.Min(1f, scale);
+            if (finalFontSize < 4f) finalFontSize = 4f; // prevent disappearing
 
-                canvas.FontSize = (float)e.FontSize;
-                canvas.FontColor = e.TextColor;
-                canvas.Font = new Microsoft.Maui.Graphics.Font(font);
-                canvas.DrawString(e.Label, innerRect, HorizontalAlignment.Center, VerticalAlignment.Center);
-            }
+            canvas.FontSize = finalFontSize;
+
+            // --- Apply rotation about the center of the rect ---
+            canvas.Translate(r.Center.X, r.Center.Y);
+            canvas.Rotate(e.Rotation % 360);
+            canvas.Translate(-r.Center.X, -r.Center.Y);
+
+            // --- Expand rect slightly to avoid clipping when rotated ---
+            var expanded = new RectF(
+                r.X - r.Width,
+                r.Y - r.Height,
+                r.Width * 3,
+                r.Height * 3);
+
+            // --- Draw string using the valid overload ---
+            canvas.DrawString(text, expanded, HorizontalAlignment.Center, VerticalAlignment.Center);
+
             canvas.RestoreState();
         }
     }

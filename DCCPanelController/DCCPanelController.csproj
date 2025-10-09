@@ -117,8 +117,20 @@
     </ItemGroup>
 
     <ItemGroup>
-        <!-- App Icon -->
-        <!-- Raw Assets (also remove the "Resources\Raw" prefix) -->
+        <MauiIcon Include="Resources\AppIcon\appiconfg.svg"/>
+        <MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#FF4F8F00"/>
+        <MauiFont Include="Resources\Fonts\**\*.ttf"/>
+        <MauiImage Include="Resources\Images\**\*"/>
+        <MauiImage Include="Resources\Splash\*"/>
+        <MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)"/>
+
+        <MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#FF4F8F00" BaseSize="172,220"/>
+
+        <!-- Splash Screen -->
+        <EmbeddedResource Include="Models\TileImages\draw_circle.svg"/>
+        <EmbeddedResource Include="Models\TileImages\draw_line.svg"/>
+        <EmbeddedResource Include="Models\TileImages\draw_rectangle.svg"/>
+        <EmbeddedResource Include="Models\TileImages\sample.svg"/>
         <EmbeddedResource Include="Models\TileImages\button_light_large.svg"/>
         <EmbeddedResource Include="Models\TileImages\button_light_large_off.svg" />
         <EmbeddedResource Include="Models\TileImages\button_light_off.svg" />
@@ -130,21 +142,7 @@
         <EmbeddedResource Include="Models\TileImages\button_square_push_corner.svg" />
         <EmbeddedResource Include="Models\TileImages\button_square_push_large.svg" />
         <EmbeddedResource Include="Models\TileImages\button_square_push_small.svg" />
-        <MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)"/>
-
-        <MauiIcon Include="Resources\AppIcon\appiconfg.svg"/>
-        <MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#FF4F8F00"/>
-        <MauiFont Include="Resources\Fonts\*"/>
-        <MauiImage Include="Resources\Images\*"/>
-        <MauiImage Include="Resources\Splash\*"/>
-
-        <!-- Splash Screen -->
-        <MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#FF4F8F00" BaseSize="172,220"/>
-        <EmbeddedResource Include="Models\TileImages\draw_circle.svg"/>
-        <EmbeddedResource Include="Models\TileImages\draw_line.svg"/>
-        <EmbeddedResource Include="Models\TileImages\draw_rectangle.svg"/>
-        <EmbeddedResource Include="Models\TileImages\sample.svg"/>
-        
+       
         <EmbeddedResource Include="Models\TileImages\track_angle.svg"/>
         <EmbeddedResource Include="Models\TileImages\track_angle_bridge.svg"/>
         <EmbeddedResource Include="Models\TileImages\track_angle_terminator.svg"/>

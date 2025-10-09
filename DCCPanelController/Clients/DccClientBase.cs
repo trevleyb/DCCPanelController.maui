@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 namespace DCCPanelController.Clients;
 
 public abstract partial class DccClientBase(Profile profile) : ObservableObject {
-    protected       ILogger _logger          = LogHelper.Logger;
+    protected       ILogger Logger          = LogHelper.Logger;
     protected const int     ReconnectDelayMs = 5000;
 
     public event EventHandler<DccClientEvent>? ClientMessage;
@@ -30,10 +30,10 @@ public abstract partial class DccClientBase(Profile profile) : ObservableObject 
     // has been received from a server. 
     // ---------------------------------------------------------------------------
     private void UpdateTurnoutCore(string id, string name, TurnoutStateEnum state, int? dccAddress = null) {
-        if (Profile?.Turnouts is { } collection) {
+        if (Profile.Turnouts is { } collection) {
             Turnout? entity = null;
-            entity ??= Profile?.Turnouts?.FirstOrDefault(x => x.Id == id) ?? null;
-            entity ??= Profile?.Turnouts?.FirstOrDefault(x => x.Name == name) ?? null;
+            entity ??= Profile.Turnouts.FirstOrDefault(x => x.Id == id) ?? null;
+            entity ??= Profile.Turnouts.FirstOrDefault(x => x.Name == name) ?? null;
             if (entity is { }) {
                 entity.State = state;
             } else {
@@ -50,10 +50,10 @@ public abstract partial class DccClientBase(Profile profile) : ObservableObject 
     }
 
     private void UpdateRouteCore(string id, string name, RouteStateEnum state, int? dccAddress = null) {
-        if (Profile?.Routes is { } collection) {
+        if (Profile.Routes is { } collection) {
             Route? entity = null;
-            entity ??= Profile?.Routes?.FirstOrDefault(x => x.Id == id) ?? null;
-            entity ??= Profile?.Routes?.FirstOrDefault(x => x.Name == name) ?? null;
+            entity ??= Profile.Routes.FirstOrDefault(x => x.Id == id) ?? null;
+            entity ??= Profile.Routes.FirstOrDefault(x => x.Name == name) ?? null;
             if (entity is { }) {
                 entity.State = state;
             } else {
@@ -61,6 +61,7 @@ public abstract partial class DccClientBase(Profile profile) : ObservableObject 
                     Id = id,
                     Name = name,
                     State = state,
+                    DccAddress = dccAddress ?? id.FromDccAddressString(),
                 };
                 collection.Add(entity);
             }
@@ -68,10 +69,10 @@ public abstract partial class DccClientBase(Profile profile) : ObservableObject 
     }
 
     private void UpdateSensorCore(string id, string name, bool isOccupied, int? dccAddress = null) {
-        if (Profile?.Sensors is { } collection) {
+        if (Profile.Sensors is { } collection) {
             Sensor? entity = null;
-            entity ??= Profile?.Sensors?.FirstOrDefault(x => x.Id == id) ?? null;
-            entity ??= Profile?.Sensors?.FirstOrDefault(x => x.Name == name) ?? null;
+            entity ??= Profile.Sensors.FirstOrDefault(x => x.Id == id) ?? null;
+            entity ??= Profile.Sensors.FirstOrDefault(x => x.Name == name) ?? null;
             if (entity is { }) {
                 entity.State = isOccupied;
             } else {
@@ -81,16 +82,16 @@ public abstract partial class DccClientBase(Profile profile) : ObservableObject 
                     DccAddress = dccAddress ?? id.FromDccAddressString(),
                     State = isOccupied,
                 };
-                collection?.Add(entity);
+                collection.Add(entity);
             }
         }
     }
 
     private void UpdateBlockCore(string id, string name, bool isOccupied, string? sensor, int? dccAddress = null) {
-        if (Profile?.Blocks is { } collection) {
+        if (Profile.Blocks is { } collection) {
             Block? entity = null;
-            entity ??= Profile?.Blocks?.FirstOrDefault(x => x.Id == id) ?? null;
-            entity ??= Profile?.Blocks?.FirstOrDefault(x => x.Name == name) ?? null;
+            entity ??= Profile.Blocks.FirstOrDefault(x => x.Id == id) ?? null;
+            entity ??= Profile.Blocks.FirstOrDefault(x => x.Name == name) ?? null;
             if (entity is { }) {
                 entity.IsOccupied = isOccupied;
                 if (sensor is {}) entity.Sensor = sensor;
@@ -99,6 +100,7 @@ public abstract partial class DccClientBase(Profile profile) : ObservableObject 
                     Id = id,
                     Name = name,
                     IsOccupied = isOccupied,
+                    DccAddress = dccAddress ?? id.FromDccAddressString(),
                     Sensor = sensor ?? "",
                 };
                 collection.Add(entity);
@@ -107,10 +109,10 @@ public abstract partial class DccClientBase(Profile profile) : ObservableObject 
     }
 
     private void UpdateLightCore(string id, string name, bool isOn, int? dccAddress = null) {
-        if (Profile?.Lights is { } collection) {
+        if (Profile.Lights is { } collection) {
             Light? entity = null;
-            entity ??= Profile?.Lights?.FirstOrDefault(x => x.Id == id) ?? null;
-            entity ??= Profile?.Lights?.FirstOrDefault(x => x.Name == name) ?? null;
+            entity ??= Profile.Lights.FirstOrDefault(x => x.Id == id) ?? null;
+            entity ??= Profile.Lights.FirstOrDefault(x => x.Name == name) ?? null;
             if (entity is { }) {
                 entity.State = isOn;
             } else {
@@ -127,10 +129,10 @@ public abstract partial class DccClientBase(Profile profile) : ObservableObject 
     }
 
     private void UpdateSignalCore(string id, string name, SignalAspectEnum aspect, int? dccAddress = null) {
-        if (Profile?.Signals is { } collection) {
+        if (Profile.Signals is { } collection) {
             Signal? entity = null;
-            entity ??= Profile?.Signals?.FirstOrDefault(x => x.Id == id) ?? null;
-            entity ??= Profile?.Signals?.FirstOrDefault(x => x.Name == name) ?? null;
+            entity ??= Profile.Signals.FirstOrDefault(x => x.Id == id) ?? null;
+            entity ??= Profile.Signals.FirstOrDefault(x => x.Name == name) ?? null;
             if (entity is { }) {
                 entity.Aspect = aspect.ToString();
             } else {
@@ -147,16 +149,14 @@ public abstract partial class DccClientBase(Profile profile) : ObservableObject 
     }
 
     private void UpdateFastClockCore(DateTime? fastClock, FastClockStateEnum state) {
-        if (fastClock is { } clock && Profile?.FastClock is { }) {
-            Profile?.FastClockState = state;
-            Profile?.FastClock = clock;
+        if (fastClock is { } clock) {
+            Profile.FastClockState = state;
+            Profile.FastClock = clock;
         }
     }
 
     private void UpdatePowerStateCore(PowerStateEnum state) {
-        if (Profile?.PowerState is { }) {
-            Profile?.PowerState = state;
-        }
+        Profile.PowerState = state;
     }
 
     protected static void OnUi(Action action) {

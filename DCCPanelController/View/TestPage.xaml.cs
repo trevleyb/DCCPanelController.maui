@@ -1,3 +1,4 @@
+using System.Net.Mime;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.ViewModel.Tiles;
@@ -6,6 +7,7 @@ using DCCPanelController.View.ControlPanel;
 using Markdig;
 using Microsoft.Maui.Layouts;
 using Svg.Model.Drawables.Elements;
+using Font = Microsoft.Maui.Graphics.Font;
 
 namespace DCCPanelController.View;
 
@@ -15,6 +17,7 @@ public partial class TestPage : ContentPage {
     public TestPage(TestPageViewModel viewModel) {
         InitializeComponent();
         BindingContext = viewModel;
+        
         _gridGestures = new GridGestureHelper(TestGrid);
         _gridGestures.SingleTap += GridGesturesOnSingleTap;
         _gridGestures.DoubleTap += GridGesturesOnDoubleTap;
@@ -40,8 +43,10 @@ public partial class TestPage : ContentPage {
         TestGrid.SetColumn(tile, tile.Entity.Col);
         TestGrid.SetRow(tile, tile.Entity.Row);
 
+        TestFontContent.Content = viewModel.TestFonts();
     }
 
+    
     private void GridGesturesOnTileDragCancelled(object? sender, TileDragEventArgs e) {
         if (e.Tile is Tile foundTile) {
             foundTile.Entity.Col = e.StartCol;

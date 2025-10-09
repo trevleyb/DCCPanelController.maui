@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Maui;
+﻿using System.Collections.Immutable;
+using CommunityToolkit.Maui;
 using CommunityToolkit.Maui.Markup;
 using DCCPanelController.Helpers;
 using DCCPanelController.Helpers.Logging;
@@ -6,6 +7,7 @@ using DCCPanelController.Services;
 using DCCPanelController.Services.ProfileService;
 using DCCPanelController.View;
 using DCCPanelController.View.Components;
+using DCCPanelController.View.Helpers;
 using Microsoft.Extensions.Logging;
 using Serilog;
 using SkiaSharp.Views.Maui.Controls.Hosting;
@@ -23,16 +25,17 @@ public static class MauiProgram {
         ConfigureSerilog();
         builder.UseMauiApp<App>()
                .ConfigureMauiHandlers(handlers => { })
+               .AddFonts()
                .UseSkiaSharp()
                .ConfigureSyncfusionToolkit()
                .UseMauiCommunityToolkit()
                .UseMauiCommunityToolkitMarkup()
                .UseMauiCommunityToolkitMediaElement()
                .ConfigureMauiHandlers(handlers => {
-                    #if IOS || MACCATALYST
-                    handlers.AddHandler<CollectionView, CollectionViewHandler2>();
-                    #endif
-                });
+                   #if IOS || MACCATALYST
+                   handlers.AddHandler<CollectionView, CollectionViewHandler2>();
+                   #endif
+               });
 
         FormHelper.RemoveBorders();
         builder.Services.AddLogging(loggingBuilder => loggingBuilder.ClearProviders().AddSerilog(dispose: true));
@@ -67,6 +70,7 @@ public static class MauiProgram {
         services.AddTransientViewAndModel<BlocksPage, BlocksViewModel>();
         services.AddTransientViewAndModel<SensorsPage, SensorsViewModel>();
         services.AddTransientViewAndModel<LightsPage, LightsViewModel>();
+
         //services.AddTransientViewAndModel<SignalsPage, SignalsViewModel>();
 
         services.AddTransientViewAndModel<UnifiedSettingsPage, UnifiedSettingsViewModel>();
@@ -76,7 +80,7 @@ public static class MauiProgram {
         Routing.RegisterRoute("help", typeof(HelpPage));
 
         var app = builder.Build();
-        
+
         ServiceHelper.Initialize(app.Services);
         LogHelper.Initialize(app.Services.GetRequiredService<ILoggerFactory>());
         return app;
@@ -90,8 +94,6 @@ public static class MauiProgram {
     /// <param name="services">The service collection to register the view and view model.</param>
     private static void AddTransientViewAndModel<TView, TViewModel>(this IServiceCollection services) where TView : ContentPage where TViewModel : class {
         services.AddTransient<TViewModel>();
-
-        //services.AddTransient<TView>(serviceProvider => new TView { BindingContext = serviceProvider.GetService<TViewModel>() });
         services.AddTransient<TView>();
     }
 
@@ -120,8 +122,8 @@ public static class MauiProgram {
         var logFilePath = GetLogFilePath();
         var levelSwitch = LoggingLevelHelper.Initialize();
         Log.Logger = new LoggerConfiguration()
-                    .MinimumLevel.ControlledBy(levelSwitch)
-                    .WriteTo.File(
+                     .MinimumLevel.ControlledBy(levelSwitch)
+                     .WriteTo.File(
                          logFilePath,
                          rollingInterval: RollingInterval.Day,
                          retainedFileCountLimit: 7,
@@ -130,10 +132,10 @@ public static class MauiProgram {
                          shared: true,
                          outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff} [{Level:u3}] {Message:lj}{NewLine}{Exception}")
                      #if DEBUG
-                    .WriteTo.Debug()
-                    .WriteTo.Console()
+                     .WriteTo.Debug()
+                     .WriteTo.Console()
                      #endif
-                    .CreateLogger();
+                     .CreateLogger();
 
         Log.Information("Logger Initialised.");
     }
@@ -149,5 +151,13 @@ public static class MauiProgram {
             ArgumentNullException.ThrowIfNull(ServiceProvider);
             return ServiceProvider.GetRequiredService<T>();
         }
+    }
+
+    private static MauiAppBuilder AddFonts(this MauiAppBuilder builder) {
+        return builder.ConfigureFonts(fontsCollection => {
+            foreach (var font in FontCatalog.RegisteredFonts) {
+                fontsCollection.AddFont(font.Filename, font.Alias);
+            }
+        });
     }
 }
