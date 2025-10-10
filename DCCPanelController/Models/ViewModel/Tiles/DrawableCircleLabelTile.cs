@@ -12,7 +12,19 @@ using SkiaSharp.Views.Maui.Controls;
 namespace DCCPanelController.Models.ViewModel.Tiles;
 
 public class DrawableCircleLabelTile : Tile, ITileDrawable {
-    public DrawableCircleLabelTile(CircleLabelEntity entity, double gridSize) : base(entity, gridSize) { }
+    public DrawableCircleLabelTile(CircleLabelEntity entity, double gridSize) : base(entity, gridSize) {
+        Watch
+            .Track(nameof(CircleLabelEntity.BorderColor), () => entity.BorderColor)
+            .Track(nameof(CircleLabelEntity.BorderInnerColor), () => entity.BorderInnerColor)
+            .Track(nameof(CircleLabelEntity.BorderInnerGap), () => entity.BorderInnerGap)
+            .Track(nameof(CircleLabelEntity.BorderInnerWidth), () => entity.BorderInnerWidth)
+            .Track(nameof(CircleLabelEntity.BorderWidth), () => entity.BorderWidth)
+            .Track(nameof(CircleLabelEntity.BackgroundColor), () => entity.BackgroundColor)
+            .Track(nameof(CircleLabelEntity.FontSize), () => entity.FontSize)
+            .Track(nameof(CircleLabelEntity.FontAlias), () => entity.FontAlias)
+            .Track(nameof(CircleLabelEntity.Label), () => entity.Label)
+            .Track(nameof(CircleLabelEntity.TextColor), () => entity.TextColor);
+    }
 
     protected override Microsoft.Maui.Controls.View? CreateTile() {
         if (Entity is not CircleLabelEntity e) throw new TileRenderException(GetType(), Entity.GetType());

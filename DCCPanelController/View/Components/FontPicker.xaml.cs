@@ -53,6 +53,9 @@ public partial class FontPicker : ContentView, INotifyPropertyChanged {
         control.SelectedFamily = match.Family;
         control.SelectedStyle = match.Style;
 
+        if (string.IsNullOrWhiteSpace(control.SelectedFamily)) control.SelectedFamily = FontCatalog.DefaultFontFamily; 
+        if (string.IsNullOrWhiteSpace(control.SelectedStyle))  control.SelectedStyle = FontCatalog.DefaultStyleFor(control.SelectedFamily);
+        
         control.Notify(nameof(control.Styles));
         control.Notify(nameof(control.SelectedFontAlias));
         control.Notify(nameof(control.SelectedFamily));
@@ -61,7 +64,8 @@ public partial class FontPicker : ContentView, INotifyPropertyChanged {
     }
 
     void UpdateAliasFromFamilyStyle() {
-        if (string.IsNullOrWhiteSpace(SelectedFamily) || string.IsNullOrWhiteSpace(SelectedStyle)) return;
+        if (string.IsNullOrWhiteSpace(SelectedFamily)) SelectedFamily = FontCatalog.DefaultFontFamily; 
+        if (string.IsNullOrWhiteSpace(SelectedStyle))  SelectedStyle = FontCatalog.DefaultStyleFor(SelectedFamily);
 
         var selectedAlias = FontCatalog.GetAlias(SelectedFamily, SelectedStyle);
         if (!string.Equals(selectedAlias, SelectedFontAlias, StringComparison.OrdinalIgnoreCase)) {

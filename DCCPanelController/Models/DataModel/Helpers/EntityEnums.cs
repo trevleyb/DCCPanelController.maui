@@ -32,26 +32,9 @@ public enum TextAlignmentHorizontalEnum { Left, Right, Center, Justified }
 
 public enum TextAlignmentVerticalEnum { Top, Bottom, Center }
 
-public enum TextAttributeEnum { Regular, Bold, Italic, BoldItalic, Light, LightItalic, Medium, MediumItalic, SemiBold, SemiBoldItalic, ExtraBold, ExtraBoldItalic }
-
 public enum TitleBarTextDisplayEnum { Blank, ProfileName, PanelName }
 
 public static class EnumHelpers {
-    public static string ConvertFontStyle(TextAttributeEnum style) => style switch {
-        TextAttributeEnum.Regular         => "OpenSansRegular",
-        TextAttributeEnum.Bold            => "OpenSansBold",
-        TextAttributeEnum.Italic          => "OpenSansItalic",
-        TextAttributeEnum.BoldItalic      => "OpenSansBoldItalic",
-        TextAttributeEnum.Light           => "OpenSansLight",
-        TextAttributeEnum.LightItalic     => "OpenSansLightItalic",
-        TextAttributeEnum.Medium          => "OpenSansMedium",
-        TextAttributeEnum.MediumItalic    => "OpenSansMediumItalic",
-        TextAttributeEnum.SemiBold        => "OpenSansSemiBold",
-        TextAttributeEnum.SemiBoldItalic  => "OpenSansSemiBoldItalic",
-        TextAttributeEnum.ExtraBold       => "OpenSansExtraBold",
-        TextAttributeEnum.ExtraBoldItalic => "OpenSansExtraBoldItalic",
-        _                                 => "OpenSansRegular",
-    };
 
     public static HorizontalAlignment ConvertHorizontalAlignment(TextAlignmentHorizontalEnum alignment) => alignment switch {
         TextAlignmentHorizontalEnum.Left    => HorizontalAlignment.Left,
@@ -72,7 +55,7 @@ public static class EnumHelpers {
         "Left"    => TextAlignmentHorizontalEnum.Left,
         "Right"   => TextAlignmentHorizontalEnum.Right,
         "Center"  => TextAlignmentHorizontalEnum.Center,
-        "Justify" => TextAlignmentHorizontalEnum.Justified,
+        "Justified" => TextAlignmentHorizontalEnum.Justified,
         _         => TextAlignmentHorizontalEnum.Center,
     };
 

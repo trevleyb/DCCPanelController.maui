@@ -29,7 +29,6 @@ public static class JsonOptions {
             new JsonEnumToStringConverter<TextAlignment>(),
             new JsonEnumToStringConverter<TextAlignmentHorizontalEnum>(),
             new JsonEnumToStringConverter<TextAlignmentVerticalEnum>(),
-            new JsonEnumToStringConverter<TextAttributeEnum>(),
 
             new ExpressionFilterConverter<Turnout>(t => t.IsEditable || t.IsModified),
             new ExpressionFilterConverter<Route>(t => t.IsEditable || t.IsModified),

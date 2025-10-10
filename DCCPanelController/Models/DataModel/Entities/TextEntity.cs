@@ -17,9 +17,6 @@ public partial class TextEntity : DrawingEntity, ITextEntity, IDrawingEntity {
     [ObservableProperty] [property: Editable("Font Style", "", 2, "Text", EditorKind = EditorKinds.FontAlias)]
     private string _fontAlias = FontCatalog.DefaultFontAlias;
     
-    [ObservableProperty] [property: Editable("Font Style", "", 2, "Text")]
-    private TextAttributeEnum _fontStyle = TextAttributeEnum.Regular;
-
     [ObservableProperty] [property: Editable("Horizontal", "", 3, "Text")]
     private TextAlignmentHorizontalEnum _horizontalJustification = TextAlignmentHorizontalEnum.Center;
 

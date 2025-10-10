@@ -16,7 +16,7 @@ public class DrawableTextTile : Tile, ITileDrawable {
             .Track(nameof(TextEntity.VerticalJustification), () => entity.VerticalJustification)
             .Track(nameof(TextEntity.BackgroundColor), () => entity.BackgroundColor)
             .Track(nameof(TextEntity.FontSize), () => entity.FontSize)
-            .Track(nameof(TextEntity.FontStyle), () => entity.FontStyle)
+            .Track(nameof(TextEntity.FontAlias), () => entity.FontAlias)
             .Track(nameof(TextEntity.Label), () => entity.Label)
             .Track(nameof(TextEntity.TextColor), () => entity.TextColor);
     }
