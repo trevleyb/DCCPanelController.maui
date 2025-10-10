@@ -79,6 +79,18 @@ public static class FontCatalog {
         NewFontFace("Dancing Script", "Medium", "Dancing-Medium","DancingScript-Medium.ttf"),
         NewFontFace("Dancing Script", "SemiBold", "Dancing-SemiBold", "DancingScript-SemiBold.ttf"),
         NewFontFace("Dancing Script", "Bold", "Dancing-Bold", "DancingScript-Bold.ttf"),
+        
+        NewFontFace("Garamond","Bold","Garamond-Bold","EBGaramond-Bold.ttf"),
+        NewFontFace("Garamond","Bold Italic","Garamond-BoldItalic","EBGaramond-BoldItalic.ttf"),
+        NewFontFace("Garamond","Extra Bold","Garamond-ExtraBold","EBGaramond-ExtraBold.ttf"),
+        NewFontFace("Garamond","Extra Bold Italic","Garamond-ExtraBoldItalic","EBGaramond-ExtraBoldItalic.ttf"),
+        NewFontFace("Garamond","Italic","Garamond-Italic","EBGaramond-Italic.ttf"),
+        NewFontFace("Garamond","Medium","Garamond-Medium","EBGaramond-Medium.ttf"),
+        NewFontFace("Garamond","Medium Italic","Garamond-MediumItalic","EBGaramond-MediumItalic.ttf"),
+        NewFontFace("Garamond","Regular","Garamond-Regular","EBGaramond-Regular.ttf"),
+        NewFontFace("Garamond","SemiBold","Garamond-SemiBold","EBGaramond-SemiBold.ttf"),
+        NewFontFace("Garamond","SemiBold Italic","Garamond-SemiBoldItalic","EBGaramond-SemiBoldItalic.ttf"),
+        
     };
 
     // Public read-only view
