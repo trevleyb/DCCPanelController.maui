@@ -17,9 +17,12 @@
                 OnColor="{StaticResource Primary}"
                 ThumbColor="{StaticResource Gray200}"/>
         <Border Grid.Row="0" Grid.Column="2" WidthRequest="50" Padding="0" HeightRequest="30" Style="{StaticResource EntryBorderStyle}">
-            <Entry Text="{Binding SimulatorSettings.HeartbeatSeconds, Mode=TwoWay}" HorizontalOptions="Fill" HorizontalTextAlignment="Center">
+            <Entry Text="{Binding SimulatorSettings.HeartbeatSeconds, Mode=TwoWay}"
+                   Style="{StaticResource EntryStyle}"
+                   IsEnabled="{Binding SimulatorSettings.SimulateHeatbeat}"
+                   HorizontalOptions="Fill" HorizontalTextAlignment="Center">
                 <Entry.Behaviors>
-                    <helpers:EntryIntValidationBehavior Min="15" Max="300"/>
+                    <helpers:EntryIntValidationBehavior Min="15" Max="300" IsEnabled="{Binding SimulatorSettings.SimulateHeatbeat}"/>
                 </Entry.Behaviors>
             </Entry>
         </Border>
@@ -31,9 +34,12 @@
                 OnColor="{StaticResource Primary}"
                 ThumbColor="{StaticResource Gray200}"/>
         <Border Grid.Row="1" Grid.Column="2" WidthRequest="50" Padding="0" HeightRequest="30" Style="{StaticResource EntryBorderStyle}">
-            <Entry Text="{Binding SimulatorSettings.FastClockRate, Mode=TwoWay}" HorizontalOptions="Fill" HorizontalTextAlignment="Center">
+            <Entry Text="{Binding SimulatorSettings.FastClockRate, Mode=TwoWay}"
+                   Style="{StaticResource EntryStyle}"
+                   IsEnabled="{Binding SimulatorSettings.SimulateFastClock}"
+                   HorizontalOptions="Fill" HorizontalTextAlignment="Center">
                 <Entry.Behaviors>
-                    <helpers:EntryDoubleValidationBehavior Min="1.0" Max="12.0"/>
+                    <helpers:EntryDoubleValidationBehavior Min="1.0" Max="12.0" IsEnabled="{Binding SimulatorSettings.SimulateFastClock}"/>
                 </Entry.Behaviors>
             </Entry>
         </Border>
@@ -45,9 +51,12 @@
                 OnColor="{StaticResource Primary}"
                 ThumbColor="{StaticResource Gray200}"/>
         <Border Grid.Row="2" Grid.Column="2" WidthRequest="50" Padding="0" HeightRequest="30" Style="{StaticResource EntryBorderStyle}">
-            <Entry Text="{Binding SimulatorSettings.DisconnectEvery, Mode=TwoWay}" HorizontalOptions="Fill" HorizontalTextAlignment="Center">
+            <Entry Text="{Binding SimulatorSettings.DisconnectEvery, Mode=TwoWay}"
+                   Style="{StaticResource EntryStyle}"
+                   IsEnabled="{Binding SimulatorSettings.SimulateDisconnect}"
+                   HorizontalOptions="Fill" HorizontalTextAlignment="Center">
                 <Entry.Behaviors>
-                    <helpers:EntryIntValidationBehavior Min="0" Max="300"/>
+                    <helpers:EntryIntValidationBehavior Min="0" Max="300" IsEnabled="{Binding SimulatorSettings.SimulateDisconnect}"/>
                 </Entry.Behaviors>
             </Entry>
         </Border>
@@ -58,9 +67,12 @@
         <Switch Grid.Row="3" Grid.Column="1" IsToggled="{Binding SimulatorSettings.SimulateToggles}" VerticalOptions="Center"
                 OnColor="{StaticResource Primary}" ThumbColor="{StaticResource Gray200}"/>
         <Border Grid.Row="3" Grid.Column="2" WidthRequest="50" Padding="0" HeightRequest="30" Style="{StaticResource EntryBorderStyle}">
-            <Entry Text="{Binding SimulatorSettings.RandomFlipSeconds, Mode=TwoWay}" HorizontalOptions="Fill" HorizontalTextAlignment="Center">
+            <Entry Text="{Binding SimulatorSettings.RandomFlipSeconds, Mode=TwoWay}"
+                   Style="{StaticResource EntryStyle}"
+                   IsEnabled="{Binding SimulatorSettings.SimulateToggles}"
+                   HorizontalOptions="Fill" HorizontalTextAlignment="Center">
                 <Entry.Behaviors>
-                    <helpers:EntryIntValidationBehavior Min="0" Max="300"/>
+                    <helpers:EntryIntValidationBehavior Min="0" Max="300" IsEnabled="{Binding SimulatorSettings.SimulateToggles}"/>
                 </Entry.Behaviors>
             </Entry>
         </Border>

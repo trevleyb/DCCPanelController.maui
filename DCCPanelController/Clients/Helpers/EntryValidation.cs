@@ -11,9 +11,10 @@ public class EntryDoubleValidationBehavior : EntryValidationBehavior<double> { }
 
 public class EntryValidationBehavior<T> : Behavior<Entry>
     where T : struct, IParsable<T>, IComparable<T> {
-    public static readonly BindableProperty MinProperty = BindableProperty.Create(nameof(Min), typeof(T), typeof(EntryValidationBehavior<T>), default(T));
-    public static readonly BindableProperty MaxProperty = BindableProperty.Create(nameof(Max), typeof(T), typeof(EntryValidationBehavior<T>), default(T));
-    public static readonly BindableProperty PatternProperty = BindableProperty.Create(nameof(Pattern), typeof(string), typeof(EntryValidationBehavior<T>), null);
+    public static readonly BindableProperty MinProperty        = BindableProperty.Create(nameof(Min), typeof(T), typeof(EntryValidationBehavior<T>), default(T));
+    public static readonly BindableProperty MaxProperty        = BindableProperty.Create(nameof(Max), typeof(T), typeof(EntryValidationBehavior<T>), default(T));
+    public static readonly BindableProperty IsEnabledProperty  = BindableProperty.Create(nameof(IsEnabled), typeof(bool), typeof(EntryValidationBehavior<T>), true);
+    public static readonly BindableProperty PatternProperty    = BindableProperty.Create(nameof(Pattern), typeof(string), typeof(EntryValidationBehavior<T>), null);
     public static readonly BindableProperty IsRequiredProperty = BindableProperty.Create(nameof(IsRequired), typeof(bool), typeof(EntryValidationBehavior<T>), false);
 
     // Flags to indicate whether Min/Max should be enforced
@@ -33,6 +34,11 @@ public class EntryValidationBehavior<T> : Behavior<Entry>
     public string? Pattern {
         get => (string?)GetValue(PatternProperty);
         set => SetValue(PatternProperty, value);
+    }
+
+    public bool IsEnabled {
+        get => (bool)GetValue(IsEnabledProperty);
+        set => SetValue(IsEnabledProperty, value);
     }
 
     public bool IsRequired {
@@ -59,7 +65,7 @@ public class EntryValidationBehavior<T> : Behavior<Entry>
     }
 
     private void OnTextChanged(object? sender, TextChangedEventArgs e) {
-        var isValid = Validate(e.NewTextValue);
+        var isValid = Validate(e.NewTextValue) || !IsEnabled;  // If it's not enabled, show it as valid
         _entry!.TextColor = isValid ? Colors.Black : Colors.Red;
     }
 

@@ -26,6 +26,7 @@ public partial class SimulatorSettingsViewModel : SettingsViewModel {
         SimulatorSettings.SimulateFastClock = false;
         SimulatorSettings.SimulateDisconnect = false;
         
+        SimulatorSettings.SimulateToggles = false;
         SimulatorSettings.ToggleBlocks = false;
         SimulatorSettings.ToggleTurnouts = false;
         SimulatorSettings.ToggleLights = false;

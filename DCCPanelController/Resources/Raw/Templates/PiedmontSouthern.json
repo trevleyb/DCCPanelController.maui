@@ -4585,10 +4585,10 @@
   "Settings": {
     "ClientSettings": {
       "Type": "Simulator",
-      "SimulateHeatbeat": true,
+      "SimulateHeatbeat": false,
       "SimulateDisconnect": false,
-      "SimulateFastClock": true,
-      "SimulateToggles": true,
+      "SimulateFastClock": false,
+      "SimulateToggles": false,
       "ToggleTurnouts": false,
       "ToggleLights": false,
       "ToggleBlocks": false,

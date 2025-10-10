@@ -12,7 +12,7 @@ public partial class TextEntity : DrawingEntity, ITextEntity, IDrawingEntity {
     private Color _backgroundColor = Colors.Transparent;
 
     [ObservableProperty] [property: Editable("Font Size", "", 2, "Text")]
-    private int _fontSize = 12;
+    private int _fontSize = 5;
 
     [ObservableProperty] [property: Editable("Font Style", "", 1, "Text", EditorKind = EditorKinds.FontAlias)]
     private string _fontAlias = FontCatalog.DefaultFontAlias;
