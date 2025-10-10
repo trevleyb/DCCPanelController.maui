@@ -25,7 +25,6 @@ public static class MauiProgram {
         ConfigureSerilog();
         builder.UseMauiApp<App>()
                .ConfigureMauiHandlers(handlers => { })
-               .AddFonts()
                .UseSkiaSharp()
                .ConfigureSyncfusionToolkit()
                .UseMauiCommunityToolkit()

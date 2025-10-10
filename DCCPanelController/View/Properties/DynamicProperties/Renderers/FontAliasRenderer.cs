@@ -1,4 +1,5 @@
 using DCCPanelController.View.Components;
+using DCCPanelController.View.Helpers;
 
 namespace DCCPanelController.View.Properties.DynamicProperties.Renderers;
 
@@ -11,7 +12,7 @@ internal sealed class FontAliasRenderer : BaseRenderer, IPropertyRenderer {
         var row = ctx.Row;
 
         var entry = new FontPicker {
-            SelectedFontAlias    = row.OriginalValue as string ?? "OpenSansRegular",
+            SelectedFontAlias    = row.OriginalValue as string ?? FontCatalog.DefaultFontAlias,
             FontColor = Colors.Black,
             Margin = new Thickness(5, 0, 5, 0),
         };

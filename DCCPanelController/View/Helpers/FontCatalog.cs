@@ -15,7 +15,7 @@ public static class FontCatalog {
     };
 
     private static FontFace NewFontFace(string family, string style, string alias, string filename, bool isDefault = false) {
-        return new FontFace(family, style, $"{family}{style}", filename, isDefault);
+        return new FontFace(family, style, alias, filename, isDefault);
     }
     
     private static readonly List<FontFace> _registeredFonts = new() {
@@ -118,7 +118,7 @@ public static class FontCatalog {
             f.Style.Equals(style, StringComparison.OrdinalIgnoreCase));
     }
 
-    public static string DefaultFontAlias => "OpenSansRegular"; 
+    public static string DefaultFontAlias => GetFontFaceAlias(DefaultFontFamily, DefaultStyleFor(DefaultFontFamily))?.Alias ?? "OpenSans-Regular"; 
     public static string DefaultFontFamily => Families.Contains("Open Sans") ? "Open Sans" : Families[0];
     public static string DefaultStyleFor(string family) {
         var def = RegisteredFonts.FirstOrDefault(f => f.Family.Equals(family, StringComparison.OrdinalIgnoreCase) && f.IsDefault)?.Style ?? null;

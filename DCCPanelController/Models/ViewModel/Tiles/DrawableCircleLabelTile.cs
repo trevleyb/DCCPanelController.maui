@@ -4,6 +4,7 @@ using DCCPanelController.Models.ViewModel.ImageManager;
 using DCCPanelController.Models.ViewModel.Interfaces;
 using DCCPanelController.Models.ViewModel.TileCache;
 using DCCPanelController.View.Converters;
+using DCCPanelController.View.Helpers;
 using Microsoft.Maui.Controls.Shapes;
 
 namespace DCCPanelController.Models.ViewModel.Tiles;
@@ -42,7 +43,7 @@ public class DrawableCircleLabelTile : Tile, ITileDrawable {
             }
 
             // --- Font setup ---
-            var alias = e.FontAlias ?? "OpenSansRegular";
+            var alias = e.FontAlias ?? FontCatalog.DefaultFontAlias;
             var font = new Microsoft.Maui.Graphics.Font(alias);
             var text = e.Label;
 

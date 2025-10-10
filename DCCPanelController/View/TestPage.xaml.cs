@@ -18,60 +18,58 @@ public partial class TestPage : ContentPage {
         InitializeComponent();
         BindingContext = viewModel;
         
-        _gridGestures = new GridGestureHelper(TestGrid);
-        _gridGestures.SingleTap += GridGesturesOnSingleTap;
-        _gridGestures.DoubleTap += GridGesturesOnDoubleTap;
-        _gridGestures.LongPress += GridGesturesOnLongPress;
-        _gridGestures.GridSelectionStarted += GridGesturesOnGridSelectionStarted;
-        _gridGestures.GridSelectionChanged += GridGesturesOnGridSelectionChanged;
-        _gridGestures.GridSelectionCompleted += GridGesturesOnGridSelectionCompleted;
-        _gridGestures.GridSelectionCancelled += GridGesturesOnGridSelectionCancelled;
-        _gridGestures.TileDragStarted += GridGesturesOnTileDragStarted;
-        _gridGestures.TileDragMoved += GridGesturesOnTileDragMoved;
-        _gridGestures.TileDragCompleted += GridGesturesOnTileDragCompleted;
-        _gridGestures.TileDragCancelled += GridGesturesOnTileDragCancelled;
+        // _gridGestures = new GridGestureHelper(TestGrid);
+        // _gridGestures.SingleTap += GridGesturesOnSingleTap;
+        // _gridGestures.DoubleTap += GridGesturesOnDoubleTap;
+        // _gridGestures.LongPress += GridGesturesOnLongPress;
+        // _gridGestures.GridSelectionStarted += GridGesturesOnGridSelectionStarted;
+        // _gridGestures.GridSelectionChanged += GridGesturesOnGridSelectionChanged;
+        // _gridGestures.GridSelectionCompleted += GridGesturesOnGridSelectionCompleted;
+        // _gridGestures.GridSelectionCancelled += GridGesturesOnGridSelectionCancelled;
+        // _gridGestures.TileDragStarted += GridGesturesOnTileDragStarted;
+        // _gridGestures.TileDragMoved += GridGesturesOnTileDragMoved;
+        // _gridGestures.TileDragCompleted += GridGesturesOnTileDragCompleted;
+        // _gridGestures.TileDragCancelled += GridGesturesOnTileDragCancelled;
 
         // Create a dummy Panel and Add it to the system
         // ---------------------------------------------
-        var panels = new Panels();
-        var panel = panels.CreatePanel();
-        var entity = panel.CreateEntity<StraightEntity>();
-        entity.Col = 2;
-        entity.Row = 2;
-        var tile = new TrackStraightTile(entity, 15);
-        TestGrid.Children.Add(tile);
-        TestGrid.SetColumn(tile, tile.Entity.Col);
-        TestGrid.SetRow(tile, tile.Entity.Row);
-
-        TestFontContent.Content = viewModel.TestFonts();
+        // var panels = new Panels();
+        // var panel = panels.CreatePanel();
+        // var entity = panel.CreateEntity<StraightEntity>();
+        // entity.Col = 2;
+        // entity.Row = 2;
+        // var tile = new TrackStraightTile(entity, 15);
+        // TestGrid.Children.Add(tile);
+        // TestGrid.SetColumn(tile, tile.Entity.Col);
+        // TestGrid.SetRow(tile, tile.Entity.Row);
     }
 
     
     private void GridGesturesOnTileDragCancelled(object? sender, TileDragEventArgs e) {
-        if (e.Tile is Tile foundTile) {
-            foundTile.Entity.Col = e.StartCol;
-            foundTile.Entity.Row = e.StartRow;
-            TestGrid.SetColumn(foundTile, foundTile.Entity.Col);
-            TestGrid.SetRow(foundTile, foundTile.Entity.Row);
-        }
+        // if (e.Tile is Tile foundTile) {
+        //     foundTile.Entity.Col = e.StartCol;
+        //     foundTile.Entity.Row = e.StartRow;
+        //     TestGrid.SetColumn(foundTile, foundTile.Entity.Col);
+        //     TestGrid.SetRow(foundTile, foundTile.Entity.Row);
+        // }
     }
 
     private void GridGesturesOnTileDragCompleted(object? sender, TileDragEventArgs e) {
-        if (e.Tile is Tile foundTile) {
-            foundTile.Entity.Col = e.CurrentCol;
-            foundTile.Entity.Row = e.CurrentRow;
-            TestGrid.SetColumn(foundTile, foundTile.Entity.Col);
-            TestGrid.SetRow(foundTile, foundTile.Entity.Row);
-        }
+        // if (e.Tile is Tile foundTile) {
+        //     foundTile.Entity.Col = e.CurrentCol;
+        //     foundTile.Entity.Row = e.CurrentRow;
+        //     TestGrid.SetColumn(foundTile, foundTile.Entity.Col);
+        //     TestGrid.SetRow(foundTile, foundTile.Entity.Row);
+        // }
     }
 
     private void GridGesturesOnTileDragMoved(object? sender, TileDragEventArgs e) {
-        if (e.Tile is Tile foundTile) {
-            foundTile.Entity.Col = e.CurrentCol;
-            foundTile.Entity.Row = e.CurrentRow;
-            TestGrid.SetColumn(foundTile, foundTile.Entity.Col);
-            TestGrid.SetRow(foundTile, foundTile.Entity.Row);
-        }
+        // if (e.Tile is Tile foundTile) {
+        //     foundTile.Entity.Col = e.CurrentCol;
+        //     foundTile.Entity.Row = e.CurrentRow;
+        //     TestGrid.SetColumn(foundTile, foundTile.Entity.Col);
+        //     TestGrid.SetRow(foundTile, foundTile.Entity.Row);
+        // }
     }
 
     private void GridGesturesOnTileDragStarted(object? sender, TileDragEventArgs e) => Console.WriteLine($"Tile START Selection @{e.CurrentCol},{e.CurrentRow} Start @{e.StartCol},{e.StartRow}");

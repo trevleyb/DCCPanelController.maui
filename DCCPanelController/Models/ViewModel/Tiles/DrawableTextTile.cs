@@ -1,6 +1,7 @@
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.ViewModel.Interfaces;
 using DCCPanelController.Models.ViewModel.TileCache;
+using DCCPanelController.View.Helpers;
 using Microsoft.Maui.Graphics.Text;
 
 namespace DCCPanelController.Models.ViewModel.Tiles;
@@ -49,7 +50,7 @@ public class DrawableTextTile : Tile, ITileDrawable {
             }
 
             // --- Font setup ---
-            var alias = e.FontAlias ?? "OpenSansRegular";
+            var alias = e.FontAlias ?? FontCatalog.DefaultFontAlias;
             var font = new Microsoft.Maui.Graphics.Font(alias);
             var text = e.Label;
 

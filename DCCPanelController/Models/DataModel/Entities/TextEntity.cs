@@ -2,6 +2,7 @@ using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Models.DataModel.Entities.BaseClasses;
 using DCCPanelController.Models.DataModel.Entities.Interfaces;
+using DCCPanelController.View.Helpers;
 using DCCPanelController.View.Properties.DynamicProperties;
 
 namespace DCCPanelController.Models.DataModel.Entities;
@@ -14,7 +15,7 @@ public partial class TextEntity : DrawingEntity, ITextEntity, IDrawingEntity {
     private int _fontSize = 12;
 
     [ObservableProperty] [property: Editable("Font Style", "", 2, "Text", EditorKind = EditorKinds.FontAlias)]
-    private string _fontAlias = "OpenSansRegular";
+    private string _fontAlias = FontCatalog.DefaultFontAlias;
     
     [ObservableProperty] [property: Editable("Font Style", "", 2, "Text")]
     private TextAttributeEnum _fontStyle = TextAttributeEnum.Regular;
