@@ -6,7 +6,7 @@
   - [X] ~~Allow it to be a Push and Release not Toggle State~~ 
   - [X] ~~Reset all Turnout States tile~~
 - [X] ~~Write a quick validator, and call, that validates the files in the panels folder and the files listed in the index~~
-- [ ] What about a Turnout Entity & Tile
+- [ ] What about a TURNTABLE Entity & Tile
 - 
 
 ## Bugs and Issues
@@ -22,11 +22,17 @@
 - [X] ~~Fix the UI for the DCC System Selector on the Test Page~~
 - [X] ~~Test Page can be left in the system but add comments and warnings~~
 
-- [ ] Changing the font type of Text is not having any impact
+- [X] Changing the font type of Text is not having any impact
 - [X] Layer is getting set to -1???
 - [X] When you change the Panel Name in properties it is not reflected in the title of the editor
 - [ ] Select Many is slow 
 - [ ] Move lots does not seem to work
+- [X] allows me to resize even when there is something in the way
+
+## Documentation
+- [ ] Add Documentation for the Panels
+- [ ] Add copyright notices for fonts
+
 
 ## Panels
 - [ ] Chelsea and Balmain Sample Panels 

@@ -18,7 +18,7 @@ public partial class FontPicker : ContentView, INotifyPropertyChanged {
 
     // -------- Bindable API (the one you persist and pass to ICanvas) --------
     public static readonly BindableProperty SelectedFontAliasProperty = BindableProperty.Create(nameof(SelectedFontAlias), typeof(string), typeof(FontPicker), null, BindingMode.TwoWay, propertyChanged: OnSelectedFontAliasChanged);
-    public static readonly BindableProperty FontSizeProperty          = BindableProperty.Create(nameof(FontSize), typeof(int), typeof(FontPicker), 12);
+    public static readonly BindableProperty FontSizeProperty          = BindableProperty.Create(nameof(FontSize), typeof(int), typeof(FontPicker), 13);
     public static readonly BindableProperty FontColorProperty         = BindableProperty.Create(nameof(FontColor), typeof(Color), typeof(FontPicker), Colors.Black);
 
     public string? SelectedFontAlias {
@@ -48,13 +48,8 @@ public partial class FontPicker : ContentView, INotifyPropertyChanged {
         if (string.IsNullOrWhiteSpace(alias)) return;
 
         var match = FontCatalog.GetFontFace(alias);
-        if (match is null) return;
-
-        control.SelectedFamily = match.Family;
-        control.SelectedStyle = match.Style;
-
-        if (string.IsNullOrWhiteSpace(control.SelectedFamily)) control.SelectedFamily = FontCatalog.DefaultFontFamily; 
-        if (string.IsNullOrWhiteSpace(control.SelectedStyle))  control.SelectedStyle = FontCatalog.DefaultStyleFor(control.SelectedFamily);
+        control.SelectedFamily = match?.Family ?? FontCatalog.DefaultFontFamily;
+        control.SelectedStyle = match?.Style ?? FontCatalog.DefaultStyleFor(control.SelectedFamily);
         
         control.Notify(nameof(control.Styles));
         control.Notify(nameof(control.SelectedFontAlias));

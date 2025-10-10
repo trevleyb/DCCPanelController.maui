@@ -41,7 +41,7 @@
                                     <RoundRectangle CornerRadius="12,12,12,12"/>
                                 </Border.StrokeShape>
                             </Border>
-                            <Stepper HorizontalOptions="FillAndExpand" Increment="1" Maximum="48" Minimum="8"
+                            <Stepper HorizontalOptions="FillAndExpand" Increment="1" Maximum="48" Minimum="{Binding MinCols}"
                                      Value="{Binding Panel.Cols, Mode=TwoWay}" x:Name="ColsStepper"/>
                         </HorizontalStackLayout>
                         <!--  Panel Rows  -->
@@ -55,7 +55,7 @@
                                     <RoundRectangle CornerRadius="12,12,12,12"/>
                                 </Border.StrokeShape>
                             </Border>
-                            <Stepper HorizontalOptions="FillAndExpand" Increment="1" Maximum="48" Minimum="8"
+                            <Stepper HorizontalOptions="FillAndExpand" Increment="1" Maximum="48" Minimum="{Binding MinRows}"
                                      Value="{Binding Panel.Rows, Mode=TwoWay}" x:Name="RowsStepper"/>
                         </HorizontalStackLayout>
                     </VerticalStackLayout>

@@ -12,7 +12,7 @@
         <Picker x:Name="FamilyPicker"
                 x:DataType="components:FontPicker"
                 Grid.Column="0"
-                Margin="5,5,0,5"
+                Margin="0,5,0,5"
                 Title="Font Family"
                 SelectedIndexChanged="FamilyPicker_OnSelectedIndexChanged"
                 TextColor="{Binding Source={x:Reference Self}, Path=FontColor}"

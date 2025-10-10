@@ -15,6 +15,9 @@ public partial class PanelPropertyViewModel : BaseViewModel {
     [ObservableProperty] private Panel  _original;
     [ObservableProperty] private string _title;
 
+    [ObservableProperty] private int _minCols;
+    [ObservableProperty] private int _minRows;
+
     public ObservableCollection<ColorItemGroup> GroupedColorSettings { get; set; }
     public ObservableCollection<PanelColorItem> ColorSettings { get; }
     
@@ -25,6 +28,9 @@ public partial class PanelPropertyViewModel : BaseViewModel {
 
         ColorSettings = Panel.InitializeColorSettings();
         GroupedColorSettings = Panel.InitializeGroupedColorSettings();
+        var (maxCol, maxRow) = GetMaxColAndRow();
+        MinCols = maxCol;
+        MinRows = maxRow;
     }
 
     public Task ApplyChangesAsync() => Task.CompletedTask;
@@ -82,4 +88,16 @@ public partial class PanelPropertyViewModel : BaseViewModel {
         }
         return false;
     }
+    
+    // Find the position of the maximum cols and rows
+    private (int maxCol, int maxRow) GetMaxColAndRow() {
+        int maxCol = 0;
+        int maxRow = 0;
+        foreach (var entity in Panel.Entities) {
+            if (entity.Col + (entity.Width -1) > maxCol) maxCol = entity.Col;
+            if (entity.Row + (entity.Height -1) > maxRow) maxRow = entity.Row;
+        }
+        return (maxCol, maxRow);
+    }
+
 }
