@@ -12,7 +12,7 @@ using Font = Microsoft.Maui.Graphics.Font;
 namespace DCCPanelController.View;
 
 public partial class TestPage : ContentPage {
-    private readonly GridGestureHelper _gridGestures;
+    //private readonly GridGestureHelper _gridGestures;
 
     public TestPage(TestPageViewModel viewModel) {
         InitializeComponent();
