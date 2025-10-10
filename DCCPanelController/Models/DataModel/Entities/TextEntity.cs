@@ -11,10 +11,10 @@ public partial class TextEntity : DrawingEntity, ITextEntity, IDrawingEntity {
     [ObservableProperty] [property: Editable("Background Color", "", 2, "Color")]
     private Color _backgroundColor = Colors.Transparent;
 
-    [ObservableProperty] [property: Editable("Font Size", "", 1, "Text")]
+    [ObservableProperty] [property: Editable("Font Size", "", 2, "Text")]
     private int _fontSize = 12;
 
-    [ObservableProperty] [property: Editable("Font Style", "", 2, "Text", EditorKind = EditorKinds.FontAlias)]
+    [ObservableProperty] [property: Editable("Font Style", "", 1, "Text", EditorKind = EditorKinds.FontAlias)]
     private string _fontAlias = FontCatalog.DefaultFontAlias;
     
     [ObservableProperty] [property: Editable("Horizontal", "", 3, "Text")]
