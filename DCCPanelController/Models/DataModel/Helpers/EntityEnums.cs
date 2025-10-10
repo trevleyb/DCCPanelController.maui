@@ -28,7 +28,7 @@ public enum TrackAttributeEnum { Normal, Dashed }
 
 public enum TurnoutStyleEnum { Standard, NoBranch }
 
-public enum TextAlignmentHorizontalEnum { Left, Right, Center, Justify }
+public enum TextAlignmentHorizontalEnum { Left, Right, Center, Justified }
 
 public enum TextAlignmentVerticalEnum { Top, Bottom, Center }
 
@@ -57,7 +57,7 @@ public static class EnumHelpers {
         TextAlignmentHorizontalEnum.Left    => HorizontalAlignment.Left,
         TextAlignmentHorizontalEnum.Right   => HorizontalAlignment.Right,
         TextAlignmentHorizontalEnum.Center  => HorizontalAlignment.Center,
-        TextAlignmentHorizontalEnum.Justify => HorizontalAlignment.Justified,
+        TextAlignmentHorizontalEnum.Justified => HorizontalAlignment.Justified,
         _                                   => HorizontalAlignment.Left,
     };
 
@@ -72,7 +72,7 @@ public static class EnumHelpers {
         "Left"    => TextAlignmentHorizontalEnum.Left,
         "Right"   => TextAlignmentHorizontalEnum.Right,
         "Center"  => TextAlignmentHorizontalEnum.Center,
-        "Justify" => TextAlignmentHorizontalEnum.Justify,
+        "Justify" => TextAlignmentHorizontalEnum.Justified,
         _         => TextAlignmentHorizontalEnum.Center,
     };
 
@@ -84,11 +84,11 @@ public static class EnumHelpers {
     };
 
     public static TextAlignment ConvertHorizontalAlignmentToText(TextAlignmentHorizontalEnum alignment) => alignment switch {
-        TextAlignmentHorizontalEnum.Left    => TextAlignment.Start,
-        TextAlignmentHorizontalEnum.Right   => TextAlignment.End,
-        TextAlignmentHorizontalEnum.Center  => TextAlignment.Center,
-        TextAlignmentHorizontalEnum.Justify => TextAlignment.Justify,
-        _                                   => TextAlignment.Start,
+        TextAlignmentHorizontalEnum.Left      => TextAlignment.Start,
+        TextAlignmentHorizontalEnum.Right     => TextAlignment.End,
+        TextAlignmentHorizontalEnum.Center    => TextAlignment.Center,
+        TextAlignmentHorizontalEnum.Justified => TextAlignment.Justify,
+        _                                     => TextAlignment.Start,
     };
 
     public static TextAlignment ConvertVerticalAlignmentToText(TextAlignmentVerticalEnum alignment) => alignment switch {
@@ -99,11 +99,11 @@ public static class EnumHelpers {
     };
 
     public static HorizontalAlignment ConvertHorizontalAlignmentToDraw(TextAlignmentHorizontalEnum alignment) => alignment switch {
-        TextAlignmentHorizontalEnum.Left    => HorizontalAlignment.Left,
-        TextAlignmentHorizontalEnum.Right   => HorizontalAlignment.Right,
-        TextAlignmentHorizontalEnum.Center  => HorizontalAlignment.Center,
-        TextAlignmentHorizontalEnum.Justify => HorizontalAlignment.Justified,
-        _                                   => HorizontalAlignment.Left
+        TextAlignmentHorizontalEnum.Left      => HorizontalAlignment.Left,
+        TextAlignmentHorizontalEnum.Right     => HorizontalAlignment.Right,
+        TextAlignmentHorizontalEnum.Center    => HorizontalAlignment.Center,
+        TextAlignmentHorizontalEnum.Justified => HorizontalAlignment.Justified,
+        _                                     => HorizontalAlignment.Left
     };
 
     public static VerticalAlignment ConvertVerticalAlignmentToDraw(TextAlignmentVerticalEnum alignment) => alignment switch {

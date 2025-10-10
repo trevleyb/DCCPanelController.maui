@@ -47,12 +47,10 @@ public partial class TextEntity : DrawingEntity, ITextEntity, IDrawingEntity {
 
     public override void RotateLeft() {
         base.RotateLeft();
-        HandleRotation();
     }
 
     public override void RotateRight() {
         base.RotateRight();
-        HandleRotation();
     }
 
     public override Entity Clone() => new TextEntity(this);
