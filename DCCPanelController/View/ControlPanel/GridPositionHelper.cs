@@ -55,11 +55,12 @@ public static class GridPositionHelper {
     /// <summary>
     ///     Find all tiles at the specified grid position, ordered by layer (highest first)
     /// </summary>
-    public static List<ITile> GetTilesAt(int col, int row, Grid grid) => grid.Children
-                                                                             .OfType<ITile>()
-                                                                             .Where(x => x.Entity.Col == col && x.Entity.Row == row)
-                                                                             .OrderByDescending(x => x.Entity.Layer)
-                                                                             .ToList();
+    public static List<ITile> GetTilesAt(int col, int row, Grid grid) =>
+        grid.Children
+            .OfType<ITile>()
+            .Where(x => x.Entity.Col == col && x.Entity.Row == row)
+            .OrderByDescending(x => x.Entity.Layer)
+            .ToList();
 
     /// <summary>
     ///     Find all tiles at the specified grid position
@@ -74,13 +75,14 @@ public static class GridPositionHelper {
     /// <summary>
     ///     Find all interactive tiles at the specified grid position, ordered by layer (highest first)
     /// </summary>
-    public static List<ITile> GetInteractiveTilesAt(int col, int row, Grid grid) => grid.Children
-                                                                                        .OfType<ITile>()
-                                                                                        .Where(x => x.Entity is IInteractiveEntity &&
-                                                                                                    x.Entity.Col == col &&
-                                                                                                    x.Entity.Row == row)
-                                                                                        .OrderByDescending(x => x.Entity.Layer)
-                                                                                        .ToList();
+    public static List<ITile> GetInteractiveTilesAt(int col, int row, Grid grid) =>
+        grid.Children
+            .OfType<ITile>()
+            .Where(x => x.Entity is IInteractiveEntity &&
+                        x.Entity.Col == col &&
+                        x.Entity.Row == row)
+            .OrderByDescending(x => x.Entity.Layer)
+            .ToList();
 
     /// <summary>
     ///     Find all interactive tiles at the specified position
@@ -90,14 +92,15 @@ public static class GridPositionHelper {
     /// <summary>
     ///     Find all track tiles (non-interactive) at the specified grid position, ordered by layer (highest first)
     /// </summary>
-    public static List<ITile> GetTrackTilesAt(int col, int row, Grid grid) => grid.Children
-                                                                                  .OfType<ITile>()
-                                                                                  .Where(x => x.Entity is ITrackEntity &&
-                                                                                              /* x.Entity is not IInteractiveEntity && */
-                                                                                              x.Entity.Col == col &&
-                                                                                              x.Entity.Row == row)
-                                                                                  .OrderByDescending(x => x.Entity.Layer)
-                                                                                  .ToList();
+    public static List<ITile> GetTrackTilesAt(int col, int row, Grid grid) =>
+        grid.Children
+            .OfType<ITile>()
+            .Where(x => x.Entity is ITrackEntity &&
+                        /* x.Entity is not IInteractiveEntity && */
+                        x.Entity.Col == col &&
+                        x.Entity.Row == row)
+            .OrderByDescending(x => x.Entity.Layer)
+            .ToList();
 
     /// <summary>
     ///     Find all track tiles at the specified position
@@ -111,15 +114,16 @@ public static class GridPositionHelper {
     /// </summary>
     public static ITile? GetTopmostTileCovering(int col, int row, Grid grid) => GetTilesCovering(col, row, grid).FirstOrDefault();
 
-    public static List<ITile> GetTilesCovering(int col, int row, Grid grid) => grid.Children
-                                                                                   .OfType<ITile>()
-                                                                                   .Where(t =>
-                                                                                        col >= t.Entity.Col &&
-                                                                                        col < t.Entity.Col + t.Entity.Width &&
-                                                                                        row >= t.Entity.Row &&
-                                                                                        row < t.Entity.Row + t.Entity.Height)
-                                                                                   .OrderByDescending(t => t.Entity.Layer)
-                                                                                   .ToList();
+    public static List<ITile> GetTilesCovering(int col, int row, Grid grid) =>
+        grid.Children
+            .OfType<ITile>()
+            .Where(t =>
+                col >= t.Entity.Col &&
+                col < t.Entity.Col + t.Entity.Width &&
+                row >= t.Entity.Row &&
+                row < t.Entity.Row + t.Entity.Height)
+            .OrderByDescending(t => t.Entity.Layer)
+            .ToList();
     #endregion
 
     #region Existence Check Methods
@@ -158,10 +162,11 @@ public static class GridPositionHelper {
     /// <summary>
     ///     Check if the specified bounds are completely within the grid
     /// </summary>
-    public static bool IsInBounds(int col, int row, int width, int height, int maxCols, int maxRows) => col >= 0 && row >= 0 &&
-                                                                                                        width >= 1 && height >= 1 &&
-                                                                                                        col + width <= maxCols &&
-                                                                                                        row + height <= maxRows;
+    public static bool IsInBounds(int col, int row, int width, int height, int maxCols, int maxRows) =>
+        col >= 0 && row >= 0 &&
+        width >= 1 && height >= 1 &&
+        col + width <= maxCols &&
+        row + height <= maxRows;
 
     /// <summary>
     ///     Check if a tile would be within bounds at the specified position
@@ -172,8 +177,9 @@ public static class GridPositionHelper {
     ///     Check if two rectangles overlap using axis-aligned bounding box test
     /// </summary>
     public static bool RectsOverlap(int aCol, int aRow, int aWidth, int aHeight,
-        int bCol, int bRow, int bWidth, int bHeight) => aCol < bCol + bWidth && aCol + aWidth > bCol &&
-                                                        aRow < bRow + bHeight && aRow + aHeight > bRow;
+        int bCol, int bRow, int bWidth, int bHeight) =>
+        aCol < bCol + bWidth && aCol + aWidth > bCol &&
+        aRow < bRow + bHeight && aRow + aHeight > bRow;
 
     public static bool WouldCollide(ITile tile, int col, int row, Grid grid, EditModeEnum mode,
         ISet<ITile>? exclude = null) // prefer passing a HashSet here if you use exclusions often
@@ -226,7 +232,48 @@ public static class GridPositionHelper {
 
             // Rule 3: Track + Interactive is allowed → keep scanning
         }
+
         return false;
+    }
+
+    public static bool WouldCollide(ITile tile,
+        int col,
+        int row,
+        Grid grid,
+        EditModeEnum mode,
+        IReadOnlyCollection<ITile>? currentSelection // ← selection-aware
+    ) {
+        // If there's no multi-selection (or tile isn’t part of it), just use the existing rule.
+        if (currentSelection is null || currentSelection.Count <= 1 || !currentSelection.Contains(tile)) {
+            return WouldCollide(tile, col, row, grid, mode);
+        }
+
+        // In a group move, allow overlaps with the other tiles that are moving too.
+        var exclude = currentSelection as ISet<ITile> ?? new HashSet<ITile>(currentSelection);
+        return WouldCollide(tile, col, row, grid, mode, exclude);
+    }
+
+    /// <summary>
+    /// Convenience: for a whole selection, anchored at (anchorCol, anchorRow), tell me if it would collide,
+    /// while preserving per-tile offsets and ignoring intra-selection overlaps (Move mode).
+    /// </summary>
+    public static bool WouldSelectionCollideForMove(IReadOnlyCollection<ITile> selection,
+        int anchorCol,
+        int anchorRow,
+        Grid grid,
+        int maxCols,
+        int maxRows) {
+        var result = EvaluateSelectionPlacement(
+            selection,
+            anchorCol,
+            anchorRow,
+            grid,
+            EditModeEnum.Move,
+            maxCols,
+            maxRows
+        );
+
+        return!result.CanPlace;
     }
 
     public static bool WouldCollide(ITile tile, int col, int row, Grid grid, EditModeEnum mode, IEnumerable<ITile>? excludeTiles) {
@@ -319,9 +366,10 @@ public static class GridPositionHelper {
     /// <summary>
     ///     Find all views in the grid with the specified ClassId
     /// </summary>
-    public static List<IView> GetViewsByClassId(Grid grid, string classId) => grid.Children
-                                                                                  .Where(x => x is Microsoft.Maui.Controls.View view && view.ClassId == classId)
-                                                                                  .ToList();
+    public static List<IView> GetViewsByClassId(Grid grid, string classId) =>
+        grid.Children
+            .Where(x => x is Microsoft.Maui.Controls.View view && view.ClassId == classId)
+            .ToList();
 
     /// <summary>
     ///     Remove all views with the specified ClassId from the grid

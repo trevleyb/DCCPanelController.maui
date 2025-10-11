@@ -25,9 +25,12 @@
 - [X] Changing the font type of Text is not having any impact
 - [X] Layer is getting set to -1???
 - [X] When you change the Panel Name in properties it is not reflected in the title of the editor
-- [ ] Select Many is slow 
-- [ ] Move lots does not seem to work
+- [X] Select Many is slow 
+- [X] Move lots does not seem to work
 - [X] allows me to resize even when there is something in the way
+
+- [ ] When using the Re-Layer button, it needs to pickup all tile under the selected including the range (w x h)
+- [ ] Make the CircleLabel 2px larger so it is exactly in the Grid (so remove any margin)
 
 ## Documentation
 - [ ] Add Documentation for the Panels
