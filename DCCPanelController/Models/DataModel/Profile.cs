@@ -21,7 +21,7 @@ public partial class Profile : ObservableObject {
     [ObservableProperty] private Panels                          _panels;
     [ObservableProperty] private Settings                        _settings;
     [ObservableProperty] private UiObservableCollection<Light>   _lights;
-    [ObservableProperty] private ObservableCollection<Block>     _blocks;
+    [ObservableProperty] private UiObservableCollection<Block>   _blocks;
     [ObservableProperty] private UiObservableCollection<Route>   _routes;
     [ObservableProperty] private UiObservableCollection<Sensor>  _sensors;
     [ObservableProperty] private UiObservableCollection<Signal>  _signals;

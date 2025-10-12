@@ -23,7 +23,7 @@ public abstract class Tile : ContentView, ITile, IDisposable {
     public double   TileHeight => GridSize * Entity.Height;
     // @formatter:on
 
-    protected const float DefaultScaleFactor = 1.5f;
+    protected const float DefaultScaleFactor = 1.0f;        // Was 1.5???
     protected const float SymbolScaleFactor  = 0.75f;
     private const   int   DebounceDelay      = 75;
 

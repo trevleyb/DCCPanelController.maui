@@ -13,135 +13,118 @@ using Syncfusion.Maui.Toolkit.BottomSheet;
 
 namespace DCCPanelController.View;
 
-public partial class SensorsViewModel : ConnectionViewModel {
-    private const                string         _labelID    = "ID";
-    private const                string         _labelName  = "Sensor";
-    private const                string         _labelState = "Occupied?";
-    private readonly             ProfileService _profileService;
-    [ObservableProperty] private string         _columnLabelID    = _labelID;
-    [ObservableProperty] private string         _columnLabelName  = _labelName;
-    [ObservableProperty] private string         _columnLabelState = _labelState;
+public partial class SensorsViewModel : TablesViewModel<Sensor>
+{
+    private const string _labelID    = "ID";
+    private const string _labelName  = "Sensor";
+    private const string _labelState = "Occupied?";
+
+    private readonly ILogger<SensorsViewModel> _logger;
 
     [ObservableProperty] private bool _isSensorSelected;
     [ObservableProperty] private bool _canAddSensor;
-    private                      bool _isAscending;
 
-    private ILogger<SensorsViewModel> _logger;
+    [ObservableProperty] private string _columnLabelID    = _labelID;
+    [ObservableProperty] private string _columnLabelName  = _labelName;
+    [ObservableProperty] private string _columnLabelState = _labelState;
 
-    [ObservableProperty] private Sensor?                      _selectedSensor;
-    [ObservableProperty] private ObservableCollection<Sensor> _sensors;
-    private                      string                       _sortColumn = "";
+    private SfBottomSheet? _bottomSheet;
 
-    public SensorsViewModel(ILogger<SensorsViewModel> logger, ProfileService profileService, ConnectionService connectionService) : base(profileService, connectionService) {
+    public SensorsViewModel(ILogger<SensorsViewModel> logger, ProfileService profileService, ConnectionService connectionService)
+        : base(profileService, connectionService)
+    {
         _logger = logger;
-        _profileService = profileService;
-        
-        _profileService.ActiveProfileChanged += (sender, args) => {
-            Sensors = _profileService?.ActiveProfile?.Sensors ?? throw new ArgumentNullException(nameof(profileService), "SensorsViewModel: Active profile is not defined.");
-            IsSupported = false;//_profileService.ActiveProfile?.Settings?.ClientSettings?.Capabilities.Contains(DccClientCapability.Sensors) ?? false;
-            SetLabels();
-        };
 
-        PropertyChanged += (sender, args) => {
-            if (args.PropertyName == nameof(SelectedSensor)) {
+        PropertyChanged += (_, args) =>
+        {
+            if (args.PropertyName == nameof(SelectedSensor))
                 IsSensorSelected = SelectedSensor != null;
-            }
         };
-        
-        _sortColumn = _labelName;
-        _isAscending = true;
-        var sensors = _profileService?.ActiveProfile?.Sensors ?? throw new ArgumentNullException(nameof(profileService), "SensorsViewModel: Active profile is not defined.");
-        Sensors = new ObservableCollection<Sensor>(sensors.OrderBy<Sensor, string>(x => x.Name ?? "").ToList());
-
-        IsSupported = false; //_profileService.ActiveProfile?.Settings?.ClientSettings?.Capabilities.Contains(DccClientCapability.Sensors) ?? false;
-        SetLabels();
     }
+
+    public ObservableCollection<Sensor> Sensors
+    {
+        get => Items;
+        private set => Items = value;
+    }
+
+    [ObservableProperty] private Sensor? _selectedSensor;
 
     public string LabelID => _labelID;
     public string LabelName => _labelName;
     public string LabelState => _labelState;
 
-    public bool IsSupported { get; private set; }
-    public bool IsNotSupported => !IsSupported;
-
-    private SfBottomSheet? _bottomSheet;
     public void SetNavigationReferences(SfBottomSheet bottomSheet) => _bottomSheet = bottomSheet;
 
-    public void SetToolbarItems() {
-        IsSupported = false; //_profileService.ActiveProfile?.Settings?.ClientSettings?.Capabilities.Contains(DccClientCapability.Sensors) ?? false;
+    public void SetToolbarItems()
+    {
+        // Sensors support is currently disabled in original code
+        IsSupported = false;
         CanAddSensor = _profileService.ActiveProfile?.Settings?.ClientSettings?.SupportsManualEntries == true && IsSupported;
     }
-    
-    [RelayCommand]
-    private async Task SortByColumnAsync(string columnName) {
-        List<Sensor> sorted;
-        if (!_isAscending) {
-            sorted = columnName switch {
-                _labelName  => Sensors.OrderBy<Sensor, string>(x => x.Name ?? "").ToList(),
-                _labelID    => Sensors.OrderBy<Sensor, string>(x => x.Id ?? "").ToList(),
-                _labelState => Sensors.OrderBy<Sensor, bool>(x => x.State).ToList(),
-                _           => Sensors.ToList<Sensor>(),
-            };
-        } else {
-            sorted = columnName switch {
-                _labelName  => Sensors.OrderByDescending<Sensor, string>(x => x.Name ?? "").ToList(),
-                _labelID    => Sensors.OrderByDescending<Sensor, string>(x => x.Id ?? "").ToList(),
-                _labelState => Sensors.OrderByDescending<Sensor, bool>(x => x.State).ToList(),
-                _           => Sensors.ToList<Sensor>(),
-            };
-        }
 
-        Sensors = new ObservableCollection<Sensor>(sorted);
+    protected override string DefaultSortKey => _labelName;
 
-        _sortColumn = columnName;
-        _isAscending = !_isAscending;
-        OnPropertyChanged(nameof(Sensors));
-        SetLabels();
+    protected override ObservableCollection<Sensor> ResolveCollection(Profile profile) => profile.Sensors;
+
+    protected override IReadOnlyDictionary<string, Func<Sensor, IComparable>> Sorters => new Dictionary<string, Func<Sensor, IComparable>>
+    {
+        [_labelName]  = x => x.Name ?? "",
+        [_labelID]    = x => x.Id ?? "",
+        [_labelState] = x => x.State
+    };
+
+    protected override void UpdateColumnLabels()
+    {
+        ColumnLabelID = LabelWithArrow(_labelID, _labelID);
+        ColumnLabelName = LabelWithArrow(_labelName, _labelName);
+        ColumnLabelState = LabelWithArrow(_labelState, _labelState);
     }
 
-    private void SetLabels() {
-        ColumnLabelID = LabelID + (_sortColumn.Equals(_labelID) ? _isAscending.GetSortDirection() : "");
-        ColumnLabelName = LabelName + (_sortColumn.Equals(_labelName) ? _isAscending.GetSortDirection() : "");
-        ColumnLabelState = LabelState + (_sortColumn.Equals(_labelState) ? _isAscending.GetSortDirection() : "");
-    }
+    protected override void OnItemsRebound() => OnPropertyChanged(nameof(Sensors));
 
     [RelayCommand(AllowConcurrentExecutions = false)]
-    public async Task ToggleSensorState(Sensor? sensor) {
+    public async Task ToggleSensorState(Sensor? sensor)
+    {
         if (sensor == null) return;
         sensor.State = !sensor.State;
-        if (!string.IsNullOrEmpty(sensor.Id)) {
-            if (ConnectionService.Client is {State: DccClientState.Connected } client) await client.SendSensorCmdAsync(sensor, sensor.State)!;
+        if (!string.IsNullOrEmpty(sensor.Id))
+        {
+            if (ConnectionService.Client is { State: DccClientState.Connected } client)
+                await client.SendSensorCmdAsync(sensor, sensor.State)!;
         }
     }
 
     [RelayCommand]
-    private async Task RefreshSensorsAsync() {
+    private async Task RefreshSensorsAsync()
+    {
         IsBusy = true;
-        try {
-            if (_profileService?.ActiveProfile is { } profile) profile.RefreshSensors();
+        try
+        {
+            _profileService.ActiveProfile?.RefreshSensors();
             if (ConnectionService.Client is { } client) await client.ForceRefreshAsync();
-        } catch { /* ignored */
-        } finally {
-            IsBusy = false;
         }
+        finally { IsBusy = false; }
     }
 
     [RelayCommand]
-    private async Task DeleteSensorAsync(Sensor? sensor) {
+    private async Task DeleteSensorAsync(Sensor? sensor)
+    {
         sensor ??= SelectedSensor;
-        if (sensor is { }) {
-            Sensors.Remove(sensor);
-            OnPropertyChanged(nameof(Sensors));
-            await _profileService.SaveAsync();
-            SelectedSensor = null;
-            IsSensorSelected = false;
-        }
+        if (sensor is null) return;
+        Sensors.Remove(sensor);
+        await _profileService.SaveAsync();
+        OnPropertyChanged(nameof(Sensors));
+        SelectedSensor = null;
+        IsSensorSelected = false;
     }
 
     [RelayCommand]
-    private async Task AddSensorAsync() {
-        var sensor = new Sensor {
-            Id = TableAnalyser<Sensor>.GetUniqueID(Sensors.ToList<Sensor>()),
+    private async Task AddSensorAsync()
+    {
+        var sensor = new Sensor
+        {
+            Id = TableAnalyser<Sensor>.GetUniqueID(Sensors.ToList()),
             Name = "New Sensor",
             IsEditable = true,
         };
@@ -153,38 +136,33 @@ public partial class SensorsViewModel : ConnectionViewModel {
     }
 
     [RelayCommand]
-    private async Task SendSensorStateAsync(Sensor? sensor) {
-        if (sensor is { }) {
-            if (ConnectionService.Client is {State: DccClientState.Connected } client) await client.SendSensorCmdAsync(sensor, sensor.State)!;
-            OnPropertyChanged(nameof(Sensors));
-        }
-    }
-
-    [RelayCommand]
-    public async Task EditSensorAsync(Sensor? sensor) {
+    private async Task EditSensorAsync(Sensor? sensor)
+    {
         sensor ??= SelectedSensor;
-        try {
-            if (sensor is { } && _bottomSheet is { } sfBottomSheet) {
-                var sensorsEditViewModel = new SensorsEditViewModel(LogHelper.CreateLogger<SensorsEditViewModel>(), sensor, ConnectionService);
-                sfBottomSheet.BottomSheetContent = sensorsEditViewModel.CreatePropertiesView();
-        
-                if (DeviceInfo.Platform == DevicePlatform.iOS && DeviceInfo.Current.Idiom == DeviceIdiom.Phone) {
-                    sfBottomSheet.ContentWidthMode = BottomSheetContentWidthMode.Full;
-                } else {
-                    sfBottomSheet.ContentWidthMode = BottomSheetContentWidthMode.Custom;
-                    sfBottomSheet.BottomSheetContentWidth = 400;
-                }
-        
-                sfBottomSheet.ShowGrabber = true;
-                sfBottomSheet.EnableSwiping = true;
-                sfBottomSheet.CollapsedHeight = 0;
-                sfBottomSheet.CollapseOnOverlayTap = true;
-                sfBottomSheet.State = BottomSheetState.HalfExpanded;
-                sfBottomSheet.IsModal = true;
-                sfBottomSheet.IsVisible = true;
-                sfBottomSheet.Show();
+        try
+        {
+            if (sensor is { } && _bottomSheet is { } sheet)
+            {
+                var vm = new SensorsEditViewModel(LogHelper.CreateLogger<SensorsEditViewModel>(), sensor, ConnectionService);
+                sheet.BottomSheetContent = vm.CreatePropertiesView();
+                sheet.ContentWidthMode = (DeviceInfo.Platform == DevicePlatform.iOS && DeviceInfo.Current.Idiom == DeviceIdiom.Phone)
+                    ? BottomSheetContentWidthMode.Full
+                    : BottomSheetContentWidthMode.Custom;
+                if (sheet.ContentWidthMode == BottomSheetContentWidthMode.Custom)
+                    sheet.BottomSheetContentWidth = 400;
+
+                sheet.ShowGrabber = true;
+                sheet.EnableSwiping = true;
+                sheet.CollapsedHeight = 0;
+                sheet.CollapseOnOverlayTap = true;
+                sheet.State = BottomSheetState.HalfExpanded;
+                sheet.IsModal = true;
+                sheet.IsVisible = true;
+                sheet.Show();
             }
-        } catch (Exception ex) {
+        }
+        catch (Exception ex)
+        {
             _logger.LogCritical("Error Launching Sensor Properties Page: " + ex.Message);
         }
         OnPropertyChanged(nameof(Sensors));

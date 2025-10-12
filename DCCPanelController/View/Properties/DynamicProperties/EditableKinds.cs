@@ -9,9 +9,10 @@ public static class EditorKinds {
     public const string Password  = "password";
     public const string FontAlias = "fontalias";
 
-    public const string Int     = "int";
-    public const string Number  = "number";
-    public const string Opacity = "opacity";
+    public const string Int         = "int";
+    public const string Number      = "number";
+    public const string Opacity     = "opacity";
+    public const string Scale       = "scale";
 
     public const string Toggle      = "toggle";
     public const string Choice      = "choice";
@@ -47,6 +48,7 @@ public static class EditorKinds {
         registry.Register(Int, new IntRenderer());
         registry.Register(Number, new NumberRenderer());
         registry.Register(Opacity, new OpacityRenderer());
+        registry.Register(Scale, new ScaleRenderer());
 
         registry.Register(Toggle, new ToggleRenderer());
         registry.Register(Choice, new ChoiceRenderer());

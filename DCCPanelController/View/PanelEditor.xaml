@@ -24,7 +24,9 @@
             IconImageSource="{Binding CanSetModes, Converter={StaticResource BoolToIcon}, ConverterParameter=move}"
             Text="Mode" x:Name="ModeToolbar"
             IsEnabled="{Binding CanSetModes}"
-            Command="{Binding Path=SwitchModeCommand}"/>
+            Command="{Binding Path=SwitchModeCommand}">
+            
+        </ToolbarItem>
 
         <ToolbarItem
             IconImageSource="{Binding CanEditProperties, Converter={StaticResource BoolToIcon}, ConverterParameter=settings}"

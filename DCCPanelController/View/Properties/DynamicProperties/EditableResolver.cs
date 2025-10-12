@@ -36,6 +36,7 @@ public sealed class EditableExtractorResolver : IEditorKindResolver {
         if (name.EndsWith("Width", StringComparison.OrdinalIgnoreCase)) return EditorKinds.Int;
         if (name.EndsWith("Height", StringComparison.OrdinalIgnoreCase)) return EditorKinds.Int;
         if (name.Contains("Opacity", StringComparison.OrdinalIgnoreCase) && t == typeof(double)) return EditorKinds.Opacity;
+        if (name.Contains("Scale", StringComparison.OrdinalIgnoreCase) && t == typeof(double)) return EditorKinds.Opacity;
         if (name.Contains("Image", StringComparison.OrdinalIgnoreCase)) return EditorKinds.Image;
 
         if (name.EndsWith("Block", StringComparison.Ordinal) || t == typeof(Uri)) return EditorKinds.Block;

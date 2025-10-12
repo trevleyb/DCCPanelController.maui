@@ -71,7 +71,7 @@ public partial class PanelEditorViewModel : ObservableObject {
         _connectionService = connectionService;
         _logger = logger;
         _original = panel;
-        _panel = panel.Clone(false); // Make a clone so we are working on a clone
+        _panel = panel.Clone(false);
         _panelView = panelView;
         _panelEditor = panelEditor;
         _panelEditorContainer = panelEditorContainer;

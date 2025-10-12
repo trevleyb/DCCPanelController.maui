@@ -1,6 +1,7 @@
 <svg width="48px" height="48px" viewBox="0 0 48 48" version="1.1" xmlns="http://www.w3.org/2000/svg"
 >
-    <g id="Tracks" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" transform="matrix(-0 1 -1 -0 48 0)">
+
+        <g id="Tracks" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" transform="matrix(-0 1 -1 -0 48 0)">
         <g id="Track_Angle">
             <polygon id="Border" fill="#000000" transform="translate(21.5, 21.5) rotate(180) translate(-21.5, -21.5)"
                      points="42.9999957 -9.536743e-05 43 2.99990516 3.00000014 42.9999996 1.94751386 42.9999996 0 42.9999996"></polygon>
@@ -12,10 +13,6 @@
             <line x1="4.00000005" y1="44.0000007" x2="44" y2="4.00000001" id="Dashline" stroke="#686868"
                   stroke-width="4" stroke-linecap="square" stroke-dasharray="2,6"></line>
         </g>
-
-    </g>
+        </g>
 </svg>
-
-        <!--<polygon id="Track" fill="#BDBDBD" transform="translate(24, 24) rotate(180) translate(-24, -24)"-->
-        <!--         points="-1.5258789e-05 42.9999878 43.0000028 -1.1444092e-05 47.9999997 -1.1444092e-05 47.9999997 4.99999504 4.99998474 47.9999986 -1.5258789e-05 47.999987"></polygon>-->
 

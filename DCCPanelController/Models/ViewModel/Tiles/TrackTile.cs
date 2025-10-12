@@ -46,13 +46,13 @@ public abstract class TrackTile : Tile, ITileTrack {
 
     public SvgImage? SvgImage { get; protected set; }
 
-    protected Microsoft.Maui.Controls.View? CreateTrackTile(string trackName, int trackRotation) => CreateTrackTileAsCanvas(trackName, trackRotation, DefaultScaleFactor);
+    protected Microsoft.Maui.Controls.View? CreateTrackTile(string trackName, int trackRotation) => CreateTrackTileAsCanvas(trackName, trackRotation);
 
-    protected Microsoft.Maui.Controls.View? CreateTrackTile(string trackName, int trackRotation, float scale) => CreateTrackTileAsCanvas(trackName, trackRotation, scale);
+    protected Microsoft.Maui.Controls.View? CreateTrackTile(string trackName, int trackRotation, float scale) => CreateTrackTileAsCanvas(trackName, trackRotation);
 
-    protected Microsoft.Maui.Controls.View? CreateTrackTile(string trackName, int trackRotation, SvgStyle addStyle) => CreateTrackTileAsCanvas(trackName, trackRotation, DefaultScaleFactor, addStyle);
+    protected Microsoft.Maui.Controls.View? CreateTrackTile(string trackName, int trackRotation, SvgStyle addStyle) => CreateTrackTileAsCanvas(trackName, trackRotation, addStyle);
 
-    protected Microsoft.Maui.Controls.View? CreateTrackTileAsCanvas(string trackName, int trackRotation, float scale, SvgStyle? addStyle = null) {
+    protected Microsoft.Maui.Controls.View? CreateTrackTileAsCanvas(string trackName, int trackRotation, SvgStyle? addStyle = null) {
         SvgImage = SvgImages.GetImage(trackName, trackRotation);
         var style = GetDefaultStyle();
         if (addStyle is { }) style.AddExisting(addStyle);
