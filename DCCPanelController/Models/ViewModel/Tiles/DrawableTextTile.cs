@@ -40,6 +40,7 @@ public class DrawableTextTile : Tile, ITileDrawable {
             DrawText(c, r, e, (float)GridSize);
         };
 
+        view.SetBinding(ScaleProperty, new Binding(nameof(e.Scale), source: e));
         view.SetBinding(ZIndexProperty, new Binding(nameof(e.Layer), source: e));
         view.SetBinding(OpacityProperty, new Binding(nameof(e.Opacity), source: e));
         e.PropertyChanged += (_, _) => view.InvalidateSurface();
@@ -60,9 +61,12 @@ public class DrawableTextTile : Tile, ITileDrawable {
         using var font = new SKFont(tf, requested) { Subpixel = true, LinearMetrics = true };
         using var paint = new SKPaint { IsAntialias = true, Color = ToSkColor(e.TextColor) };
 
-        // Work inside an inner rect
-        const float pad = 2f;
-        var inner = new SKRect(r.Left + pad, r.Top + pad, r.Right - pad, r.Bottom - pad);
+        // --- Explicit, adjustable padding ---
+        float hPad = 2f;
+        float vPad = 0f; 
+
+        // Work inside a padded rect
+        var inner = new SKRect(r.Left + hPad, r.Top + vPad, r.Right - hPad, r.Bottom - vPad);
 
         var text = e.Label;
 
@@ -71,27 +75,24 @@ public class DrawableTextTile : Tile, ITileDrawable {
         float W = tight.Width;
         float H = tight.Height;
 
-        // We'll draw with the text's *top-left* as local origin (0,0)
-        // Hence local baseline is (-tight.Top), and local "left" is (-tight.Left).
+        // DrawText uses a baseline; move (0,0) to tight top-left so xLocal/yLocal are intuitive
         float xLocal = -tight.Left;
         float baselineLocalY = -tight.Top;
 
-        // Rotation
+        // Rotation math for the tight box corners
         float theta = DegreesToRadians((float)(e.Rotation % 360f));
-        float cs = (float)Math.Cos(theta);
-        float sn = (float)Math.Sin(theta);
+        float cosT = (float)Math.Cos(theta);
+        float sinT = (float)Math.Sin(theta);
 
-        // Rotated corners of the tight box relative to (0,0) top-left
-        // TL(0,0), TR(W,0), BR(W,H), BL(0,H)
         static void Rot(float x, float y, float c, float s, out float rx, out float ry) {
             rx = x * c - y * s;
             ry = x * s + y * c;
         }
 
-        Rot(0, 0, cs, sn, out var x1, out var y1);
-        Rot(W, 0, cs, sn, out var x2, out var y2);
-        Rot(W, H, cs, sn, out var x3, out var y3);
-        Rot(0, H, cs, sn, out var x4, out var y4);
+        Rot(0, 0, cosT, sinT, out var x1, out var y1);
+        Rot(W, 0, cosT, sinT, out var x2, out var y2);
+        Rot(W, H, cosT, sinT, out var x3, out var y3);
+        Rot(0, H, cosT, sinT, out var x4, out var y4);
 
         float minX = MathF.Min(MathF.Min(x1, x2), MathF.Min(x3, x4));
         float maxX = MathF.Max(MathF.Max(x1, x2), MathF.Max(x3, x4));
@@ -101,63 +102,61 @@ public class DrawableTextTile : Tile, ITileDrawable {
         float spanX = maxX - minX;
         float spanY = maxY - minY;
 
-        // Uniform downscale so rotated box fits inside inner
+        // Uniform DOWN-scale so the rotated box fits within the padded tile area
         float s = MathF.Min(1f,
             MathF.Min(
                 inner.Width / MathF.Max(1e-6f, spanX),
                 inner.Height / MathF.Max(1e-6f, spanY)));
 
-        // Place the rotated box inside 'inner' according to alignment:
-        // We compute (Tx, Ty) so that after rotate+scale, the rotated box's
-        // min/max aligns to inner.Left/Center/Right (and Top/Center/Bottom).
-        float Tx; // translation in world space before rotate/scale
-        float Ty;
+        // Compute Tx, Ty so AFTER rotate+scale the rotated box sits where we want
+        float Tx; // world translation X
+        float Ty; // world translation Y
 
-        // Horizontal
+        // Horizontal alignment (unchanged)
         switch (e.HorizontalJustification) {
         case TextAlignmentHorizontalEnum.Left:
-            // left edge of rotated box sits on inner.Left
             Tx = inner.Left - s * minX;
             break;
         case TextAlignmentHorizontalEnum.Right:
-            // right edge of rotated box sits on inner.Right
             Tx = inner.Right - s * maxX;
             break;
         case TextAlignmentHorizontalEnum.Justified:
         case TextAlignmentHorizontalEnum.Center:
         default:
-            // horizontal center of rotated box at inner.MidX
             Tx = inner.MidX - s * (minX + maxX) * 0.5f;
             break;
         }
 
-        // Vertical
+        // Vertical alignment — now exact to the TILE top/bottom with a 1px pad
         switch (e.VerticalJustification) {
         case TextAlignmentVerticalEnum.Top:
-            Ty = inner.Top - s * minY;
+            // top of rotated box touches r.Top + vPad
+            Ty = (r.Top + vPad) - s * minY;
             break;
         case TextAlignmentVerticalEnum.Bottom:
-            Ty = inner.Bottom - s * maxY;
+            // bottom of rotated box touches r.Bottom - vPad
+            Ty = (r.Bottom - vPad) - s * maxY;
             break;
         case TextAlignmentVerticalEnum.Center:
         default:
+            // unchanged: center the rotated box within the padded rect
             Ty = inner.MidY - s * (minY + maxY) * 0.5f;
             break;
         }
 
-        // Draw: translate to placement, then rotate and scale about the (0,0) local origin
+        // Draw
         c.Save();
         c.Translate(Tx, Ty);
         c.RotateDegrees((float)(e.Rotation % 360f));
         if (Math.Abs(s - 1f) > 1e-6f)
             c.Scale(s, s);
 
-        bool justify = e.HorizontalJustification == TextAlignmentHorizontalEnum.Justified;
+        bool justified = e.HorizontalJustification == TextAlignmentHorizontalEnum.Justified;
 
-        if (!justify) {
+        if (!justified) {
             c.DrawText(text, xLocal, baselineLocalY, SKTextAlign.Left, font, paint);
         } else {
-            // Word-spacing justification across the unscaled glyph width W
+            // Simple word-spacing justification across the tight width W
             var words = text.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
             int gaps = Math.Max(0, words.Length - 1);
 

@@ -11,29 +11,31 @@ public partial class CircleLabelEntity : DrawingEntity, ITextEntity, IDrawingEnt
     [ObservableProperty] [property: Editable("Background Color", "", 5, "Circle")]
     private Color _backgroundColor = Colors.DarkGray;
 
-    [ObservableProperty] [property: Editable("Border Color", "", 5, "Circle")]
-    private Color _borderColor = Colors.Black;
-
-    [ObservableProperty] [property: Editable("Inner Border Color", "", 5, "Circle")]
+    [ObservableProperty] [property: Editable("Inner Border", "", 10, "Circle")]
     private Color _borderInnerColor = Colors.White;
 
-    [ObservableProperty] [property: Editable("Inner Border Gap", "", 5, "Circle")]
-    private int _borderInnerGap = 2;
+    [ObservableProperty] [property: Editable("Outer Border", "", 11, "Circle")]
+    private Color _borderOuterColor = Colors.Black;
 
-    [ObservableProperty] [property: Editable("Inner Border Width", "", 5, "Circle")]
+    [ObservableProperty] [property: Editable("Gap Color", "", 12, "Circle")]
+    private Color _gapColor = Colors.White;
+
+    [ObservableProperty] [property: Editable("Inner Width", "", 13, "Circle")]
     private int _borderInnerWidth = 2;
+    
+    [ObservableProperty] [property: Editable("Outer Width", "", 14, "Circle")]
+    private int _borderOuterWidth = 2;
+    
+    [ObservableProperty] [property: Editable("Gap Width", "", 15, "Circle")]
+    private int _gapWidth = 2;
 
-    [ObservableProperty] [property: Editable("Border Width", "", 5, "Circle")]
-    private int _borderWidth = 2;
+
 
     [ObservableProperty] [property: Editable("Font Size", "", 1, "Text")]
     private int _fontSize = 15;
 
     [ObservableProperty] [property: Editable("Label", "", 0, "Text")]
     private string _label = string.Empty;
-
-    [ObservableProperty]
-    private double _scale = 0.8;
 
     [ObservableProperty] [property: Editable("Text Color", "", 2, "Text")]
     private Color _textColor = Colors.White;
@@ -50,7 +52,7 @@ public partial class CircleLabelEntity : DrawingEntity, ITextEntity, IDrawingEnt
 
     public CircleLabelEntity(CircleLabelEntity entity) : base(entity) { }
 
-    [JsonIgnore] protected override int RotationFactor => 90;
+    [JsonIgnore] protected override int RotationFactor => 45;
 
     [JsonIgnore] public override string EntityName => "Label";
     [JsonIgnore] public override string EntityDescription => "Circle Label";

@@ -30,6 +30,7 @@ public class DrawableImageTile : Tile, ITileDrawable {
         image.SetBinding(Image.SourceProperty, new Binding(nameof(ImageEntity.Image), BindingMode.OneWay,
                 new Base64ToImageSourceConverter(), source: entity));
         
+        image.SetBinding(ScaleProperty, new Binding(nameof(entity.Scale), source: entity));
         image.SetBinding(ZIndexProperty, new Binding(nameof(entity.Layer), source: entity));
         image.SetBinding(OpacityProperty, new Binding(nameof(entity.Opacity), source: entity));
 

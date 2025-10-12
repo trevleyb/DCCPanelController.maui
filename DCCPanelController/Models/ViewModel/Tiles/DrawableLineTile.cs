@@ -20,6 +20,7 @@ public class DrawableLineTile : Tile, ITileDrawable {
             InputTransparent = true,
             Drawable = new LineDrawable(e, (float)TileWidth, (float)TileHeight)
         };
+        gv.SetBinding(ScaleProperty, new Binding(nameof(e.Scale), source: e));
         gv.SetBinding(ZIndexProperty,  new Binding(nameof(e.Layer),   source: e));
         gv.SetBinding(OpacityProperty, new Binding(nameof(e.Opacity), source: e));
         e.PropertyChanged += (_, __) => gv.Invalidate();

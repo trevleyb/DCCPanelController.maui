@@ -20,6 +20,7 @@ public class DrawableRectangleTile : Tile, ITileDrawable {
             InputTransparent = true,
             Drawable = new RectDrawable(e)
         };
+        gv.SetBinding(ScaleProperty, new Binding(nameof(e.Scale), source: e));
         gv.SetBinding(ZIndexProperty,  new Binding(nameof(e.Layer),   source: e));
         gv.SetBinding(OpacityProperty, new Binding(nameof(e.Opacity), source: e));
         e.PropertyChanged += (_, __) => gv.Invalidate();

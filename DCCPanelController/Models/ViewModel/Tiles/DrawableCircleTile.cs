@@ -21,8 +21,10 @@ public class DrawableCircleTile : Tile, ITileDrawable {
             InputTransparent = true,
             Drawable = new CircleDrawable(e)
         };
+        gv.SetBinding(ScaleProperty, new Binding(nameof(e.Scale), source: e));
         gv.SetBinding(ZIndexProperty, new Binding(nameof(e.Layer), source: e));
         gv.SetBinding(OpacityProperty, new Binding(nameof(e.Opacity), source: e));
+        Console.WriteLine($"");
 
         e.PropertyChanged += (_, __) => gv.Invalidate(); // redraw on visual changes
         return gv;
@@ -32,13 +34,14 @@ public class DrawableCircleTile : Tile, ITileDrawable {
         private readonly CircleEntity e;
         public CircleDrawable(CircleEntity e) => this.e = e;
 
-        public void Draw(ICanvas canvas, RectF dirty) {
+        public void Draw(ICanvas canvas, RectF r) {
+            
             canvas.SaveState();
             canvas.Antialias = true;
 
             if (e.BackgroundColor is { } bg) {
                 canvas.FillColor = bg;
-                canvas.FillEllipse(dirty);
+                canvas.FillEllipse(r);
             }
 
             // Stroke (inset by half-thickness so stroke stays inside the tile)
@@ -46,7 +49,7 @@ public class DrawableCircleTile : Tile, ITileDrawable {
             if (t > 0f) {
                 canvas.StrokeColor = e.BorderColor;
                 canvas.StrokeSize = t;
-                var inset = dirty.Inflate(new SizeF(-t / 2f));
+                var inset = r.Inflate(new SizeF(-t / 2f));
                 canvas.DrawEllipse(inset);
             }
             canvas.RestoreState();
