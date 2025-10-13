@@ -15,21 +15,21 @@
         <HorizontalStackLayout HeightRequest="40">
             <Label WidthRequest="175" Text="System Name (ID)" VerticalOptions="Center"/>
             <Border Padding="0,0,0,0" Style="{StaticResource EntryBorderStyle}">
-                <Entry Margin="5" HorizontalOptions="Fill" IsEnabled="{Binding Sensor.IsEditable}" Text="{Binding Sensor.Id}"/>
+                <Entry Margin="5"  Style="{StaticResource EntryStyle}" HorizontalOptions="Fill" IsEnabled="{Binding Sensor.IsEditable}" Text="{Binding Sensor.Id}"/>
             </Border>
         </HorizontalStackLayout>
 
         <HorizontalStackLayout HeightRequest="40">
             <Label WidthRequest="175" HorizontalOptions="Start" Text="User Name" VerticalOptions="Center"/>
             <Border Padding="0,0,0,0" Style="{StaticResource EntryBorderStyle}">
-                <Entry Margin="5" HorizontalOptions="Fill" IsEnabled="{Binding Sensor.IsEditable}" Text="{Binding Sensor.Name}"/>
+                <Entry Margin="5"  Style="{StaticResource EntryStyle}" HorizontalOptions="Fill" IsEnabled="{Binding Sensor.IsEditable}" Text="{Binding Sensor.Name}"/>
             </Border>
         </HorizontalStackLayout>
 
         <HorizontalStackLayout HeightRequest="40">
             <Label WidthRequest="175" HorizontalOptions="Start" Text="DCC Address" VerticalOptions="Center"/>
             <Border Padding="0,0,0,0" Style="{StaticResource EntryBorderStyle}" WidthRequest="60">
-                <Entry Keyboard="Numeric" Margin="5" HorizontalOptions="Fill" IsEnabled="{Binding Sensor.CanEditDccAddress}" Text="{Binding Sensor.DccAddress}">
+                <Entry Keyboard="Numeric"  Style="{StaticResource EntryStyle}" Margin="5" HorizontalOptions="Fill" IsEnabled="{Binding Sensor.CanEditDccAddress}" Text="{Binding Sensor.DccAddress}">
                     <Entry.Behaviors>
                         <toolkit:NumericValidationBehavior
                             Flags="ValidateOnValueChanged"

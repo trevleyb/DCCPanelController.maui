@@ -88,7 +88,6 @@ public partial class TurnoutStateControl : ContentView, INotifyPropertyChanged {
             }
             if (prevState != State) {
                 StateChanged?.Invoke(this, State);
-                ;
                 if (StateChangedCommand is { } command) {
                     if (command.CanExecute(Turnout)) command.Execute(Turnout);
                 }

@@ -102,7 +102,8 @@
 
                 <Grid VerticalOptions="FillAndExpand"
                       IsEnabled="{Binding Source={RelativeSource AncestorType={x:Type view:BlocksViewModel}}, x:DataType=view:BlocksViewModel, Path=IsConnected}">
-                    <CollectionView ItemsSource="{Binding Blocks}" SelectionMode="Single"
+                    <CollectionView ItemsSource="{Binding Blocks}" 
+                                    SelectionMode="Single"
                                     SelectedItem="{Binding SelectedBlock}">
                         <CollectionView.EmptyView>
                             <Border WidthRequest="350" HeightRequest="100" StrokeShape="RoundRectangle 15" BackgroundColor="WhiteSmoke">

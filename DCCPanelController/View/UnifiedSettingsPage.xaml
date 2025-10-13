@@ -57,7 +57,8 @@
                 </DataTrigger>
             </ScrollView.Triggers>
             
-            <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto">
+            <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto,Auto">
+                
                 <Grid ColumnDefinitions="Auto,*" Padding="5" RowSpacing="5"
                       RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto"
                       Grid.Row="0"

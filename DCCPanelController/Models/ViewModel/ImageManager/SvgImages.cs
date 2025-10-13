@@ -49,6 +49,10 @@ public static class SvgImages {
         AddImage("SwitchOn", "switch_on");
         AddImage("SwitchOff", "switch_off");
 
+        AddImage("Signals3", "signal_lights_3");
+        AddImage("Signals2", "signal_lights_2");
+        AddImage("Signals1", "signal_lights_1");
+
         AddImage("Compass", "Track_Compass");
         AddImage("Points", "Track_Points");
 

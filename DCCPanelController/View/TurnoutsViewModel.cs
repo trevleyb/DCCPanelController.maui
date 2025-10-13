@@ -14,8 +14,7 @@ using Syncfusion.Maui.Toolkit.BottomSheet;
 
 namespace DCCPanelController.View;
 
-public partial class TurnoutsViewModel : TablesViewModel<Turnout>
-{
+public partial class TurnoutsViewModel : TablesViewModel<Turnout> {
     private const string _labelID      = "ID";
     private const string _labelName    = "User Name";
     private const string _labelState   = "State";
@@ -23,6 +22,7 @@ public partial class TurnoutsViewModel : TablesViewModel<Turnout>
 
     private readonly ILogger<TurnoutsViewModel> _logger;
 
+    [ObservableProperty] private bool _canDelTurnout;
     [ObservableProperty] private bool _canAddTurnout;
     [ObservableProperty] private bool _isTurnoutSelected;
 
@@ -35,20 +35,19 @@ public partial class TurnoutsViewModel : TablesViewModel<Turnout>
     private SfBottomSheet? _bottomSheet;
 
     public TurnoutsViewModel(ILogger<TurnoutsViewModel> logger, ProfileService profileService, ConnectionService connectionService)
-        : base(profileService, connectionService)
-    {
+        : base(profileService, connectionService) {
         _logger = logger;
 
-        PropertyChanged += (_, args) =>
-        {
-            if (args.PropertyName == nameof(SelectedTurnout))
+        PropertyChanged += (_, args) => {
+            if (args.PropertyName == nameof(SelectedTurnout)) {
                 IsTurnoutSelected = SelectedTurnout != null;
+                CanDelTurnout = _profileService.ActiveProfile?.Settings?.ClientSettings?.SupportsManualEntries == true && IsSupported && SelectedTurnout?.IsEditable == true;
+            }
         };
     }
 
     // Alias for Items so XAML bindings remain unchanged
-    public ObservableCollection<Turnout> Turnouts
-    {
+    public ObservableCollection<Turnout> Turnouts {
         get => Items;
         private set => Items = value;
     }
@@ -65,26 +64,25 @@ public partial class TurnoutsViewModel : TablesViewModel<Turnout>
 
     public void SetNavigationReferences(SfBottomSheet bottomSheet) => _bottomSheet = bottomSheet;
 
-    public void SetToolbarItems()
-    {
+    public void SetToolbarItems() {
         IsSupported = _profileService.ActiveProfile?.Settings?.ClientSettings?.Capabilities.Contains(DccClientCapability.Turnouts) ?? false;
         CanAddTurnout = _profileService.ActiveProfile?.Settings?.ClientSettings?.SupportsManualEntries == true && IsSupported;
+        CanDelTurnout = _profileService.ActiveProfile?.Settings?.ClientSettings?.SupportsManualEntries == true && IsSupported;
     }
 
     protected override string DefaultSortKey => _labelName;
 
     protected override ObservableCollection<Turnout> ResolveCollection(Profile profile) => profile.Turnouts;
 
-    protected override IReadOnlyDictionary<string, Func<Turnout, IComparable>> Sorters => new Dictionary<string, Func<Turnout, IComparable>>
-    {
-        [_labelName]    = x => x.Name ?? "",
-        [_labelID]      = x => x.Id ?? "",
-        [_labelAddress] = x => x.DccAddress.ToString() ?? "",
-        [_labelState]   = x => x.State
-    };
+    protected override IReadOnlyDictionary<string, Func<Turnout, IComparable>> Sorters =>
+        new Dictionary<string, Func<Turnout, IComparable>> {
+            [_labelName] = x => x.Name ?? "",
+            [_labelID] = x => x.Id ?? "",
+            [_labelAddress] = x => x.DccAddress.ToString() ?? "",
+            [_labelState] = x => x.State
+        };
 
-    protected override void UpdateColumnLabels()
-    {
+    protected override void UpdateColumnLabels() {
         ColumnLabelID = LabelWithArrow(_labelID, _labelID);
         ColumnLabelName = LabelWithArrow(_labelName, _labelName);
         ColumnLabelState = LabelWithArrow(_labelState, _labelState);
@@ -94,23 +92,21 @@ public partial class TurnoutsViewModel : TablesViewModel<Turnout>
     protected override void OnItemsRebound() => OnPropertyChanged(nameof(Turnouts));
 
     [RelayCommand]
-    private async Task RefreshTurnoutsAsync()
-    {
+    private async Task RefreshTurnoutsAsync() {
         IsBusy = true;
-        try
-        {
+        try {
             _profileService.ActiveProfile?.RefreshTurnouts();
             if (ConnectionService.Client is { } client) await client.ForceRefreshAsync();
             OnPropertyChanged(nameof(Turnouts));
             SelectedTurnout = null;
             IsTurnoutSelected = false;
+        } finally {
+            IsBusy = false;
         }
-        finally { IsBusy = false; }
     }
 
     [RelayCommand]
-    private async Task DeleteTurnoutAsync(Turnout? turnout)
-    {
+    private async Task DeleteTurnoutAsync(Turnout? turnout) {
         turnout ??= SelectedTurnout;
         if (turnout is null) return;
         Turnouts.Remove(turnout);
@@ -121,16 +117,15 @@ public partial class TurnoutsViewModel : TablesViewModel<Turnout>
     }
 
     [RelayCommand]
-    private async Task AddTurnoutAsync()
-    {
-        var turnout = new Turnout
-        {
+    private async Task AddTurnoutAsync() {
+        var turnout = new Turnout {
             Id = TableAnalyser<Turnout>.GetUniqueID(Turnouts.ToList()),
             Name = "New Turnout",
             State = TurnoutStateEnum.Closed,
             Default = TurnoutStateEnum.Closed,
             IsEditable = true,
         };
+
         Turnouts.Add(turnout);
         await EditTurnoutAsync(turnout);
         await _profileService.SaveAsync();
@@ -140,27 +135,25 @@ public partial class TurnoutsViewModel : TablesViewModel<Turnout>
     }
 
     [RelayCommand]
-    private async Task SendTurnoutStateAsync(Turnout? turnout)
-    {
+    private async Task SendTurnoutStateAsync(Turnout? turnout) {
         if (turnout is null) return;
         if (ConnectionService.Client is { State: DccClientState.Connected } client)
             await client.SendTurnoutCmdAsync(turnout, turnout.State == TurnoutStateEnum.Thrown)!;
+
         OnPropertyChanged(nameof(Turnouts));
     }
 
     [RelayCommand]
-    public async Task EditTurnoutAsync(Turnout? turnout)
-    {
+    public async Task EditTurnoutAsync(Turnout? turnout) {
         turnout ??= SelectedTurnout;
-        try
-        {
-            if (turnout is { } && _bottomSheet is { } sheet)
-            {
+        try {
+            if (turnout is { } && _bottomSheet is { } sheet) {
                 var vm = new TurnoutsEditViewModel(LogHelper.CreateLogger<TurnoutsEditViewModel>(), turnout, ConnectionService);
                 sheet.BottomSheetContent = vm.CreatePropertiesView();
                 sheet.ContentWidthMode = (DeviceInfo.Platform == DevicePlatform.iOS && DeviceInfo.Current.Idiom == DeviceIdiom.Phone)
                     ? BottomSheetContentWidthMode.Full
                     : BottomSheetContentWidthMode.Custom;
+
                 if (sheet.ContentWidthMode == BottomSheetContentWidthMode.Custom)
                     sheet.BottomSheetContentWidth = 400;
 
@@ -173,11 +166,10 @@ public partial class TurnoutsViewModel : TablesViewModel<Turnout>
                 sheet.IsVisible = true;
                 sheet.Show();
             }
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             _logger.LogCritical("Error Launching Panel Properties Page: " + ex.Message);
         }
+
         OnPropertyChanged(nameof(Turnouts));
     }
 }

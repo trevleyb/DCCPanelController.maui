@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <g>
+    <g transform="translate(8 8)">
+      <line id="SignalStand" x1="1" y1="16" x2="1" y2="26" fill="none" stroke-width="2" stroke="#808080" stroke-linecap="square" transform="translate(15 3.5)" />
+      <line id="SignalStand" x1="0" y1="1" x2="4" y2="1" fill="none" stroke-width="2" stroke="#808080" stroke-linecap="square" transform="translate(14 30)" />
+      <g id="SignalHead1" fill="#8EFA00" transform="translate(12 16)">
+        <path d="M4 0C6.20944 0 8 1.79056 8 4L8 4C8 6.20944 6.20944 8 4 8L4 8C1.79056 8 0 6.20944 0 4L0 4C0 1.79056 1.79056 0 4 0Z" />
+        <path id="SignalHeadBorder1" d="M8 4C8 1.79056 6.20944 0 4 0C1.79056 0 0 1.79056 0 4C0 6.20944 1.79056 8 4 8C6.20944 8 8 6.20944 8 4ZM0.999999 4Q1 1 4 1Q7 1 7 4Q7 7 4 7Q1 7 0.999999 4Z" fill="#808080" fill-rule="evenodd" />
+      </g>
+    </g>
+  </g>
+</svg>
