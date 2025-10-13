@@ -23,7 +23,7 @@ public class CopyableAttribute : Attribute {
 /// <summary>
 ///     Represents a grouped collection of PanelColorItems
 /// </summary>
-public class ColorItemGroup : List<PanelColorItem> {
+public class ColorItemGroup : ObservableCollection<PanelColorItem> {
     public ColorItemGroup(string categoryName, int categorySortOrder, IEnumerable<PanelColorItem> items) : base(items) {
         CategoryName = categoryName;
         CategorySortOrder = categorySortOrder;
@@ -72,7 +72,7 @@ public static class AttributeMapper {
         var type = typeof(Panel);
         var colorProperties = GetCopyableColorProperties(type, group);
 
-        var colorItemsWithSortOrder = new List<(PanelColorItem Item, int CategorySortOrder, int ItemSortOrder)>();
+        var colorItemsWithSortOrder = new ObservableCollection<(PanelColorItem Item, int CategorySortOrder, int ItemSortOrder)>();
 
         foreach (var (property, attribute) in colorProperties) {
             var displayName = !string.IsNullOrEmpty(attribute.DisplayName)
