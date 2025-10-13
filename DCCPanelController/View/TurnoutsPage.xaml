@@ -18,25 +18,25 @@
     <ContentPage.ToolbarItems>
         <ToolbarItem
             Command="{Binding AddTurnoutCommand}" IsEnabled="{Binding CanAddTurnout}"
-            IconImageSource="{Binding CanAddTurnout, Converter={StaticResource BoolToIcon}, ConverterParameter=plus_circle}"/>
+            IconImageSource="{Binding CanAddTurnout, Converter={StaticResource BoolToIcon}, ConverterParameter=plus_circle}" />
 
         <ToolbarItem
             Command="{Binding DeleteTurnoutCommand}" IsEnabled="{Binding IsTurnoutSelected}"
-            IconImageSource="{Binding IsTurnoutSelected, Converter={StaticResource BoolToIcon}, ConverterParameter=minus_circle}"/>
+            IconImageSource="{Binding IsTurnoutSelected, Converter={StaticResource BoolToIcon}, ConverterParameter=minus_circle}" />
 
         <ToolbarItem Command="{Binding EditTurnoutCommand}" IsEnabled="{Binding IsTurnoutSelected}"
-                     IconImageSource="{Binding IsTurnoutSelected, Converter={StaticResource BoolToIcon}, ConverterParameter=edit}"/>
+                     IconImageSource="{Binding IsTurnoutSelected, Converter={StaticResource BoolToIcon}, ConverterParameter=edit}" />
 
         <ToolbarItem Command="{Binding RefreshTurnoutsCommand}" IsEnabled="{Binding IsConnected}"
-                     IconImageSource="{Binding IsConnected, Converter={StaticResource BoolToIcon}, ConverterParameter=refresh_cw}"/>
+                     IconImageSource="{Binding IsConnected, Converter={StaticResource BoolToIcon}, ConverterParameter=refresh_cw}" />
 
         <ToolbarItem
             Command="{Binding ToggleConnectionCommand}"
             IsEnabled="{Binding IsConnectionAvailable}">
             <ToolbarItem.IconImageSource>
                 <MultiBinding Converter="{StaticResource ConnectionIconConverter}">
-                    <Binding Path="IsConnectionAvailable"/>     <!-- Parameter 1: bool for _active/_inactive -->
-                    <Binding Path="ConnectionState"/>           <!-- Parameter 2: bool for name selection -->
+                    <Binding Path="IsConnectionAvailable" />     <!-- Parameter 1: bool for _active/_inactive -->
+                    <Binding Path="ConnectionState" />           <!-- Parameter 2: bool for name selection -->
                 </MultiBinding>
             </ToolbarItem.IconImageSource>
         </ToolbarItem>
@@ -50,12 +50,12 @@
                     <VisualStateGroup x:Name="CommonStates">
                         <VisualState x:Name="Normal">
                             <VisualState.Setters>
-                                <Setter Property="BackgroundColor" Value="Transparent"/>
+                                <Setter Property="BackgroundColor" Value="Transparent" />
                             </VisualState.Setters>
                         </VisualState>
                         <VisualState x:Name="Selected">
                             <VisualState.Setters>
-                                <Setter Property="BackgroundColor" Value="LightGray"/>
+                                <Setter Property="BackgroundColor" Value="LightGray" />
                             </VisualState.Setters>
                         </VisualState>
                     </VisualStateGroup>
@@ -64,113 +64,121 @@
         </Style>
     </ContentPage.Resources>
 
-        <Grid>
-    <StackLayout x:Name="MainStackLayout">
-        <Grid
-            ColumnDefinitions="120,*,100"
-            HorizontalOptions="Fill">
-            <Button
-                Command="{Binding SortByColumnCommand}"
-                CommandParameter="{Binding LabelID}"
-                Grid.Column="0"
-                HorizontalOptions="CenterAndExpand"
-                Margin="10,0,0,0"
-                Style="{StaticResource ColumnLabel}"
-                Text="{Binding ColumnLabelID}"/>
-            <Button
-                Command="{Binding SortByColumnCommand}"
-                CommandParameter="{Binding LabelName}"
-                Grid.Column="1"
-                Style="{StaticResource ColumnLabel}"
-                Text="{Binding ColumnLabelName}"/>
-            <Button
-                Command="{Binding SortByColumnCommand}"
-                CommandParameter="{Binding LabelState}"
-                Grid.Column="2"
-                Style="{StaticResource ColumnLabel}"
-                Text="{Binding ColumnLabelState}"/>
-        </Grid>
-        <BoxView
-            BackgroundColor="{StaticResource Primary}"
-            HeightRequest="1"
-            HorizontalOptions="FillAndExpand"/>
-        
-        <RefreshView IsRefreshing="{Binding IsBusy}" Command="{Binding RefreshTurnoutsCommand}">
-            <Grid VerticalOptions="FillAndExpand"
-                  IsEnabled="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, x:DataType=view:TurnoutsViewModel, Path=IsConnected}">
-                
-                <CollectionView ItemsSource="{Binding Turnouts}" SelectionMode="Single" SelectedItem="{Binding SelectedTurnout}">
-                    <CollectionView.EmptyView>
-                        <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
-                            <Border WidthRequest="350" HeightRequest="100" StrokeShape="RoundRectangle 15" BackgroundColor="WhiteSmoke">
-                                <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" >
-                                    <Label IsVisible="{Binding IsSupported}" Text="No Turnout data available." VerticalOptions="Center" HorizontalOptions="Center"/>
-                                    <Label IsVisible="{Binding IsNotSupported}"
-                                           Text="The current server type does not support Turnouts." VerticalOptions="Center" HorizontalOptions="Center"/>
-                                </Grid>
-                            </Border>
-                        </Grid>
-                    </CollectionView.EmptyView>
+    <Grid>
+        <StackLayout x:Name="MainStackLayout">
+            <Grid
+                ColumnDefinitions="120,*,100"
+                HorizontalOptions="Fill">
+                <Button
+                    Command="{Binding SortByColumnCommand}"
+                    CommandParameter="{Binding LabelID}"
+                    Grid.Column="0"
+                    HorizontalOptions="CenterAndExpand"
+                    Margin="10,0,0,0"
+                    Style="{StaticResource ColumnLabel}"
+                    Text="{Binding ColumnLabelID}" />
+                <Button
+                    Command="{Binding SortByColumnCommand}"
+                    CommandParameter="{Binding LabelName}"
+                    Grid.Column="1"
+                    Style="{StaticResource ColumnLabel}"
+                    Text="{Binding ColumnLabelName}" />
+                <Button
+                    Command="{Binding SortByColumnCommand}"
+                    CommandParameter="{Binding LabelState}"
+                    Grid.Column="2"
+                    Style="{StaticResource ColumnLabel}"
+                    Text="{Binding ColumnLabelState}" />
+            </Grid>
+            <BoxView
+                BackgroundColor="{StaticResource Primary}"
+                HeightRequest="1"
+                HorizontalOptions="FillAndExpand" />
 
-                    <CollectionView.ItemTemplate>
-                        <DataTemplate x:DataType="dataModel:Turnout">
-                            <Grid>
-                            <StackLayout Padding="0">
-                                <Grid ColumnDefinitions="120,*,100" Margin="0,5,0,5" Padding="0">
-                                    <Label
-                                        Grid.Column="0"
-                                        Margin="10,0,0,0"
-                                        HorizontalOptions="Start"
-                                        LineBreakMode="NoWrap"
-                                        Style="{StaticResource MediumLabel}"
-                                        Text="{Binding Id}"
-                                        VerticalOptions="Center"/>
-                                    <Label
-                                        FontAttributes="Bold"
-                                        Grid.Column="1"
-                                        HorizontalOptions="FillAndExpand"
-                                        LineBreakMode="WordWrap"
-                                        Style="{StaticResource MediumLabel}"
-                                        Text="{Binding Name}"
-                                        VerticalOptions="Center"/>
-                                    <Label
-                                        IsVisible="False"
-                                        Grid.Column="2"
-                                        HorizontalOptions="Start"
-                                        Style="{StaticResource MediumLabel}"
-                                        Text="{Binding State}"
-                                        VerticalOptions="Center">
-                                        <Label.Triggers>
-                                            <DataTrigger TargetType="Label" Binding="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, x:DataType=view:TurnoutsViewModel, Path=IsConnected}" Value="True">
-                                                <Setter Property="Opacity" Value="1.00" />
-                                            </DataTrigger>
+            <RefreshView IsRefreshing="{Binding IsBusy}" Command="{Binding RefreshTurnoutsCommand}">
+                <Grid VerticalOptions="FillAndExpand"
+                      IsEnabled="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, x:DataType=view:TurnoutsViewModel, Path=IsConnected}">
 
-                                            <DataTrigger TargetType="Label" Binding="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, x:DataType=view:TurnoutsViewModel, Path=IsConnected}" Value="False">
-                                                <Setter Property="Opacity" Value="0.35" />
-                                            </DataTrigger>
+                    <CollectionView ItemsSource="{Binding Turnouts}" SelectionMode="Single"
+                                    SelectedItem="{Binding SelectedTurnout}">
+                        <CollectionView.EmptyView>
+                            <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+                                <Border WidthRequest="350" HeightRequest="100" StrokeShape="RoundRectangle 15"
+                                        BackgroundColor="WhiteSmoke">
+                                    <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+                                        <Label IsVisible="{Binding IsSupported}" Text="No Turnout data available."
+                                               VerticalOptions="Center" HorizontalOptions="Center" />
+                                        <Label IsVisible="{Binding IsNotSupported}"
+                                               Text="The current server type does not support Turnouts."
+                                               VerticalOptions="Center" HorizontalOptions="Center" />
+                                    </Grid>
+                                </Border>
+                            </Grid>
+                        </CollectionView.EmptyView>
 
-                                            <DataTrigger
-                                                Binding="{Binding State}"
-                                                TargetType="Label"
-                                                Value="Closed">
-                                                <Setter Property="TextColor" Value="Green"/>
-                                                <Setter Property="Text" Value="Closed"/>
-                                            </DataTrigger>
-                                            <DataTrigger
-                                                Binding="{Binding State}"
-                                                TargetType="Label"
-                                                Value="Thrown">
-                                                <Setter Property="TextColor" Value="Red"/>
-                                                <Setter Property="Text" Value="Thrown"/>
-                                            </DataTrigger>
-                                        </Label.Triggers>
-                                        <Label.GestureRecognizers>
-                                            <TapGestureRecognizer
-                                                Command="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, Path=SendTurnoutStateCommand}"
-                                                CommandParameter="{Binding .}"
-                                                x:DataType="{x:Type view:TurnoutsViewModel}"/>
-                                        </Label.GestureRecognizers>
-                                    </Label>
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="dataModel:Turnout">
+                                <Grid>
+                                    <StackLayout Padding="0">
+                                        <Grid ColumnDefinitions="120,*,100" Margin="0,5,0,5" Padding="0">
+                                            <Label
+                                                Grid.Column="0"
+                                                Margin="10,0,0,0"
+                                                HorizontalOptions="Start"
+                                                LineBreakMode="NoWrap"
+                                                Style="{StaticResource MediumLabel}"
+                                                Text="{Binding Id}"
+                                                VerticalOptions="Center" />
+                                            <Label
+                                                FontAttributes="Bold"
+                                                Grid.Column="1"
+                                                HorizontalOptions="FillAndExpand"
+                                                LineBreakMode="WordWrap"
+                                                Style="{StaticResource MediumLabel}"
+                                                Text="{Binding Name}"
+                                                VerticalOptions="Center" />
+                                            <Label
+                                                IsVisible="False"
+                                                Grid.Column="2"
+                                                HorizontalOptions="Start"
+                                                Style="{StaticResource MediumLabel}"
+                                                Text="{Binding State}"
+                                                VerticalOptions="Center">
+                                                <Label.Triggers>
+                                                    <DataTrigger TargetType="Label"
+                                                                 Binding="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, x:DataType=view:TurnoutsViewModel, Path=IsConnected}"
+                                                                 Value="True">
+                                                        <Setter Property="Opacity" Value="1.00" />
+                                                    </DataTrigger>
+
+                                                    <DataTrigger TargetType="Label"
+                                                                 Binding="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, x:DataType=view:TurnoutsViewModel, Path=IsConnected}"
+                                                                 Value="False">
+                                                        <Setter Property="Opacity" Value="0.35" />
+                                                    </DataTrigger>
+
+                                                    <DataTrigger
+                                                        Binding="{Binding State}"
+                                                        TargetType="Label"
+                                                        Value="Closed">
+                                                        <Setter Property="TextColor" Value="Green" />
+                                                        <Setter Property="Text" Value="Closed" />
+                                                    </DataTrigger>
+                                                    <DataTrigger
+                                                        Binding="{Binding State}"
+                                                        TargetType="Label"
+                                                        Value="Thrown">
+                                                        <Setter Property="TextColor" Value="Red" />
+                                                        <Setter Property="Text" Value="Thrown" />
+                                                    </DataTrigger>
+                                                </Label.Triggers>
+                                                <Label.GestureRecognizers>
+                                                    <TapGestureRecognizer
+                                                        Command="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, Path=SendTurnoutStateCommand}"
+                                                        CommandParameter="{Binding .}"
+                                                        x:DataType="{x:Type view:TurnoutsViewModel}" />
+                                                </Label.GestureRecognizers>
+                                            </Label>
 
                                             <components:TurnoutStateControl
                                                 StateChangedCommand="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, Path=SendTurnoutStateCommand, x:DataType=view:TurnoutsViewModel}"
@@ -182,157 +190,200 @@
                                                 State="{Binding State}"
                                                 Turnout="{Binding .}">
                                                 <components:TurnoutStateControl.Triggers>
-                                                    <DataTrigger TargetType="components:TurnoutStateControl" Binding="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, x:DataType=view:TurnoutsViewModel, Path=IsConnected}" Value="True">
+                                                    <DataTrigger TargetType="components:TurnoutStateControl"
+                                                                 Binding="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, x:DataType=view:TurnoutsViewModel, Path=IsConnected}"
+                                                                 Value="True">
                                                         <Setter Property="Opacity" Value="1.00" />
                                                     </DataTrigger>
-                                                    <DataTrigger TargetType="components:TurnoutStateControl" Binding="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, x:DataType=view:TurnoutsViewModel, Path=IsConnected}" Value="False">
+                                                    <DataTrigger TargetType="components:TurnoutStateControl"
+                                                                 Binding="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, x:DataType=view:TurnoutsViewModel, Path=IsConnected}"
+                                                                 Value="False">
                                                         <Setter Property="Opacity" Value="0.35" />
                                                     </DataTrigger>
                                                 </components:TurnoutStateControl.Triggers>
-                                            <components:TurnoutStateControl.GestureRecognizers>
-                                                <TapGestureRecognizer
-                                                    Command="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, Path=SendTurnoutStateCommand}"
-                                                    CommandParameter="{Binding .}"
-                                                    x:DataType="{x:Type view:TurnoutsViewModel}"/>
-                                            </components:TurnoutStateControl.GestureRecognizers>
+                                                <components:TurnoutStateControl.GestureRecognizers>
+                                                    <TapGestureRecognizer
+                                                        Command="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, Path=SendTurnoutStateCommand}"
+                                                        CommandParameter="{Binding .}"
+                                                        x:DataType="{x:Type view:TurnoutsViewModel}" />
+                                                </components:TurnoutStateControl.GestureRecognizers>
                                             </components:TurnoutStateControl>
+                                        </Grid>
+                                        <BoxView
+                                            BackgroundColor="{StaticResource Primary}"
+                                            HeightRequest="1"
+                                            HorizontalOptions="FillAndExpand" />
+                                    </StackLayout>
                                 </Grid>
-                                <BoxView
-                                    BackgroundColor="{StaticResource Primary}"
-                                    HeightRequest="1"
-                                    HorizontalOptions="FillAndExpand"/>
-                            </StackLayout>
-                                </Grid>
-                        </DataTemplate>
-                    </CollectionView.ItemTemplate>
-                </CollectionView>
-            </Grid>
-        </RefreshView>
-        
-        <BoxView
-            BackgroundColor="{StaticResource Primary}"
-            HeightRequest="1"
-            HorizontalOptions="FillAndExpand"/>
-        
-    </StackLayout>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </Grid>
+            </RefreshView>
 
-    
-    <!-- <Grid> -->
-    <!--     <RefreshView IsRefreshing="{Binding IsBusy}" -->
-    <!--                  Command="{Binding RefreshTurnoutsCommand}"> -->
-    <!--         <Grid> -->
-    <!--             ~1~ IsEnabled="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, x:DataType=view:TurnoutsViewModel, Path=IsConnected}"> @1@ -->
-    <!--             <CollectionView ItemsSource="{Binding Turnouts}" -->
-    <!--                             SelectedItem="{Binding SelectedTurnout}" -->
-    <!--                             SelectionMode="Single"> -->
-    <!-- -->
-    <!--                 <CollectionView.Header> -->
-    <!--                     <StackLayout> -->
-    <!--                         <Grid ColumnDefinitions="120,*,100"> -->
-    <!--                             <Button -->
-    <!--                                 Grid.Column="0" -->
-    <!--                                 CommandParameter="{Binding LabelID}" -->
-    <!--                                 HorizontalOptions="Start" -->
-    <!--                                 Style="{StaticResource ColumnLabel}" -->
-    <!--                                 Text="{Binding ColumnLabelID}"/> -->
-    <!--                             <Button -->
-    <!--                                 Grid.Column="1" -->
-    <!--                                 HorizontalOptions="Start" -->
-    <!--                                 Command="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, Path=SortByColumnCommand}" -->
-    <!--                                 CommandParameter="{Binding LabelName}" -->
-    <!--                                 Style="{StaticResource ColumnLabel}" -->
-    <!--                                 Text="{Binding ColumnLabelName}"/> -->
-    <!--                             <Button -->
-    <!--                                 Grid.Column="2" -->
-    <!--                                 Command="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, Path=SortByColumnCommand}" -->
-    <!--                                 CommandParameter="{Binding LabelState}" -->
-    <!--                                 HorizontalOptions="Start" -->
-    <!--                                 Style="{StaticResource ColumnLabel}" -->
-    <!--                                 Text="{Binding ColumnLabelState}"/> -->
-    <!--                         </Grid> -->
-    <!--                         <BoxView -->
-    <!--                             BackgroundColor="{StaticResource Primary}" -->
-    <!--                             HeightRequest="1" -->
-    <!--                             HorizontalOptions="FillAndExpand"/> -->
-    <!--                     </StackLayout> -->
-    <!--                 </CollectionView.Header> -->
-    <!-- -->
-    <!--                 <CollectionView.EmptyView> -->
-    <!--                     <Border WidthRequest="350" HeightRequest="100" StrokeShape="RoundRectangle 15" BackgroundColor="WhiteSmoke"> -->
-    <!--                         <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" > -->
-    <!--                             <Label IsVisible="{Binding IsSupported}" Text="No Turnouts are available." VerticalOptions="Center" HorizontalOptions="Center"/> -->
-    <!--                             <Label IsVisible="{Binding IsNotSupported}" -->
-    <!--                                    Text="The current server type does not support Turnouts." VerticalOptions="Center" HorizontalOptions="Center"/> -->
-    <!--                         </Grid> -->
-    <!--                     </Border> -->
-    <!--                 </CollectionView.EmptyView> -->
-    <!-- -->
-    <!--                 <CollectionView.ItemTemplate> -->
-    <!--                     <DataTemplate x:DataType="dataModel:Turnout"> -->
-    <!--                         <Grid Style="{StaticResource SelectableItemStyle}" InputTransparent="True"> -->
-    <!--                                 <StackLayout > -->
-    <!--                                     <Grid ColumnDefinitions="120,*,100" Margin="0,5,0,5" Padding="0"> -->
-    <!--                                         <Label -->
-    <!--                                             Grid.Column="0" -->
-    <!--                                             Margin="10,0,0,0" -->
-    <!--                                             HorizontalOptions="Start" -->
-    <!--                                             LineBreakMode="TailTruncation" -->
-    <!--                                             Style="{StaticResource MediumLabel}" -->
-    <!--                                             Text="{Binding Id}" -->
-    <!--                                             VerticalOptions="Center"/> -->
-    <!--                                         <Label -->
-    <!--                                             Grid.Column="1" -->
-    <!--                                             FontAttributes="Bold" -->
-    <!--                                             LineBreakMode="TailTruncation" -->
-    <!--                                             Style="{StaticResource MediumLabel}" -->
-    <!--                                             Text="{Binding Name}" -->
-    <!--                                             VerticalOptions="Center"/> -->
-    <!--                                          -->
-    <!--                                         ~1~ StateChangedCommand="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, Path=SendTurnoutStateCommand, x:DataType=view:TurnoutsViewModel}" @1@ -->
-    <!--                                         <components:TurnoutStateControl -->
-    <!--                                             InputTransparent="False" -->
-    <!--                                             IsEnabled="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, Path=IsConnected, x:DataType=view:TurnoutsViewModel}" -->
-    <!--                                             CanToggleState="true" -->
-    <!--                                             Grid.Column="2" -->
-    <!--                                             Margin="0,0,10,0" -->
-    <!--                                             State="{Binding State}" -->
-    <!--                                             Turnout="{Binding .}"> -->
-    <!--                                             <components:TurnoutStateControl.Triggers> -->
-    <!--                                                 <DataTrigger TargetType="components:TurnoutStateControl" Binding="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, x:DataType=view:TurnoutsViewModel, Path=IsConnected}" Value="True"> -->
-    <!--                                                     <Setter Property="Opacity" Value="1.00" /> -->
-    <!--                                                 </DataTrigger> -->
-    <!-- -->
-    <!--                                                 <DataTrigger TargetType="components:TurnoutStateControl" Binding="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, x:DataType=view:TurnoutsViewModel, Path=IsConnected}" Value="False"> -->
-    <!--                                                     <Setter Property="Opacity" Value="0.35" /> -->
-    <!--                                                 </DataTrigger> -->
-    <!--                                             </components:TurnoutStateControl.Triggers> -->
-    <!--                                         <components:TurnoutStateControl.GestureRecognizers> -->
-    <!--                                             <TapGestureRecognizer -->
-    <!--                                                 Command="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, Path=SendTurnoutStateCommand}" -->
-    <!--                                                 CommandParameter="{Binding .}" -->
-    <!--                                                 x:DataType="{x:Type view:TurnoutsViewModel}"/> -->
-    <!--                                         </components:TurnoutStateControl.GestureRecognizers> -->
-    <!--                                         </components:TurnoutStateControl> -->
-    <!--                                     </Grid> -->
-    <!-- -->
-    <!--                                     <BoxView -->
-    <!--                                         BackgroundColor="{StaticResource Primary}" -->
-    <!--                                         HeightRequest="1" -->
-    <!--                                         HorizontalOptions="FillAndExpand"/> -->
-    <!--                                 </StackLayout> -->
-    <!--                         </Grid>     -->
-    <!--                     </DataTemplate> -->
-    <!--                 </CollectionView.ItemTemplate> -->
-    <!--             </CollectionView> -->
-    <!--         </Grid> -->
-    <!--     </RefreshView> -->
+            <BoxView
+                BackgroundColor="{StaticResource Primary}"
+                HeightRequest="1"
+                HorizontalOptions="FillAndExpand" />
 
+        </StackLayout>
+
+
+        <!-- <Grid> -->
+        <!--     <RefreshView IsRefreshing="{Binding IsBusy}" -->
+        <!--                  Command="{Binding RefreshTurnoutsCommand}"> -->
+        <!--         <Grid> -->
+        <!--             ~1~ IsEnabled="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, x:DataType=view:TurnoutsViewModel, Path=IsConnected}"> @1@ -->
+        <!--             <CollectionView ItemsSource="{Binding Turnouts}" -->
+        <!--                             SelectedItem="{Binding SelectedTurnout}" -->
+        <!--                             SelectionMode="Single"> -->
+        <!-- -->
+        <!--                 <CollectionView.Header> -->
+        <!--                     <StackLayout> -->
+        <!--                         <Grid ColumnDefinitions="120,*,100"> -->
+        <!--                             <Button -->
+        <!--                                 Grid.Column="0" -->
+        <!--                                 CommandParameter="{Binding LabelID}" -->
+        <!--                                 HorizontalOptions="Start" -->
+        <!--                                 Style="{StaticResource ColumnLabel}" -->
+        <!--                                 Text="{Binding ColumnLabelID}"/> -->
+        <!--                             <Button -->
+        <!--                                 Grid.Column="1" -->
+        <!--                                 HorizontalOptions="Start" -->
+        <!--                                 Command="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, Path=SortByColumnCommand}" -->
+        <!--                                 CommandParameter="{Binding LabelName}" -->
+        <!--                                 Style="{StaticResource ColumnLabel}" -->
+        <!--                                 Text="{Binding ColumnLabelName}"/> -->
+        <!--                             <Button -->
+        <!--                                 Grid.Column="2" -->
+        <!--                                 Command="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, Path=SortByColumnCommand}" -->
+        <!--                                 CommandParameter="{Binding LabelState}" -->
+        <!--                                 HorizontalOptions="Start" -->
+        <!--                                 Style="{StaticResource ColumnLabel}" -->
+        <!--                                 Text="{Binding ColumnLabelState}"/> -->
+        <!--                         </Grid> -->
+        <!--                         <BoxView -->
+        <!--                             BackgroundColor="{StaticResource Primary}" -->
+        <!--                             HeightRequest="1" -->
+        <!--                             HorizontalOptions="FillAndExpand"/> -->
+        <!--                     </StackLayout> -->
+        <!--                 </CollectionView.Header> -->
+        <!-- -->
+        <!--                 <CollectionView.EmptyView> -->
+        <!--                     <Border WidthRequest="350" HeightRequest="100" StrokeShape="RoundRectangle 15" BackgroundColor="WhiteSmoke"> -->
+        <!--                         <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" > -->
+        <!--                             <Label IsVisible="{Binding IsSupported}" Text="No Turnouts are available." VerticalOptions="Center" HorizontalOptions="Center"/> -->
+        <!--                             <Label IsVisible="{Binding IsNotSupported}" -->
+        <!--                                    Text="The current server type does not support Turnouts." VerticalOptions="Center" HorizontalOptions="Center"/> -->
+        <!--                         </Grid> -->
+        <!--                     </Border> -->
+        <!--                 </CollectionView.EmptyView> -->
+        <!-- -->
+        <!--                 <CollectionView.ItemTemplate> -->
+        <!--                     <DataTemplate x:DataType="dataModel:Turnout"> -->
+        <!--                         <Grid Style="{StaticResource SelectableItemStyle}" InputTransparent="True"> -->
+        <!--                                 <StackLayout > -->
+        <!--                                     <Grid ColumnDefinitions="120,*,100" Margin="0,5,0,5" Padding="0"> -->
+        <!--                                         <Label -->
+        <!--                                             Grid.Column="0" -->
+        <!--                                             Margin="10,0,0,0" -->
+        <!--                                             HorizontalOptions="Start" -->
+        <!--                                             LineBreakMode="TailTruncation" -->
+        <!--                                             Style="{StaticResource MediumLabel}" -->
+        <!--                                             Text="{Binding Id}" -->
+        <!--                                             VerticalOptions="Center"/> -->
+        <!--                                         <Label -->
+        <!--                                             Grid.Column="1" -->
+        <!--                                             FontAttributes="Bold" -->
+        <!--                                             LineBreakMode="TailTruncation" -->
+        <!--                                             Style="{StaticResource MediumLabel}" -->
+        <!--                                             Text="{Binding Name}" -->
+        <!--                                             VerticalOptions="Center"/> -->
+        <!--                                          -->
+        <!--                                         ~1~ StateChangedCommand="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, Path=SendTurnoutStateCommand, x:DataType=view:TurnoutsViewModel}" @1@ -->
+        <!--                                         <components:TurnoutStateControl -->
+        <!--                                             InputTransparent="False" -->
+        <!--                                             IsEnabled="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, Path=IsConnected, x:DataType=view:TurnoutsViewModel}" -->
+        <!--                                             CanToggleState="true" -->
+        <!--                                             Grid.Column="2" -->
+        <!--                                             Margin="0,0,10,0" -->
+        <!--                                             State="{Binding State}" -->
+        <!--                                             Turnout="{Binding .}"> -->
+        <!--                                             <components:TurnoutStateControl.Triggers> -->
+        <!--                                                 <DataTrigger TargetType="components:TurnoutStateControl" Binding="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, x:DataType=view:TurnoutsViewModel, Path=IsConnected}" Value="True"> -->
+        <!--                                                     <Setter Property="Opacity" Value="1.00" /> -->
+        <!--                                                 </DataTrigger> -->
+        <!-- -->
+        <!--                                                 <DataTrigger TargetType="components:TurnoutStateControl" Binding="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, x:DataType=view:TurnoutsViewModel, Path=IsConnected}" Value="False"> -->
+        <!--                                                     <Setter Property="Opacity" Value="0.35" /> -->
+        <!--                                                 </DataTrigger> -->
+        <!--                                             </components:TurnoutStateControl.Triggers> -->
+        <!--                                         <components:TurnoutStateControl.GestureRecognizers> -->
+        <!--                                             <TapGestureRecognizer -->
+        <!--                                                 Command="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, Path=SendTurnoutStateCommand}" -->
+        <!--                                                 CommandParameter="{Binding .}" -->
+        <!--                                                 x:DataType="{x:Type view:TurnoutsViewModel}"/> -->
+        <!--                                         </components:TurnoutStateControl.GestureRecognizers> -->
+        <!--                                         </components:TurnoutStateControl> -->
+        <!--                                     </Grid> -->
+        <!-- -->
+        <!--                                     <BoxView -->
+        <!--                                         BackgroundColor="{StaticResource Primary}" -->
+        <!--                                         HeightRequest="1" -->
+        <!--                                         HorizontalOptions="FillAndExpand"/> -->
+        <!--                                 </StackLayout> -->
+        <!--                         </Grid>     -->
+        <!--                     </DataTemplate> -->
+        <!--                 </CollectionView.ItemTemplate> -->
+        <!--             </CollectionView> -->
+        <!--         </Grid> -->
+        <!--     </RefreshView> -->
+
+        <!-- Connecting Overlay -->
+        <Grid IsVisible="{Binding ConnectionState, Converter={StaticResource ShowConnectingStateConverter}}"
+              BackgroundColor="WhiteSmoke"
+              Opacity="0.75"
+              HorizontalOptions="Fill"
+              VerticalOptions="Fill">
+
+            <Border BackgroundColor="White"
+                    StrokeShape="RoundRectangle 25"
+                    Stroke="{StaticResource Primary}"
+                    StrokeThickness="3"
+                    HorizontalOptions="Center"
+                    VerticalOptions="Center"
+                    WidthRequest="200"
+                    HeightRequest="120"
+                    Opacity="1"
+                    Margin="20"
+                    Padding="20">
+
+                <StackLayout
+                    BackgroundColor="White"
+                    HorizontalOptions="Center" VerticalOptions="Center" Spacing="5">
+                    <ActivityIndicator
+                        BackgroundColor="White"
+                        IsRunning="{Binding ConnectionState, Converter={StaticResource ShowConnectingStateConverter}}"
+                        Color="{StaticResource Primary}" />
+                    <Label Text="DCC System Status"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center"
+                           FontSize="15"
+                           TextColor="Black" />
+                    <Label Text="{Binding ConnectionText}"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center"
+                           FontSize="15"
+                           TextColor="{Binding ConnectionColor}" />
+                </StackLayout>
+            </Border>
+        </Grid>
         <!-- Bottom Sheet for editing the Connection Details -->
         <navigationDrawer:SfBottomSheet
             x:Name="BottomSheet"
             CornerRadius="15, 15, 0, 0"
-            HalfExpandedRatio="0.50" 
-            ContentPadding="10"/>
+            HalfExpandedRatio="0.50"
+            ContentPadding="10" />
 
     </Grid>
 </ContentPage>
