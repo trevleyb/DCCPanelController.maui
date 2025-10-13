@@ -33,8 +33,8 @@ public abstract class TurnoutTile : TrackTile, ITileInteractive {
                     TurnoutStateEnum.Thrown => TurnoutStateEnum.Closed,
                     _                       => TurnoutStateEnum.Closed,
                 };
-                await client.SendTurnoutCmdAsync(turnout, turnout.State != TurnoutStateEnum.Closed);
-                turnoutEntity.SetState(newState, StateChangeSource.Internal);
+                await client.SendTurnoutCmdAsync(turnout, newState != TurnoutStateEnum.Closed);
+                turnoutEntity.SetState(newState, StateChangeSource.Internal); // not sure we do this - leave it to messages?
                 return true;
             }
         }

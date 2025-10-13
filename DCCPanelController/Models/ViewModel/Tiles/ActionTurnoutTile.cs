@@ -45,8 +45,8 @@ public class ActionTurnoutTile : Tile, ITileInteractive {
                     TurnoutStateEnum.Thrown => TurnoutStateEnum.Closed,
                     _                       => TurnoutStateEnum.Closed,
                 };
-                await client.SendTurnoutCmdAsync(turnout, turnout.State != TurnoutStateEnum.Closed);
-                turnout.State = newState;
+                await client.SendTurnoutCmdAsync(turnout, newState != TurnoutStateEnum.Closed);
+                turnout.State = newState; // Dont do this - let the message from the System control this
                 return true;
             }
         }

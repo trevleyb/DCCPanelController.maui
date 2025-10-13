@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
+using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel.Entities.BaseClasses;
 using DCCPanelController.Models.DataModel.Entities.Interfaces;
 using DCCPanelController.View.Helpers;
@@ -9,19 +10,19 @@ namespace DCCPanelController.Models.DataModel.Entities;
 
 public partial class CircleLabelEntity : DrawingEntity, ITextEntity, IDrawingEntity {
     [ObservableProperty] [property: Editable("Background Color", "", 5, "Circle")]
-    private Color _backgroundColor = Colors.DarkGray;
+    private Color _backgroundColor = AppleCrayonColors.EnumToColor(AppleCrayonColors.AppleCrayonColorsEnum.Licorice);
 
     [ObservableProperty] [property: Editable("Inner Border", "", 10, "Circle")]
-    private Color _borderInnerColor = Colors.White;
+    private Color _borderInnerColor = AppleCrayonColors.EnumToColor(AppleCrayonColors.AppleCrayonColorsEnum.Licorice);
 
     [ObservableProperty] [property: Editable("Outer Border", "", 11, "Circle")]
-    private Color _borderOuterColor = Colors.Black;
+    private Color _borderOuterColor = AppleCrayonColors.EnumToColor(AppleCrayonColors.AppleCrayonColorsEnum.Licorice);
 
     [ObservableProperty] [property: Editable("Gap Color", "", 12, "Circle")]
-    private Color _gapColor = Colors.White;
+    private Color _gapColor = AppleCrayonColors.EnumToColor(AppleCrayonColors.AppleCrayonColorsEnum.Snow);
 
     [ObservableProperty] [property: Editable("Inner Width", "", 13, "Circle")]
-    private int _borderInnerWidth = 2;
+    private int _borderInnerWidth = 0;
     
     [ObservableProperty] [property: Editable("Outer Width", "", 14, "Circle")]
     private int _borderOuterWidth = 2;
@@ -29,19 +30,17 @@ public partial class CircleLabelEntity : DrawingEntity, ITextEntity, IDrawingEnt
     [ObservableProperty] [property: Editable("Gap Width", "", 15, "Circle")]
     private int _gapWidth = 2;
 
-
-
     [ObservableProperty] [property: Editable("Font Size", "", 1, "Text")]
-    private int _fontSize = 15;
+    private int _fontSize = 3;
 
     [ObservableProperty] [property: Editable("Label", "", 0, "Text")]
     private string _label = string.Empty;
 
     [ObservableProperty] [property: Editable("Text Color", "", 2, "Text")]
-    private Color _textColor = Colors.White;
+    private Color _textColor = AppleCrayonColors.EnumToColor(AppleCrayonColors.AppleCrayonColorsEnum.Snow);
     
     [ObservableProperty] [property: Editable("Font Style", "", 2, "Text", EditorKind = EditorKinds.FontAlias)]
-    private string _fontAlias = FontCatalog.DefaultFontAlias;
+    private string _fontAlias = FontCatalog.GetFontFaceAlias(FontCatalog.DefaultFontFamily,"Bold")?.ToString() ?? FontCatalog.DefaultFontAlias;
 
     [JsonConstructor]
     public CircleLabelEntity() { }

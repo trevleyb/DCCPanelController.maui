@@ -213,6 +213,12 @@
         <EmbeddedResource Include="Models\TileImages\track_turnout_left_angle_diverging.svg" />
         <EmbeddedResource Include="Models\TileImages\track_turnout_left_angle_straight_alt.svg" />
         <EmbeddedResource Include="Models\TileImages\track_turnout_left_angle_diverging_alt.svg" />
+        <None Remove="Models\TileImages\signal_lights_1.svg" />
+        <EmbeddedResource Include="Models\TileImages\signal_lights_1.svg" />
+        <None Remove="Models\TileImages\signal_lights_2.svg" />
+        <EmbeddedResource Include="Models\TileImages\signal_lights_2.svg" />
+        <None Remove="Models\TileImages\signal_lights_3.svg" />
+        <EmbeddedResource Include="Models\TileImages\signal_lights_3.svg" />
     </ItemGroup>
 
     <ItemGroup>

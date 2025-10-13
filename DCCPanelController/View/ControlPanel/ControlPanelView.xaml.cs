@@ -804,7 +804,6 @@ public partial class ControlPanelView {
 
         // Move: update entity rows/cols in-place, then refresh grid positions
         // -------------------------------------------------------------------
-        Console.WriteLine($"Performing Move: {anchorCol} {anchorRow} {minCol} {minRow}");
         MainThread.BeginInvokeOnMainThread(async void () => {
             try {
                 RemoveHighlights();

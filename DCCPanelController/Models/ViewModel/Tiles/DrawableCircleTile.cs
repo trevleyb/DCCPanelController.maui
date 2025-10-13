@@ -24,7 +24,6 @@ public class DrawableCircleTile : Tile, ITileDrawable {
         gv.SetBinding(ScaleProperty, new Binding(nameof(e.Scale), source: e));
         gv.SetBinding(ZIndexProperty, new Binding(nameof(e.Layer), source: e));
         gv.SetBinding(OpacityProperty, new Binding(nameof(e.Opacity), source: e));
-        Console.WriteLine($"");
 
         e.PropertyChanged += (_, __) => gv.Invalidate(); // redraw on visual changes
         return gv;
