@@ -54,7 +54,7 @@ public abstract class TurnoutTile : TrackTile, ITileInteractive {
             if (turnout.TurnoutStyle == TurnoutStyleEnum.NoBranch) imageName += "alt";
 
             var style = new SvgStyleBuilder();
-            style.Add(e => e.WithName(SvgElementType.TrackDiverging).WithColor(turnout.TrackNotSelectedColor ?? turnout?.Parent?.DivergingColor ?? Colors.Gray));
+            style.Add(e => e.WithName(SvgElementType.TrackDiverging).WithColor(turnout.TrackNotSelectedColor ?? turnout.TrackColor ?? turnout?.Parent?.DivergingColor ?? Colors.Gray));
 
             // If the Neighbor track is actually a BranchLine then mark the diverging
             // track as not having a border as it would not make sense.
@@ -75,7 +75,6 @@ public abstract class TurnoutTile : TrackTile, ITileInteractive {
                     style.Add(e => e.WithName(SvgElementType.TrackDiverging).WithColor(color).Visible());
                 }
             }
-
             
             var trackTurnout = base.CreateTrackTile(imageName, Entity.Rotation, style.Build());
             return trackTurnout;

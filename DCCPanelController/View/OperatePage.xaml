@@ -18,6 +18,7 @@
 
     <ContentPage.Resources>
         <ResourceDictionary>
+            <converters:ShowConnectingStateConverter x:Key="ShowConnectingStateConverter"/>
             <converters:ColorFallbackConverter x:Key="ColorFallbackConverter"/>
             <converters:ContrastToBackgroundConverter x:Key="ContrastToBg" MinContrast="4.5"/>
             <converters:ContrastToBackgroundMultiConverter x:Key="ContrastToBgMulti" MinContrast="4.5"/>
@@ -283,6 +284,47 @@
                          Opacity="0.50"
                          IsVisible="{Binding IsMaximized}"
                          Clicked="UnmaximizeFab_Clicked"/>
+            
+            <!-- Connecting Overlay -->
+            <Grid IsVisible="{Binding ConnectionState, Converter={StaticResource ShowConnectingStateConverter}}"
+                  BackgroundColor="WhiteSmoke"
+                  Opacity="0.75"
+                  HorizontalOptions="Fill"
+                  VerticalOptions="Fill">
+
+                <Border BackgroundColor="White"
+                        StrokeShape="RoundRectangle 25"
+                        Stroke="{StaticResource Primary}"
+                        StrokeThickness="3"
+                        HorizontalOptions="Center"
+                        VerticalOptions="Center"
+                        WidthRequest="200"
+                        HeightRequest="120"
+                        Opacity="1"
+                        Margin="20"
+                        Padding="20">
+
+                    <StackLayout
+                        BackgroundColor="White"
+                        HorizontalOptions="Center" VerticalOptions="Center" Spacing="5">
+                        <ActivityIndicator
+                            BackgroundColor="White"
+                            IsRunning="{Binding ConnectionState, Converter={StaticResource ShowConnectingStateConverter}}"
+                            Color="{StaticResource Primary}"/>
+                        <Label Text="DCC System Status"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center"
+                               FontSize="15"
+                               TextColor="Black"/>
+                        <Label Text="{Binding ConnectionText}"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center"
+                               FontSize="15"
+                               TextColor="{Binding ConnectionColor}"/>
+                    </StackLayout>
+                </Border>
+            </Grid>
+
         </Grid>
     </ContentPage.Content>
 </ContentPage>

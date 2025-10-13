@@ -81,6 +81,9 @@ public sealed class JmriDccClient : DccClientBase, IDccClient, IDisposable {
         //     return Result.Fail("Could not auto-detect connection settings.");
         // }
 
+        State = DccClientState.Initialising;
+        OnClientMessage($"Connecting to JMRI at {_jmriSettings.Address}:{_jmriSettings.Port}...");
+
         // 2) Hard probe: fail-fast if we can't connect/handshake now
         var probe = await ValidateConnectionAsync();
         if (probe.IsFailure) {
@@ -103,9 +106,6 @@ public sealed class JmriDccClient : DccClientBase, IDccClient, IDisposable {
                 ct: _cts.Token
             );
         }
-
-        State = DccClientState.Initialising;
-        OnClientMessage($"Connecting to JMRI at {_jmriSettings.Address}:{_jmriSettings.Port}...");
         return Result.Ok();
     }
 

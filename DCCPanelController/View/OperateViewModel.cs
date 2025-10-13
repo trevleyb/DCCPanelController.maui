@@ -17,19 +17,20 @@ using Microsoft.Extensions.Logging;
 namespace DCCPanelController.View;
 
 public partial class OperateViewModel : ConnectionViewModel {
-    private readonly ProfileService    _profileService;
-    private readonly ConnectionService _connectionService;
+    private readonly ProfileService            _profileService;
+    private readonly ConnectionService         _connectionService;
+    private          ILogger<OperateViewModel> _logger;
 
     [ObservableProperty] private Panel? _activePanel;
     [ObservableProperty] private int    _currentPanelIndex;
 
     [NotifyPropertyChangedFor(nameof(IsNotMaximized))]
     [ObservableProperty] private bool _isMaximized;
-
-    private                      ILogger<OperateViewModel>    _logger;
+    
     [ObservableProperty] private ObservableCollection<Panel>? _panels;
     [ObservableProperty] private bool                         _showGrid;
     [ObservableProperty] private bool                         _showPath;
+    [ObservableProperty] private bool                         _isConnecting;
 
     [NotifyPropertyChangedFor(nameof(HideWelcomePage))]
     [ObservableProperty] private bool _showWelcomePage;

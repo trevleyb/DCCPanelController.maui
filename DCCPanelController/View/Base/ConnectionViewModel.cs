@@ -28,6 +28,7 @@ public partial class ConnectionViewModel : BaseViewModel {
         _profileService = profileService;
         ConnectionService = connectionService;
         ConnectionService.ConnectionStateChanged += (sender, args) => {
+            Console.WriteLine($"ConnectionViewModel: Connection State=> {args}");
             PropertiesChanged();
             IsConnected = ConnectionState == DccClientState.Connected;
         };
@@ -97,6 +98,12 @@ public partial class ConnectionViewModel : BaseViewModel {
 
     [RelayCommand]
     protected async Task ToggleConnectionAsync() {
+        Console.WriteLine($"ConnectionViewModel: ToggleConnectionAsync");
+        if (ConnectionState == DccClientState.Disconnected) {
+            ConnectionService.ConnectionState = DccClientState.Initialising;
+            OnPropertyChanged(nameof(ConnectionState));
+        }
+
         var result = await ConnectionService.ToggleConnectionAsync();
         PropertiesChanged();
         if (result.IsFailure) {

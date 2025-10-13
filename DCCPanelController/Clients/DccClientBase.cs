@@ -13,7 +13,7 @@ public abstract partial class DccClientBase(Profile profile) : ObservableObject 
     protected const int     ReconnectDelayMs = 5000;
 
     public event EventHandler<DccClientEvent>? ClientMessage;
-    [ObservableProperty] private DccClientState _state;
+    [ObservableProperty] private DccClientState _state = DccClientState.Disconnected;
 
     protected Profile Profile = profile;
 
