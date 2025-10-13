@@ -84,9 +84,10 @@ public abstract class TrackTile : Tile, ITileTrack {
             var c = e.Surface.Canvas;
             c.Clear(SKColors.Transparent);
 
-            //EnsureImageMatchesSurfaceSize(ref cachedImage, style, baseKey, e.Info.Width, e.Info.Height, SvgImage!);
+            EnsureImageMatchesSurfaceSize(ref cachedImage, style, baseKey, e.Info.Width, e.Info.Height, SvgImage!);
+            var sampling = new SKSamplingOptions(SKFilterMode.Nearest, SKMipmapMode.None);
             var dest = SKRect.Create(e.Info.Width, e.Info.Height);
-            c.DrawImage(cachedImage, dest); // rotated already
+            c.DrawImage(cachedImage, dest, sampling); // rotated already
         };
 
         view.HorizontalOptions = LayoutOptions.Fill;
@@ -94,12 +95,24 @@ public abstract class TrackTile : Tile, ITileTrack {
         view.SetBinding(OpacityProperty, new Binding(nameof(Opacity), source: Entity));
         view.SetBinding(ZIndexProperty, new Binding(nameof(TrackEntity.Layer), source: Entity));
 
+        var bx = -GridSize * 0.25;
+        var by = -GridSize * 0.25;
+        var bw =  GridSize * 1.5;
+        var bh =  GridSize * 1.5;
+        
         var absoluteLayout = new AbsoluteLayout();
-        AbsoluteLayout.SetLayoutBounds(view, new Rect(-GridSize * 0.25, -GridSize * 0.25, GridSize * 1.5, GridSize * 1.5));
+        AbsoluteLayout.SetLayoutBounds(view, SnapToPixels(bx, by, bw, bh));
         absoluteLayout.Children.Add(view);
         return absoluteLayout;
     }
 
+    static Rect SnapToPixels(double x, double y, double w, double h) {
+        var d = DeviceDisplay.MainDisplayInfo.Density; // pixels per DIP
+        double Snap(double v) => Math.Round(v * d) / d;
+        return new Rect(Snap(x), Snap(y), Snap(w), Snap(h));
+    }
+
+    
     private void EnsureImageMatchesSurfaceSize(ref SKImage img, SvgStyleBuilder svgStyle, TileRenderKey baseKey, int w, int h, SvgImage svg) {
         if (img.Width == w && img.Height == h) return;
 

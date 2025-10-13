@@ -30,7 +30,7 @@
 - [X] allows me to resize even when there is something in the way
 
 
-- [ ] Check - if the diverging route is connected to a Branchline, then hide the diverging border
+- [X] Check - if the diverging route is connected to a Branchline, then hide the diverging border
 - [X] When using the Re-Layer button, it needs to pickup all tile under the selected including the range (w x h)
 - [X] Make the CircleLabel 2px larger so it is exactly in the Grid (so remove any margin)
 
