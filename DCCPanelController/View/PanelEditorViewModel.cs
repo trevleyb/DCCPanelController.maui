@@ -145,9 +145,15 @@ public partial class PanelEditorViewModel : ObservableObject {
         }
         OnPropertyChanged(nameof(CanLinkTiles));
     }
+
+    [RelayCommand]
+    private async Task LinkTilesClosedAsync() => await LinkTilesAsync(TurnoutStateEnum.Closed);
     
     [RelayCommand]
-    private async Task LinkTilesAsync() {
+    private async Task LinkTilesDivergingAsync() => await LinkTilesAsync(TurnoutStateEnum.Thrown);
+    
+    [RelayCommand]
+    private async Task LinkTilesAsync(TurnoutStateEnum direction) {
         if (SelectedEntities.Count != 2) return;
         
         TurnoutButtonEntity? button = null;
@@ -163,8 +169,13 @@ public partial class PanelEditorViewModel : ObservableObject {
         }
 
         button?.TurnoutID = turnout?.Turnout?.Name?? "";
-        button?.WhenNormal = ButtonStateEnum.On;
-        button?.WhenThrown = ButtonStateEnum.Off;
+        if (direction == TurnoutStateEnum.Closed) {
+            button?.WhenNormal = ButtonStateEnum.On;
+            button?.WhenThrown = ButtonStateEnum.Off;
+        } else {
+            button?.WhenNormal = ButtonStateEnum.Off;
+            button?.WhenThrown = ButtonStateEnum.On;
+        }
         _panelView.ClearAllSelectedTiles();
     }
 

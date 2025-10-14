@@ -70,8 +70,13 @@
                 <HorizontalStackLayout HorizontalOptions="End" x:DataType="view:PanelEditorViewModel" Margin="0,0,5,0" Spacing="10" Padding="5">
                     <ImageButton
                         IsEnabled="{Binding CanLinkTiles}"
-                        Command="{Binding Path=LinkTilesCommand}"
-                        Source="{Binding CanLinkTiles, Converter={StaticResource BoolToIcon}, ConverterParameter=link}"/>
+                        Command="{Binding Path=LinkTilesClosedCommand}"
+                        Source="{Binding CanLinkTiles, Converter={StaticResource BoolToIcon}, ConverterParameter=link_closed}"/>
+
+                    <ImageButton
+                        IsEnabled="{Binding CanLinkTiles}"
+                        Command="{Binding Path=LinkTilesDivergingCommand}"
+                        Source="{Binding CanLinkTiles, Converter={StaticResource BoolToIcon}, ConverterParameter=link_diverging}"/>
 
                     <ImageButton
                         IsEnabled="{Binding CanRotateTiles}"
