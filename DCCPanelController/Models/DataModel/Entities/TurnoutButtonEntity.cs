@@ -14,9 +14,12 @@ public partial class TurnoutButtonEntity : BaseClasses.ButtonEntity, IInteractiv
     private ButtonStyleEnum _buttonStyle = ButtonStyleEnum.Round;
 
     [ObservableProperty]
-    [property: Editable("Is Enabled?", "Does this button perform an action", 10, "Colors")]
+    [property: Editable("Is Enabled?", "Does this button perform an action", 10, Order = 6)]
     private bool _isEnabled = true;
 
+    [ObservableProperty] [property: Editable("Non-Toggle", "Button one-way to On only.", Order = 5)]
+    private bool _singlePress = false;
+    
     [ObservableProperty]
     private ButtonStateEnum _state = ButtonStateEnum.Unknown;
 

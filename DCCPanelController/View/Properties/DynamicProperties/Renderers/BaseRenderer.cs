@@ -16,7 +16,7 @@ public abstract class BaseRenderer {
     protected virtual int FieldHeight => 35;
     protected virtual int FieldWidth => -1;
 
-    protected virtual int LabelFontSize => 15;
+    protected virtual int LabelFontSize => 12;
     protected virtual int FieldFontSize => 12;
     protected virtual int ErrorFontSize => 10;
     protected virtual int DescFontSize => 10;
@@ -122,7 +122,6 @@ public abstract class BaseRenderer {
             Text = row?.Field?.Meta?.Label ?? "Unknown",
             FontSize = LabelFontSize,
             TextColor = LabelColor,
-            FontAttributes = FontAttributes.Bold,
             VerticalOptions = LayoutOptions.Center,
             HorizontalTextAlignment = TextAlignment.Start,
             HorizontalOptions = LayoutOptions.Fill,

@@ -37,17 +37,20 @@ public class ActionTurnoutTile : Tile, ITileInteractive {
     public SvgImage? SvgImage { get; protected set; }
 
     public async Task<bool> Interact(ConnectionService? connectionService) {
-        if (Entity is TurnoutButtonEntity { IsEnabled: true, Turnout: {} turnout } button) {
-            if (connectionService?.Client is { } client) {
-                if (UseClickSounds) await ClickSounds.PlayButtonClickSoundAsync();
-                var newState = turnout.State switch {
-                    TurnoutStateEnum.Closed => TurnoutStateEnum.Thrown,
-                    TurnoutStateEnum.Thrown => TurnoutStateEnum.Closed,
-                    _                       => TurnoutStateEnum.Closed,
-                };
-                await client.SendTurnoutCmdAsync(turnout, newState != TurnoutStateEnum.Closed);
-                turnout.State = newState; // Dont do this - let the message from the System control this
-                return true;
+        if (Entity is TurnoutButtonEntity { IsEnabled: true,  Turnout: {} turnout } button) {
+            if (button.SinglePress == true && button.State != ButtonStateEnum.On || button.SinglePress == false) {
+                if (connectionService?.Client is { } client) {
+                    if (UseClickSounds) await ClickSounds.PlayButtonClickSoundAsync();
+                    var newState = turnout.State switch {
+                        TurnoutStateEnum.Closed => TurnoutStateEnum.Thrown,
+                        TurnoutStateEnum.Thrown => TurnoutStateEnum.Closed,
+                        _                       => TurnoutStateEnum.Closed,
+                    };
+
+                    await client.SendTurnoutCmdAsync(turnout, newState != TurnoutStateEnum.Closed);
+                    turnout.State = newState; // Dont do this - let the message from the System control this
+                    return true;
+                }
             }
         }
         return false;

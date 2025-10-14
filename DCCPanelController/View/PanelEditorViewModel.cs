@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
+using DCCPanelController.Models.DataModel.Entities.Actions;
 using DCCPanelController.Models.ViewModel.Interfaces;
 using DCCPanelController.Services;
 using DCCPanelController.Services.ProfileService;
@@ -19,7 +20,11 @@ namespace DCCPanelController.View;
 
 public partial class PanelEditorViewModel : ObservableObject {
     //private DynamicTilePropertyPopupContent? _dynamicTileContent;
-    public enum PopupAction { None, Accept, Cancel }
+    public enum PopupAction {
+        None,
+        Accept,
+        Cancel
+    }
 
     private readonly ILogger<PanelEditor>         _logger;
     private readonly PanelEditor?                 _panelEditor;
@@ -39,6 +44,7 @@ public partial class PanelEditorViewModel : ObservableObject {
     [NotifyPropertyChangedFor(nameof(CanDeleteTiles))]
     [NotifyPropertyChangedFor(nameof(CanToggleGrid))]
     [ObservableProperty] private bool _isNavigationDrawerOpen;
+
     [ObservableProperty] private bool _isProcessing;
 
     [ObservableProperty] private Panel _panel;
@@ -91,6 +97,8 @@ public partial class PanelEditorViewModel : ObservableObject {
     public List<Entity> SelectedEntities => SelectedTiles.Select(x => x.Entity).ToList();
 
     public bool CanLinkTiles { get; set; }
+    public bool CanLinkATiles { get; set; }
+
     public bool CanEditProperties => !IsNavigationDrawerOpen && !IsProcessing;
     public bool CanEditTileProperties => HasSelectedEntities && !IsNavigationDrawerOpen && !IsProcessing;
     public bool CanSetModes => !IsNavigationDrawerOpen && !IsProcessing;
@@ -114,7 +122,6 @@ public partial class PanelEditorViewModel : ObservableObject {
             _                 => "move.png",
         };
 
-    
     public bool SetCanEditProperties() => true;
 
     public void UpdateOriginalFromCopy() {
@@ -139,43 +146,68 @@ public partial class PanelEditorViewModel : ObservableObject {
 
     public void CheckIfCanLinkTiles() {
         CanLinkTiles = false;
-        if (SelectedEntities.Count == 2) {
-            CanLinkTiles = (SelectedEntities[0] is TurnoutButtonEntity && SelectedEntities[1] is TurnoutEntity) ||
-                           (SelectedEntities[1] is TurnoutButtonEntity && SelectedEntities[0] is TurnoutEntity);
-        }
+        CanLinkATiles = false;
+
+        var aButtonCount = SelectedEntities.OfType<ActionButtonEntity>().Count();
+        var tButtonCount = SelectedEntities.OfType<TurnoutButtonEntity>().Count();
+        var turnoutCount = SelectedEntities.OfType<TurnoutEntity>().Count();
+
+        CanLinkTiles = tButtonCount == 1 && turnoutCount > 1;
+        CanLinkATiles = aButtonCount == 1 && turnoutCount > 1;
+
         OnPropertyChanged(nameof(CanLinkTiles));
     }
 
     [RelayCommand]
+    private async Task LinkTilesActionClosedAsync() => await LinkTilesActionAsync(TurnoutStateEnum.Closed);
+
+    [RelayCommand]
+    private async Task LinkTilesActionDivergingAsync() => await LinkTilesActionAsync(TurnoutStateEnum.Thrown);
+
+    [RelayCommand]
+    private async Task LinkTilesActionAsync(TurnoutStateEnum direction) {
+        if (SelectedEntities.Count != 2) return;
+
+        var button = SelectedEntities.OfType<ActionButtonEntity>().FirstOrDefault();
+        var turnouts = SelectedEntities.OfType<TurnoutEntity>().ToList();
+
+        if (button is { } && turnouts.Count > 0) {
+            button.TurnoutPanelActions.Clear();
+            foreach (var turnout in turnouts) {
+                button.TurnoutPanelActions.Add(new TurnoutAction() {
+                    ActionID = turnout.Turnout.Id,
+                    WhenClosed = direction == TurnoutStateEnum.Closed ? TurnoutStateEnum.Closed : TurnoutStateEnum.Thrown,
+                    WhenThrown = direction == TurnoutStateEnum.Closed ? TurnoutStateEnum.Thrown : TurnoutStateEnum.Closed,
+                });
+            }
+        }
+        _panelView.ClearAllSelectedTiles();
+    }
+
+    [RelayCommand]
     private async Task LinkTilesClosedAsync() => await LinkTilesAsync(TurnoutStateEnum.Closed);
-    
+
     [RelayCommand]
     private async Task LinkTilesDivergingAsync() => await LinkTilesAsync(TurnoutStateEnum.Thrown);
-    
+
     [RelayCommand]
     private async Task LinkTilesAsync(TurnoutStateEnum direction) {
         if (SelectedEntities.Count != 2) return;
-        
-        TurnoutButtonEntity? button = null;
-        TurnoutEntity? turnout = null;
-        
-        if (SelectedEntities[0] is TurnoutButtonEntity && SelectedEntities[1] is TurnoutEntity) {
-            button = (TurnoutButtonEntity)SelectedEntities[0];
-            turnout = (TurnoutEntity)SelectedEntities[1];
-        }
-        if (SelectedEntities[1] is TurnoutButtonEntity && SelectedEntities[0] is TurnoutEntity) {
-            button = (TurnoutButtonEntity)SelectedEntities[1];
-            turnout = (TurnoutEntity)SelectedEntities[0];
+
+        var button = SelectedEntities.OfType<TurnoutButtonEntity>().FirstOrDefault();
+        var turnout = SelectedEntities.OfType<TurnoutEntity>().FirstOrDefault();
+
+        if (button is not null && turnout is not null) {
+            button?.TurnoutID = turnout?.Turnout?.Name ?? "";
+            if (direction == TurnoutStateEnum.Closed) {
+                button?.WhenNormal = ButtonStateEnum.On;
+                button?.WhenThrown = ButtonStateEnum.Off;
+            } else {
+                button?.WhenNormal = ButtonStateEnum.Off;
+                button?.WhenThrown = ButtonStateEnum.On;
+            }
         }
 
-        button?.TurnoutID = turnout?.Turnout?.Name?? "";
-        if (direction == TurnoutStateEnum.Closed) {
-            button?.WhenNormal = ButtonStateEnum.On;
-            button?.WhenThrown = ButtonStateEnum.Off;
-        } else {
-            button?.WhenNormal = ButtonStateEnum.Off;
-            button?.WhenThrown = ButtonStateEnum.On;
-        }
         _panelView.ClearAllSelectedTiles();
     }
 
@@ -185,6 +217,7 @@ public partial class PanelEditorViewModel : ObservableObject {
             var result = await DisplayAlertHelper.DisplayAlertAsync("Unsaved Changes", null, "Save & Leave", "Discard Changes");
             if (result) await SaveAsync();
         }
+
         ExitViaBackButton = true;
         await Shell.Current.GoToAsync("..");
     }
@@ -227,12 +260,13 @@ public partial class PanelEditorViewModel : ObservableObject {
             if (shot == null) return string.Empty;
 
             var base64 = await Task.Run(async () => {
-                                        using var ms = new MemoryStream(64 * 1024); // small initial capacity; grows as needed
-                                        await shot.CopyToAsync(ms, ScreenshotFormat.Jpeg, 75);
-                                        var length = (int)ms.Length;
-                                        return Convert.ToBase64String(ms.GetBuffer(), 0, length);
-                                    })
+                                       using var ms = new MemoryStream(64 * 1024); // small initial capacity; grows as needed
+                                       await shot.CopyToAsync(ms, ScreenshotFormat.Jpeg, 75);
+                                       var length = (int)ms.Length;
+                                       return Convert.ToBase64String(ms.GetBuffer(), 0, length);
+                                   })
                                    .ConfigureAwait(false);
+
             return base64;
         } catch (Exception ex) {
             _logger.LogDebug("Error Capturing Thumbnail Image: {Message}", ex.Message);
@@ -245,18 +279,20 @@ public partial class PanelEditorViewModel : ObservableObject {
         if (HasSelectedEntities) {
             LayerCyclerByLocation.CycleLayersAtSelectedLocations(SelectedEntities, Panel.Entities);
         }
+
         CheckIfPanelChanged();
     }
 
-    
     [RelayCommand]
     private async Task RotateTileLeftAsync() {
         if (HasSelectedEntities) {
             foreach (var entity in SelectedEntities) {
                 entity.RotateLeft();
             }
+
             //_panelView.MarkAllSelectedTiles();
         }
+
         CheckIfPanelChanged();
     }
 
@@ -266,11 +302,13 @@ public partial class PanelEditorViewModel : ObservableObject {
             foreach (var entity in SelectedEntities) {
                 entity.RotateRight();
             }
+
             //_panelView.MarkAllSelectedTiles();
         }
+
         CheckIfPanelChanged();
     }
-    
+
     [RelayCommand]
     private async Task SwitchModeAsync() {
         if (SingleOrNoEntitiesSelected) {
@@ -283,6 +321,7 @@ public partial class PanelEditorViewModel : ObservableObject {
             // If multiple items selected, then only MOVE or COPY allowed
             EditMode = EditMode == EditModeEnum.Move ? EditModeEnum.Copy : EditModeEnum.Move;
         }
+
         CheckIfPanelChanged();
     }
 
@@ -292,9 +331,11 @@ public partial class PanelEditorViewModel : ObservableObject {
             foreach (var entity in SelectedEntities) {
                 Panel.Entities.Remove(entity);
             }
+
             SelectedEntities.Clear();
             OnPropertyChanged(nameof(Panels));
         }
+
         CheckIfPanelChanged();
     }
 
@@ -318,6 +359,7 @@ public partial class PanelEditorViewModel : ObservableObject {
         } finally {
             IsProcessing = false;
         }
+
         EditMode = EditModeEnum.Move; // Reset the edit mode after editing properties
         CheckIfPanelChanged();
     }
@@ -340,6 +382,7 @@ public partial class PanelEditorViewModel : ObservableObject {
             IsProcessing = false;
             await LetUiCatchUpAsync();
         }
+
         EditMode = EditModeEnum.Move; // Reset the edit mode after editing properties
         CheckIfPanelChanged();
     }
@@ -386,6 +429,7 @@ public partial class PanelEditorViewModel : ObservableObject {
             OverlayMode = PopupOverlayMode.Transparent,
             AcceptCommand = acceptPopupCommand,
         };
+
         popup.Show();
     }
 

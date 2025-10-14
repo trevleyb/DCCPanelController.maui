@@ -69,14 +69,24 @@
                 
                 <HorizontalStackLayout HorizontalOptions="End" x:DataType="view:PanelEditorViewModel" Margin="0,0,5,0" Spacing="10" Padding="5">
                     <ImageButton
-                        IsEnabled="{Binding CanLinkTiles}"
+                        IsVisible="{Binding CanLinkATiles}"
+                        Command="{Binding Path=LinkTilesActionClosedCommand}"
+                        Source="{Binding CanLinkATiles, Converter={StaticResource BoolToIcon}, ConverterParameter=link_closed}"/>
+
+                    <ImageButton
+                        IsVisible="{Binding CanLinkATiles}"
+                        Command="{Binding Path=LinkTilesActionDivergingCommand}"
+                        Source="{Binding CanLinkATiles, Converter={StaticResource BoolToIcon}, ConverterParameter=link_diverging}"/>
+
+                    <ImageButton
+                        IsVisible="{Binding CanLinkTiles}"
                         Command="{Binding Path=LinkTilesClosedCommand}"
                         Source="{Binding CanLinkTiles, Converter={StaticResource BoolToIcon}, ConverterParameter=link_closed}"/>
 
                     <ImageButton
-                        IsEnabled="{Binding CanLinkTiles}"
+                        IsVisible="{Binding CanLinkTiles}"
                         Command="{Binding Path=LinkTilesDivergingCommand}"
-                        Source="{Binding CanLinkTiles, Converter={StaticResource BoolToIcon}, ConverterParameter=link_diverging}"/>
+                        Source="{Binding CanLinkTiles, Converter={StaticResource BoolToIcon}, ConverterParameter=link}"/>
 
                     <ImageButton
                         IsEnabled="{Binding CanRotateTiles}"

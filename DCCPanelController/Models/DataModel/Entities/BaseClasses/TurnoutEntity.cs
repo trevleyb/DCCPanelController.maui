@@ -82,16 +82,10 @@ public abstract partial class TurnoutEntity : TrackEntity, IEntityGeneratingID, 
         }
     }
 
-    /// <summary>
-    ///     This function is design to find the entity that the diverging track on
-    ///     this turnout would connect to. We can do this so that if it is a branch
-    ///     line and the turnout is a mainline, then we can hide the border.
-    /// </summary>
-    /// <returns>The neighbor Entity</returns>
-    public Entity? GetDivergingEntity() {
+    public Entity? GetNeighbourEntity(ConnectionType connectionType) {
         var connections = Connections.GetConnections(Rotation);
         for (var i = 0; i <= connections.Length; i++) {
-            if (connections[i] == ConnectionType.Diverging) {
+            if (connections[i] == connectionType) {
                 var neighborOffset = EntityConnections.GetDirectionOffset(i);
                 var neighborCol = Col + neighborOffset.dx;
                 var neighborRow = Row + neighborOffset.dy;
@@ -101,4 +95,12 @@ public abstract partial class TurnoutEntity : TrackEntity, IEntityGeneratingID, 
         }
         return null;
     }
+    
+    /// <summary>
+    ///     This function is design to find the entity that the diverging track on
+    ///     this turnout would connect to. We can do this so that if it is a branch
+    ///     line and the turnout is a mainline, then we can hide the border.
+    /// </summary>
+    /// <returns>The neighbor Entity</returns>
+    public Entity? GetDivergingEntity() => GetNeighbourEntity(ConnectionType.Diverging);
 }

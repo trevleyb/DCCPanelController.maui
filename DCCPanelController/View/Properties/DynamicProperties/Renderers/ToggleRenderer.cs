@@ -1,3 +1,5 @@
+using DCCPanelController.Resources.Styles;
+
 namespace DCCPanelController.View.Properties.DynamicProperties.Renderers;
 
 internal sealed class ToggleRenderer : BaseRenderer, IPropertyRenderer {
@@ -5,7 +7,12 @@ internal sealed class ToggleRenderer : BaseRenderer, IPropertyRenderer {
 
     public object CreateView(PropertyContext ctx) {
         var row = ctx.Row;
-        var sw = new Switch { IsToggled = row.OriginalValue as bool? ?? false };
+        var sw = new Switch {
+            IsToggled = row.OriginalValue as bool? ?? false,
+            OnColor  = StyleHelper.FromStyle("Primary") ?? Colors.Black,
+            ThumbColor =StyleHelper.FromStyle("Gray200") ?? Colors.Gray,
+                
+        };
         if (row.HasMixedValues) {
             var stack = new Grid();
             var label = new Label { Text = "— mixed —", VerticalTextAlignment = TextAlignment.Center, HorizontalTextAlignment = TextAlignment.Start, Opacity = 0.6, TextColor = Colors.Black };

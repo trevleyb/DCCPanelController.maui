@@ -75,17 +75,17 @@ public partial class DynamicTilePropertyPage {
         // Build up the Properties by Group and Sort order. 
         // Each Group is in its own Expander View so can be collaposed
         // ---------------------------------------------------------------
-        var children = 0;
         foreach (var group in Form.Groups) {
             if (group.Rows.Count == 0) continue;
             var expander = CreateExpanderGroup(group.Name);
 
             // Add the rows to the expander
             // -----------------------------------------------------------
+            var children = 0;
             foreach (var row in group.Rows) {
                 if (Form.GetRendererView(row) is Microsoft.Maui.Controls.View v) {
                     expander.children?.Add(v);
-                    if (++children < group.Rows.Count) expander.children?.Add(FieldDivider());
+                    //if (++children < group.Rows.Count) expander.children?.Add(FieldDivider());
                 }
             }
             PropertyHost.Children.Add(expander.expander);
