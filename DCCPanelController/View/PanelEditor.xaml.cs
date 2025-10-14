@@ -108,6 +108,7 @@ public partial class PanelEditor : ContentPage {
     #region Manage Tiles being selected or tapped from the Control Panel View
     private async void PanelViewOnTileTapped(object? sender, TileSelectedEventArgs e) {
         try {
+            _viewModel.SetToolbarActions();
             if (BindingContext is PanelEditorViewModel) {
                 if (e.Tile is ITileInteractive { } tile) {
                     if (e.IsSingleTap) await tile.Interact(null);
@@ -141,7 +142,7 @@ public partial class PanelEditor : ContentPage {
 
     private void PanelViewOnTileSelected(HashSet<ITile> tiles) {
         _viewModel.SelectedTiles = tiles.ToObservableCollection();
-        _viewModel.CheckIfCanLinkTiles();
+        _viewModel.SetToolbarActions();
         if (AppStateService.Instance.SelectedTile is { } selectedTile) {
             SelectionText.Text = $"Place Tile: {selectedTile.Entity.EntityName}";
         } else {

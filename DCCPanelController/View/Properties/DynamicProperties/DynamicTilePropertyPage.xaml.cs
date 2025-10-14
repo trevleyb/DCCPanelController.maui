@@ -81,7 +81,7 @@ public partial class DynamicTilePropertyPage {
 
             // Add the rows to the expander
             // -----------------------------------------------------------
-            var children = 0;
+            // var children = 0;
             foreach (var row in group.Rows) {
                 if (Form.GetRendererView(row) is Microsoft.Maui.Controls.View v) {
                     expander.children?.Add(v);

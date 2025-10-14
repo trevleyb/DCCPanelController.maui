@@ -5,6 +5,7 @@ using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.DataModel.Entities.Actions;
+using DCCPanelController.Models.DataModel.Entities.Interfaces;
 using DCCPanelController.Models.ViewModel.Interfaces;
 using DCCPanelController.Services;
 using DCCPanelController.Services.ProfileService;
@@ -98,7 +99,10 @@ public partial class PanelEditorViewModel : ObservableObject {
 
     public bool CanLinkTiles { get; set; }
     public bool CanLinkATiles { get; set; }
+    public bool CanEditText { get; set; }
 
+    public TextEntityProxy TextEntity { get; } = new(); 
+    
     public bool CanEditProperties => !IsNavigationDrawerOpen && !IsProcessing;
     public bool CanEditTileProperties => HasSelectedEntities && !IsNavigationDrawerOpen && !IsProcessing;
     public bool CanSetModes => !IsNavigationDrawerOpen && !IsProcessing;
@@ -144,18 +148,32 @@ public partial class PanelEditorViewModel : ObservableObject {
         HavePropertiesChanged = HavePropertiesChanged || !_original.IsEqualTo(Panel);
     }
 
-    public void CheckIfCanLinkTiles() {
+    public void SetToolbarActions() {
+        CanEditText = false;
         CanLinkTiles = false;
         CanLinkATiles = false;
 
+        // Check if we can edit the Turnouts and Linked Buttons
+        // -----------------------------------------------------
         var aButtonCount = SelectedEntities.OfType<ActionButtonEntity>().Count();
         var tButtonCount = SelectedEntities.OfType<TurnoutButtonEntity>().Count();
         var turnoutCount = SelectedEntities.OfType<TurnoutEntity>().Count();
-
-        CanLinkTiles = tButtonCount == 1 && turnoutCount > 1;
-        CanLinkATiles = aButtonCount == 1 && turnoutCount > 1;
-
+        CanLinkTiles = tButtonCount == 1 && turnoutCount >= 1;
+        CanLinkATiles = aButtonCount == 1 && turnoutCount >= 1;
         OnPropertyChanged(nameof(CanLinkTiles));
+        OnPropertyChanged(nameof(CanLinkATiles));
+        
+        // Check if we can edit Labels and if so, show the label on the screen
+        // ------------------------------------------------------------------
+        if (SelectedEntities is [ITextEntity textEntity]) {
+            CanEditText = true;
+            TextEntity.Entity = textEntity;
+            OnPropertyChanged(nameof(TextEntity));
+        }
+        
+        // Tell the UI that the properties may have changed
+        // ------------------------------------------------------------------
+        OnPropertyChanged(nameof(CanEditText));
     }
 
     [RelayCommand]
@@ -174,6 +192,7 @@ public partial class PanelEditorViewModel : ObservableObject {
         if (button is { } && turnouts.Count > 0) {
             button.TurnoutPanelActions.Clear();
             foreach (var turnout in turnouts) {
+                if (string.IsNullOrEmpty(turnout?.Turnout?.Id)) continue;
                 button.TurnoutPanelActions.Add(new TurnoutAction() {
                     ActionID = turnout.Turnout.Id,
                     WhenClosed = direction == TurnoutStateEnum.Closed ? TurnoutStateEnum.Closed : TurnoutStateEnum.Thrown,
