@@ -13,8 +13,7 @@ using Microsoft.Extensions.Logging;
 namespace DCCPanelController.View.TileSelectors;
 
 public partial class SideSelectorPanel {
-    public static readonly BindableProperty PanelProperty    = BindableProperty.Create(nameof(Panel), typeof(Panel), typeof(SideSelectorPanel), propertyChanged: OnPanelChanged);
-    public static readonly BindableProperty DockSideProperty = BindableProperty.Create(nameof(DockSide), typeof(TileSelectorDockSide), typeof(SideSelectorPanel), TileSelectorDockSide.Side, BindingMode.TwoWay);
+    public static readonly BindableProperty DockSideProperty = BindableProperty.Create(nameof(DockSide), typeof(PaletteDockSide), typeof(SideSelectorPanel), PaletteDockSide.Side, BindingMode.TwoWay);
 
     public static readonly BindableProperty SelectedTileProperty =
         BindableProperty.Create(
@@ -35,13 +34,8 @@ public partial class SideSelectorPanel {
 
     public SideSelectorPanelViewModel ViewModel { get; set; }
 
-    public Panel? Panel {
-        get => (Panel)GetValue(PanelProperty);
-        set => SetValue(PanelProperty, value);
-    }
-
-    public TileSelectorDockSide DockSide {
-        get => (TileSelectorDockSide)GetValue(DockSideProperty);
+    public PaletteDockSide DockSide {
+        get => (PaletteDockSide)GetValue(DockSideProperty);
         set => SetValue(DockSideProperty, value);
     }
 
@@ -50,20 +44,10 @@ public partial class SideSelectorPanel {
         set => SetValue(SelectedTileProperty, value);
     }
 
-    public event EventHandler<TileSelectorDockSide>? OnDockSideChanged;
-
-    public void ForceReDraw() => (BindingContext as SideSelectorPanelViewModel)?.ForceReDraw();
-
-    private static void OnPanelChanged(BindableObject bindable, object oldValue, object newValue) {
-        if (bindable is SideSelectorPanel { BindingContext: SideSelectorPanelViewModel vm }) {
-            if (newValue != oldValue && newValue is Panel panel) {
-                vm.Panel = panel ?? throw new NullReferenceException("Panels cannot be null");
-            }
-        }
-    }
+    public event EventHandler<PaletteDockSide>? OnDockSideChanged;
 
     private void SwitchSidePosition(object? _, TouchStatusChangedEventArgs e) {
-        if (e.Status == TouchStatus.Completed) OnDockSideChanged?.Invoke(this, TileSelectorDockSide.Bottom);
+        if (e.Status == TouchStatus.Completed) OnDockSideChanged?.Invoke(this, PaletteDockSide.Bottom);
     }
 
     private static void OnSelectedTileChanged(BindableObject bindable, object oldValue, object newValue) {

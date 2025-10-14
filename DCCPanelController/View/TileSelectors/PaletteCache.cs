@@ -1,5 +1,9 @@
 using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Windows.Input;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.ViewModel.Helpers;
@@ -7,9 +11,11 @@ using DCCPanelController.Models.ViewModel.Interfaces;
 
 namespace DCCPanelController.View.TileSelectors;
 
-public static class TileSelectorPaletteCache {
+public static class PaletteCache {
     private const string DefaultPalette = "Default";
 
+    public static Palette Palette { get; private set; } = new Palette();
+    
     // Store Lazy<PaletteResult> to guarantee single-construction per key
     private static readonly ConcurrentDictionary<string, PaletteResult> Cache = new();
 
@@ -38,9 +44,10 @@ public static class TileSelectorPaletteCache {
 
     private static PaletteResult BuildTilesForPanel(Panel panel) {
         try {
+            Palette.Clear();
             var byCategory = new Dictionary<string, ObservableCollection<ITile>>(StringComparer.Ordinal);
             var categories = new ObservableCollection<string>();
-
+            
             Add("Actions", [
                 new TurnoutButtonEntity(panel) { State = ButtonStateEnum.On },
                 new ActionButtonEntity(panel) { State = ButtonStateEnum.On },
@@ -105,13 +112,18 @@ public static class TileSelectorPaletteCache {
             // Add function to add to the collection
             // -----------------------------------------------------
             void Add(string category, IEnumerable<Entity> entities) {
+                var group = new PaletteGroup(category);
                 categories.Add(category);
                 var list = new ObservableCollection<ITile>();
                 foreach (var e in entities) {
                     var tile = TileFactory.CreateTile(e, 32, false);
-                    if (tile is { }) list.Add(tile);
+                    if (tile is { }) {
+                        list.Add(tile);
+                        group.AddTile(tile);
+                    }
                 }
                 byCategory[category] = list;
+                Palette.Add(group);
             }
         } catch (Exception ex) {
             throw new ApplicationException($"Error building palette: {ex.Message}", ex);
@@ -122,4 +134,59 @@ public static class TileSelectorPaletteCache {
     public sealed record PaletteResult(
         Dictionary<string, ObservableCollection<ITile>> ByCategory,
         ObservableCollection<string> Categories);
+}
+
+public sealed class Palette : ObservableCollection<PaletteGroup>, INotifyPropertyChanged { }
+
+public sealed class PaletteGroup : ObservableCollection<PaletteItem>, INotifyPropertyChanged
+{
+    private readonly List<PaletteItem> _allItems = new();
+    public string Category { get; }
+    public bool IsExpanded { get; private set; }
+
+    public void AddTile(ITile tile)
+    {
+        var item = new PaletteItem(tile, this);
+        _allItems.Add(item);
+        Add(item);
+    }
+
+    public PaletteGroup(string category)
+    {
+        Category = category;
+        IsExpanded = true;
+        ToggleExpandCommand = new RelayCommand(ToggleExpanded);
+    }
+
+    public ICommand ToggleExpandCommand { get; }
+
+    private void ToggleExpanded()
+    {
+        IsExpanded = !IsExpanded;
+        OnPropertyChanged(new PropertyChangedEventArgs(nameof(IsExpanded)));
+
+        if (IsExpanded)
+        {
+            foreach (var item in _allItems)
+            {
+                Add(item);
+            }
+        }
+        else
+        {
+            Clear();
+        }
+    }
+}
+
+public sealed partial class PaletteItem : ObservableObject
+{
+    public PaletteItem(ITile tile, PaletteGroup group)
+    {
+        Tile = tile;
+        IsSelected = false;
+    }
+
+    [ObservableProperty] private ITile _tile;
+    [ObservableProperty] private bool _isSelected;
 }

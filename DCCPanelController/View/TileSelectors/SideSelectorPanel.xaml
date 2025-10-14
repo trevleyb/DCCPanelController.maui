@@ -16,7 +16,6 @@
     <ContentView.Resources>
         <tileSelectors:CategoryToTilesConverter x:Key="CategoryToTilesConverter"/>
         <tileSelectors:RefEqualsConverter x:Key="RefEqualsConverter"/>
-
     </ContentView.Resources>
 
     <Border BackgroundColor="White"
@@ -35,8 +34,7 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-
-
+            
             <Border Grid.Row="0" Margin="0,4,0,0" HorizontalOptions="Center" WidthRequest="25" StrokeThickness="6"
                     StrokeShape="RoundRectangle 15 15 5 5"
                     Stroke="{StaticResource Primary}">

@@ -121,7 +121,7 @@ public partial class LoadingPage : ContentPage, INotifyPropertyChanged {
 
             // 7)
             await StepAsync("Building palette cache…", ++step/steps, async () => {
-                TileSelectorPaletteCache.PrebuildDefaultPalette();
+                PaletteCache.PrebuildDefaultPalette();
                 await Task.CompletedTask;
             });
 

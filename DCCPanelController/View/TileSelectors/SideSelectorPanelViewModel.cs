@@ -1,10 +1,16 @@
+using System.Collections.ObjectModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Models.ViewModel.Interfaces;
 using DCCPanelController.Services;
 
 namespace DCCPanelController.View.TileSelectors;
 
-public class SideSelectorPanelViewModel : TileSelectorViewModel {
+public partial class SideSelectorPanelViewModel : ObservableObject {
     public SideSelectorPanelViewModel() => AppStateService.Instance.SelectedTileCleared += InstanceOnSelectedTileCleared;
+    public Palette Palette { get; set; } = PaletteCache.Palette;
+    
+    [ObservableProperty] private Dictionary<string, ObservableCollection<ITile>> _byCategory = [];
+    [ObservableProperty] private ObservableCollection<string>                    _categories = [];
 
     public ITile? SelectedTile {
         get;
@@ -15,8 +21,6 @@ public class SideSelectorPanelViewModel : TileSelectorViewModel {
             OnPropertyChanged();
         }
     }
-
-    protected override void AfterBuildAllTiles() { }
 
     private void InstanceOnSelectedTileCleared() => SelectedTile = null;
 }

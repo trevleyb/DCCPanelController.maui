@@ -8,6 +8,7 @@
              xmlns:controlPanel="clr-namespace:DCCPanelController.View.ControlPanel"
              xmlns:services="clr-namespace:DCCPanelController.Services"
              xmlns:components="clr-namespace:DCCPanelController.View.Components"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              ios:Page.UseSafeArea="false"
              x:DataType="view:PanelEditorViewModel"
              Title="{Binding Panel.Title}"
@@ -47,126 +48,97 @@
             Command="{Binding Path=SaveButtonPressedCommand}"/>
     </ContentPage.ToolbarItems>
 
-    <Grid>
-        <!-- <ContentPage.Content> -->
-        <Grid x:Name="MainGrid" BackgroundColor="WhiteSmoke" HorizontalOptions="Fill" VerticalOptions="Fill">
+    <toolkit:DockLayout >
+        <Grid toolkit:DockLayout.DockPosition="Top"
+              x:Name="TileToolbar"
+              x:DataType="services:AppStateService"
+              HeightRequest="35"
+              VerticalOptions="Fill" HorizontalOptions="Fill" Margin="0"
+              BackgroundColor="{Binding Source={x:Static services:AppStateService.Instance}, Path=ShellBackgroundColor}">
+                
+                <HorizontalStackLayout HorizontalOptions="End" x:DataType="view:PanelEditorViewModel" Margin="0,0,5,0" Spacing="10" Padding="5">
+                    <Border IsVisible="{Binding CanEditText}" Padding="5" StrokeShape="RoundRectangle 6" StrokeThickness="1" Stroke="White">
+                        <Entry TextColor="White" Text="{Binding TextEntity.EditText}" WidthRequest="150"/>
+                    </Border>
+                        
+                    <ImageButton IsVisible="{Binding CanLinkATiles}" Command="{Binding Path=LinkTilesActionClosedCommand}" Source="{Binding CanLinkATiles, Converter={StaticResource BoolToIcon}, ConverterParameter=link_closed}"/>
+                    <ImageButton IsVisible="{Binding CanLinkATiles}" Command="{Binding Path=LinkTilesActionDivergingCommand}" Source="{Binding CanLinkATiles, Converter={StaticResource BoolToIcon}, ConverterParameter=link_diverging}"/>
+                    <ImageButton IsVisible="{Binding CanLinkTiles}"  Command="{Binding Path=LinkTilesClosedCommand}" Source="{Binding CanLinkTiles, Converter={StaticResource BoolToIcon}, ConverterParameter=link_closed}"/>
+                    <ImageButton IsVisible="{Binding CanLinkTiles}"  Command="{Binding Path=LinkTilesDivergingCommand}" Source="{Binding CanLinkTiles, Converter={StaticResource BoolToIcon}, ConverterParameter=link_diverging}"/>
+                    <ImageButton IsEnabled="{Binding CanRotateTiles}" Command="{Binding Path=RotateTileLeftCommand}" Source="{Binding CanRotateTiles, Converter={StaticResource BoolToIcon}, ConverterParameter=rotate_ccw}"/>
+                    <ImageButton IsEnabled="{Binding CanRotateTiles}" Command="{Binding Path=RotateTileRightCommand}" Source="{Binding CanRotateTiles, Converter={StaticResource BoolToIcon}, ConverterParameter=rotate_cw}"/>
+                    <ImageButton IsEnabled="{Binding CanChangeLayers}" Command="{Binding Path=ChangeLayersCommand}" Source="{Binding CanChangeLayers, Converter={StaticResource BoolToIcon}, ConverterParameter=layers}"/>
+                    <ImageButton IsEnabled="{Binding CanDeleteTiles}" Source="{Binding CanDeleteTiles, Converter={StaticResource BoolToIcon}, ConverterParameter=trash_2}" Command="{Binding Path=DeleteTileCommand}"/>
+                    <ImageButton IsEnabled="{Binding CanEditTileProperties}" Source="{Binding CanEditTileProperties, Converter={StaticResource BoolToIcon}, ConverterParameter=edit}" Command="{Binding Path=EditTilePropertiesPopupCommand}"/>
+                    
+                </HorizontalStackLayout>
+            </Grid>
 
-            <!-- Initially: 1 column, 3 rows (standard layout) -->
+        <Grid toolkit:DockLayout.DockPosition="Bottom"
+              x:Name="StatusContainer"
+              HeightRequest="35">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1"/>  
+                <RowDefinition Height="*"/>  
+            </Grid.RowDefinitions>
+
+            <BoxView Grid.Row="0" HeightRequest="0.5" BackgroundColor="{StaticResource Primary}" HorizontalOptions="Fill"/>
+
+            <Grid Grid.Row="1" Margin="10,0,10,0">
+                <Grid ColumnDefinitions="auto,*,auto" HorizontalOptions="Fill" VerticalOptions="Fill">
+                    <Label Grid.Column="0" HorizontalOptions="Start" FontSize="15" FontFamily="OpenSansLight" x:Name="SelectionText" TextColor="{StaticResource Primary}"/>
+                    <Label Grid.Column="2" HorizontalOptions="End" FontSize="15" FontFamily="OpenSansLight" x:Name="ChangesText" TextColor="{StaticResource Primary}"/>
+                </Grid>
+            </Grid>
+        </Grid>
+        
+        <Grid toolkit:DockLayout.DockPosition="Right" 
+            x:Name="PaletteContainer"
+            
+            WidthRequest="110"
+            IsClippedToBounds="True">
+            <tileSelectors:PaletteSelector
+                x:Name="PaletteSelector"
+                HorizontalOptions="Center"
+                OnDockSideChanged="PaletteDockSideChanged"/>
+        </Grid>
+
+        <Grid toolkit:DockLayout.DockPosition="None"
+              x:Name="PanelEditorContainer" 
+              HorizontalOptions="Fill"
+              VerticalOptions="Fill">
+            <controlPanel:ControlPanelView
+                Margin="5"
+                BackgroundColor="Transparent"
+                DesignMode="true"
+                Interactive="False"
+                EditMode="{Binding Source={RelativeSource AncestorType={x:Type view:PanelEditorViewModel}}, Path=EditMode, Mode=OneWay}"
+                Grid.Column="0"
+                HorizontalOptions="Fill"
+                Panel="{Binding Source={RelativeSource AncestorType={x:Type view:PanelEditorViewModel}}, Path=Panel, Mode=OneWay}"
+                VerticalOptions="Fill"
+                x:Name="PanelView"/>
+        </Grid>
+
+    </toolkit:DockLayout>
+    
+</ContentPage>    
+    <!--
+    
+    <Grid>
+        <Grid x:Name="MainGrid" BackgroundColor="WhiteSmoke" HorizontalOptions="Fill" VerticalOptions="Fill">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" x:Name="MainColumn"/>
-                <ColumnDefinition Width="Auto" x:Name="SidePalette"/>
+                <ColumnDefinition Width="200" x:Name="SidePalette"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="34" x:Name="ToolbarRow"/>
                 <RowDefinition Height="*" x:Name="PanelRow"/>
-                <RowDefinition Height="Auto" x:Name="BottomPalette"/>
+                <RowDefinition Height="100" x:Name="BottomPalette"/>
                 <RowDefinition Height="30" x:Name="StatusRow"/>
             </Grid.RowDefinitions>
 
-            <Grid Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" x:DataType="services:AppStateService"
-                  VerticalOptions="Fill" HorizontalOptions="Fill" Margin="0"
-                  BackgroundColor="{Binding Source={x:Static services:AppStateService.Instance}, Path=ShellBackgroundColor}">
-                
-                <HorizontalStackLayout HorizontalOptions="End" x:DataType="view:PanelEditorViewModel" Margin="0,0,5,0" Spacing="10" Padding="5">
-                    
-                    <Border IsVisible="{Binding CanEditText}" Padding="5" StrokeShape="RoundRectangle 6" StrokeThickness="1" Stroke="White">
-                    <Entry 
-                        TextColor="White"
-                        Text="{Binding TextEntity.EditText}"
-                        WidthRequest="150"/>
-                    </Border>
-                        
-                    <ImageButton
-                        IsVisible="{Binding CanLinkATiles}"
-                        Command="{Binding Path=LinkTilesActionClosedCommand}"
-                        Source="{Binding CanLinkATiles, Converter={StaticResource BoolToIcon}, ConverterParameter=link_closed}"/>
-
-                    <ImageButton
-                        IsVisible="{Binding CanLinkATiles}"
-                        Command="{Binding Path=LinkTilesActionDivergingCommand}"
-                        Source="{Binding CanLinkATiles, Converter={StaticResource BoolToIcon}, ConverterParameter=link_diverging}"/>
-
-                    <ImageButton
-                        IsVisible="{Binding CanLinkTiles}"
-                        Command="{Binding Path=LinkTilesClosedCommand}"
-                        Source="{Binding CanLinkTiles, Converter={StaticResource BoolToIcon}, ConverterParameter=link_closed}"/>
-
-                    <ImageButton
-                        IsVisible="{Binding CanLinkTiles}"
-                        Command="{Binding Path=LinkTilesDivergingCommand}"
-                        Source="{Binding CanLinkTiles, Converter={StaticResource BoolToIcon}, ConverterParameter=link_diverging}"/>
-
-                    <ImageButton
-                        IsEnabled="{Binding CanRotateTiles}"
-                        Command="{Binding Path=RotateTileLeftCommand}"
-                        Source="{Binding CanRotateTiles, Converter={StaticResource BoolToIcon}, ConverterParameter=rotate_ccw}"/>
-                
-                    <ImageButton
-                        IsEnabled="{Binding CanRotateTiles}"
-                        Command="{Binding Path=RotateTileRightCommand}"
-                        Source="{Binding CanRotateTiles, Converter={StaticResource BoolToIcon}, ConverterParameter=rotate_cw}"/>
-                
-                    <ImageButton
-                        IsEnabled="{Binding CanChangeLayers}"
-                        Command="{Binding Path=ChangeLayersCommand}"
-                        Source="{Binding CanChangeLayers, Converter={StaticResource BoolToIcon}, ConverterParameter=layers}"/>
-                
-                    <ImageButton
-                        Source="{Binding CanDeleteTiles, Converter={StaticResource BoolToIcon}, ConverterParameter=trash_2}"
-                        IsEnabled="{Binding CanDeleteTiles}"
-                        Command="{Binding Path=DeleteTileCommand}"/>
-                
-                    <ImageButton
-                        Source="{Binding CanEditTileProperties, Converter={StaticResource BoolToIcon}, ConverterParameter=edit}"
-                        Command="{Binding Path=EditTilePropertiesPopupCommand}"
-                        IsEnabled="{Binding CanEditTileProperties}"/>
-                        
-                    
-                </HorizontalStackLayout>
-                
-                <!-- <components:InlineToolbar HorizontalOptions="End" x:DataType="view:PanelEditorViewModel" Margin="5,5,10,5" Spacing="30" Padding="10" IconSize="24" BackgroundColor="Aqua"> -->
-                <!-- -->
-                <!--     <components:InlineToolbarItem -->
-                <!--         Text="Link" x:Name="LinkToolbar" -->
-                <!--         IsEnabled="{Binding CanLinkTiles}" -->
-                <!--         Command="{Binding Path=LinkTilesCommand}" -->
-                <!--         IconImageSource="{Binding CanLinkTiles, Converter={StaticResource BoolToIcon}, ConverterParameter=link}"/> -->
-                <!-- -->
-                <!--     <components:InlineToolbarItem -->
-                <!--         Text="Rotate" x:Name="RotateToolbarLeft" -->
-                <!--         IsEnabled="{Binding CanRotateTiles}" -->
-                <!--         Command="{Binding Path=RotateTileLeftCommand}" -->
-                <!--         IconImageSource="{Binding CanRotateTiles, Converter={StaticResource BoolToIcon}, ConverterParameter=rotate_ccw}"/> -->
-                <!-- -->
-                <!--     <components:InlineToolbarItem -->
-                <!--         Text="Rotate" x:Name="RotateToolbarRight" -->
-                <!--         IsEnabled="{Binding CanRotateTiles}" -->
-                <!--         Command="{Binding Path=RotateTileRightCommand}" -->
-                <!--         IconImageSource="{Binding CanRotateTiles, Converter={StaticResource BoolToIcon}, ConverterParameter=rotate_cw}"/> -->
-                <!-- -->
-                <!--     <components:InlineToolbarItem -->
-                <!--         Text="Layers" x:Name="LayersToolbar" -->
-                <!--         IsEnabled="{Binding CanChangeLayers}" -->
-                <!--         Command="{Binding Path=ChangeLayersCommand}" -->
-                <!--         IconImageSource="{Binding CanChangeLayers, Converter={StaticResource BoolToIcon}, ConverterParameter=layers}"/> -->
-                <!-- -->
-                <!--     <components:InlineToolbarItem -->
-                <!--         IconImageSource="{Binding CanDeleteTiles, Converter={StaticResource BoolToIcon}, ConverterParameter=trash_2}" -->
-                <!--         Text="Delete" x:Name="DeleteToolbar" -->
-                <!--         IsEnabled="{Binding CanDeleteTiles}" -->
-                <!--         Command="{Binding Path=DeleteTileCommand}"/> -->
-                <!-- -->
-                <!--     <components:InlineToolbarItem -->
-                <!--         IconImageSource="{Binding CanEditTileProperties, Converter={StaticResource BoolToIcon}, ConverterParameter=edit}" -->
-                <!--         Text="Edit" x:Name="EditTileToolbar" -->
-                <!--         Command="{Binding Path=EditTilePropertiesPopupCommand}" -->
-                <!--         IsEnabled="{Binding CanEditTileProperties}"/> -->
-                <!-- -->
-                <!-- </components:InlineToolbar> -->
-                
-            </Grid>
             
-                <!-- Row 0: Panel Editor -->
             <Grid x:Name="PanelEditorContainer" Grid.Row="1" Grid.Column="0" HorizontalOptions="Fill"
                   VerticalOptions="Fill">
                 <controlPanel:ControlPanelView
@@ -182,15 +154,15 @@
                     x:Name="PanelView"/>
             </Grid>
 
-            <Grid x:Name="SidePaletteContainer" Grid.Column="1" Grid.Row="1" RowSpan="2"  IsClippedToBounds="True">
-                <tileSelectors:SideSelectorPanel
-                    x:Name="SidePaletteSelector"
+            <Grid x:Name="SidePaletteContainer" Grid.Column="1" Grid.Row="1" RowSpan="2"  IsClippedToBounds="True" BackgroundColor="Beige">
+                <tileSelectors:PaletteSelector
+                    x:Name="PaletteSelector"
                     HorizontalOptions="Center"
                     OnDockSideChanged="PaletteDockSideChanged"/>
             </Grid>
 
-            <Grid x:Name="BottomPaletteContainer" Grid.Column="0" Grid.Row="2" IsClippedToBounds="True">
-                <tileSelectors:PillSelectorPanel
+            <Grid x:Name="BottomPaletteContainer" Grid.Column="0" Grid.Row="2" IsClippedToBounds="True" BackgroundColor="Aquamarine">
+                <tileSelectors:PaletteSelector
                     x:Name="PillPaletteSelector"
                     HorizontalOptions="Center"
                     OnDockSideChanged="PaletteDockSideChanged"/>
@@ -198,16 +170,14 @@
 
             <Grid x:Name="StatusContainer" Grid.Column="0" Grid.Row="3" Margin="2" ColumnSpan="2">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="1"/>   <!-- Top border -->
-                    <RowDefinition Height="*"/>   <!-- Content -->
+                    <RowDefinition Height="1"/>  
+                    <RowDefinition Height="*"/>  
                 </Grid.RowDefinitions>
 
-                <!-- Top Border -->
                 <BoxView Grid.Row="0" HeightRequest="0.5"
                          BackgroundColor="{StaticResource Primary}"
                          HorizontalOptions="Fill"/>
 
-                <!-- Content -->
                 <Grid Grid.Row="1">
                     <Grid ColumnDefinitions="auto,*,auto" HorizontalOptions="Fill" VerticalOptions="Fill">
                         <Label Grid.Column="0" HorizontalOptions="Start" FontSize="15" FontFamily="OpenSansLight"
@@ -218,7 +188,6 @@
                 </Grid>
             </Grid>
 
-            <!-- Loading Overlay -->
             <Grid IsVisible="{Binding IsProcessing}"
                   HorizontalOptions="Fill"
                   VerticalOptions="Fill">
@@ -227,5 +196,5 @@
             </Grid>
 
         </Grid>
-    </Grid>
-</ContentPage>
+    </Grid> 
+-->

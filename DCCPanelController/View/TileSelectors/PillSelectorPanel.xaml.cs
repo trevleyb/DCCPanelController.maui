@@ -26,7 +26,7 @@ public partial class PillSelectorPanel : ContentView {
     }
 
     private PillSelectorPanelViewModel? Vm => BindingContext as PillSelectorPanelViewModel;
-    public event EventHandler<TileSelectorDockSide>? OnDockSideChanged;
+    public event EventHandler<PaletteDockSide>? OnDockSideChanged;
 
     public void ForceReDraw() => (BindingContext as PillSelectorPanelViewModel)?.ForceReDraw();
 
@@ -70,7 +70,7 @@ public partial class PillSelectorPanel : ContentView {
     }
 
     private void SwitchPillPosition(object? _, TouchStatusChangedEventArgs e) {
-        if (e.Status == TouchStatus.Completed) OnDockSideChanged?.Invoke(this, TileSelectorDockSide.Side);
+        if (e.Status == TouchStatus.Completed) OnDockSideChanged?.Invoke(this, PaletteDockSide.Side);
     }
 
     private void OnTileCollectionDragStarting(object? sender, DragStartingEventArgs e) {

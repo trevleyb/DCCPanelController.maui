@@ -1,5 +1,5 @@
 namespace DCCPanelController.View.TileSelectors;
 
-public enum TileSelectorDockSide {
+public enum PaletteDockSide {
     Bottom, Side,
 }

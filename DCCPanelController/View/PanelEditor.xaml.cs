@@ -1,6 +1,8 @@
 using System.ComponentModel;
 using System.Diagnostics;
+using CommunityToolkit.Maui.Core;
 using CommunityToolkit.Maui.Core.Extensions;
+using CommunityToolkit.Maui.Layouts;
 using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
@@ -21,7 +23,7 @@ public partial class PanelEditor : ContentPage {
     private readonly ILogger<PanelEditor>       _logger;
     private readonly PanelEditorViewModel       _viewModel;
 
-    private TileSelectorDockSide? _currentState;
+    private PaletteDockSide? _currentState;
 
     public PanelEditor(ILogger<PanelEditor> logger, Panel panel, ProfileService profileService, ConnectionService connectionService) : base() {
         _logger = logger;
@@ -41,12 +43,12 @@ public partial class PanelEditor : ContentPage {
         _viewModel.PropertyChanged += ViewModelOnPropertyChanged;
 
         BindingContext = _viewModel;
-        AppStateService.Instance.IsEditingPanel = true;
-        SidePaletteSelector.Panel = _viewModel.Panel;
-        PillPaletteSelector.Panel = _viewModel.Panel;
 
+        AppStateService.Instance.IsEditingPanel = true;
         AppStateService.Instance.SelectedTileSet += InstanceOnSelectedTileSet;
         AppStateService.Instance.SelectedTileCleared += InstanceOnSelectedTileCleared;
+        
+        PaletteSelector.OnDockSideChanged += PaletteDockSideChanged;
     }
 
     public Task<bool> PageClosed => _closeTcs.Task;
@@ -61,7 +63,7 @@ public partial class PanelEditor : ContentPage {
         _viewModel.ScreenHeight = height;
         _viewModel.ScreenWidth = width;
 
-        var newState = width <= height ? TileSelectorDockSide.Bottom : TileSelectorDockSide.Side;
+        var newState = width <= height ? PaletteDockSide.Bottom : PaletteDockSide.Side;
         if (newState != _currentState) {
             _currentState = SetDockedSide(newState);
         }
@@ -84,18 +86,20 @@ public partial class PanelEditor : ContentPage {
     }
 
     #region Manage the showing and hiding of the Palettes
-    private void PaletteDockSideChanged(object? sender, TileSelectorDockSide e) => SetDockedSide(e);
+    private void PaletteDockSideChanged(object? sender, PaletteDockSide e) => SetDockedSide(e);
 
-    private TileSelectorDockSide SetDockedSide(TileSelectorDockSide side) {
+    private PaletteDockSide SetDockedSide(PaletteDockSide side) {
         switch (side) {
-            case TileSelectorDockSide.Side:
-                BottomPaletteContainer.HeightRequest = 0;
-                SidePaletteContainer.WidthRequest = 100;
+            case PaletteDockSide.Side:
+                DockLayout.SetDockPosition(PaletteContainer, DockPosition.Right);
+                PaletteContainer.WidthRequest = 150;
+                PaletteContainer.HeightRequest = -1;
             break;
 
-            case TileSelectorDockSide.Bottom:
-                BottomPaletteContainer.HeightRequest = 120;
-                SidePaletteContainer.WidthRequest = 0;
+            case PaletteDockSide.Bottom:
+                DockLayout.SetDockPosition(PaletteContainer, DockPosition.Bottom);
+                PaletteContainer.WidthRequest = -1;
+                PaletteContainer.HeightRequest = 100;
             break;
 
             default:

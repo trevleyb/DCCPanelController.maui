@@ -321,6 +321,9 @@
         <MauiXaml Update="Clients\WiThrottle\View\WiThrottleSettingsView.xaml">
           <SubType>Designer</SubType>
         </MauiXaml>
+        <MauiXaml Update="View\TileSelectors\PaletteSelector.xaml">
+          <SubType>Designer</SubType>
+        </MauiXaml>
     </ItemGroup>
 
     <ItemGroup>
@@ -480,6 +483,13 @@
         </Compile>
         <Compile Update="View\TileSelectors\PillSelectorPanelViewModel.cs">
           <DependentUpon>PillSelectorPanel.xaml</DependentUpon>
+        </Compile>
+        <Compile Update="View\TileSelectors\PaletteSelector.xaml.cs">
+          <DependentUpon>PaletteSelector.xaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="View\TileSelectors\PaletteSelectorViewModel.cs">
+          <DependentUpon>PaletteSelector.xaml</DependentUpon>
         </Compile>
     </ItemGroup>
 

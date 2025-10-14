@@ -917,6 +917,8 @@ public partial class ControlPanelView {
             return;
         }
 
+        if (!e.Data.Properties.ContainsKey("Tile")) return;
+        
         var tile = e.Data.Properties["Tile"] as ITile ?? null;
         if (tile is null) return;
 
