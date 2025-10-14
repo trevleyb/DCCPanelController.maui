@@ -100,10 +100,12 @@ public partial class ControlPanelView {
 
         // 5) Nudge a first repaint after size is known
         _panelSurface.SizeChanged += (_, _) => {
+            Console.WriteLine($"Panel Surface Size Changed Called");
             if (_panelSurface.Width <= 0 || _panelSurface.Height <= 0) return;
             _overlayGridLines.Invalidate();
             _overlayGridSelection.Invalidate();
             _overlayGridHighlights.Invalidate();
+            Console.WriteLine($"panel Surface Size Changed Finished");
         };
     }
     #endregion
@@ -451,6 +453,7 @@ public partial class ControlPanelView {
     [Time]
     private async Task DrawPanel([CallerMemberName] string memberName = "",
         [CallerLineNumber] int sourceLineNumber = 0) {
+
         // Only redraw the grid if we absolutely need to. Events may mean that this 
         // is called multiple times, but if we really have not changed, then do not 
         // waste time redrawing and rebuilding the grid. 
@@ -471,15 +474,15 @@ public partial class ControlPanelView {
                     ClearAllSelectedTiles();
                     RemoveAllTilesFromGrid();
 
-                    _gridSize = CalculateGridSize(MainGrid.Width, MainGrid.Height);
-                    _viewWidth = _gridSize * Cols;
-                    _viewHeight = _gridSize * Rows;
+                    _gridSize       = CalculateGridSize(MainGrid.Width, MainGrid.Height);
+                    _viewWidth      = _gridSize * Cols;
+                    _viewHeight     = _gridSize * Rows;
                     _overlayGridHighlights.CellSize = _gridSize;
 
-                    _panelSurface.WidthRequest = _viewWidth;
+                    _panelSurface.WidthRequest  = _viewWidth;
                     _panelSurface.HeightRequest = _viewHeight;
-                    _dynamicGrid.WidthRequest = _viewWidth;
-                    _dynamicGrid.HeightRequest = _viewHeight;
+                    _dynamicGrid.WidthRequest   = _viewWidth;
+                    _dynamicGrid.HeightRequest  = _viewHeight;
                     _dynamicGrid.BackgroundColor = Panel?.PanelBackgroundColor ?? Colors.Transparent;
 
                     // If the grid rows and or columns have changed, then recreate the Dynamic Grid
@@ -516,6 +519,7 @@ public partial class ControlPanelView {
     /// <summary>
     ///     Given the Panel list of Entities, add each one as a tile to the panel.
     /// </summary>
+    [Time]
     private async Task AddEntitiesToGrid(Panel? panel) {
         if (panel is null) return;
         _pathTracer.ClearTileRegistry();
@@ -533,6 +537,7 @@ public partial class ControlPanelView {
     /// <summary>
     ///     Given an Entity, create a tile and add it to the panel grid.
     /// </summary>
+    [Time]
     private ITile? AddEntityToGrid(Entity entity) {
         var tile = TileFactory.CreateTile(entity, _gridSize, DesignMode);
         if (tile is { }) {
@@ -597,6 +602,7 @@ public partial class ControlPanelView {
     ///     This is a clean up route. If we redraw the grid, remove each tile from the grid first and ensure
     ///     we have removed events and gestures.
     /// </summary>
+    [Time]
     private void RemoveAllTilesFromGrid() {
         var children = _dynamicGrid.Children.OfType<ITile>().ToList();
         _dynamicGrid.BatchBegin();
@@ -607,11 +613,16 @@ public partial class ControlPanelView {
     /// <summary>
     ///     Remove an individual tile from the grid.
     /// </summary>
-    private void RemoveTileFromGrid(ITile tile) {
+    private void RemoveTileFromGrid(ITile? tile) {
+        if (tile is null) return;
+        
         tile.TileChanged -= TileOnPropertiesChanged;
-        RemoveEntityFromGrid(tile.Entity);
         (tile as IDisposable)?.Dispose();
-        OnTileChanged(tile);
+        if (tile is ContentView view) {
+            view.GestureRecognizers.Clear();
+            _dynamicGrid.Remove(view);
+            if (view is TrackTile trackTile) _pathTracer.UnregisterTile(trackTile);
+        }
     }
 
     /// <summary>
@@ -623,17 +634,7 @@ public partial class ControlPanelView {
                                 .Where(x => x.ClassId == entity.Guid.ToString())
                                 .ToList();
 
-        foreach (var view in views) {
-            if (view is ITile tile) {
-                tile.TileChanged -= TileOnPropertiesChanged;
-                (tile as IDisposable)?.Dispose();
-                MarkTileUnSelected(tile);
-            }
-
-            view.GestureRecognizers.Clear();
-            _dynamicGrid.Remove(view);
-            if (view is TrackTile trackTile) _pathTracer.UnregisterTile(trackTile);
-        }
+        foreach (var view in views) RemoveTileFromGrid((ITile)view);
     }
 
     private void ResizeTile(ITile? tile, int startCol, int startRow, int endCol, int endRow) {
@@ -1069,6 +1070,7 @@ public partial class ControlPanelView {
     }
 
     private void EntitiesOnCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e) {
+        Console.WriteLine($"Entities ON COLLECTION CHANGED");
         ClearAllSelectedTiles();
 
         // Remove any entities from the grid that were removed from the collection.
@@ -1096,17 +1098,7 @@ public partial class ControlPanelView {
     /// <summary>
     ///     Responds to property changes on the currently assigned Panel object.
     /// </summary>
-    private async void OnPanelPropertyChanged(object? sender, PropertyChangedEventArgs e) {
-        // if (e.PropertyName is nameof(Panel.Cols) or nameof(Panel.Rows)) {
-        //     Dispatcher.Dispatch(async void () => {
-        //         try {
-        //             await ForceRefreshAsync();
-        //         } catch (Exception ex) {
-        //             _logger.LogCritical("Error Forcing a Refresh on Col/Row Change: {Message}", ex.Message);
-        //         }
-        //     });
-        // }
-    }
+    private async void OnPanelPropertyChanged(object? sender, PropertyChangedEventArgs e) { }
 
     private static void OnShowGridChanged(BindableObject bindable, object oldvalue, object newvalue) {
         if (bindable is ControlPanelView control && newvalue is bool showGrid) {
