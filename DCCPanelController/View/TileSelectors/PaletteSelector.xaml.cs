@@ -9,12 +9,12 @@ using DCCPanelController.Models.ViewModel.Interfaces;
 using DCCPanelController.Services;
 using DCCPanelController.View.Helpers;
 using Microsoft.Extensions.Logging;
-#if IOS || MACCATALYST
-#endif
 
 namespace DCCPanelController.View.TileSelectors;
 
 public partial class PaletteSelector {
+
+    public event EventHandler<PaletteDockSide>? OnDockSideChanged;
     public static readonly BindableProperty DockSideProperty = BindableProperty.Create(nameof(DockSide), typeof(PaletteDockSide), typeof(PaletteSelector), PaletteDockSide.Side, BindingMode.TwoWay);
 
     public PaletteSelector() {
@@ -24,18 +24,10 @@ public partial class PaletteSelector {
     }
 
     public PaletteSelectorViewModel ViewModel { get; init; }
-
     public PaletteDockSide DockSide {
         get => (PaletteDockSide)GetValue(DockSideProperty);
         set => SetValue(DockSideProperty, value);
     }
-
-    // public ITile? SelectedTile {
-    //     get => (ITile?)GetValue(SelectedTileProperty);
-    //     set => SetValue(SelectedTileProperty, value);
-    // }
-
-    public event EventHandler<PaletteDockSide>? OnDockSideChanged;
 
     private void SwitchDockPosition(object? _, object e) {
         ViewModel.DockSide = ViewModel.DockSide == PaletteDockSide.Bottom ? PaletteDockSide.Side : PaletteDockSide.Bottom;
@@ -52,37 +44,7 @@ public partial class PaletteSelector {
         OnDockSideChanged?.Invoke(this, ViewModel.DockSide);
     }
 
-    // private void Button_OnClicked(object? sender, EventArgs e) => SwitchDockPosition(sender, e);
-    // private static void OnSelectedTileChanged(BindableObject bindable, object oldValue, object newValue) {
-    //     var view = (PaletteSelector)bindable;
-    //     if (view.BindingContext is PaletteSelectorViewModel vm) {
-    //         if (!ReferenceEquals(vm.SelectedTile, newValue)) {
-    //             vm.SelectedTile = (ITile?)newValue;
-    //         }
-    //     }
-    // }
-
-    // protected override void OnBindingContextChanged() {
-    //     base.OnBindingContextChanged();
-    //     if (BindingContext is PaletteSelectorViewModel vm) {
-    //         if (!ReferenceEquals(SelectedTile, vm.SelectedTile.Tile)) {
-    //             SelectedTile = vm.SelectedTile;
-    //         }
-    //         vm.PropertyChanged -= VmOnPropertyChanged;
-    //         vm.PropertyChanged += VmOnPropertyChanged;
-    //     }
-    // }
-
-    // private void VmOnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
-    //     if (e.PropertyName == nameof(PaletteSelectorViewModel.SelectedTile) &&
-    //         sender is PaletteSelectorViewModel vm &&
-    //         !ReferenceEquals(SelectedTile, vm.SelectedTile)) {
-    //         SelectedTile = vm.SelectedTile;
-    //     }
-    // }
-
     private void OnTileCollectionDragStarting(object? sender, DragStartingEventArgs e) {
-        //SetDragPreviewHelper.SetDragPreview(sender, e, "copy.png");
         ViewModel.SelectedItem = null;
         try {
             if ((sender as GestureRecognizer)?.Parent?.BindingContext is PaletteItem item && e.Data.Properties is { } props) {

@@ -9,6 +9,7 @@ using DCCPanelController.Services;
 namespace DCCPanelController.View.TileSelectors;
 
 public partial class PaletteSelectorViewModel : ObservableObject {
+
     [ObservableProperty] private PaletteDockSide _dockSide = PaletteDockSide.Side;
     
     public PaletteSelectorViewModel() => AppStateService.Instance.SelectedTileCleared += InstanceOnSelectedTileCleared;
