@@ -488,9 +488,6 @@
           <DependentUpon>PaletteSelector.xaml</DependentUpon>
           <SubType>Code</SubType>
         </Compile>
-        <Compile Update="View\TileSelectors\PaletteSelectorViewModel.cs">
-          <DependentUpon>PaletteSelector.xaml</DependentUpon>
-        </Compile>
     </ItemGroup>
 
     <ItemGroup Condition="'$(TargetFramework)' == 'net9.0-ios'">

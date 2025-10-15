@@ -24,8 +24,6 @@ public partial class PanelEditor : ContentPage {
     private readonly ILogger<PanelEditor>       _logger;
     private readonly PanelEditorViewModel       _viewModel;
 
-    private PaletteDockSide? _currentState;
-
     public PanelEditor(ILogger<PanelEditor> logger, Panel panel, ProfileService profileService, ConnectionService connectionService) : base() {
         _logger = logger;
 
@@ -48,8 +46,6 @@ public partial class PanelEditor : ContentPage {
         AppStateService.Instance.IsEditingPanel = true;
         AppStateService.Instance.SelectedTileSet += InstanceOnSelectedTileSet;
         AppStateService.Instance.SelectedTileCleared += InstanceOnSelectedTileCleared;
-        
-        //PaletteSelector.OnDockSideChanged += PaletteDockSideChanged;
     }
 
     public Task<bool> PageClosed => _closeTcs.Task;
@@ -94,14 +90,14 @@ public partial class PanelEditor : ContentPage {
         switch (side) {
             case PaletteDockSide.Side:
                 DockLayout.SetDockPosition(PaletteContainer, DockPosition.Right);
-                PaletteContainer.WidthRequest = 110;
-                PaletteContainer.HeightRequest = -1;
+                //PaletteContainer.WidthRequest = 110;
+                //PaletteContainer.HeightRequest = -1;
             break;
 
             case PaletteDockSide.Bottom:
                 DockLayout.SetDockPosition(PaletteContainer, DockPosition.Bottom);
-                PaletteContainer.WidthRequest = -1;
-                PaletteContainer.HeightRequest = 120;
+                //PaletteContainer.WidthRequest = -1;
+                //PaletteContainer.HeightRequest = 120;
             break;
 
             default:

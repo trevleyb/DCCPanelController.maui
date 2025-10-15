@@ -3,7 +3,7 @@
 <ContentView
     x:Name="RootDock"
     x:Class="DCCPanelController.View.TileSelectors.PaletteSelector"
-    x:DataType="view:PaletteSelectorViewModel"
+    x:DataType="view:PaletteSelector"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
@@ -70,19 +70,65 @@
                         ItemSizingStrategy="MeasureAllItems">
 
                         <CollectionView.ItemsLayout>
-                            <GridItemsLayout Orientation="Horizontal" Span="2" VerticalItemSpacing="2" HorizontalItemSpacing="2" />
+                            <GridItemsLayout x:Name="GridItemsLayout" Orientation="Vertical" Span="2" VerticalItemSpacing="2" HorizontalItemSpacing="2" />
                         </CollectionView.ItemsLayout>
+                        
+                        <CollectionView.Triggers>
+                            <DataTrigger TargetType="CollectionView" Binding="{Binding DockSide, Source={x:Reference RootDock}}" Value="Side">
+                                <Setter Property="ItemsLayout">
+                                    <Setter.Value>
+                                        <GridItemsLayout Orientation="Vertical" Span="2" VerticalItemSpacing="2" HorizontalItemSpacing="2" />
+                                    </Setter.Value>
+                                </Setter>
+                            </DataTrigger>
+
+                            <DataTrigger TargetType="CollectionView" Binding="{Binding DockSide, Source={x:Reference RootDock}}" Value="Bottom">
+                                <Setter Property="ItemsLayout">
+                                    <Setter.Value>
+                                        <GridItemsLayout Orientation="Horizontal" Span="2" VerticalItemSpacing="2" HorizontalItemSpacing="2" />
+                                    </Setter.Value>
+                                </Setter>
+                            </DataTrigger>
+                        </CollectionView.Triggers>
                         
                         <CollectionView.GroupHeaderTemplate>
                             <DataTemplate x:Name="GroupRoot" x:DataType="view:PaletteGroup">
-                                <VerticalStackLayout Spacing="0" Margin="-10,0,-10,5">
+                                <VerticalStackLayout Spacing="0">
+                                    <VerticalStackLayout.Style>
+                                        <Style TargetType="VerticalStackLayout">
+                                            <Style.Triggers> 
+                                                <DataTrigger TargetType="VerticalStackLayout" Value="Side">
+                                                    <DataTrigger.Binding>
+                                                        <Binding Path="DockSide" Source="{x:Reference RootDock}" x:DataType="view:PaletteSelector" />
+                                                    </DataTrigger.Binding>
+                                                    <Setter Property="Rotation" Value="0" />
+                                                    <Setter Property="Margin" Value="5,0,5,5" />
+                                                    <Setter Property="WidthRequest" Value="90" />
+                                                    <Setter Property="HeightRequest" Value="25" />
+                                                    <Setter Property="HorizontalOptions" Value="Center" />
+                                                    <Setter Property="VerticalOptions" Value="Center" />
+                                                </DataTrigger>
+                                                <DataTrigger TargetType="VerticalStackLayout" Value="Bottom">
+                                                    <DataTrigger.Binding>
+                                                        <Binding Path="DockSide" Source="{x:Reference RootDock}" x:DataType="view:PaletteSelector" />
+                                                    </DataTrigger.Binding>
+                                                    <Setter Property="Rotation" Value="-90" />
+                                                    <Setter Property="Margin" Value="0,-10,10,-5" />
+                                                    <Setter Property="WidthRequest" Value="90" />
+                                                    <Setter Property="HeightRequest" Value="20" />
+                                                    <Setter Property="HorizontalOptions" Value="Center" />
+                                                    <Setter Property="VerticalOptions" Value="Center" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </VerticalStackLayout.Style>
                                     <Border BackgroundColor="{StaticResource Primary}"
-                                            HeightRequest="18" Margin="0,5,0,0"
+                                            HeightRequest="20" Margin="5,5,5,0"
                                             StrokeThickness="0"
-                                            StrokeShape="RoundRectangle 0 0 6 6"
+                                            StrokeShape="RoundRectangle 0 0 0 0"
                                             HorizontalOptions="FillAndExpand">
                                         <HorizontalStackLayout>
-                                            <Image Margin="12,0,4,0" HeightRequest="12" WidthRequest="12"  Source="{Binding IsExpanded, Converter={StaticResource BoolToChevronConverter}}">
+                                            <Image Margin="3,0,3,0" HeightRequest="12" WidthRequest="12"  Source="{Binding IsExpanded, Converter={StaticResource BoolToChevronConverter}}">
                                                 <Image.Behaviors>
                                                     <toolkit:IconTintColorBehavior TintColor="White"/>
                                                 </Image.Behaviors>
@@ -94,7 +140,7 @@
                                                 HorizontalTextAlignment="Center"
                                                 HorizontalOptions="Center"
                                                 VerticalOptions="Center"
-                                                FontSize="10"/>
+                                                FontSize="12"/>
                                         </HorizontalStackLayout>
                                         
                                         <Border.GestureRecognizers>
@@ -166,5 +212,18 @@
                 </Grid>
             </Grid>
         </Border>
+        
+        <Grid.Triggers>
+            <!-- When docked on the RIGHT: keep vertical, maybe 2 columns -->
+            <DataTrigger TargetType="Grid" Binding="{Binding DockSide, Source={x:Reference RootDock}}" Value="Side">
+                <Setter Property="WidthRequest" Value="100"/>
+                <Setter Property="HeightRequest" Value="-1"/>
+            </DataTrigger>
+
+            <DataTrigger TargetType="Grid" Binding="{Binding DockSide, Source={x:Reference RootDock}}" Value="Bottom">
+                <Setter Property="WidthRequest" Value="-1"/>
+                <Setter Property="HeightRequest" Value="120"/>
+            </DataTrigger>
+        </Grid.Triggers>
     </Grid>
 </ContentView>

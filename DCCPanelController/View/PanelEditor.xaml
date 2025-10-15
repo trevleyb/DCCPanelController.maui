@@ -92,15 +92,9 @@
             </Grid>
         </Grid>
         
-        <Grid toolkit:DockLayout.DockPosition="Bottom" 
-            x:Name="PaletteContainer"
-            
-            HeightRequest="120"
-            IsClippedToBounds="True">
-            <tileSelectors:PaletteSelector
-                x:Name="PaletteSelector"
-                HorizontalOptions="Center"
-                OnDockSideChanged="PaletteDockSideChanged"/>
+        <Grid toolkit:DockLayout.DockPosition="Right" 
+            x:Name="PaletteContainer" IsClippedToBounds="True">
+            <tileSelectors:PaletteSelector OnDockSideChanged="PaletteDockSideChanged"/>
         </Grid>
 
         <Grid toolkit:DockLayout.DockPosition="None"

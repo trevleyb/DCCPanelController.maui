@@ -1,13 +1,6 @@
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Runtime.CompilerServices;
-using CommunityToolkit.Maui.Core;
-using CommunityToolkit.Maui.Layouts;
 using DCCPanelController.Helpers.Logging;
-using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.ViewModel.Interfaces;
 using DCCPanelController.Services;
-using DCCPanelController.View.Helpers;
 using Microsoft.Extensions.Logging;
 
 namespace DCCPanelController.View.TileSelectors;
@@ -17,35 +10,37 @@ public partial class PaletteSelector {
     public event EventHandler<PaletteDockSide>? OnDockSideChanged;
     public static readonly BindableProperty DockSideProperty = BindableProperty.Create(nameof(DockSide), typeof(PaletteDockSide), typeof(PaletteSelector), PaletteDockSide.Side, BindingMode.TwoWay);
 
+    public Palette Palette { get; set; } = PaletteCache.Palette;
+    public ITile? SelectedTile => SelectedItem?.Tile ?? null;
+
     public PaletteSelector() {
         InitializeComponent();
-        ViewModel = new PaletteSelectorViewModel();
-        BindingContext = ViewModel;
+        BindingContext = this;
+        AppStateService.Instance.SelectedTileCleared += InstanceOnSelectedTileCleared;
     }
 
-    public PaletteSelectorViewModel ViewModel { get; init; }
     public PaletteDockSide DockSide {
         get => (PaletteDockSide)GetValue(DockSideProperty);
         set => SetValue(DockSideProperty, value);
     }
 
     private void SwitchDockPosition(object? _, object e) {
-        ViewModel.DockSide = ViewModel.DockSide == PaletteDockSide.Bottom ? PaletteDockSide.Side : PaletteDockSide.Bottom;
-        switch (ViewModel.DockSide) {
+        DockSide = DockSide == PaletteDockSide.Bottom ? PaletteDockSide.Side : PaletteDockSide.Bottom;
+        switch (DockSide) {
         case PaletteDockSide.Side:
-            //TileCollectionByCategoryLandscape.IsVisible = true;
-            //TileCollectionByCategoryPortrait.IsVisible = false;
+            //WidthRequest = 110;
+            //HeightRequest = -1;
             break;
         case PaletteDockSide.Bottom:
-            //TileCollectionByCategoryLandscape.IsVisible = false;
-            //TileCollectionByCategoryPortrait.IsVisible = true;
+            //WidthRequest = -1;
+            //HeightRequest = 120;
             break;
         }
-        OnDockSideChanged?.Invoke(this, ViewModel.DockSide);
+        OnDockSideChanged?.Invoke(this, DockSide);
     }
 
     private void OnTileCollectionDragStarting(object? sender, DragStartingEventArgs e) {
-        ViewModel.SelectedItem = null;
+        SelectedItem = null;
         try {
             if ((sender as GestureRecognizer)?.Parent?.BindingContext is PaletteItem item && e.Data.Properties is { } props) {
                 props["Tile"] = item.Tile;
@@ -65,13 +60,13 @@ public partial class PaletteSelector {
                 if (item is PaletteItem paletteItem) paletteItem.IsSelected = false;
             }
         }
-        ViewModel.SelectedItem = null;
-        if (e.CurrentSelection is { Count: > 0 }) ViewModel.SelectedItem = e.CurrentSelection[0] as PaletteItem;
+        SelectedItem = null;
+        if (e.CurrentSelection is { Count: > 0 }) SelectedItem = e.CurrentSelection[0] as PaletteItem;
     }
 
     private void OnItemTapped(object? sender, TappedEventArgs e) {
         if (sender is ContentView { BindingContext: PaletteItem item }) {
-            ViewModel.SelectedItem = item;
+            SelectedItem = item;
         }
     }
 
@@ -80,4 +75,21 @@ public partial class PaletteSelector {
             group.ToggleExpandCommand.Execute(null);            
         }
     }
+    
+    private PaletteItem? _selectedItem;
+    public PaletteItem? SelectedItem {
+        get => _selectedItem;
+        set {
+            if (_selectedItem == value) return;
+            _selectedItem?.IsSelected = false;
+            _selectedItem = value;
+            if (_selectedItem == null) return;
+            _selectedItem?.IsSelected = true;
+            AppStateService.Instance.SelectedTile = value?.Tile ?? null;
+            OnPropertyChanged();
+            Console.WriteLine($"Selected Tile->{SelectedItem?.Tile.Entity.EntityName}");
+        }
+    }
+
+    private void InstanceOnSelectedTileCleared() => SelectedItem = null;
 }
