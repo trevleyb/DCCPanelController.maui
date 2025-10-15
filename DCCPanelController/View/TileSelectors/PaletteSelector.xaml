@@ -13,8 +13,6 @@
     xmlns:converters="clr-namespace:DCCPanelController.View.Converters">
 
     <ContentView.Resources>
-        <view:CategoryToTilesConverter x:Key="CategoryToTilesConverter" />
-        <view:RefEqualsConverter x:Key="RefEqualsConverter" />
         <converters:BoolToChevronConverter x:Key="BoolToChevronConverter" />
     </ContentView.Resources>
 

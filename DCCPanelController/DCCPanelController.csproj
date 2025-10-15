@@ -297,9 +297,6 @@
         <MauiXaml Update="AppShell.xaml">
             <SubType>Designer</SubType>
         </MauiXaml>
-        <MauiXaml Update="View\TileSelectors\SideSelectorPanel.xaml">
-            <SubType>Designer</SubType>
-        </MauiXaml>
         <MauiXaml Update="View\ControlPanel\ControlPanelView.xaml">
             <SubType>Designer</SubType>
         </MauiXaml>
@@ -431,13 +428,6 @@
         <Compile Update="View\TestPageViewModel.cs">
             <DependentUpon>TestPage.xaml</DependentUpon>
         </Compile>
-        <Compile Update="View\TileSelectors\SideSelectorPanel.xaml.cs">
-            <DependentUpon>SideSelectorPanel.xaml</DependentUpon>
-            <SubType>Code</SubType>
-        </Compile>
-        <Compile Update="View\TileSelectors\SideSelectorPanelViewModel.cs">
-            <DependentUpon>SideSelectorPanel.xaml</DependentUpon>
-        </Compile>
         <Compile Update="View\ControlPanel\ControlPanelView.xaml.cs">
             <DependentUpon>ControlPanelView.xaml</DependentUpon>
             <SubType>Code</SubType>
@@ -480,9 +470,6 @@
         </Compile>
         <Compile Update="View\UnifiedSettingsViewModel.cs">
           <DependentUpon>UnifiedSettingsPage.xaml</DependentUpon>
-        </Compile>
-        <Compile Update="View\TileSelectors\PillSelectorPanelViewModel.cs">
-          <DependentUpon>PillSelectorPanel.xaml</DependentUpon>
         </Compile>
         <Compile Update="View\TileSelectors\PaletteSelector.xaml.cs">
           <DependentUpon>PaletteSelector.xaml</DependentUpon>
