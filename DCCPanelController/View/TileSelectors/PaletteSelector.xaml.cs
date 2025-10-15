@@ -10,7 +10,7 @@ public partial class PaletteSelector {
     public event EventHandler<PaletteDockSide>? OnDockSideChanged;
     public static readonly BindableProperty DockSideProperty = BindableProperty.Create(nameof(DockSide), typeof(PaletteDockSide), typeof(PaletteSelector), PaletteDockSide.Side, BindingMode.TwoWay);
 
-    public Palette Palette { get; set; } = PaletteCache.Palette;
+    public Palette Palette { get; set; } = PaletteCache.GetDefaultPalette();
     public ITile? SelectedTile => SelectedItem?.Tile ?? null;
 
     public PaletteSelector() {

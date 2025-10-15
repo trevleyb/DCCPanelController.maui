@@ -3,11 +3,14 @@ using System.ComponentModel;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.ViewModel.Interfaces;
 
 namespace DCCPanelController.View.TileSelectors;
 
-public sealed class Palette : ObservableCollection<PaletteGroup>, INotifyPropertyChanged { }
+public sealed class Palette(Panel panel) : ObservableCollection<PaletteGroup>, INotifyPropertyChanged {
+    public Panel Panel { get; init; } = panel;
+}
 
 public sealed class PaletteGroup : ObservableCollection<PaletteItem>, INotifyPropertyChanged {
     private readonly List<PaletteItem> _allItems = new();

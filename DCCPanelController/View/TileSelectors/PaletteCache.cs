@@ -14,24 +14,22 @@ namespace DCCPanelController.View.TileSelectors;
 public static class PaletteCache {
     private const string DefaultPalette = "Default";
 
-    public static Palette Palette { get; private set; } = new Palette();
-    
     // Store Lazy<PaletteResult> to guarantee single-construction per key
-    private static readonly ConcurrentDictionary<string, PaletteResult> Cache = new();
+    private static readonly ConcurrentDictionary<string, Palette> Cache = new();
 
     // Prebuild (or return existing) without allocating a Panel unless needed
-    public static PaletteResult PrebuildDefaultPalette() => GetPalette(DefaultPalette, CreateDefaultPanel());
+    public static Palette PrebuildDefaultPalette() => GetPalette(DefaultPalette, CreateDefaultPanel());
 
-    public static PaletteResult GetDefaultPalette() => GetPalette(DefaultPalette, CreateDefaultPanel());
+    public static Palette GetDefaultPalette() => GetPalette(DefaultPalette, CreateDefaultPanel());
 
-    public static PaletteResult GetPalette(Panel panel) => GetPalette(panel.Guid.ToString(), panel.CloneEmptyPanel("Selector"));
+    public static Palette GetPalette(Panel panel) => GetPalette(panel.Guid.ToString(), panel.CloneEmptyPanel("Selector"));
     
     public static void Clear(string key) => Cache.TryRemove(key, out _);
 
     public static void Clear() => Cache.Clear();
 
-    private static PaletteResult GetPalette(string key, Panel panel) {
-        var result = BuildTilesForPanel(panel);
+    private static Palette GetPalette(string key, Panel panel) {
+        var result = BuildPaletteForPanel(panel);
         return result ?? throw new InvalidOperationException("Unable to build palette.");
     }
 
@@ -42,11 +40,9 @@ public static class PaletteCache {
         return panels.CreatePanel("Palette");
     }
 
-    private static PaletteResult BuildTilesForPanel(Panel panel) {
+    private static Palette BuildPaletteForPanel(Panel panel) {
         try {
-            Palette.Clear();
-            var byCategory = new Dictionary<string, ObservableCollection<ITile>>(StringComparer.Ordinal);
-            var categories = new ObservableCollection<string>();
+            var palette = new Palette(panel);
             
             Add("Actions", [
                 new TurnoutButtonEntity(panel) { State = ButtonStateEnum.On },
@@ -102,37 +98,23 @@ public static class PaletteCache {
                 new CompassEntity(panel) { },
             ]);
 
-            // Return read-only views to prevent accidental mutation of the cache
-            var roByCategory = byCategory.ToDictionary(
-                kvp => kvp.Key, ObservableCollection<ITile> (kvp) => kvp.Value,
-                StringComparer.Ordinal);
-
-            return new PaletteResult(roByCategory, categories);
+            return palette;
 
             // Add function to add to the collection
             // -----------------------------------------------------
             void Add(string category, IEnumerable<Entity> entities) {
                 var group = new PaletteGroup(category);
-                categories.Add(category);
-                var list = new ObservableCollection<ITile>();
                 foreach (var e in entities) {
                     var tile = TileFactory.CreateTile(e, 32, false);
                     if (tile is { }) {
-                        list.Add(tile);
                         group.AddTile(tile);
                     }
                 }
-                byCategory[category] = list;
-                Palette.Add(group);
+                palette.Add(group);
             }
         } catch (Exception ex) {
             throw new ApplicationException($"Error building palette: {ex.Message}", ex);
         }
     }
-
-    // Immutable-ish result (lists are read-only)
-    public sealed record PaletteResult(
-        Dictionary<string, ObservableCollection<ITile>> ByCategory,
-        ObservableCollection<string> Categories);
 }
 
