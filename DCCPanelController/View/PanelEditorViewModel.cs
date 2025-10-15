@@ -28,6 +28,9 @@ public partial class PanelEditorViewModel : ObservableObject {
         Cancel
     }
 
+    public Palette SidePalette { get; init; } = PaletteCache.GetPalette("Side");
+    public Palette BottomPalette { get; init; } = PaletteCache.GetPalette("Bottom");
+    
     private readonly ILogger<PanelEditor>         _logger;
     private readonly PanelEditor?                 _panelEditor;
     private readonly Microsoft.Maui.Controls.View _panelEditorContainer;
@@ -35,7 +38,6 @@ public partial class PanelEditorViewModel : ObservableObject {
     private readonly ProfileService               _profileService;
     private readonly ConnectionService            _connectionService;
 
-    [ObservableProperty] private PaletteDockSide _dockSide = PaletteDockSide.Side;
     [ObservableProperty] private EditModeEnum    _editMode = EditModeEnum.Move;
     [ObservableProperty] private bool            _gridVisible;
     [ObservableProperty] private bool            _havePropertiesChanged;

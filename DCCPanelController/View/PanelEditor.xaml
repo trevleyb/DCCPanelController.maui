@@ -20,6 +20,11 @@
                             Command="{Binding BackButtonPressedCommand}"/>
     </Shell.BackButtonBehavior>
 
+    <ContentPage.Resources>
+        <GridItemsLayout x:Key="VerticalLayout" Orientation="Vertical" Span="2" VerticalItemSpacing="2" HorizontalItemSpacing="2"/>
+        <GridItemsLayout x:Key="HorizontalLayout" Orientation="Horizontal" Span="2" VerticalItemSpacing="2" HorizontalItemSpacing="2"/>
+    </ContentPage.Resources>
+
     <ContentPage.ToolbarItems>
         <ToolbarItem
             IconImageSource="{Binding CanSetModes, Converter={StaticResource BoolToIcon}, ConverterParameter=move}"
@@ -91,13 +96,13 @@
                 </Grid>
             </Grid>
         </Grid>
-        
-        <Grid toolkit:DockLayout.DockPosition="Right" 
-            x:Name="PaletteContainer" IsClippedToBounds="True">
-            <tileSelectors:PaletteSelector
-                x:Name="PaletteSelector"
-                DockSide="{Binding DockSide}"
-                OnDockSideChanged="PaletteDockSideChanged"/>
+
+        <Grid x:Name="SidePaletteContainer" toolkit:DockLayout.DockPosition="Right" WidthRequest="110" IsVisible="True">
+            <tileSelectors:PaletteSelector Orientation="Vertical" Palette="{Binding SidePalette}" OnClosePalette="SidePaletteClosed" />
+        </Grid>
+                
+        <Grid x:Name="BottomPaletteContainer" toolkit:DockLayout.DockPosition="Bottom" HeightRequest="125" IsVisible="False">
+            <tileSelectors:PaletteSelector Orientation="Horizontal" Palette="{Binding BottomPalette}" OnClosePalette="BottomPaletteClosed"/>
         </Grid>
 
         <Grid toolkit:DockLayout.DockPosition="None"

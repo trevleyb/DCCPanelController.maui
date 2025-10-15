@@ -42,10 +42,10 @@
     xmlns:services="clr-namespace:DCCPanelController.Services">
 
     <FlyoutItem FlyoutDisplayOptions="AsSingleItem">
-        <!-- <Tab Icon="control.png" -->
-        <!--      Title="Test"> -->
-        <!--     <ShellContent ContentTemplate="{DataTemplate view:TestPage}"/> -->
-        <!-- </Tab> -->
+        <Tab Icon="control.png"
+             Title="Test">
+            <ShellContent ContentTemplate="{DataTemplate view:TestPage}"/>
+        </Tab>
 
         <Tab Icon="control.png"
              Title="Operate"

@@ -23,7 +23,7 @@ public partial class PanelEditor : ContentPage {
     private readonly TaskCompletionSource<bool> _closeTcs = new();
     private readonly ILogger<PanelEditor>       _logger;
     private readonly PanelEditorViewModel       _viewModel;
-
+    
     public PanelEditor(ILogger<PanelEditor> logger, Panel panel, ProfileService profileService, ConnectionService connectionService) : base() {
         _logger = logger;
 
@@ -60,9 +60,12 @@ public partial class PanelEditor : ContentPage {
         _viewModel.ScreenHeight = height;
         _viewModel.ScreenWidth = width;
 
-        var newState = width <= height ? PaletteDockSide.Bottom : PaletteDockSide.Side;
-        if (newState != _viewModel.DockSide) {
-            _viewModel.DockSide = SetDockedSide(newState);
+        if (height > width) {
+            SidePaletteContainer.IsVisible = false;
+            BottomPaletteContainer.IsVisible = true;
+        } else {
+            SidePaletteContainer.IsVisible = true;
+            BottomPaletteContainer.IsVisible = false;
         }
     }
 
@@ -81,27 +84,6 @@ public partial class PanelEditor : ContentPage {
         _closeTcs.TrySetResult(true); // or return data as needed
         AppStateService.Instance.IsEditingPanel = false;
     }
-
-    #region Manage the showing and hiding of the Palettes
-    private void PaletteDockSideChanged(object? sender, PaletteDockSide e) => SetDockedSide(e);
-
-    private PaletteDockSide SetDockedSide(PaletteDockSide side) {
-        if (side == PaletteDockSide.Side) {
-            DockLayout.SetDockPosition(PaletteContainer, DockPosition.Right);
-        } else {
-            DockLayout.SetDockPosition(PaletteContainer, DockPosition.Bottom);
-        }
-        _viewModel.DockSide = side;
-        PaletteSelector.DockSide = side;
-        
-        MainThread.BeginInvokeOnMainThread(() => {
-            Dock.InvalidateMeasure();
-            PaletteContainer.InvalidateMeasure();
-            PaletteSelector.InvalidateMeasure();
-        });
-        return side;
-    }
-    #endregion
 
     #region Manage Tiles being selected or tapped from the Control Panel View
     private async void PanelViewOnTileTapped(object? sender, TileSelectedEventArgs e) {
@@ -200,4 +182,14 @@ public partial class PanelEditor : ContentPage {
         }
     }
     #endregion
+
+    private void BottomPaletteClosed(object? sender, EventArgs e) {
+        SidePaletteContainer.IsVisible = true;
+        BottomPaletteContainer.IsVisible = false;
+    }
+
+    private void SidePaletteClosed(object? sender, EventArgs e) {
+        SidePaletteContainer.IsVisible = false;
+        BottomPaletteContainer.IsVisible = true;
+    }
 }

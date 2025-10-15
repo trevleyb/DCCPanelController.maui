@@ -16,32 +16,38 @@
         <converters:BoolToChevronConverter x:Key="BoolToChevronConverter" />
     </ContentView.Resources>
 
-    <Grid RowDefinitions="*" ColumnDefinitions="*" x:Name="SidePalette" 
-          HorizontalOptions="Fill" VerticalOptions="Fill" 
+    <Grid HorizontalOptions="Fill" VerticalOptions="Fill"
           BackgroundColor="Transparent">
-        <Border BackgroundColor="White"
+
+        <Border BackgroundColor="GhostWhite"
                 StrokeShape="RoundRectangle 15 15 15 15"
                 StrokeThickness="2"
                 Stroke="{StaticResource Primary}"
                 ZIndex="10"
                 Margin="5"
-                Padding="0">
+                Padding="5">
 
             <Grid>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="9" />
+                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
-                <Border Grid.Row="0" Margin="0,4,0,0" HorizontalOptions="Center" WidthRequest="25" StrokeThickness="6"
+                <Border x:Name="SideCloseButton"
+                        IsVisible="True"
+                        Grid.Row="0" Grid.Column="1" Margin="0,4,0,4"
+                        HeightRequest="10" WidthRequest="25"
+                        HorizontalOptions="Center" VerticalOptions="Center"
+                        StrokeThickness="6"
                         StrokeShape="RoundRectangle 15 15 5 5"
                         Stroke="{StaticResource Primary}">
                     <Border.Behaviors>
                         <toolkit:TouchBehavior
-                            TouchGestureCompleted="SwitchDockPosition"
+                            TouchGestureCompleted="ClosePalette"
                             DefaultBackgroundColor="{StaticResource Primary}"
                             DefaultOpacity="0.50"
                             HoveredBackgroundColor="{StaticResource PrimaryDisabled}"
@@ -54,98 +60,68 @@
                     </Border.Behaviors>
                 </Border>
 
-                <!-- ============================================================== -->
+                <Border x:Name="BottomCloseButton"
+                        IsVisible="False"
+                        Grid.Row="1" Grid.Column="0" Margin="0,0,0,4"
+                        Rotation="90"
+                        HeightRequest="10" WidthRequest="25"
+                        HorizontalOptions="Center" VerticalOptions="Center"
+                        StrokeThickness="6"
+                        StrokeShape="RoundRectangle 15 15 5 5"
+                        Stroke="{StaticResource Primary}">
+                    <Border.Behaviors>
+                        <toolkit:TouchBehavior
+                            TouchGestureCompleted="ClosePalette"
+                            DefaultBackgroundColor="{StaticResource Primary}"
+                            DefaultOpacity="0.50"
+                            HoveredBackgroundColor="{StaticResource PrimaryDisabled}"
+                            HoveredOpacity="1.00"
+                            PressedBackgroundColor="{StaticResource Primary}"
+                            PressedOpacity="0.75"
+                            DefaultScale="1.0"
+                            HoveredScale="2.00"
+                            PressedScale="0.75" />
+                    </Border.Behaviors>
+                </Border>
 
+
+                <!-- ============================================================== -->
                 <!-- Main content area -->
-                <Grid Grid.Row="1" Margin="0,0,0,5">
+                <!-- ============================================================== -->
+                <Grid Grid.Row="1" Grid.Column="1" HorizontalOptions="Fill" VerticalOptions="Fill">
                     <CollectionView
                         x:Name="PaletteCollectionView"
                         HorizontalScrollBarVisibility="Never"
                         VerticalScrollBarVisibility="Never"
                         ItemsSource="{Binding Palette, Source={x:Reference Root}}"
+                        ItemsLayout="{Binding ItemLayout, Source={x:Reference Root}}"
                         IsGrouped="True"
                         SelectionMode="None"
                         ItemSizingStrategy="MeasureAllItems">
-
-                        <CollectionView.ItemsLayout>
-                            <GridItemsLayout Orientation="Vertical" Span="2" VerticalItemSpacing="2" HorizontalItemSpacing="2"/>
-                        </CollectionView.ItemsLayout>
-                        
-                        <!-- <CollectionView.Triggers> -->
-                        <!--     <DataTrigger TargetType="CollectionView" Binding="{Binding DockSide, Source={x:Reference Root}}" Value="Side"> -->
-                        <!--         <Setter Property="ItemsLayout"> -->
-                        <!--             <Setter.Value> -->
-                        <!--                 <GridItemsLayout Orientation="Vertical" Span="2" VerticalItemSpacing="2" HorizontalItemSpacing="2" /> -->
-                        <!--             </Setter.Value> -->
-                        <!--         </Setter> -->
-                        <!--     </DataTrigger> -->
-                        <!-- -->
-                        <!--     <DataTrigger TargetType="CollectionView" Binding="{Binding DockSide, Source={x:Reference Root}}" Value="Bottom"> -->
-                        <!--         <Setter Property="ItemsLayout"> -->
-                        <!--             <Setter.Value> -->
-                        <!--                 <GridItemsLayout Orientation="Horizontal" Span="2" VerticalItemSpacing="2" HorizontalItemSpacing="2" /> -->
-                        <!--             </Setter.Value> -->
-                        <!--         </Setter> -->
-                        <!--     </DataTrigger> -->
-                        <!-- </CollectionView.Triggers> -->
                         
                         <CollectionView.GroupHeaderTemplate>
                             <DataTemplate x:Name="GroupRoot" x:DataType="view:PaletteGroup">
-                                <VerticalStackLayout Spacing="0">
-                                    <VerticalStackLayout.Style>
-                                        <Style TargetType="VerticalStackLayout">
-                                            <Style.Triggers> 
-                                                <DataTrigger TargetType="VerticalStackLayout" Value="Side">
-                                                    <DataTrigger.Binding>
-                                                        <Binding Path="DockSide" Source="{x:Reference Root}" x:DataType="view:PaletteSelector" />
-                                                    </DataTrigger.Binding>
-                                                    <Setter Property="Rotation" Value="0" />
-                                                    <Setter Property="Margin" Value="5,0,5,5" />
-                                                    <Setter Property="WidthRequest" Value="90" />
-                                                    <Setter Property="HeightRequest" Value="25" />
-                                                    <Setter Property="HorizontalOptions" Value="Center" />
-                                                    <Setter Property="VerticalOptions" Value="Center" />
-                                                </DataTrigger>
-                                                <DataTrigger TargetType="VerticalStackLayout" Value="Bottom">
-                                                    <DataTrigger.Binding>
-                                                        <Binding Path="DockSide" Source="{x:Reference Root}" x:DataType="view:PaletteSelector" />
-                                                    </DataTrigger.Binding>
-                                                    <Setter Property="Rotation" Value="-90" />
-                                                    <Setter Property="Margin" Value="0,-10,10,-5" />
-                                                    <Setter Property="WidthRequest" Value="90" />
-                                                    <Setter Property="HeightRequest" Value="20" />
-                                                    <Setter Property="HorizontalOptions" Value="Center" />
-                                                    <Setter Property="VerticalOptions" Value="Center" />
-                                                </DataTrigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </VerticalStackLayout.Style>
-                                    <Border BackgroundColor="{StaticResource Primary}"
-                                            HeightRequest="20" Margin="5,5,5,0"
-                                            StrokeThickness="0"
-                                            StrokeShape="RoundRectangle 0 0 0 0"
-                                            HorizontalOptions="FillAndExpand">
-                                        <HorizontalStackLayout>
-                                            <Image Margin="3,0,3,0" HeightRequest="12" WidthRequest="12"  Source="{Binding IsExpanded, Converter={StaticResource BoolToChevronConverter}}">
-                                                <Image.Behaviors>
-                                                    <toolkit:IconTintColorBehavior TintColor="White"/>
-                                                </Image.Behaviors>
-                                            </Image>
-                                            <Label
-                                                Text="{Binding Category}"
-                                                TextColor="White"
-                                                FontFamily="OpenSansMedium"
-                                                HorizontalTextAlignment="Center"
-                                                HorizontalOptions="Center"
-                                                VerticalOptions="Center"
-                                                FontSize="12"/>
-                                        </HorizontalStackLayout>
-                                        
-                                        <Border.GestureRecognizers>
-                                            <TapGestureRecognizer Command="{Binding ToggleExpandCommand}" />
-                                        </Border.GestureRecognizers>
-                                    </Border>
-                                </VerticalStackLayout>
+                                <Border
+                                    Rotation="{Binding CategoryRotation, Source={x:Reference Root}, x:DataType=view:PaletteSelector}"
+                                    BackgroundColor="{StaticResource Primary}"
+                                    HeightRequest="20"
+                                    WidthRequest="90"
+                                    StrokeThickness="0"
+                                    Margin="0,5,0,5"
+                                    StrokeShape="RoundRectangle 0 0 0 0"
+                                    HorizontalOptions="Fill">
+                                    <Label
+                                        Text="{Binding Category}"
+                                        TextColor="White"
+                                        FontFamily="OpenSansMedium"
+                                        HorizontalTextAlignment="Center"
+                                        HorizontalOptions="Center"
+                                        VerticalOptions="Center"
+                                        FontSize="12" />
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding ToggleExpandCommand}" />
+                                    </Border.GestureRecognizers>
+                                </Border>
                             </DataTemplate>
                         </CollectionView.GroupHeaderTemplate>
 
@@ -173,8 +149,7 @@
                                                 HorizontalOptions="Fill"
                                                 VerticalOptions="Fill">
                                                 <ContentView.GestureRecognizers>
-                                                    <DragGestureRecognizer DragStarting="OnTileCollectionDragStarting"
-                                                                           CanDrag="True" />
+                                                    <DragGestureRecognizer DragStarting="OnTileCollectionDragStarting" CanDrag="True" />
                                                 </ContentView.GestureRecognizers>
                                             </ContentView>
                                             <Border.Style>
@@ -210,18 +185,6 @@
                 </Grid>
             </Grid>
         </Border>
-        
-        <Grid.Triggers>
-            <!-- When docked on the RIGHT: keep vertical, maybe 2 columns -->
-            <DataTrigger TargetType="Grid" Binding="{Binding DockSide, Source={x:Reference Root}}" Value="Side">
-                <Setter Property="WidthRequest" Value="100"/>
-                <Setter Property="HeightRequest" Value="-1"/>
-            </DataTrigger>
 
-            <DataTrigger TargetType="Grid" Binding="{Binding DockSide, Source={x:Reference Root}}" Value="Bottom">
-                <Setter Property="WidthRequest" Value="-1"/>
-                <Setter Property="HeightRequest" Value="120"/>
-            </DataTrigger>
-        </Grid.Triggers>
     </Grid>
 </ContentView>

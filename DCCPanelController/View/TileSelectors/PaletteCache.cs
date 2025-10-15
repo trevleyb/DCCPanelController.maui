@@ -20,10 +20,14 @@ public static class PaletteCache {
     // Prebuild (or return existing) without allocating a Panel unless needed
     public static Palette PrebuildDefaultPalette() => GetPalette(DefaultPalette, CreateDefaultPanel());
 
+    public static Palette PrebuildPalette(string name) => GetPalette(name, CreateDefaultPanel(name));
+
     public static Palette GetDefaultPalette() => GetPalette(DefaultPalette, CreateDefaultPanel());
 
     public static Palette GetPalette(Panel panel) => GetPalette(panel.Guid.ToString(), panel.CloneEmptyPanel("Selector"));
-    
+
+    public static Palette GetPalette(string name) => GetPalette(name, CreateDefaultPanel(name));
+
     public static void Clear(string key) => Cache.TryRemove(key, out _);
 
     public static void Clear() => Cache.Clear();
@@ -35,9 +39,9 @@ public static class PaletteCache {
 
     // --- Implementation details ----------------------------------------------
 
-    private static Panel CreateDefaultPanel() {
+    private static Panel CreateDefaultPanel(string name = "Palette") {
         var panels = new Panels();
-        return panels.CreatePanel("Palette");
+        return panels.CreatePanel(name);
     }
 
     private static Palette BuildPaletteForPanel(Panel panel) {
