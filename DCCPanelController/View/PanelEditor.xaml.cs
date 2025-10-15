@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using CommunityToolkit.Maui.Core;
 using CommunityToolkit.Maui.Core.Extensions;
 using CommunityToolkit.Maui.Layouts;
@@ -48,7 +49,7 @@ public partial class PanelEditor : ContentPage {
         AppStateService.Instance.SelectedTileSet += InstanceOnSelectedTileSet;
         AppStateService.Instance.SelectedTileCleared += InstanceOnSelectedTileCleared;
         
-        PaletteSelector.OnDockSideChanged += PaletteDockSideChanged;
+        //PaletteSelector.OnDockSideChanged += PaletteDockSideChanged;
     }
 
     public Task<bool> PageClosed => _closeTcs.Task;
@@ -63,10 +64,10 @@ public partial class PanelEditor : ContentPage {
         _viewModel.ScreenHeight = height;
         _viewModel.ScreenWidth = width;
 
-        var newState = width <= height ? PaletteDockSide.Bottom : PaletteDockSide.Side;
-        if (newState != _currentState) {
-            _currentState = SetDockedSide(newState);
-        }
+        // var newState = width <= height ? PaletteDockSide.Bottom : PaletteDockSide.Side;
+        // if (newState != _currentState) {
+        //     _currentState = SetDockedSide(newState);
+        // }
     }
 
     protected override async void OnNavigatedFrom(NavigatedFromEventArgs args) {
@@ -88,7 +89,8 @@ public partial class PanelEditor : ContentPage {
     #region Manage the showing and hiding of the Palettes
     private void PaletteDockSideChanged(object? sender, PaletteDockSide e) => SetDockedSide(e);
 
-    private PaletteDockSide SetDockedSide(PaletteDockSide side) {
+    private PaletteDockSide SetDockedSide(PaletteDockSide side,  [CallerMemberName] string name = "", [CallerLineNumber] int line = 0) {
+        Console.WriteLine($"SetDockSide called from {name}@{line}");
         switch (side) {
             case PaletteDockSide.Side:
                 DockLayout.SetDockPosition(PaletteContainer, DockPosition.Right);

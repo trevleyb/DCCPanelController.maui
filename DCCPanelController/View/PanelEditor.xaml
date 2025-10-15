@@ -92,10 +92,10 @@
             </Grid>
         </Grid>
         
-        <Grid toolkit:DockLayout.DockPosition="Right" 
+        <Grid toolkit:DockLayout.DockPosition="Bottom" 
             x:Name="PaletteContainer"
             
-            WidthRequest="110"
+            HeightRequest="110"
             IsClippedToBounds="True">
             <tileSelectors:PaletteSelector
                 x:Name="PaletteSelector"

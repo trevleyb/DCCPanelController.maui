@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using CommunityToolkit.Maui.Core;
 using CommunityToolkit.Maui.Layouts;
 using DCCPanelController.Helpers.Logging;
@@ -22,7 +23,7 @@ public partial class PaletteSelector {
         BindingContext = ViewModel;
     }
 
-    public PaletteSelectorViewModel ViewModel { get; set; }
+    public PaletteSelectorViewModel ViewModel { get; init; }
 
     public PaletteDockSide DockSide {
         get => (PaletteDockSide)GetValue(DockSideProperty);
@@ -51,8 +52,7 @@ public partial class PaletteSelector {
         OnDockSideChanged?.Invoke(this, ViewModel.DockSide);
     }
 
-    private void Button_OnClicked(object? sender, EventArgs e) => SwitchDockPosition(sender, e);
-
+    // private void Button_OnClicked(object? sender, EventArgs e) => SwitchDockPosition(sender, e);
     // private static void OnSelectedTileChanged(BindableObject bindable, object oldValue, object newValue) {
     //     var view = (PaletteSelector)bindable;
     //     if (view.BindingContext is PaletteSelectorViewModel vm) {

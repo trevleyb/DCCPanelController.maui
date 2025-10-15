@@ -42,7 +42,7 @@
                         Stroke="{StaticResource Primary}">
                     <Border.Behaviors>
                         <toolkit:TouchBehavior
-                            CurrentTouchStatusChanged="SwitchDockPosition"
+                            TouchGestureCompleted="SwitchDockPosition"
                             DefaultBackgroundColor="{StaticResource Primary}"
                             DefaultOpacity="0.50"
                             HoveredBackgroundColor="{StaticResource PrimaryDisabled}"
