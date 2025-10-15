@@ -13,6 +13,7 @@ using DCCPanelController.View.ControlPanel;
 using DCCPanelController.View.Helpers;
 using DCCPanelController.View.Properties.DynamicProperties;
 using DCCPanelController.View.Properties.PanelProperties;
+using DCCPanelController.View.TileSelectors;
 using Microsoft.Extensions.Logging;
 using Syncfusion.Maui.Toolkit.Popup;
 using PanelPropertyViewModel = DCCPanelController.View.Properties.PanelProperties.PanelPropertyViewModel;
@@ -34,9 +35,10 @@ public partial class PanelEditorViewModel : ObservableObject {
     private readonly ProfileService               _profileService;
     private readonly ConnectionService            _connectionService;
 
-    [ObservableProperty] private EditModeEnum _editMode = EditModeEnum.Move;
-    [ObservableProperty] private bool         _gridVisible;
-    [ObservableProperty] private bool         _havePropertiesChanged;
+    [ObservableProperty] private PaletteDockSide _dockSide = PaletteDockSide.Side;
+    [ObservableProperty] private EditModeEnum    _editMode = EditModeEnum.Move;
+    [ObservableProperty] private bool            _gridVisible;
+    [ObservableProperty] private bool            _havePropertiesChanged;
 
     [NotifyPropertyChangedFor(nameof(CanEditProperties))]
     [NotifyPropertyChangedFor(nameof(CanEditTileProperties))]

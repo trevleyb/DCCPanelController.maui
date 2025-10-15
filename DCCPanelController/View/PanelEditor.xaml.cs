@@ -60,10 +60,10 @@ public partial class PanelEditor : ContentPage {
         _viewModel.ScreenHeight = height;
         _viewModel.ScreenWidth = width;
 
-        // var newState = width <= height ? PaletteDockSide.Bottom : PaletteDockSide.Side;
-        // if (newState != _currentState) {
-        //     _currentState = SetDockedSide(newState);
-        // }
+        var newState = width <= height ? PaletteDockSide.Bottom : PaletteDockSide.Side;
+        if (newState != _viewModel.DockSide) {
+            _viewModel.DockSide = SetDockedSide(newState);
+        }
     }
 
     protected override async void OnNavigatedFrom(NavigatedFromEventArgs args) {
@@ -85,24 +85,20 @@ public partial class PanelEditor : ContentPage {
     #region Manage the showing and hiding of the Palettes
     private void PaletteDockSideChanged(object? sender, PaletteDockSide e) => SetDockedSide(e);
 
-    private PaletteDockSide SetDockedSide(PaletteDockSide side,  [CallerMemberName] string name = "", [CallerLineNumber] int line = 0) {
-        Console.WriteLine($"SetDockSide called from {name}@{line}");
-        switch (side) {
-            case PaletteDockSide.Side:
-                DockLayout.SetDockPosition(PaletteContainer, DockPosition.Right);
-                //PaletteContainer.WidthRequest = 110;
-                //PaletteContainer.HeightRequest = -1;
-            break;
-
-            case PaletteDockSide.Bottom:
-                DockLayout.SetDockPosition(PaletteContainer, DockPosition.Bottom);
-                //PaletteContainer.WidthRequest = -1;
-                //PaletteContainer.HeightRequest = 120;
-            break;
-
-            default:
-                throw new ArgumentOutOfRangeException(nameof(side), side, null);
+    private PaletteDockSide SetDockedSide(PaletteDockSide side) {
+        if (side == PaletteDockSide.Side) {
+            DockLayout.SetDockPosition(PaletteContainer, DockPosition.Right);
+        } else {
+            DockLayout.SetDockPosition(PaletteContainer, DockPosition.Bottom);
         }
+        _viewModel.DockSide = side;
+        PaletteSelector.DockSide = side;
+        
+        MainThread.BeginInvokeOnMainThread(() => {
+            Dock.InvalidateMeasure();
+            PaletteContainer.InvalidateMeasure();
+            PaletteSelector.InvalidateMeasure();
+        });
         return side;
     }
     #endregion

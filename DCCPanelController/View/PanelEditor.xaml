@@ -48,7 +48,7 @@
             Command="{Binding Path=SaveButtonPressedCommand}"/>
     </ContentPage.ToolbarItems>
 
-    <toolkit:DockLayout >
+    <toolkit:DockLayout x:Name="Dock">
         <Grid toolkit:DockLayout.DockPosition="Top"
               x:Name="TileToolbar"
               x:DataType="services:AppStateService"
@@ -94,7 +94,10 @@
         
         <Grid toolkit:DockLayout.DockPosition="Right" 
             x:Name="PaletteContainer" IsClippedToBounds="True">
-            <tileSelectors:PaletteSelector OnDockSideChanged="PaletteDockSideChanged"/>
+            <tileSelectors:PaletteSelector
+                x:Name="PaletteSelector"
+                DockSide="{Binding DockSide}"
+                OnDockSideChanged="PaletteDockSideChanged"/>
         </Grid>
 
         <Grid toolkit:DockLayout.DockPosition="None"

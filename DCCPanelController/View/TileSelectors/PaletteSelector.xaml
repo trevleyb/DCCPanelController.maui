@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <ContentView
-    x:Name="RootDock"
+    x:Name="Root"
     x:Class="DCCPanelController.View.TileSelectors.PaletteSelector"
     x:DataType="view:PaletteSelector"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
@@ -17,7 +17,7 @@
     </ContentView.Resources>
 
     <Grid RowDefinitions="*" ColumnDefinitions="*" x:Name="SidePalette" 
-          HorizontalOptions="Fill" VerticalOptions="Fill" IsVisible="True"
+          HorizontalOptions="Fill" VerticalOptions="Fill" 
           BackgroundColor="Transparent">
         <Border BackgroundColor="White"
                 StrokeShape="RoundRectangle 15 15 15 15"
@@ -59,35 +59,35 @@
                 <!-- Main content area -->
                 <Grid Grid.Row="1" Margin="0,0,0,5">
                     <CollectionView
-                        x:Name="TileCollection"
+                        x:Name="PaletteCollectionView"
                         HorizontalScrollBarVisibility="Never"
                         VerticalScrollBarVisibility="Never"
-                        ItemsSource="{Binding Palette}"
+                        ItemsSource="{Binding Palette, Source={x:Reference Root}}"
                         IsGrouped="True"
                         SelectionMode="None"
                         ItemSizingStrategy="MeasureAllItems">
 
                         <CollectionView.ItemsLayout>
-                            <GridItemsLayout x:Name="GridItemsLayout" Orientation="Vertical" Span="2" VerticalItemSpacing="2" HorizontalItemSpacing="2" />
+                            <GridItemsLayout Orientation="Vertical" Span="2" VerticalItemSpacing="2" HorizontalItemSpacing="2"/>
                         </CollectionView.ItemsLayout>
                         
-                        <CollectionView.Triggers>
-                            <DataTrigger TargetType="CollectionView" Binding="{Binding DockSide, Source={x:Reference RootDock}}" Value="Side">
-                                <Setter Property="ItemsLayout">
-                                    <Setter.Value>
-                                        <GridItemsLayout Orientation="Vertical" Span="2" VerticalItemSpacing="2" HorizontalItemSpacing="2" />
-                                    </Setter.Value>
-                                </Setter>
-                            </DataTrigger>
-
-                            <DataTrigger TargetType="CollectionView" Binding="{Binding DockSide, Source={x:Reference RootDock}}" Value="Bottom">
-                                <Setter Property="ItemsLayout">
-                                    <Setter.Value>
-                                        <GridItemsLayout Orientation="Horizontal" Span="2" VerticalItemSpacing="2" HorizontalItemSpacing="2" />
-                                    </Setter.Value>
-                                </Setter>
-                            </DataTrigger>
-                        </CollectionView.Triggers>
+                        <!-- <CollectionView.Triggers> -->
+                        <!--     <DataTrigger TargetType="CollectionView" Binding="{Binding DockSide, Source={x:Reference Root}}" Value="Side"> -->
+                        <!--         <Setter Property="ItemsLayout"> -->
+                        <!--             <Setter.Value> -->
+                        <!--                 <GridItemsLayout Orientation="Vertical" Span="2" VerticalItemSpacing="2" HorizontalItemSpacing="2" /> -->
+                        <!--             </Setter.Value> -->
+                        <!--         </Setter> -->
+                        <!--     </DataTrigger> -->
+                        <!-- -->
+                        <!--     <DataTrigger TargetType="CollectionView" Binding="{Binding DockSide, Source={x:Reference Root}}" Value="Bottom"> -->
+                        <!--         <Setter Property="ItemsLayout"> -->
+                        <!--             <Setter.Value> -->
+                        <!--                 <GridItemsLayout Orientation="Horizontal" Span="2" VerticalItemSpacing="2" HorizontalItemSpacing="2" /> -->
+                        <!--             </Setter.Value> -->
+                        <!--         </Setter> -->
+                        <!--     </DataTrigger> -->
+                        <!-- </CollectionView.Triggers> -->
                         
                         <CollectionView.GroupHeaderTemplate>
                             <DataTemplate x:Name="GroupRoot" x:DataType="view:PaletteGroup">
@@ -97,7 +97,7 @@
                                             <Style.Triggers> 
                                                 <DataTrigger TargetType="VerticalStackLayout" Value="Side">
                                                     <DataTrigger.Binding>
-                                                        <Binding Path="DockSide" Source="{x:Reference RootDock}" x:DataType="view:PaletteSelector" />
+                                                        <Binding Path="DockSide" Source="{x:Reference Root}" x:DataType="view:PaletteSelector" />
                                                     </DataTrigger.Binding>
                                                     <Setter Property="Rotation" Value="0" />
                                                     <Setter Property="Margin" Value="5,0,5,5" />
@@ -108,7 +108,7 @@
                                                 </DataTrigger>
                                                 <DataTrigger TargetType="VerticalStackLayout" Value="Bottom">
                                                     <DataTrigger.Binding>
-                                                        <Binding Path="DockSide" Source="{x:Reference RootDock}" x:DataType="view:PaletteSelector" />
+                                                        <Binding Path="DockSide" Source="{x:Reference Root}" x:DataType="view:PaletteSelector" />
                                                     </DataTrigger.Binding>
                                                     <Setter Property="Rotation" Value="-90" />
                                                     <Setter Property="Margin" Value="0,-10,10,-5" />
@@ -213,12 +213,12 @@
         
         <Grid.Triggers>
             <!-- When docked on the RIGHT: keep vertical, maybe 2 columns -->
-            <DataTrigger TargetType="Grid" Binding="{Binding DockSide, Source={x:Reference RootDock}}" Value="Side">
+            <DataTrigger TargetType="Grid" Binding="{Binding DockSide, Source={x:Reference Root}}" Value="Side">
                 <Setter Property="WidthRequest" Value="100"/>
                 <Setter Property="HeightRequest" Value="-1"/>
             </DataTrigger>
 
-            <DataTrigger TargetType="Grid" Binding="{Binding DockSide, Source={x:Reference RootDock}}" Value="Bottom">
+            <DataTrigger TargetType="Grid" Binding="{Binding DockSide, Source={x:Reference Root}}" Value="Bottom">
                 <Setter Property="WidthRequest" Value="-1"/>
                 <Setter Property="HeightRequest" Value="120"/>
             </DataTrigger>

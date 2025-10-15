@@ -100,12 +100,10 @@ public partial class ControlPanelView {
 
         // 5) Nudge a first repaint after size is known
         _panelSurface.SizeChanged += (_, _) => {
-            Console.WriteLine($"Panel Surface Size Changed Called");
             if (_panelSurface.Width <= 0 || _panelSurface.Height <= 0) return;
             _overlayGridLines.Invalidate();
             _overlayGridSelection.Invalidate();
             _overlayGridHighlights.Invalidate();
-            Console.WriteLine($"panel Surface Size Changed Finished");
         };
     }
     #endregion
@@ -1072,7 +1070,6 @@ public partial class ControlPanelView {
     }
 
     private void EntitiesOnCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e) {
-        Console.WriteLine($"Entities ON COLLECTION CHANGED");
         ClearAllSelectedTiles();
 
         // Remove any entities from the grid that were removed from the collection.
