@@ -18,7 +18,8 @@
         <converters:BoolToChevronConverter x:Key="BoolToChevronConverter" />
     </ContentView.Resources>
 
-    <Grid WidthRequest="110" x:Name="SidePalette" HorizontalOptions="Fill" VerticalOptions="Fill" IsVisible="True"
+    <Grid RowDefinitions="*" ColumnDefinitions="*" x:Name="SidePalette" 
+          HorizontalOptions="Fill" VerticalOptions="Fill" IsVisible="True"
           BackgroundColor="Transparent">
         <Border BackgroundColor="White"
                 StrokeShape="RoundRectangle 15 15 15 15"
@@ -28,7 +29,7 @@
                 Margin="5"
                 Padding="0">
 
-            <Grid WidthRequest="90">
+            <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="9" />
                     <RowDefinition Height="*" />
@@ -68,6 +69,10 @@
                         SelectionMode="None"
                         ItemSizingStrategy="MeasureAllItems">
 
+                        <CollectionView.ItemsLayout>
+                            <GridItemsLayout Orientation="Horizontal" Span="2" VerticalItemSpacing="2" HorizontalItemSpacing="2" />
+                        </CollectionView.ItemsLayout>
+                        
                         <CollectionView.GroupHeaderTemplate>
                             <DataTemplate x:Name="GroupRoot" x:DataType="view:PaletteGroup">
                                 <VerticalStackLayout Spacing="0" Margin="-10,0,-10,5">
@@ -99,11 +104,6 @@
                                 </VerticalStackLayout>
                             </DataTemplate>
                         </CollectionView.GroupHeaderTemplate>
-
-                        <CollectionView.ItemsLayout>
-                            <GridItemsLayout Orientation="Vertical" Span="2" VerticalItemSpacing="2"
-                                             HorizontalItemSpacing="2" />
-                        </CollectionView.ItemsLayout>
 
                         <CollectionView.ItemTemplate>
                             <DataTemplate x:DataType="view:PaletteItem">

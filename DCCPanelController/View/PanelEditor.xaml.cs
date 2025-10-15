@@ -94,14 +94,14 @@ public partial class PanelEditor : ContentPage {
         switch (side) {
             case PaletteDockSide.Side:
                 DockLayout.SetDockPosition(PaletteContainer, DockPosition.Right);
-                PaletteContainer.WidthRequest = 150;
+                PaletteContainer.WidthRequest = 110;
                 PaletteContainer.HeightRequest = -1;
             break;
 
             case PaletteDockSide.Bottom:
                 DockLayout.SetDockPosition(PaletteContainer, DockPosition.Bottom);
                 PaletteContainer.WidthRequest = -1;
-                PaletteContainer.HeightRequest = 100;
+                PaletteContainer.HeightRequest = 120;
             break;
 
             default:
