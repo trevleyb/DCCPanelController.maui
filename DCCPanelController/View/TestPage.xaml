@@ -21,11 +21,11 @@
         <toolkit:DockLayout >
         
             <Grid x:Name="SidePaletteContainer"  toolkit:DockLayout.DockPosition="Right" WidthRequest="110">
-                <tileSelectors:PaletteSelector Orientation="Vertical" Palette="{Binding Palette}" OnClosePalette="SideDockClosed" />
+                <tileSelectors:PaletteSelector x:Name="SidePaletteSelector" Orientation="Vertical" Palette="{Binding Palette}" OnClosePalette="SideDockClosed" />
             </Grid>
                 
             <Grid x:Name="BottomPaletteContainer" toolkit:DockLayout.DockPosition="Bottom" HeightRequest="125">
-                <tileSelectors:PaletteSelector Orientation="Horizontal" Palette="{Binding BottomPalette}" OnClosePalette="BottomDockClosed"/>
+                <tileSelectors:PaletteSelector x:Name="BottomPaletteSelector"  Orientation="Horizontal" Palette="{Binding BottomPalette}" OnClosePalette="BottomDockClosed"/>
             </Grid>
             
             <Grid toolkit:DockLayout.DockPosition="None">

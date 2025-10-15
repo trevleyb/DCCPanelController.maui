@@ -6,7 +6,7 @@ namespace DCCPanelController.View;
 public partial class TestPageViewModel : ObservableObject {
 
     public Palette Palette { get; init; } = PaletteCache.GetDefaultPalette();
-    public Palette SidePalette { get; init; } = PaletteCache.GetPalette("Side");
-    public Palette BottomPalette { get; init; } = PaletteCache.GetPalette("Bottom");
+    public Palette SidePalette { get; init; } = PaletteCache.GetPalette("Side-Test");
+    public Palette BottomPalette { get; init; } = PaletteCache.GetPalette("Bottom-Test");
 
 }

@@ -15,6 +15,12 @@ public partial class PaletteSelector {
         AppStateService.Instance.SelectedTileCleared += InstanceOnSelectedTileCleared;
     }
 
+    public void SwitchPaletteView() {
+        var palette = Palette;
+        Palette = null;
+        Palette = palette;
+    }
+    
     private void ClosePalette(object? sender, TouchGestureCompletedEventArgs e) {
         OnClosePalette?.Invoke(this, EventArgs.Empty);
     }
@@ -56,7 +62,7 @@ public partial class PaletteSelector {
         if (sender is VerticalStackLayout { BindingContext: PaletteGroup group }) {
             // Temporarily disabling this as it is not quite right for some reason. 
             // It works, but if I rotate and rotate back the margins don't seem right
-            // group.ToggleExpandCommand.Execute(null);
+            group.ToggleExpandCommand.Execute(null);
         }
     }
 
@@ -77,7 +83,7 @@ public partial class PaletteSelector {
     private void InstanceOnSelectedTileCleared() => SelectedItem = null;
     
     public static readonly BindableProperty PaletteProperty = BindableProperty.Create(nameof(Palette), typeof(Palette), typeof(PaletteSelector), defaultValue: PaletteCache.GetDefaultPalette());
-    public Palette Palette {
+    public Palette? Palette {
         get => (Palette)GetValue(PaletteProperty);
         set => SetValue(PaletteProperty, value);
     }

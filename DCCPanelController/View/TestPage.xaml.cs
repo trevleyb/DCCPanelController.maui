@@ -30,9 +30,11 @@ public partial class TestPage : ContentPage {
         if (height > width) {
             SidePaletteContainer.IsVisible = false;
             BottomPaletteContainer.IsVisible = true;
+            BottomPaletteSelector.SwitchPaletteView();
         } else {
-            SidePaletteContainer.IsVisible = true;
             BottomPaletteContainer.IsVisible = false;
+            SidePaletteContainer.IsVisible = true;
+            SidePaletteSelector.SwitchPaletteView();
         }
     }
 
