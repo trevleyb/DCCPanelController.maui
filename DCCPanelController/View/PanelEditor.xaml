@@ -42,6 +42,7 @@
             Command="{Binding Path=ToggleGridCommand}"/>
 
         <ToolbarItem
+            IsEnabled="{Binding CanToggleGrid}"
             IconImageSource="{Binding PaletteState, Converter={StaticResource PaletteIconConverter}}"
             Text="Palette"
             Clicked="PaletteClicked"/> 
@@ -62,8 +63,22 @@
               BackgroundColor="{Binding Source={x:Static services:AppStateService.Instance}, Path=ShellBackgroundColor}">
                 
                 <HorizontalStackLayout HorizontalOptions="End" x:DataType="view:PanelEditorViewModel" Margin="0,0,5,0" Spacing="10" Padding="5">
-                    <Border IsVisible="{Binding CanEditText}" Padding="5,2,5,2" StrokeShape="RoundRectangle 6" StrokeThickness="1" Stroke="White">
-                        <Entry TextColor="White" Text="{Binding TextEntity.EditText}" WidthRequest="150"/>
+
+                    <Border IsVisible="{Binding ShowEditTextBox}" Padding="5,2,5,2" StrokeShape="RoundRectangle 6" StrokeThickness="1" Stroke="White" >
+                        <HorizontalStackLayout Spacing="1" Padding="0" >
+                            <Entry TextColor="White" Text="{Binding TextEntity.EditText, Mode=TwoWay}" HorizontalOptions="Start" WidthRequest="100"/>
+                            <ImageButton HorizontalOptions="End" Margin="5,0,0,0" MinimumWidthRequest="15" WidthRequest="15" Source="plus_active.png" Command="{Binding Path=IncreaseTextSizeCommand}">
+                                <ImageButton.Behaviors>
+                                    <toolkit:IconTintColorBehavior TintColor="White"/>
+                                </ImageButton.Behaviors>
+                            </ImageButton>
+                            <ImageButton HorizontalOptions="End" Margin="5,0,5,0" MinimumWidthRequest="15" WidthRequest="15" Source="minus_active.png" Command="{Binding Path=DecreaseTextSizeCommand}">
+                                <ImageButton.Behaviors>
+                                    <toolkit:IconTintColorBehavior TintColor="White"/>
+                                </ImageButton.Behaviors>
+                            </ImageButton>
+                            <Label HorizontalOptions="End" TextColor="White" Margin="0,0,5,0" Text="{Binding TextEntity.TextSize}"/>
+                        </HorizontalStackLayout>
                     </Border>
                         
                     <ImageButton IsVisible="{Binding CanLinkATiles}" Command="{Binding Path=LinkTilesActionClosedCommand}" Source="{Binding CanLinkATiles, Converter={StaticResource BoolToIcon}, ConverterParameter=link_closed}"/>

@@ -46,6 +46,7 @@ public partial class PanelEditorViewModel : ObservableObject {
     [NotifyPropertyChangedFor(nameof(CanDeleteTiles))]
     [NotifyPropertyChangedFor(nameof(CanToggleGrid))]
     [NotifyPropertyChangedFor(nameof(CanPressBackButton))]
+    [NotifyPropertyChangedFor(nameof(ShowEditTextBox))]
     [ObservableProperty] private bool _isNavigationDrawerOpen;
    
     [NotifyPropertyChangedFor(nameof(CanEditProperties))]
@@ -56,6 +57,7 @@ public partial class PanelEditorViewModel : ObservableObject {
     [NotifyPropertyChangedFor(nameof(CanDeleteTiles))]
     [NotifyPropertyChangedFor(nameof(CanToggleGrid))]
     [NotifyPropertyChangedFor(nameof(CanPressBackButton))]
+    [NotifyPropertyChangedFor(nameof(ShowEditTextBox))]
     [ObservableProperty] private bool _isProcessing;
 
     [ObservableProperty] private Panel _panel;
@@ -75,6 +77,7 @@ public partial class PanelEditorViewModel : ObservableObject {
     [NotifyPropertyChangedFor(nameof(CanRotateTiles))]
     [NotifyPropertyChangedFor(nameof(CanChangeLayers))]
     [NotifyPropertyChangedFor(nameof(CanDeleteTiles))]
+    [NotifyPropertyChangedFor(nameof(ShowEditTextBox))]
     [NotifyPropertyChangedFor(nameof(HavePropertiesChanged))]
     [ObservableProperty] private ObservableCollection<ITile> _selectedTiles = [];
 
@@ -113,6 +116,7 @@ public partial class PanelEditorViewModel : ObservableObject {
 
     public TextEntityProxy TextEntity { get; } = new(); 
     
+    public bool ShowEditTextBox => CanEditText && !IsNavigationDrawerOpen && !IsProcessing;
     public bool CanEditProperties => !IsNavigationDrawerOpen && !IsProcessing;
     public bool CanEditTileProperties => HasSelectedEntities && !IsNavigationDrawerOpen && !IsProcessing;
     public bool CanSetModes => !IsNavigationDrawerOpen && !IsProcessing;
@@ -193,6 +197,7 @@ public partial class PanelEditorViewModel : ObservableObject {
         // Tell the UI that the properties may have changed
         // ------------------------------------------------------------------
         OnPropertyChanged(nameof(CanEditText));
+        OnPropertyChanged(nameof(ShowEditTextBox));
     }
 
     [RelayCommand]
@@ -246,6 +251,22 @@ public partial class PanelEditorViewModel : ObservableObject {
             }
         }
         _panelView.ClearAllSelectedTiles();
+    }
+
+    [RelayCommand]
+    private async Task IncreaseTextSizeAsync() {
+        if (SelectedEntities is [ITextEntity textEntity]) {
+            TextEntity.TextSize++;
+            if (TextEntity.TextSize > 20) TextEntity.TextSize = 20;
+        }
+    }
+
+    [RelayCommand]
+    private async Task DecreaseTextSizeAsync() {
+        if (SelectedEntities is [ITextEntity textEntity]) {
+            TextEntity.TextSize--;
+            if (TextEntity.TextSize < 1) TextEntity.TextSize = 1;
+        }
     }
 
     [RelayCommand]

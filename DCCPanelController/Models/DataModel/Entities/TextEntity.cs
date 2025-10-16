@@ -29,6 +29,9 @@ public partial class TextEntity : DrawingEntity, ITextEntity, IDrawingEntity {
     [ObservableProperty] [property: Editable("Vertical", "", 3, "Text")]
     private TextAlignmentVerticalEnum _verticalJustification = TextAlignmentVerticalEnum.Center;
 
+    [ObservableProperty] [property: Editable("Wordwrap", "", 3, "Text")]
+    private bool _wrapText = false;
+
     [JsonConstructor]
     public TextEntity() { }
 

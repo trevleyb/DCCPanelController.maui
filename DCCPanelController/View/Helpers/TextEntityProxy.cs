@@ -2,6 +2,8 @@ using System.ComponentModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Models.DataModel.Entities.Interfaces;
 
+namespace DCCPanelController.View.Helpers;
+
 public class TextEntityProxy : ObservableObject, IDisposable {
     private ITextEntity? _entity;
 
@@ -20,7 +22,8 @@ public class TextEntityProxy : ObservableObject, IDisposable {
             if (_entity is INotifyPropertyChanged newNpc)
                 newNpc.PropertyChanged += OnEntityPropertyChanged;
 
-            OnPropertyChanged(nameof(EditText)); // ensure UI refreshes
+            OnPropertyChanged(nameof(EditText)); 
+            OnPropertyChanged(nameof(TextSize)); 
         }
     }
 
@@ -34,9 +37,19 @@ public class TextEntityProxy : ObservableObject, IDisposable {
         }
     }
 
+    public int TextSize {
+        get => Entity?.FontSize ?? 14;
+        set {
+            if (Entity is null) return;
+            if (Entity.FontSize == value) return;
+            Entity.FontSize = value;
+            OnPropertyChanged(nameof(TextSize));
+        }
+    }
+
     private void OnEntityPropertyChanged(object? sender, PropertyChangedEventArgs e) {
-        if (e.PropertyName == nameof(ITextEntity.Label))
-            OnPropertyChanged(nameof(EditText));
+        if (e.PropertyName == nameof(ITextEntity.Label)) OnPropertyChanged(nameof(EditText));
+        if (e.PropertyName == nameof(ITextEntity.FontSize)) OnPropertyChanged(nameof(TextSize));
     }
 
     public void Dispose() {
