@@ -61,9 +61,9 @@
               HeightRequest="35"
               VerticalOptions="Fill" HorizontalOptions="Fill" Margin="0"
               BackgroundColor="{Binding Source={x:Static services:AppStateService.Instance}, Path=ShellBackgroundColor}">
-                
-                <HorizontalStackLayout HorizontalOptions="End" x:DataType="view:PanelEditorViewModel" Margin="0,0,5,0" Spacing="10" Padding="5">
 
+            <ScrollView HorizontalScrollBarVisibility="Never" VerticalScrollBarVisibility="Never" Orientation="Horizontal" HorizontalOptions="Fill" HeightRequest="35"  >
+                <HorizontalStackLayout HorizontalOptions="End" x:DataType="view:PanelEditorViewModel" Padding="5">
                     <Border IsVisible="{Binding ShowEditTextBox}" Padding="5,2,5,2" StrokeShape="RoundRectangle 6" StrokeThickness="1" Stroke="White" >
                         <HorizontalStackLayout Spacing="1" Padding="0" >
                             <Entry TextColor="White" Text="{Binding TextEntity.EditText, Mode=TwoWay}" HorizontalOptions="Start" WidthRequest="100"/>
@@ -92,6 +92,7 @@
                     <ImageButton IsEnabled="{Binding CanEditTileProperties}" Source="{Binding CanEditTileProperties, Converter={StaticResource BoolToIcon}, ConverterParameter=edit}" Command="{Binding Path=EditTilePropertiesPopupCommand}"/>
                     
                 </HorizontalStackLayout>
+            </ScrollView>
             </Grid>
 
         <Grid toolkit:DockLayout.DockPosition="Bottom"
@@ -140,78 +141,4 @@
     </toolkit:DockLayout>
     
 </ContentPage>    
-    <!--
-    
-    <Grid>
-        <Grid x:Name="MainGrid" BackgroundColor="WhiteSmoke" HorizontalOptions="Fill" VerticalOptions="Fill">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" x:Name="MainColumn"/>
-                <ColumnDefinition Width="200" x:Name="SidePalette"/>
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="34" x:Name="ToolbarRow"/>
-                <RowDefinition Height="*" x:Name="PanelRow"/>
-                <RowDefinition Height="100" x:Name="BottomPalette"/>
-                <RowDefinition Height="30" x:Name="StatusRow"/>
-            </Grid.RowDefinitions>
-
-            
-            <Grid x:Name="PanelEditorContainer" Grid.Row="1" Grid.Column="0" HorizontalOptions="Fill"
-                  VerticalOptions="Fill">
-                <controlPanel:ControlPanelView
-                    Margin="5"
-                    BackgroundColor="Transparent"
-                    DesignMode="true"
-                    Interactive="False"
-                    EditMode="{Binding Source={RelativeSource AncestorType={x:Type view:PanelEditorViewModel}}, Path=EditMode, Mode=OneWay}"
-                    Grid.Column="0"
-                    HorizontalOptions="Fill"
-                    Panel="{Binding Source={RelativeSource AncestorType={x:Type view:PanelEditorViewModel}}, Path=Panel, Mode=OneWay}"
-                    VerticalOptions="Fill"
-                    x:Name="PanelView"/>
-            </Grid>
-
-            <Grid x:Name="SidePaletteContainer" Grid.Column="1" Grid.Row="1" RowSpan="2"  IsClippedToBounds="True" BackgroundColor="Beige">
-                <tileSelectors:PaletteSelector
-                    x:Name="PaletteSelector"
-                    HorizontalOptions="Center"
-                    OnDockSideChanged="PaletteDockSideChanged"/>
-            </Grid>
-
-            <Grid x:Name="BottomPaletteContainer" Grid.Column="0" Grid.Row="2" IsClippedToBounds="True" BackgroundColor="Aquamarine">
-                <tileSelectors:PaletteSelector
-                    x:Name="PillPaletteSelector"
-                    HorizontalOptions="Center"
-                    OnDockSideChanged="PaletteDockSideChanged"/>
-            </Grid>
-
-            <Grid x:Name="StatusContainer" Grid.Column="0" Grid.Row="3" Margin="2" ColumnSpan="2">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="1"/>  
-                    <RowDefinition Height="*"/>  
-                </Grid.RowDefinitions>
-
-                <BoxView Grid.Row="0" HeightRequest="0.5"
-                         BackgroundColor="{StaticResource Primary}"
-                         HorizontalOptions="Fill"/>
-
-                <Grid Grid.Row="1">
-                    <Grid ColumnDefinitions="auto,*,auto" HorizontalOptions="Fill" VerticalOptions="Fill">
-                        <Label Grid.Column="0" HorizontalOptions="Start" FontSize="15" FontFamily="OpenSansLight"
-                               x:Name="SelectionText" TextColor="{StaticResource Primary}"/>
-                        <Label Grid.Column="2" HorizontalOptions="End" FontSize="15" FontFamily="OpenSansLight"
-                               x:Name="ChangesText" TextColor="{StaticResource Primary}"/>
-                    </Grid>
-                </Grid>
-            </Grid>
-
-            <Grid IsVisible="{Binding IsProcessing}"
-                  HorizontalOptions="Fill"
-                  VerticalOptions="Fill">
-
-                <ActivityIndicator WidthRequest="100" HeightRequest="100" IsRunning="{Binding IsProcessing}" Color="{StaticResource Primary}"/>
-            </Grid>
-
-        </Grid>
-    </Grid> 
--->
+   
