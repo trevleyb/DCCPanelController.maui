@@ -9,6 +9,7 @@
         <ResourceDictionary>
             <converters:SelectedBorderConverter x:Key="SelectedBorderConverter"/>
             <converters:BoolToIconConverter x:Key="BoolToIcon"/>
+            <converters:PaletteIconConverter x:Key="PaletteIconConverter"/>
             <converters:MultiBoolToIconConverter x:Key="MultiBoolToIcon"/>
             <converters:ConnectionIconConverter x:Key="ConnectionIconConverter"/>
             <ResourceDictionary.MergedDictionaries>

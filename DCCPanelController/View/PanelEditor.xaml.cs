@@ -60,12 +60,41 @@ public partial class PanelEditor : ContentPage {
         _viewModel.ScreenHeight = height;
         _viewModel.ScreenWidth = width;
 
+        // ---------------------------------------------------------------------------------------------
+        // If the height of the screen is greater than width, then we are in portrait mode
+        // If we are in portrait mode, and we had hidden the panel and it was a side panel, 
+        // then just mark the panel as being a bottom panel for the next state change. 
+        //
+        // If it is a side or bottom panel, then we need to switch the view and update the state.
+        // ---------------------------------------------------------------------------------------------
         if (height > width) {
-            SidePaletteContainer.IsVisible = false;
-            BottomPaletteContainer.IsVisible = true;
+            switch (_viewModel.PaletteState) {
+            case PanelEditorViewModel.PaletteStateEnum.SideHidden:
+                _viewModel.PaletteState = PanelEditorViewModel.PaletteStateEnum.BottomHidden;
+                return;
+            case PanelEditorViewModel.PaletteStateEnum.BottomHidden:
+                return;
+            case PanelEditorViewModel.PaletteStateEnum.SideVisible or PanelEditorViewModel.PaletteStateEnum.BottomVisible:
+                SidePaletteContainer.IsVisible = false;
+                BottomPaletteContainer.IsVisible = true;
+                BottomPaletteSelector.SwitchPaletteView();
+                _viewModel.PaletteState = PanelEditorViewModel.PaletteStateEnum.BottomVisible;
+                break;
+            }
         } else {
-            SidePaletteContainer.IsVisible = true;
-            BottomPaletteContainer.IsVisible = false;
+            switch (_viewModel.PaletteState) {
+            case PanelEditorViewModel.PaletteStateEnum.BottomHidden:
+                _viewModel.PaletteState = PanelEditorViewModel.PaletteStateEnum.SideHidden;
+                return;
+            case PanelEditorViewModel.PaletteStateEnum.SideHidden:
+                return;
+            case PanelEditorViewModel.PaletteStateEnum.SideVisible or PanelEditorViewModel.PaletteStateEnum.BottomVisible:
+                SidePaletteContainer.IsVisible = true;
+                BottomPaletteContainer.IsVisible = false;
+                BottomPaletteSelector.SwitchPaletteView();
+                _viewModel.PaletteState = PanelEditorViewModel.PaletteStateEnum.SideVisible;
+                break;
+            }
         }
     }
 
@@ -186,10 +215,37 @@ public partial class PanelEditor : ContentPage {
     private void BottomPaletteClosed(object? sender, EventArgs e) {
         SidePaletteContainer.IsVisible = true;
         BottomPaletteContainer.IsVisible = false;
+        _viewModel.PaletteState = PanelEditorViewModel.PaletteStateEnum.SideVisible;
     }
 
     private void SidePaletteClosed(object? sender, EventArgs e) {
         SidePaletteContainer.IsVisible = false;
         BottomPaletteContainer.IsVisible = true;
+        _viewModel.PaletteState = PanelEditorViewModel.PaletteStateEnum.BottomVisible;
+    }
+
+    private void PaletteClicked(object? sender, EventArgs e) {
+        switch (_viewModel.PaletteState) {
+        case PanelEditorViewModel.PaletteStateEnum.SideVisible:
+            SidePaletteContainer.IsVisible = false;
+            BottomPaletteContainer.IsVisible = false;
+            _viewModel.PaletteState = PanelEditorViewModel.PaletteStateEnum.SideHidden;
+            break;
+        case PanelEditorViewModel.PaletteStateEnum.BottomVisible:
+            SidePaletteContainer.IsVisible = false;
+            BottomPaletteContainer.IsVisible = false;
+            _viewModel.PaletteState = PanelEditorViewModel.PaletteStateEnum.BottomHidden;
+            break;
+        case PanelEditorViewModel.PaletteStateEnum.SideHidden:
+            SidePaletteContainer.IsVisible = true;
+            BottomPaletteContainer.IsVisible = false;
+            _viewModel.PaletteState = PanelEditorViewModel.PaletteStateEnum.SideVisible;
+            break;
+        case PanelEditorViewModel.PaletteStateEnum.BottomHidden:
+            SidePaletteContainer.IsVisible = false;
+            BottomPaletteContainer.IsVisible = true;
+            _viewModel.PaletteState = PanelEditorViewModel.PaletteStateEnum.BottomVisible;
+            break;
+        }
     }
 }

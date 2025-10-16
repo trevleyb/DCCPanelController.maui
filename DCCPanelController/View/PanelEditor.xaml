@@ -20,11 +20,6 @@
                             Command="{Binding BackButtonPressedCommand}"/>
     </Shell.BackButtonBehavior>
 
-    <ContentPage.Resources>
-        <GridItemsLayout x:Key="VerticalLayout" Orientation="Vertical" Span="2" VerticalItemSpacing="2" HorizontalItemSpacing="2"/>
-        <GridItemsLayout x:Key="HorizontalLayout" Orientation="Horizontal" Span="2" VerticalItemSpacing="2" HorizontalItemSpacing="2"/>
-    </ContentPage.Resources>
-
     <ContentPage.ToolbarItems>
         <ToolbarItem
             IconImageSource="{Binding CanSetModes, Converter={StaticResource BoolToIcon}, ConverterParameter=move}"
@@ -45,6 +40,11 @@
             Text="Grid" x:Name="GridToolbar"
             IsEnabled="{Binding CanToggleGrid}"
             Command="{Binding Path=ToggleGridCommand}"/>
+
+        <ToolbarItem
+            IconImageSource="{Binding PaletteState, Converter={StaticResource PaletteIconConverter}}"
+            Text="Palette"
+            Clicked="PaletteClicked"/> 
 
         <ToolbarItem
             IconImageSource="{Binding CanPressBackButton, Converter={StaticResource BoolToIcon}, ConverterParameter=save}"
@@ -98,11 +98,11 @@
         </Grid>
 
         <Grid x:Name="SidePaletteContainer" toolkit:DockLayout.DockPosition="Right" WidthRequest="110" IsVisible="True">
-            <tileSelectors:PaletteSelector Orientation="Vertical" Palette="{Binding SidePalette}" OnClosePalette="SidePaletteClosed" />
+            <tileSelectors:PaletteSelector x:Name="SidePaletteSelector" Orientation="Vertical" Palette="{Binding SidePalette}" OnClosePalette="SidePaletteClosed" />
         </Grid>
                 
         <Grid x:Name="BottomPaletteContainer" toolkit:DockLayout.DockPosition="Bottom" HeightRequest="125" IsVisible="False">
-            <tileSelectors:PaletteSelector Orientation="Horizontal" Palette="{Binding BottomPalette}" OnClosePalette="BottomPaletteClosed"/>
+            <tileSelectors:PaletteSelector x:Name="BottomPaletteSelector" Orientation="Horizontal" Palette="{Binding BottomPalette}" OnClosePalette="BottomPaletteClosed"/>
         </Grid>
 
         <Grid toolkit:DockLayout.DockPosition="None"

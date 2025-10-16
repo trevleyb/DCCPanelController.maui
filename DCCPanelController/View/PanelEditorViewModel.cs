@@ -21,13 +21,9 @@ using PanelPropertyViewModel = DCCPanelController.View.Properties.PanelPropertie
 namespace DCCPanelController.View;
 
 public partial class PanelEditorViewModel : ObservableObject {
-    //private DynamicTilePropertyPopupContent? _dynamicTileContent;
-    public enum PopupAction {
-        None,
-        Accept,
-        Cancel
-    }
 
+    public enum PopupAction { None, Accept, Cancel }
+    
     public Palette SidePalette { get; init; } = PaletteCache.GetPalette("Side");
     public Palette BottomPalette { get; init; } = PaletteCache.GetPalette("Bottom");
     
@@ -121,6 +117,15 @@ public partial class PanelEditorViewModel : ObservableObject {
     public bool HasSelectedEntities => SelectedEntitiesCount > 0;
     public bool MultipleEntitiesSelected => SelectedEntitiesCount > 1;
     public bool SingleEntitySelected => SelectedEntitiesCount == 1;
+
+    public enum PaletteStateEnum { SideVisible, BottomVisible, SideHidden, BottomHidden }
+    public PaletteStateEnum PaletteState {
+        get;
+        set {
+            field = value;
+            OnPropertyChanged();
+        } 
+    }
 
     public string GetEditModeIconFilename =>
         EditMode switch {
