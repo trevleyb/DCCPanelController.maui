@@ -62,7 +62,7 @@
               BackgroundColor="{Binding Source={x:Static services:AppStateService.Instance}, Path=ShellBackgroundColor}">
                 
                 <HorizontalStackLayout HorizontalOptions="End" x:DataType="view:PanelEditorViewModel" Margin="0,0,5,0" Spacing="10" Padding="5">
-                    <Border IsVisible="{Binding CanEditText}" Padding="5" StrokeShape="RoundRectangle 6" StrokeThickness="1" Stroke="White">
+                    <Border IsVisible="{Binding CanEditText}" Padding="5,2,5,2" StrokeShape="RoundRectangle 6" StrokeThickness="1" Stroke="White">
                         <Entry TextColor="White" Text="{Binding TextEntity.EditText}" WidthRequest="150"/>
                     </Border>
                         

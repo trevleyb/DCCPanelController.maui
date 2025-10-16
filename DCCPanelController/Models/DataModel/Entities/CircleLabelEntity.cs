@@ -38,7 +38,7 @@ public partial class CircleLabelEntity : DrawingEntity, ITextEntity, IDrawingEnt
 
     [ObservableProperty] [property: Editable("Text Color", "", 2, "Text")]
     private Color _textColor = AppleCrayonColors.EnumToColor(AppleCrayonColors.AppleCrayonColorsEnum.Snow);
-    
+
     [ObservableProperty] [property: Editable("Font Style", "", 2, "Text", EditorKind = EditorKinds.FontAlias)]
     private string _fontAlias = FontCatalog.GetFontFaceAlias(FontCatalog.DefaultFontFamily,"Bold")?.ToString() ?? FontCatalog.DefaultFontAlias;
 
@@ -52,7 +52,6 @@ public partial class CircleLabelEntity : DrawingEntity, ITextEntity, IDrawingEnt
     public CircleLabelEntity(CircleLabelEntity entity) : base(entity) { }
 
     [JsonIgnore] protected override int RotationFactor => 45;
-
     [JsonIgnore] public override string EntityName => "Label";
     [JsonIgnore] public override string EntityDescription => "Circle Label";
     [JsonIgnore] public override string EntityInformation =>

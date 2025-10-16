@@ -14,10 +14,10 @@ namespace DCCPanelController.Models.DataModel.Entities;
 public abstract partial class Entity() : ObservableObject, IEntity {
     [ObservableProperty] private int  _col;              // What Grid Position (Horizontal) is this component?
     [ObservableProperty] private int  _height    = 1;    // What Height is this component? 
+    [ObservableProperty] private int  _rotation;         // Is the track rotated?
+    [ObservableProperty] private int  _row;              // What Grid Position (Vertical) is this component?
+    [ObservableProperty] private int  _width     = 1;    // What width is this component?
     [ObservableProperty] private bool _isEnabled = true; // Is this item actually in use?
-    [ObservableProperty] private int _rotation;  // Is the track rotated?
-    [ObservableProperty] private int _row;       // What Grid Position (Vertical) is this component?
-    [ObservableProperty] private int _width = 1; // What width is this component?
 
     [ObservableProperty] [property: Editable("Layer", "A higher number places this tile on top of tiles with a lower number.", 9, "Visibility")]
     private int _layer = -1;

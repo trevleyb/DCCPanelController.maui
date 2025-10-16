@@ -42,10 +42,20 @@ public partial class PanelEditorViewModel : ObservableObject {
     [NotifyPropertyChangedFor(nameof(CanEditTileProperties))]
     [NotifyPropertyChangedFor(nameof(CanSetModes))]
     [NotifyPropertyChangedFor(nameof(CanRotateTiles))]
+    [NotifyPropertyChangedFor(nameof(CanChangeLayers))]
     [NotifyPropertyChangedFor(nameof(CanDeleteTiles))]
     [NotifyPropertyChangedFor(nameof(CanToggleGrid))]
+    [NotifyPropertyChangedFor(nameof(CanPressBackButton))]
     [ObservableProperty] private bool _isNavigationDrawerOpen;
-
+   
+    [NotifyPropertyChangedFor(nameof(CanEditProperties))]
+    [NotifyPropertyChangedFor(nameof(CanEditTileProperties))]
+    [NotifyPropertyChangedFor(nameof(CanSetModes))]
+    [NotifyPropertyChangedFor(nameof(CanRotateTiles))]
+    [NotifyPropertyChangedFor(nameof(CanChangeLayers))]
+    [NotifyPropertyChangedFor(nameof(CanDeleteTiles))]
+    [NotifyPropertyChangedFor(nameof(CanToggleGrid))]
+    [NotifyPropertyChangedFor(nameof(CanPressBackButton))]
     [ObservableProperty] private bool _isProcessing;
 
     [ObservableProperty] private Panel _panel;
@@ -193,7 +203,7 @@ public partial class PanelEditorViewModel : ObservableObject {
 
     [RelayCommand]
     private async Task LinkTilesActionAsync(TurnoutStateEnum direction) {
-        if (SelectedEntities.Count != 2) return;
+        if (SelectedEntities.Count < 2) return;
 
         var button = SelectedEntities.OfType<ActionButtonEntity>().FirstOrDefault();
         var turnouts = SelectedEntities.OfType<TurnoutEntity>().ToList();
@@ -203,7 +213,7 @@ public partial class PanelEditorViewModel : ObservableObject {
             foreach (var turnout in turnouts) {
                 if (string.IsNullOrEmpty(turnout?.Turnout?.Id)) continue;
                 button.TurnoutPanelActions.Add(new TurnoutAction() {
-                    ActionID = turnout.Turnout.Id,
+                    ActionID = turnout.Id,
                     WhenClosed = direction == TurnoutStateEnum.Closed ? TurnoutStateEnum.Closed : TurnoutStateEnum.Thrown,
                     WhenThrown = direction == TurnoutStateEnum.Closed ? TurnoutStateEnum.Thrown : TurnoutStateEnum.Closed,
                 });
@@ -235,7 +245,6 @@ public partial class PanelEditorViewModel : ObservableObject {
                 button?.WhenThrown = ButtonStateEnum.On;
             }
         }
-
         _panelView.ClearAllSelectedTiles();
     }
 
@@ -253,10 +262,14 @@ public partial class PanelEditorViewModel : ObservableObject {
     [RelayCommand]
     private async Task SaveButtonPressedAsync() {
         IsProcessing = true;
+        OnPropertyChanged(nameof(CanPressBackButton));
+        
         await SaveAsync();
         ExitViaBackButton = true;
         await Shell.Current.GoToAsync("..");
+
         IsProcessing = false;
+        OnPropertyChanged(nameof(CanPressBackButton));
     }
 
     [RelayCommand]
