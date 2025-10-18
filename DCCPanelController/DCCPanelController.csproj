@@ -61,7 +61,7 @@
 
     <PropertyGroup Condition="'$(TargetFramework)' == 'net9.0-ios' and '$(Configuration)' == 'Release'">
         <CodesignKey>Apple Distribution: TREVOR GRANT LEYBOURNE (3FBC48TFF3)</CodesignKey>
-        <CodesignProvision>AC350ADDEAF38223C0C4F1FE63584C2592FC9270</CodesignProvision>
+        <CodesignProvision>2b8112e8-5818-4df3-a757-1bc3ec50a939</CodesignProvision>
 
         <MtouchLink>SdkOnly</MtouchLink>         <!-- or Full if you’re sure; SdkOnly is safer for MAUI -->
         <UseInterpreter>false</UseInterpreter>   <!-- Interpreter must be off for App Store -->
