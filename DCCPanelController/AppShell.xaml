@@ -80,7 +80,7 @@
                 ContentTemplate="{DataTemplate view:HelpPage}"
                 Title="Help"/>
             <ShellContent
-                ContentTemplate="{DataTemplate view:AboutPage}"
+                ContentTemplate="{DataTemplate view:AboutSettings}"
                 Title="About"/>
         </Tab>
     </FlyoutItem>

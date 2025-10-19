@@ -4,6 +4,7 @@
     IconImageSource="route_active.png"
     Title="Server Messages"
     ios:Page.UseSafeArea="False"
+    x:Name="Root"
     x:Class="DCCPanelController.View.ServerMessagesPage"
     x:DataType="view:ServerMessagesViewModel"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"

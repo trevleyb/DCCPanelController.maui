@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage
+    BackgroundColor="White"
+    x:Class="DCCPanelController.View.AboutSettings"
+    x:DataType="view:AboutSettings"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:view="clr-namespace:DCCPanelController.View">
+
+    <ContentPage.Content>
+        <Grid HorizontalOptions="Center" VerticalOptions="Center" BackgroundColor="White">
+                <StackLayout>
+                    <Image Margin="0,10,0,0" Grid.Row="0" Source="splash.png" WidthRequest="200" HeightRequest="200"/>
+                    <StackLayout Margin="0,0,0,0" VerticalOptions="Center">
+                        <Label Text="(c) Copyright 2025 Trevor Leybourne" Margin="0,10,0,0"
+                               Style="{StaticResource SmallLabel}" HorizontalOptions="Center"
+                               FontFamily="OpenSansLight"/>
+                        <Label Text="{Binding VersionString}" Style="{StaticResource SmallLabel}"
+                               HorizontalOptions="Center" FontFamily="OpenSansLightItalic"/>
+                    </StackLayout>
+                </StackLayout>
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>
