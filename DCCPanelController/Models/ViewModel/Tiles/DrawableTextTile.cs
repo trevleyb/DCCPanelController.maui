@@ -63,7 +63,7 @@ public class DrawableTextTile : Tile, ITileDrawable {
         using var paint = new SKPaint { IsAntialias = true, Color = ToSkColor(e.TextColor) };
 
         // --- Explicit, adjustable padding (same semantics you asked for) ---
-        float hPad = 2f; // horizontal pad in px
+        float hPad = 0f; // horizontal pad in px
         float vPad = 0f; // vertical pad in px (top/bottom)
         var inner = new SKRect(r.Left + hPad, r.Top + vPad, r.Right - hPad, r.Bottom - vPad);
 

@@ -37,7 +37,7 @@ internal sealed class OpacityRenderer : BaseRenderer, IPropertyRenderer {
 
         entry.Behaviors.Add(new NumericValidationBehavior());
         entry.TextChanged += (s, e) => {
-            var val = ConvertToPercentageToOpacity(e.NewTextValue);
+            var val = ConvertToPercentageToOpacity(e.NewTextValue,min,max);
             val = Math.Clamp(val, min, max);
             SetValue(row, val);
         };
@@ -54,9 +54,9 @@ internal sealed class OpacityRenderer : BaseRenderer, IPropertyRenderer {
 
     private static string ConvertOpacityToPercentage(double opacity) => opacity.ToString("0%", CultureInfo.InvariantCulture);
 
-    private static double ConvertToPercentageToOpacity(string percentage) {
+    private static double ConvertToPercentageToOpacity(string percentage, double min, double max) {
         if (percentage.EndsWith("%") && double.TryParse(percentage.TrimEnd('%'), NumberStyles.Number, CultureInfo.InvariantCulture, out var parsedValue)) {
-            return Math.Clamp(parsedValue / 100.0, 0.0, 1.0);
+            return Math.Clamp(parsedValue / 100.0, min, max);
         }
         return 0.0;
     }
