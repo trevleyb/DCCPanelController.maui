@@ -24,8 +24,8 @@ public class GridGestureHelper : IDisposable {
     // Debouce Support
     private const int MoveMinIntervalMs = 10; // try 8–12
 
-    private readonly Grid   _grid;
-    private readonly object _tapLock = new();
+    private readonly Grid _grid;
+    private readonly Lock _tapLock = new();
 
     // Tile or element being dragged
     private ITile? _draggedTile;

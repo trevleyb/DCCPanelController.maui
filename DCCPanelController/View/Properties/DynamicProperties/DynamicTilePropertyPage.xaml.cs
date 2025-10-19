@@ -185,8 +185,7 @@ public partial class DynamicTilePropertyPage {
     private static string? GetInformation(List<Entity> selectedEntities) {
         if (selectedEntities.Count <= 0) return null;
         if (selectedEntities.Count == 1 || AllEntitiesAreSame(selectedEntities)) return selectedEntities[0].EntityInformation;
-        ;
-        return null;
+        return "Multiple tiles have been selected so only common properties are shown.";
     }
 
     /// <summary>

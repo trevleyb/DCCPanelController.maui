@@ -37,7 +37,7 @@
             IsEnabled="{Binding CanEditProperties}"/>
 
         <ToolbarItem
-            IconImageSource="{Binding CanToggleGrid, Converter={StaticResource BoolToIcon}, ConverterParameter=grid_off}"
+            IconImageSource="{Binding CanToggleGrid, Converter={StaticResource BoolToIcon}, ConverterParameter=grid_on}"
             Text="Grid" x:Name="GridToolbar"
             IsEnabled="{Binding CanToggleGrid}"
             Command="{Binding Path=ToggleGridCommand}"/>

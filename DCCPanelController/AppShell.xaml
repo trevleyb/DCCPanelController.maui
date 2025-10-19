@@ -79,6 +79,9 @@
             <ShellContent
                 ContentTemplate="{DataTemplate view:HelpPage}"
                 Title="Help"/>
+            <ShellContent
+                ContentTemplate="{DataTemplate view:AboutPage}"
+                Title="About"/>
         </Tab>
     </FlyoutItem>
 </Shell>

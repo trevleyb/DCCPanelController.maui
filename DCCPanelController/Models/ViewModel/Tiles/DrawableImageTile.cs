@@ -27,15 +27,14 @@ public class DrawableImageTile : Tile, ITileDrawable {
             Source = "image.svg",
         };
 
-        image.SetBinding(Image.SourceProperty, new Binding(nameof(ImageEntity.Image), BindingMode.OneWay,
-                new Base64ToImageSourceConverter(), source: entity));
+        image.SetBinding(Image.SourceProperty, new Binding(nameof(ImageEntity.Image), BindingMode.OneWay, new Base64ToImageSourceConverter(), source: entity));
         
         image.SetBinding(ScaleProperty, new Binding(nameof(entity.Scale), source: entity));
         image.SetBinding(ZIndexProperty, new Binding(nameof(entity.Layer), source: entity));
         image.SetBinding(OpacityProperty, new Binding(nameof(entity.Opacity), source: entity));
 
         // If there’s no border, just return the image
-        if (entity.BorderWidth <= 0 && entity.BorderRadius <= 0) return image;
+        if (entity is { BorderWidth: <= 0, BorderRadius: <= 0 }) return image;
 
         // Create a stroke shape instance we can actually bind to
         var rr = new RoundRectangle();

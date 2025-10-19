@@ -18,7 +18,7 @@ public sealed class Base64ToImageSourceConverter : IValueConverter {
 
         if (value is ImageSource src) return src;
 
-        if (value is byte[] bytes && bytes.Length > 0)
+        if (value is byte[] { Length: > 0 } bytes)
             return ImageSource.FromStream(() => new MemoryStream(bytes, writable: false));
 
         if (value is string s) {
@@ -30,7 +30,7 @@ public sealed class Base64ToImageSourceConverter : IValueConverter {
             // Allow either an ImageSource or a string path (MauiImage) as the parameter
             if (parameter is ImageSource isrc) return isrc;
             if (parameter is string path && !string.IsNullOrWhiteSpace(path)) return ImageSource.FromFile(path); // assumes image.svg is a MauiImage
-            return null;
+            return ImageSource.FromFile("image.png");
         }
     }
     

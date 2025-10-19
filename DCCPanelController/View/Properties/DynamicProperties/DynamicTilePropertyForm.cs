@@ -19,7 +19,8 @@ public sealed class DynamicTilePropertyForm {
     private static readonly List<string> GroupOrders = [
         "General",
         "Text", "Track", "Circle", "Rectangle",
-        "Turnout", "Layout", "Attributes", "Colors", "Color", "Actions", "Action", "Button Actions", "Turnout Actions", "Dimensions", "Visibility",
+        "Turnout", "Layout", "Attributes", "Colors", "Color", 
+        "Actions", "Action", "Button Actions", "Turnout Actions", "Dimensions", "Visibility",
     ];
 
     private readonly IEqualityPolicy                                     _equality;

@@ -171,6 +171,8 @@ public partial class PanelEditorViewModel : ObservableObject {
         HavePropertiesChanged = HavePropertiesChanged || !_original.IsEqualTo(Panel);
     }
 
+    public void ClearSelectedItem() => AppStateService.Instance.SelectedTile = null;
+    
     public void SetToolbarActions() {
         CanEditText = false;
         CanLinkTiles = false;
@@ -271,6 +273,7 @@ public partial class PanelEditorViewModel : ObservableObject {
 
     [RelayCommand]
     private async Task BackButtonPressedAsync() {
+        ClearSelectedItem();
         if (HavePropertiesChanged) {
             var result = await DisplayAlertHelper.DisplayAlertAsync("Unsaved Changes", null, "Save & Leave", "Discard Changes");
             if (result) await SaveAsync();
@@ -281,6 +284,7 @@ public partial class PanelEditorViewModel : ObservableObject {
 
     [RelayCommand]
     private async Task SaveButtonPressedAsync() {
+        ClearSelectedItem();
         IsProcessing = true;
         OnPropertyChanged(nameof(CanPressBackButton));
         
@@ -294,6 +298,7 @@ public partial class PanelEditorViewModel : ObservableObject {
 
     [RelayCommand]
     private async Task SaveAsync() {
+        ClearSelectedItem();
         try {
             IsProcessing = true;
             OnPropertyChanged(nameof(CanPressBackButton));
@@ -307,6 +312,7 @@ public partial class PanelEditorViewModel : ObservableObject {
             IsProcessing = false;
             OnPropertyChanged(nameof(CanPressBackButton));
         }
+        
     }
 
     // Take a snapshot/thumbnail of the panel and return it as a base64 string.
@@ -375,6 +381,7 @@ public partial class PanelEditorViewModel : ObservableObject {
     [RelayCommand]
     private async Task SwitchModeAsync() {
         if (SingleOrNoEntitiesSelected) {
+            ClearSelectedItem();
             EditMode = EditMode switch {
                 EditModeEnum.Move => EditModeEnum.Copy,
                 EditModeEnum.Copy => EditModeEnum.Size,
