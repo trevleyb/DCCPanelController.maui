@@ -179,7 +179,7 @@
                         Margin="0,10,0,0"
                         ItemsSource="{Binding Panels}"
                         IndicatorsShape="Circle"
-                        HideSingle="True"
+                        HideSingle="False"
                         IndicatorSize="{OnIdiom Phone='10', Default='12'}"
                         IsVisible="{Binding HideWelcomePage}"
                         Position="{Binding CurrentPanelIndex}">

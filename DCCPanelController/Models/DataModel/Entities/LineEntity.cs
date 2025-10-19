@@ -20,7 +20,7 @@ public partial class LineEntity : DrawingEntity, IDrawingEntity {
 
     public LineEntity(LineEntity entity) : base(entity) { }
 
-    [JsonIgnore] protected override int RotationFactor => 90;
+    [JsonIgnore] protected override int RotationFactor => 15;
 
     [JsonIgnore] public override string EntityName => "Line";
     [JsonIgnore] public override string EntityDescription => "Straight Line";

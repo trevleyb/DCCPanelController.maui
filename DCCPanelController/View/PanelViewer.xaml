@@ -185,7 +185,6 @@
         <ToolbarItem Text="Download" Command="{Binding DownloadPanelCommand}" IsEnabled="{Binding IsPanelSelected}"
                      x:Name="DownloadToolbarItem"
                      IconImageSource="{Binding IsPanelSelected, Converter={StaticResource BoolToIcon}, ConverterParameter=download}"/>
-        <ToolbarItem IconImageSource="spacer.png"/>
         <ToolbarItem Text="Edit" Command="{Binding Path=EditPanelCommand}" IsEnabled="{Binding IsPanelSelected}"
                      IconImageSource="{Binding IsPanelSelected, Converter={StaticResource BoolToIcon}, ConverterParameter=edit_3}"/>
         <ToolbarItem Text="Delete" Command="{Binding Path=DeletePanelCommand}" IsEnabled="{Binding IsPanelSelected}"
