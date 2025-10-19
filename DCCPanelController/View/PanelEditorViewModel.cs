@@ -275,7 +275,6 @@ public partial class PanelEditorViewModel : ObservableObject {
             var result = await DisplayAlertHelper.DisplayAlertAsync("Unsaved Changes", null, "Save & Leave", "Discard Changes");
             if (result) await SaveAsync();
         }
-
         ExitViaBackButton = true;
         await Shell.Current.GoToAsync("..");
     }
@@ -297,6 +296,7 @@ public partial class PanelEditorViewModel : ObservableObject {
     private async Task SaveAsync() {
         try {
             IsProcessing = true;
+            OnPropertyChanged(nameof(CanPressBackButton));
             if (Panel.Panels?.Profile is { }) {
                 Panel.Base64Image = await GetThumbnailImageAsync(_panelView);
                 UpdateOriginalFromCopy();
@@ -305,6 +305,7 @@ public partial class PanelEditorViewModel : ObservableObject {
             }
         } finally {
             IsProcessing = false;
+            OnPropertyChanged(nameof(CanPressBackButton));
         }
     }
 

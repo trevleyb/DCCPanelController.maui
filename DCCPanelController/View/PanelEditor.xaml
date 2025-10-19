@@ -16,6 +16,7 @@
 
     <Shell.BackButtonBehavior>
         <BackButtonBehavior IsEnabled="{Binding CanPressBackButton}"
+                            IsVisible="{Binding CanPressBackButton}"
                             x:DataType="view:PanelEditorViewModel"
                             Command="{Binding BackButtonPressedCommand}"/>
     </Shell.BackButtonBehavior>
@@ -95,9 +96,7 @@
             </ScrollView>
             </Grid>
 
-        <Grid toolkit:DockLayout.DockPosition="Bottom"
-              x:Name="StatusContainer"
-              HeightRequest="35">
+        <Grid toolkit:DockLayout.DockPosition="Bottom" x:Name="StatusContainer" HeightRequest="30">
             <Grid.RowDefinitions>
                 <RowDefinition Height="1"/>  
                 <RowDefinition Height="*"/>  
@@ -106,7 +105,7 @@
             <BoxView Grid.Row="0" HeightRequest="0.5" BackgroundColor="{StaticResource Primary}" HorizontalOptions="Fill"/>
 
             <Grid Grid.Row="1" Margin="10,0,10,0">
-                <Grid ColumnDefinitions="auto,*,auto" HorizontalOptions="Fill" VerticalOptions="Fill">
+                <Grid ColumnDefinitions="auto,*,auto" HorizontalOptions="Fill" VerticalOptions="Center">
                     <Label Grid.Column="0" HorizontalOptions="Start" FontSize="15" FontFamily="OpenSansLight" x:Name="SelectionText" TextColor="{StaticResource Primary}"/>
                     <Label Grid.Column="2" HorizontalOptions="End" FontSize="15" FontFamily="OpenSansLight" x:Name="ChangesText" TextColor="{StaticResource Primary}"/>
                 </Grid>
