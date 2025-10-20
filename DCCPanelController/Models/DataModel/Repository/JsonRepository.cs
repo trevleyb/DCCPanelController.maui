@@ -58,7 +58,6 @@ public static class JsonRepository {
                     var profile = JsonSerializer.Deserialize<Profile?>(jsonString, JsonOptions.Options) ?? throw new ApplicationException("Could not deserialize settings.");
                     LoggingLevelHelper.SetLogLevel(profile.Settings.LogLevel);
                     profile.FixLoadedPanels();
-                    profile.FixTurnoutActions();
                     profile.Validate(Logger);
                     return profile;
                 } catch (Exception ex) {

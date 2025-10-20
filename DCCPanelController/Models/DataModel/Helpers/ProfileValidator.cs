@@ -13,7 +13,7 @@ public static class ProfileValidator {
             } else {
                 logger.LogWarning(results.Message);
                 foreach (var result in results?.Value ?? []) {
-                    Console.WriteLine($"{result.Code} : {result.EntityType}@{result.EntityId}: {result.Message}");
+                    logger.LogInformation($"{result.Code} : {result.EntityType}@{result.EntityId}: {result.Message}");
                 }
             }
         }

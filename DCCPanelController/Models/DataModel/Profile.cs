@@ -77,24 +77,24 @@ public partial class Profile : ObservableObject {
 
     // Temporary Fix while we move from TurnoutEntity references to TurnoutReferences
     // ------------------------------------------------------------------------------
-    public void FixTurnoutActions() {
-        foreach (var panel in Panels) {
-            foreach (var entity in panel.Entities) {
-                if (entity is IActionEntity actionEntity) {
-                    foreach (var action in actionEntity.TurnoutPanelActions) {
-                        
-                        // Now we should have action.ActionID which is the identifier for my TurnoutEntity, 
-                        // but it needs to be an identifier to an actual Turnout
-                        // -------------------------------------------------------------------------------
-                        if (panel.GetTurnoutEntity(action.ActionID) is { } turnoutEntity) {
-                            Console.WriteLine($"Found TurnoutEntity: {action.ActionID} and converted it to {turnoutEntity.TurnoutID}");
-                            action.ActionID = turnoutEntity.TurnoutID;
-                        }
-                    }
-                }
-            }
-        }
-    }
+    // public void FixTurnoutActions() {
+    //     foreach (var panel in Panels) {
+    //         foreach (var entity in panel.Entities) {
+    //             if (entity is IActionEntity actionEntity) {
+    //                 foreach (var action in actionEntity.TurnoutPanelActions) {
+    //                     
+    //                     // Now we should have action.ActionID which is the identifier for my TurnoutEntity, 
+    //                     // but it needs to be an identifier to an actual Turnout
+    //                     // -------------------------------------------------------------------------------
+    //                     if (panel.GetTurnoutEntity(action.ActionID) is { } turnoutEntity) {
+    //                         var newId = turnoutEntity?.Turnout?.Id ?? turnoutEntity?.TurnoutID ?? "";
+    //                         action.ActionID = newId; 
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //     }
+    // }
 
     // Add this generic helper method to your Profile class
     private static void RefreshCollection<T>(ObservableCollection<T> collection, Func<T, bool> removePredicate) {
