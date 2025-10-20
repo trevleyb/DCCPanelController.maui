@@ -517,7 +517,6 @@ public partial class ControlPanelView {
     /// <summary>
     ///     Given the Panel list of Entities, add each one as a tile to the panel.
     /// </summary>
-    [Time]
     private async Task AddEntitiesToGrid(Panel? panel) {
         if (panel is null) return;
         _pathTracer.ClearTileRegistry();
@@ -535,7 +534,6 @@ public partial class ControlPanelView {
     /// <summary>
     ///     Given an Entity, create a tile and add it to the panel grid.
     /// </summary>
-    [Time]
     private ITile? AddEntityToGrid(Entity entity) {
         var tile = TileFactory.CreateTile(entity, _gridSize, DesignMode);
         if (tile is { }) {
@@ -600,7 +598,6 @@ public partial class ControlPanelView {
     ///     This is a clean up route. If we redraw the grid, remove each tile from the grid first and ensure
     ///     we have removed events and gestures.
     /// </summary>
-    [Time]
     private void RemoveAllTilesFromGrid() {
         var children = _dynamicGrid.Children.OfType<ITile>().ToList();
         _dynamicGrid.BatchBegin();

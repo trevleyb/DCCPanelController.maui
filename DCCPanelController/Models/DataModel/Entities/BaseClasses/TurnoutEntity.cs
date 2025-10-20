@@ -12,10 +12,9 @@ using Microsoft.Extensions.Logging;
 // ReSharper disable once CheckNamespace
 namespace DCCPanelController.Models.DataModel.Entities;
 
-public abstract partial class TurnoutEntity : TrackEntity, IEntityGeneratingID, IInteractiveEntity, ITrackEntity, IActionEntity {
+public abstract partial class TurnoutEntity : TrackEntity, IInteractiveEntity, ITrackEntity, IActionEntity, IEntityID {
 
-    [ObservableProperty] [property: Editable("Turnout Name", "Unique name for this Turnout", 0, "General")]
-    private string _id = string.Empty;
+    public string Id { get; set; } = string.Empty;
 
     [ObservableProperty]
     private TurnoutStateEnum _state = TurnoutStateEnum.Unknown; // We should not need to know this
@@ -103,4 +102,5 @@ public abstract partial class TurnoutEntity : TrackEntity, IEntityGeneratingID, 
     /// </summary>
     /// <returns>The neighbor Entity</returns>
     public Entity? GetDivergingEntity() => GetNeighbourEntity(ConnectionType.Diverging);
+
 }

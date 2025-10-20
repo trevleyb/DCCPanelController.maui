@@ -1,3 +1,4 @@
+using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.DataModel.Entities.Actions;
 using DCCPanelController.Models.DataModel.Entities.Interfaces;
@@ -21,7 +22,11 @@ internal sealed class ActionsTurnoutRenderer : BaseRenderer, IPropertyRenderer {
         try {
             if (entity is IEntityID actionEntity) {
                 var entityID = actionEntity.Id ?? "";
-                var availableTurnouts = EntityHelper.GetAllEntitiesByType<TurnoutEntity>(entity.Parent).Where(b => !string.IsNullOrWhiteSpace(b.Id) && b.Id != entityID).Select(b => b.Id).ToList<string>() ?? [];
+                //var availableTurnouts = EntityHelper.GetAllEntitiesByType<TurnoutEntity>(entity.Parent).Where(b => !string.IsNullOrWhiteSpace(b.Id) && b.Id != entityID).Select(b => b.Id).ToList<string>() ?? [];
+
+                var availableTurnouts =
+                    (entity.Parent?.Turnouts ?? Enumerable.Empty<Turnout>())
+                    .Select(t => t.Id).Where(id => id is { }).Cast<string>().ToList();
                 
                 // Next, get the current value of the Actions' Collection to pass to the control
                 // ----------------------------------------------------------------------------

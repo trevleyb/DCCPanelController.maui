@@ -80,7 +80,7 @@ public partial class LoadingPage : ContentPage, INotifyPropertyChanged {
             MethodTimeLogger.MaxBytesBeforeRotate = 20 * 1024 * 1024;
 
             double step = 0.0;
-            double steps = 10.0;
+            double steps = 11.0;
             
             #if IOS
             steps++;
@@ -99,7 +99,7 @@ public partial class LoadingPage : ContentPage, INotifyPropertyChanged {
             
             // 1)
             await StepAsync("Loading profile…", ++step/steps, () => profileService.InitializeAsync());
-            
+
             // 2)
             await StepAsync("Validating catalog…", ++step/steps, () => profileService.ValidateCatalog());
             

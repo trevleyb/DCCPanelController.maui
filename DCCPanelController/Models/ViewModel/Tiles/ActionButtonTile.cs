@@ -18,8 +18,8 @@ public class ActionButtonTile : Tile, ITileInteractive {
            .Track(nameof(ActionButtonEntity.ButtonSize), () => entity.ButtonSize);
 
         foreach (var turnout in entity.TurnoutPanelActions) {
-            var turnoutEnt = entity?.Parent?.GetTurnoutEntity(turnout.ActionID);
-            var turnoutRef = turnoutEnt?.Turnout;
+            //var turnoutEnt = entity?.Parent?.GetTurnoutEntity(turnout.ActionID);
+            var turnoutRef = entity.Parent?.Turnouts.FirstOrDefault(t => t.Id == turnout.ActionID);
             turnoutRef?.StateChanged += TurnoutRefOnStateChanged;
         }
     }
@@ -32,8 +32,7 @@ public class ActionButtonTile : Tile, ITileInteractive {
             var matchOn = true;
             var matchOff = true;
             foreach (var turnout in button.TurnoutPanelActions) {
-                var turnoutEnt = button.Parent?.GetTurnoutEntity(turnout.ActionID);
-                var turnoutRef = turnoutEnt?.Turnout;
+                var turnoutRef = button.Parent?.Turnout(turnout.ActionID);
                 if (turnoutRef != null) {
                     if (turnoutRef.State != turnout.WhenClosed) matchOn = false;
                     if (turnoutRef.State != turnout.WhenThrown) matchOff = false;

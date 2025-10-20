@@ -15,21 +15,37 @@ public static class ActionPlanner {
                     ButtonStateEnum.Off => action.WhenOff,
                     _                   => ButtonStateEnum.Unknown
                 };
+
                 if (newState != ButtonStateEnum.Unknown)
                     plan.Add(new PlannedAction(ActionTargetKind.Button, target.Id, target, newState));
             }
         }
 
         // Turnouts that this button controls
+        // foreach (var action in button.TurnoutPanelActions) {
+        //     if (button.Parent?.GetTurnoutEntity(action.ActionID) is { } target) {
+        //         var newState = button.State switch {
+        //             ButtonStateEnum.On  => action.WhenClosed,
+        //             ButtonStateEnum.Off => action.WhenThrown,
+        //             _                   => TurnoutStateEnum.Unknown
+        //         };
+        //         if (newState != TurnoutStateEnum.Unknown)
+        //             plan.Add(new PlannedAction(ActionTargetKind.Turnout, target.Id, target, newState));
+        //     }
+        // }
+
         foreach (var action in button.TurnoutPanelActions) {
-            if (button.Parent?.GetTurnoutEntity(action.ActionID) is { } target) {
-                var newState = button.State switch {
-                    ButtonStateEnum.On  => action.WhenClosed,
-                    ButtonStateEnum.Off => action.WhenThrown,
-                    _                   => TurnoutStateEnum.Unknown
-                };
-                if (newState != TurnoutStateEnum.Unknown)
-                    plan.Add(new PlannedAction(ActionTargetKind.Turnout, target.Id, target, newState));
+            if (button.Parent?.Turnouts.FirstOrDefault(t => t.Id == action.ActionID) is { } target) {
+                if (!string.IsNullOrEmpty(target.Id)) {
+                    var newState = button.State switch {
+                        ButtonStateEnum.On  => action.WhenClosed,
+                        ButtonStateEnum.Off => action.WhenThrown,
+                        _                   => TurnoutStateEnum.Unknown
+                    };
+
+                    if (newState != TurnoutStateEnum.Unknown)
+                        plan.Add(new PlannedAction(ActionTargetKind.Turnout, target.Id, target, newState));
+                }
             }
         }
 
@@ -48,6 +64,7 @@ public static class ActionPlanner {
                     TurnoutStateEnum.Thrown => action.WhenOff,
                     _                       => ButtonStateEnum.Unknown
                 };
+
                 if (newState != ButtonStateEnum.Unknown)
                     plan.Add(new PlannedAction(ActionTargetKind.Button, target.Id, target, newState));
             }
@@ -61,6 +78,7 @@ public static class ActionPlanner {
                     TurnoutStateEnum.Thrown => action.WhenThrown,
                     _                       => TurnoutStateEnum.Unknown
                 };
+
                 if (newState != TurnoutStateEnum.Unknown)
                     plan.Add(new PlannedAction(ActionTargetKind.Turnout, target.Id, target, newState));
             }

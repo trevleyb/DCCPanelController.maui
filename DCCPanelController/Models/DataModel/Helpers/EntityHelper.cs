@@ -57,7 +57,7 @@ public static class EntityHelper {
         var local = parent.Entities.OfType<T>().ToList() ?? [];
         return all
               .Concat(local)
-              .DistinctBy(e => e.Id) // if Id is string and you need case-insensitive: .DistinctBy(e => e.Id, StringComparer.OrdinalIgnoreCase)
+              .DistinctBy(e => e.Id) 
               .ToList();
     }
 

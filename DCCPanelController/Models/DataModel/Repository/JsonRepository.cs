@@ -58,6 +58,8 @@ public static class JsonRepository {
                     var profile = JsonSerializer.Deserialize<Profile?>(jsonString, JsonOptions.Options) ?? throw new ApplicationException("Could not deserialize settings.");
                     LoggingLevelHelper.SetLogLevel(profile.Settings.LogLevel);
                     profile.FixLoadedPanels();
+                    profile.FixTurnoutActions();
+                    profile.Validate(Logger);
                     return profile;
                 } catch (Exception ex) {
                     Logger.LogError("Could not deserialize settings. New set created: {Message}", ex.Message);
@@ -90,31 +92,6 @@ public static class JsonRepository {
             }
         } catch (Exception) {
             return"Error";
-        }
-    }
-
-    public static Profile? Load(string profileName, [CallerMemberName] string caller = "", [CallerLineNumber] int lineNumber = 0) {
-        var filePath = GetStorageFilePath(profileName);
-        using (new CodeTimer($"Load JSON File: {caller}@{lineNumber}", false)) {
-            try {
-                if (File.Exists(filePath)) {
-                    try {
-                        var jsonString = File.ReadAllText(filePath);
-                        var profile = JsonSerializer.Deserialize<Profile?>(jsonString, JsonOptions.Options) ?? throw new ApplicationException("Could not deserialize settings.");
-                        LoggingLevelHelper.SetLogLevel(profile.Settings.LogLevel);
-                        profile.FixLoadedPanels();
-                        return profile;
-                    } catch (Exception ex) {
-                        Logger.LogError("Could not deserialize settings. New set created: {Message}", ex.Message);
-                        return null;
-                    }
-                }
-                Logger.LogInformation("File not found: {profileName}", profileName);
-                return null;
-            } catch (Exception ex) {
-                Logger.LogWarning("Could not access Profile. New Profile created. {Message}", ex.Message);
-                return null;
-            }
         }
     }
 

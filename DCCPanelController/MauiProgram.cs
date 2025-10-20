@@ -39,9 +39,9 @@ public static class MauiProgram {
         FormHelper.RemoveBorders();
         builder.Services.AddLogging(loggingBuilder => loggingBuilder.ClearProviders().AddSerilog(dispose: true));
 
-        #if DEBUG
-        builder.Logging.AddDebug();
-        #endif
+        //#if DEBUG
+        // builder.Logging.AddDebug();
+        //#endif
 
         var services = builder.Services;
 

@@ -1,5 +1,7 @@
 using System.Text;
 using System.Text.Json;
+using DCCPanelController.Helpers.Logging;
+using Microsoft.Extensions.Logging;
 
 namespace DCCPanelController.Models.DataModel.Repository;
 
@@ -23,7 +25,8 @@ public static class JsonTagValidator {
 
             var actual = typeProp.ValueKind == JsonValueKind.String ? typeProp.GetString() : null;
             return actual is { } && string.Equals(actual, expectedMarker, comparison);
-        } catch (JsonException) {
+        } catch (JsonException ex) {
+            LogHelper.Logger.LogError(ex, "JsonTagValidator: Invalid JSON HasTypeTag: JsonException: {Message}", ex.Message);
             return false;
         }
     }

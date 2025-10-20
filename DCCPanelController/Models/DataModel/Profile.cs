@@ -2,8 +2,11 @@ using System.Collections.ObjectModel;
 using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Models.DataModel.Entities;
+using DCCPanelController.Models.DataModel.Entities.Interfaces;
+using DCCPanelController.Models.DataModel.Helpers;
 using DCCPanelController.Models.DataModel.Repository;
 using DCCPanelController.View.Helpers;
+using Microsoft.Extensions.Logging;
 
 namespace DCCPanelController.Models.DataModel;
 
@@ -57,6 +60,8 @@ public partial class Profile : ObservableObject {
     public Sensor? Sensor(string id) => Sensors.FirstOrDefault(s => s.Id == id);
     public Light? Light(string id) => Lights.FirstOrDefault(s => s.Id == id);
 
+    public void Validate(ILogger logger) => ProfileValidator.Validate(this, logger);
+    
     /// <summary>
     ///     This method ensures that each panel in the collection of panels is properly initialized with the reference to the
     ///     parent
@@ -67,6 +72,27 @@ public partial class Profile : ObservableObject {
         foreach (var panel in Panels) {
             panel.Panels = Panels;
             panel.CheckEntityParents();
+        }
+    }
+
+    // Temporary Fix while we move from TurnoutEntity references to TurnoutReferences
+    // ------------------------------------------------------------------------------
+    public void FixTurnoutActions() {
+        foreach (var panel in Panels) {
+            foreach (var entity in panel.Entities) {
+                if (entity is IActionEntity actionEntity) {
+                    foreach (var action in actionEntity.TurnoutPanelActions) {
+                        
+                        // Now we should have action.ActionID which is the identifier for my TurnoutEntity, 
+                        // but it needs to be an identifier to an actual Turnout
+                        // -------------------------------------------------------------------------------
+                        if (panel.GetTurnoutEntity(action.ActionID) is { } turnoutEntity) {
+                            Console.WriteLine($"Found TurnoutEntity: {action.ActionID} and converted it to {turnoutEntity.TurnoutID}");
+                            action.ActionID = turnoutEntity.TurnoutID;
+                        }
+                    }
+                }
+            }
         }
     }
 
