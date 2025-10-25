@@ -35,7 +35,7 @@
     <Grid Padding="16" RowDefinitions="Auto,*">
         <ActivityIndicator Grid.Row="1" IsRunning="{Binding IsBusy}" HorizontalOptions="Center" VerticalOptions="Center"/>
         <Grid ColumnDefinitions="*,*">
-            <Label Margin="5" Text="{Binding Profile.ProfileName}" FontAttributes="Bold" FontSize="18"/>
+            <Label Margin="5" Grid.ColumnSpan="{Binding IsWide, Converter={StaticResource BoolToSpanConverter}}" Text="{Binding Profile.ProfileName}" FontAttributes="Bold" FontSize="18"/>
             <BoxView
                 Grid.ColumnSpan="{Binding IsWide, Converter={StaticResource BoolToSpanConverter}}"
                 Margin="0,0,10,0"
