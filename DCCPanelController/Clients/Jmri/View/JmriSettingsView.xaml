@@ -69,7 +69,7 @@
                     <Entry HorizontalOptions="Fill" Focused="OnEntryFocused" HorizontalTextAlignment="Center"
                            Text="{Binding IpAddress1, Mode=TwoWay}">
                         <Entry.Behaviors>
-                            <helpers:EntryIntValidationBehavior Min="0" Max="255" IsRequired="True"/>
+                            <!-- <helpers:EntryIntValidationBehavior Min="0" Max="255" IsRequired="True"/> -->
                         </Entry.Behaviors>
                     </Entry>
                 </Border>
@@ -113,7 +113,7 @@
                 <Label FontSize="48" HorizontalOptions="Center" Margin="2,-5,2,2" Text=":"
                        TextColor="{StaticResource Primary}" VerticalOptions="Center"/>
 
-                <Border WidthRequest="90" Padding="0" HeightRequest="30" Style="{StaticResource EntryBorderStyle}">
+                <Border WidthRequest="75" Padding="0" HeightRequest="30" Style="{StaticResource EntryBorderStyle}">
                     <Entry
                         Focused="OnEntryFocused"
                         HorizontalOptions="Fill"

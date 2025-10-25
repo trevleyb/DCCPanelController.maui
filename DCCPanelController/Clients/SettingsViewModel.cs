@@ -90,13 +90,14 @@ public partial class SettingsViewModel : BaseViewModel {
     }
 
     protected string SetIpAddressParts(int part, string value, string address, [CallerMemberName] string? propertyName = null) {
-        if (string.IsNullOrEmpty(value)) return address ?? "0";
+        if (string.IsNullOrEmpty(value)) return value;
         var parts = address.Split('.');
+        if (parts.Length != 4) parts = new[] { "0", "0", "0", "0" };
         if (parts?.Length > 0) {
             if (part == 0) part = 1;
             if (parts?.Length >= part) parts[part - 1] = value;
-            if (parts is { } && parts.Length == 4) address = string.Join(".", parts);
+            if (parts is { Length: 4 }) address = string.Join(".", parts);
         }
-        return address ?? "0.0.0.0";
+        return address;
     }
 }

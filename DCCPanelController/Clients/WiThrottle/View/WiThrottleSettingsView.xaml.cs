@@ -32,10 +32,4 @@ public partial class WiThrottleSettingsView : ContentView {
             viewModel.Port = service?.Port ?? 12080;
         }
     }
-
-    // private void Switch_OnToggled(object? sender, ToggledEventArgs e) {
-    //     if (BindingContext is WiThrottleSettingsViewModel viewModel) {
-    //         viewModel.WiThrottleSettings.SetAutomatically = e.Value;
-    //     }    
-    // }
 }
