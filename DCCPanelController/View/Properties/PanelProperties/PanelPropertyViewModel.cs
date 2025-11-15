@@ -83,7 +83,7 @@ public partial class PanelPropertyViewModel : BaseViewModel {
 
     private async Task<bool> AskUserToConfirm(string title, string message) {
         if (App.Current.Windows[0].Page is { } window) {
-            var result = await window.DisplayAlert(title, message, "Yes", "No");
+            var result = await window.DisplayAlertAsync(title, message, "Yes", "No");
             return result;
         }
         return false;

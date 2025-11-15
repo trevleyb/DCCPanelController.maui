@@ -144,21 +144,25 @@ internal sealed class ImageRenderer : BaseRenderer, IPropertyRenderer {
 
     private async Task<string> SelectPhotoAsyncOffUiThread() {
         try {
-            var result = await MainThread.InvokeOnMainThreadAsync(() =>
-                MediaPicker.Default.PickPhotoAsync(new MediaPickerOptions { Title = "Please select a photo" })
+            var result = await MainThread.InvokeOnMainThreadAsync(() => 
+                MediaPicker.Default.PickPhotosAsync(new MediaPickerOptions { Title = "Please select a photo", CompressionQuality = 50, SelectionLimit = 1})
             );
 
             if (result == null) {
                 await DisplayAlertHelper.DisplayOkAlertAsync("Cancelled", "No photo was selected.");
                 return"";
             }
-
-            return await Task.Run(async () => {
-                await using var stream = await result.OpenReadAsync();
+            
+            var photo = result.FirstOrDefault();
+            if (photo is not null) {
+                await using var stream = await photo.OpenReadAsync();
                 using var ms = new MemoryStream();
                 await stream.CopyToAsync(ms);
                 return Convert.ToBase64String(ms.ToArray());
-            });
+            }
+
+            return "";
+
         } catch (Exception ex) {
             await DisplayAlertHelper.DisplayOkAlertAsync("Error", $"Unable to load Photo: {ex.Message}");
             return"";

@@ -35,6 +35,8 @@ public partial class LoadingPage : ContentPage, INotifyPropertyChanged {
         private set => Set(ref _progress, value);
     }
 
+    public new bool IsBusy { get; private set; }
+
     public LoadingPage() {
         InitializeComponent();
         BindingContext = this;
@@ -146,7 +148,7 @@ public partial class LoadingPage : ContentPage, INotifyPropertyChanged {
             await AnimateToCompleteAsync();
             IsBusy = false;
         } catch (Exception ex) {
-            await MainThread.InvokeOnMainThreadAsync(async () => { await DisplayAlert("Startup error", ex.Message, "OK"); });
+            await MainThread.InvokeOnMainThreadAsync(async () => { await DisplayAlertAsync("Startup error", ex.Message, "OK"); });
             throw;
         } finally {
             _once.Release();

@@ -40,17 +40,16 @@
             </Grid>
 
             <Grid Grid.Row="1" IsVisible="{Binding IsGridVisible}">
-                <ListView
+                <CollectionView
                     x:Name="ListView"
                     SelectionMode="None"
                     BackgroundColor="WhiteSmoke"
                     WidthRequest="{OnIdiom Phone='360', Default='550'}"
                     HorizontalOptions="Start"
-                    SeparatorVisibility="Default"
                     ItemsSource="{Binding TurnoutPanelActions }"
                     VerticalOptions="Fill">
 
-                    <ListView.Header>
+                    <CollectionView.Header>
                         <Grid
                             ColumnDefinitions="{OnIdiom Phone='120,100,100,40', Default='200,150,150,50'}"
                             ColumnSpacing="2"
@@ -111,9 +110,9 @@
                             </Image>
 
                         </Grid>
-                    </ListView.Header>
+                    </CollectionView.Header>
 
-                    <ListView.ItemTemplate>
+                    <CollectionView.ItemTemplate>
                         <DataTemplate>
                             <ViewCell x:DataType="actions:TurnoutAction">
                                 <Grid
@@ -166,8 +165,8 @@
                                 </Grid>
                             </ViewCell>
                         </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
             </Grid>
         </Grid>
     </ContentView.Content>

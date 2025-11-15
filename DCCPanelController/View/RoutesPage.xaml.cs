@@ -12,7 +12,7 @@ public partial class RoutesPage : ContentPage {
         InitializeComponent();
         BindingContext = viewModel;
 
-        On<iOS>().SetUseSafeArea(false);
+        SafeAreaEdges = SafeAreaEdges.None;
         var safeInsets = On<iOS>().SafeAreaInsets();
         MainStackLayout.Padding = new Thickness(safeInsets.Left, safeInsets.Top, safeInsets.Right, 0);
     }

@@ -6,7 +6,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:view="clr-namespace:DCCPanelController.View"
     x:DataType="view:LoadingPage"
-    ios:Page.UseSafeArea="True"
+    SafeAreaEdges="None"
     BackgroundColor="#FF4F8F00"
     xmlns:ios="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls">
 

@@ -21,7 +21,7 @@ public abstract partial class ActionsGridViewModel<TAction, TCollection> : Obser
 
     [ObservableProperty] private   List<string>  _selectableItems = [];
 
-    public ListView? ActionsGridListView;
+    public CollectionView? ActionsGridListView;
     
     protected ActionsGridViewModel(ActionsContext context, List<string> availableItems, Action? changedAction) {
         ActionContext = context;
