@@ -165,7 +165,7 @@ internal sealed class ImageRenderer : BaseRenderer, IPropertyRenderer {
 
         } catch (Exception ex) {
             await DisplayAlertHelper.DisplayOkAlertAsync("Error", $"Unable to load Photo: {ex.Message}");
-            return"";
+            return "";
         }
     }
 }
