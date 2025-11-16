@@ -19,8 +19,8 @@ public partial class SensorsEditView : ContentView {
         if (e is { PropertyName: nameof(SensorsEditViewModel.Sensor.Name) }) {
             _viewModel.Title = string.IsNullOrEmpty(_viewModel.Sensor.Name) ? "Sensor Properties" : _viewModel.Sensor.Name;
         }
-        if (e is { PropertyName: nameof(SensorsEditViewModel.Sensor.Id) }) {
-            _viewModel.Sensor.SetDccAddress(_viewModel.Sensor.Id);
+        if (e is { PropertyName: nameof(SensorsEditViewModel.Sensor.SystemId) }) {
+            _viewModel.Sensor.InferDccAddressFrom(_viewModel.Sensor.SystemId);
         }
     }
 }

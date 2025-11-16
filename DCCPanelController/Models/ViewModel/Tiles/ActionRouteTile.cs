@@ -36,7 +36,7 @@ public class ActionRouteTile : Tile, ITileInteractive {
                     RouteStateEnum.Inactive => RouteStateEnum.Active,
                     _                       => RouteStateEnum.Unknown,
                 };
-                if (Entity is RouteEntity { Route.Id: { } id } routeEntity) {
+                if (Entity is RouteEntity { Route.SystemId: { } id } routeEntity) {
                     await client.SendRouteCmdAsync(routeEntity.Route, routeEntity.State != RouteStateEnum.Inactive);
                 }
                 _isActionRunning = false;

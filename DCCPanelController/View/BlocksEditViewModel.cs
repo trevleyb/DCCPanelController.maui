@@ -2,16 +2,16 @@ using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Models.DataModel;
+using DCCPanelController.Models.DataModel.Accessories;
 using DCCPanelController.Services;
 using DCCPanelController.View.Base;
 using Microsoft.Extensions.Logging;
+using Block = DCCPanelController.Models.DataModel.Accessories.Block;
 
 namespace DCCPanelController.View;
 
 public partial class BlocksEditViewModel : BaseViewModel {
     private readonly             ILogger<BlocksEditViewModel> _logger;
-    [ObservableProperty] private bool                         _isManualControlled;
-    [ObservableProperty] private bool                         _isServerControlled;
     [ObservableProperty] private string                       _title;
     [ObservableProperty] private Block                        _block;
     [ObservableProperty] private Sensor?                      _sensor;
@@ -22,11 +22,9 @@ public partial class BlocksEditViewModel : BaseViewModel {
         _logger = logger;
         Block = block;
         Sensors = sensors;
-        Sensor = sensors.FirstOrDefault(x => x?.Id == block?.Sensor);
+        Sensor = sensors.FirstOrDefault(x => x?.SystemId == block?.Sensor);
         ConnectionService = connectionService;
         Title = Block?.Name ?? "Block Properties";
-        IsServerControlled = Block?.IsEditable == false;
-        IsManualControlled = Block?.IsEditable == true;
     }
 
     private ConnectionService ConnectionService { get; }

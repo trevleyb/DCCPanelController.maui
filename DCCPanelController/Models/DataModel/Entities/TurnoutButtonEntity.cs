@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
+using DCCPanelController.Models.DataModel.Accessories;
 using DCCPanelController.Models.DataModel.Entities.Interfaces;
 using DCCPanelController.Models.DataModel.Helpers;
 using DCCPanelController.View.Properties.DynamicProperties;

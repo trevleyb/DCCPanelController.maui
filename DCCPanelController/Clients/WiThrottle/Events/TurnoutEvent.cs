@@ -1,12 +1,13 @@
 using DCCPanelController.Clients.WiThrottle.Client;
+using DCCPanelController.Models.DataModel.Accessories;
 
 namespace DCCPanelController.Clients.WiThrottle.Events;
 
 public class TurnoutEvent(string systemName, string userName, TurnoutStateEnum stateEnum) : EventArgs, IClientEvent {
-    public TurnoutEvent(string systemName, char state) : this(systemName, "", state.ToString()) { }
-    public TurnoutEvent(string systemName, string state) : this(systemName, "", state) { }
+    public TurnoutEvent(string systemName, char state, AccessorySource source = AccessorySource.WiThrottle) : this(systemName, "", state.ToString(), source) { }
+    public TurnoutEvent(string systemName, string state, AccessorySource source = AccessorySource.WiThrottle) : this(systemName, "", state, source) { }
 
-    public TurnoutEvent(string systemName, string userName, string state) : this(systemName, userName, state switch {
+    public TurnoutEvent(string systemName, string userName, string state, AccessorySource source = AccessorySource.WiThrottle) : this(systemName, userName, state switch {
         "1"        => TurnoutStateEnum.Unknown,
         "2" or "C" => TurnoutStateEnum.Closed,
         "4" or "T" => TurnoutStateEnum.Thrown,

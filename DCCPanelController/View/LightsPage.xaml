@@ -13,7 +13,8 @@
     xmlns:view="clr-namespace:DCCPanelController.View"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:bottomSheet="http://schemas.syncfusion.com/maui/toolkit"
-    xmlns:converters="clr-namespace:DCCPanelController.View.Converters">
+    xmlns:converters="clr-namespace:DCCPanelController.View.Converters"
+    xmlns:accessories="clr-namespace:DCCPanelController.Models.DataModel.Accessories">
 
     <ContentPage.ToolbarItems>
         <ToolbarItem
@@ -117,7 +118,7 @@
                     </CollectionView.EmptyView>
 
                     <CollectionView.ItemTemplate>
-                        <DataTemplate x:DataType="dataModel:Light">
+                        <DataTemplate x:DataType="accessories:Light">
                             <!-- <Grid Style="{StaticResource SelectableItemStyle}"> -->
                             <Grid>
                             <StackLayout Padding="0">

@@ -4,13 +4,12 @@ using DCCPanelController.Models.DataModel;
 using DCCPanelController.Services;
 using DCCPanelController.View.Base;
 using Microsoft.Extensions.Logging;
+using Light = DCCPanelController.Models.DataModel.Accessories.Light;
 
 namespace DCCPanelController.View;
 
 public partial class LightsEditViewModel : BaseViewModel {
     private readonly             ILogger<LightsEditViewModel> _logger;
-    [ObservableProperty] private bool                         _isManualControlled;
-    [ObservableProperty] private bool                         _isServerControlled;
     [ObservableProperty] private string                       _title;
     [ObservableProperty] private Light                        _light;
 
@@ -19,8 +18,6 @@ public partial class LightsEditViewModel : BaseViewModel {
         Light = light;
         ConnectionService = connectionService;
         Title = Light?.Name ?? "Light Properties";
-        IsServerControlled = Light?.IsEditable == false;
-        IsManualControlled = Light?.IsEditable == true;
     }
 
     private ConnectionService ConnectionService { get; }

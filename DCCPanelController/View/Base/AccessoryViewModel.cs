@@ -4,12 +4,13 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Helpers; // for GetSortDirection()
 using DCCPanelController.Models.DataModel;
+using DCCPanelController.Models.DataModel.Accessories;
 using DCCPanelController.Services;
 using DCCPanelController.Services.ProfileService;
 
 namespace DCCPanelController.View.Base;
 
-public abstract partial class TablesViewModel<T> : ConnectionViewModel where T : DccTable
+public abstract partial class AccessoryViewModel<T> : ConnectionViewModel where T : Accessory
 {
     protected readonly ProfileService _profileService;
 
@@ -28,7 +29,7 @@ public abstract partial class TablesViewModel<T> : ConnectionViewModel where T :
     [ObservableProperty] private bool _isSupported;
     public bool IsNotSupported => !IsSupported;
 
-    protected TablesViewModel(ProfileService profileService, ConnectionService connectionService)
+    protected AccessoryViewModel(ProfileService profileService, ConnectionService connectionService)
         : base(profileService, connectionService)
     {
         _profileService = profileService;

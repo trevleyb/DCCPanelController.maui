@@ -1,5 +1,6 @@
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities.Interfaces;
+using Route = DCCPanelController.Models.DataModel.Accessories.Route;
 
 namespace DCCPanelController.View.Properties.DynamicProperties.Renderers;
 
@@ -25,13 +26,13 @@ internal sealed class RouteRenderer : BaseRenderer, IPropertyRenderer {
         picker.ItemsSource = routes;
         picker.ItemDisplayBinding = new Binding(nameof(Route.DisplayFormat));
         if (row.OriginalValue is string s) {
-            var item = routes.FirstOrDefault(b => b.Id == s) ?? routes.FirstOrDefault(b => b.Name == s);
+            var item = routes.FirstOrDefault(b => b.SystemId == s) ?? routes.FirstOrDefault(b => b.Name == s);
             picker.SelectedItem = item;
         }
         picker.SelectedIndexChanged += (s2, e2) => {
             if (picker.SelectedIndex < routes.Count && picker.SelectedIndex >= 0) {
                 var item = routes[picker.SelectedIndex];
-                SetValue(row, item.Id);
+                SetValue(row, item.SystemId);
             }
         };
         picker.IsEnabled = !row.Field.Meta.IsReadOnlyInRunMode;

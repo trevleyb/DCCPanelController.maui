@@ -9,10 +9,11 @@ using DCCPanelController.Services;
 using DCCPanelController.Services.ProfileService;
 using DCCPanelController.View.Base;
 using Microsoft.Extensions.Logging;
+using Route = DCCPanelController.Models.DataModel.Accessories.Route;
 
 namespace DCCPanelController.View;
 
-public partial class RoutesViewModel : TablesViewModel<Route>
+public partial class RoutesViewModel : AccessoryViewModel<Route>
 {
     private const string _labelID    = "ID";
     private const string _labelName  = "User Name";
@@ -53,7 +54,7 @@ public partial class RoutesViewModel : TablesViewModel<Route>
     protected override IReadOnlyDictionary<string, Func<Route, IComparable>> Sorters => new Dictionary<string, Func<Route, IComparable>>
     {
         [_labelName]  = x => x.Name ?? "",
-        [_labelID]    = x => x.Id ?? "",
+        [_labelID]    = x => x.SystemId ?? "",
         [_labelState] = x => x.State
     };
 
@@ -88,7 +89,7 @@ public partial class RoutesViewModel : TablesViewModel<Route>
             RouteStateEnum.Inactive => RouteStateEnum.Active,
             _                       => RouteStateEnum.Active,
         };
-        if (!string.IsNullOrEmpty(route.Id))
+        if (!string.IsNullOrEmpty(route.SystemId))
         {
             if (ConnectionService.Client is { State: DccClientState.Connected } client)
                 await client.SendRouteCmdAsync(route, true)!;

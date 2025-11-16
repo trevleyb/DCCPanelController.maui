@@ -1,15 +1,11 @@
 using System.Diagnostics;
-using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace DCCPanelController.Models.DataModel;
+namespace DCCPanelController.Models.DataModel.Accessories;
 
-/// <summary>
-///     Represents a Turnout with its current state.
-///     This is controlled by data that comes in via the Withrottle Interface
-/// </summary>
-[DebuggerDisplay("UniqueId: {Id}, SystemName: {Name}, State: {DccAddress}")]
-public partial class Signal : DccTable {
+[DebuggerDisplay("Signal: {SystemId}: {Name} @  {DccAddress} => State: {State}")]
+
+public partial class Signal : Accessory, IAccessory {
     [ObservableProperty] private string  _aspect = "Off";
 
     public event EventHandler<string>? AspectChanged;

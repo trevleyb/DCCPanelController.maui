@@ -1,11 +1,12 @@
 using System.Text.RegularExpressions;
+using DCCPanelController.Models.DataModel.Accessories;
 using DCCPanelController.Models.DataModel.Entities.Interfaces;
 
 namespace DCCPanelController.Models.DataModel.Helpers;
 
 public static class EntityHelper {
     public static bool TryGet<T>(this IEnumerable<T>? sourceEnumerator, string? key, out T? item)
-        where T : class, IDccTable {
+        where T : class, IAccessory {
         
         item = null;
         var source = sourceEnumerator?.ToList();
@@ -14,7 +15,7 @@ public static class EntityHelper {
         const StringComparison cmp = StringComparison.InvariantCultureIgnoreCase;
 
         // 1) Id match
-        item = source.FirstOrDefault(x => string.Equals(x.Id, key, cmp));
+        item = source.FirstOrDefault(x => string.Equals(x.SystemId, key, cmp));
         if (item is { }) return true;
 
         // 2) Name match
@@ -36,7 +37,7 @@ public static class EntityHelper {
     /// Tries Id/Name first; then DccAddress if provided.
     /// </summary>
     public static bool TryGet<T>(this IEnumerable<T> sourceEnumerator, string? idOrName, int? dccAddress, out T? item)
-        where T : class, IDccTable {
+        where T : class, IAccessory {
         
         item = null;
         var source = sourceEnumerator?.ToList();

@@ -1,15 +1,10 @@
 using System.Diagnostics;
-using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace DCCPanelController.Models.DataModel;
+namespace DCCPanelController.Models.DataModel.Accessories;
 
-/// <summary>
-///     Represents a Turnout with its current state.
-///     This is controlled by data that comes in via the Withrottle Interface
-/// </summary>
-[DebuggerDisplay("UniqueId: {Id}, SystemName: {Name}, State: {State}")]
-public partial class Sensor : DccTable, IDccTable {
+[DebuggerDisplay("Sensor: {SystemId}: {Name} @  {DccAddress} => State: {State}")]
+public partial class Sensor : Accessory, IAccessory {
     [ObservableProperty] private bool    _state;
 
     public event EventHandler<bool>? StateChanged;

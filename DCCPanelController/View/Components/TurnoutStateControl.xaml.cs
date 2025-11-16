@@ -2,6 +2,7 @@ using System.ComponentModel;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Models.DataModel;
+using DCCPanelController.Models.DataModel.Accessories;
 using DCCPanelController.Models.DataModel.Entities;
 
 namespace DCCPanelController.View.Components;

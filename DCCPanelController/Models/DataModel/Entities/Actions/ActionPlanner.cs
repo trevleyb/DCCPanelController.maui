@@ -35,8 +35,8 @@ public static class ActionPlanner {
         // }
 
         foreach (var action in button.TurnoutPanelActions) {
-            if (button.Parent?.Turnouts.FirstOrDefault(t => t.Id == action.ActionID) is { } target) {
-                if (!string.IsNullOrEmpty(target.Id)) {
+            if (button.Parent?.Turnouts.FirstOrDefault(t => t.SystemId == action.ActionID) is { } target) {
+                if (!string.IsNullOrEmpty(target.SystemId)) {
                     var newState = button.State switch {
                         ButtonStateEnum.On  => action.WhenClosed,
                         ButtonStateEnum.Off => action.WhenThrown,
@@ -44,7 +44,7 @@ public static class ActionPlanner {
                     };
 
                     if (newState != TurnoutStateEnum.Unknown)
-                        plan.Add(new PlannedAction(ActionTargetKind.Turnout, target.Id, target, newState));
+                        plan.Add(new PlannedAction(ActionTargetKind.Turnout, target.SystemId, target, newState));
                 }
             }
         }

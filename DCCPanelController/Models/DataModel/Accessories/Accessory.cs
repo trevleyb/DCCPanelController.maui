@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
+using System.Text.RegularExpressions;
 using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace DCCPanelController.Models.DataModel.Accessories;
@@ -16,15 +18,16 @@ namespace DCCPanelController.Models.DataModel.Accessories;
 ///   If valid, we send SystemId. If not, and numeric fallback is allowed,
 ///   we send DccAddress as a pure numeric name.
 /// </summary>
-public abstract partial class AccessoryBase : ObservableObject {
+public abstract partial class Accessory : ObservableObject, IEquatable<Accessory>, IComparable<Accessory> {
     
-    [ObservableProperty] private string _logicalId = string.Empty;
     [ObservableProperty] private string? _systemId;
-    [ObservableProperty] private string? _description;
+    [ObservableProperty] private string? _name;
     [ObservableProperty] private int? _dccAddress;
     [ObservableProperty] private AccessorySource _source = AccessorySource.Unknown;
     [ObservableProperty] private bool _isValidForCurrentConnection;
     [ObservableProperty] private AccessoryBindingMode _bindingMode = AccessoryBindingMode.Unbound;
+
+    [JsonIgnore] public string DisplayFormat => $"{(SystemId ?? "Unnamed")} ({(DccAddress.HasValue ? DccAddress.Value.ToString() : "—")})";
 
     // Tracks whether DccAddress was explicitly edited vs inferred from SystemId.
     private bool dccAddressHasBeenExplicitlySet;
@@ -110,13 +113,13 @@ public abstract partial class AccessoryBase : ObservableObject {
     /// Attempts to infer DCC address from trailing digits of SystemId (e.g. "NT432" -> 432).
     /// This implements your JMRI-style assumption: NTnnn / LTnnn => DccAddress nnn.
     /// </summary>
-    private void InferDccAddressFromSystemId() {
-        if (string.IsNullOrWhiteSpace(SystemId))
-            return;
-
-        var id = SystemId.Trim();
+    public void InferDccAddressFromSystemId() => InferDccAddressFrom(SystemId); 
+    
+    public void InferDccAddressFrom(string? id) {
+        if (string.IsNullOrWhiteSpace(id)) return;
 
         // Find trailing digit run.
+        id = id.Trim();
         var index = id.Length - 1;
         while (index >= 0 && char.IsDigit(id[index])) index--;
 
@@ -133,4 +136,25 @@ public abstract partial class AccessoryBase : ObservableObject {
             // can re-infer if needed.
         }
     }
+    
+    // --- Equality & ordering (by Id, then DccAddress, then Name) ---
+    public bool Equals(Accessory? other) => other is not null && string.Equals(SystemId, other.SystemId, StringComparison.OrdinalIgnoreCase);
+    public override bool Equals(object? obj) => obj is Accessory acc && Equals(acc);
+
+    public override int GetHashCode() => (SystemId ?? string.Empty).ToUpperInvariant().GetHashCode();
+
+    public int CompareTo(Accessory? other) {
+        if (other is null) return 1;
+        var byAddr = DccAddress == other.DccAddress;
+        if (byAddr) return 0;
+        var byName = string.Compare(Name, other.Name, StringComparison.OrdinalIgnoreCase);
+        return byName != 0 ? byName : string.Compare(SystemId, other.SystemId, StringComparison.OrdinalIgnoreCase);
+    }
+
+    // --- Internals ---
+    private static string? NormalizeId(string? id) => id?.Trim();
+    private static string? NormalizeName(string? nm) => nm?.Trim();
+
+    [GeneratedRegex(@"\d+")]
+    private static partial Regex Digits();
 }

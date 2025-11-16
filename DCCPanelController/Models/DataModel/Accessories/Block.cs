@@ -1,10 +1,11 @@
-using System.ComponentModel;
+using System.Diagnostics;
 using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace DCCPanelController.Models.DataModel;
+namespace DCCPanelController.Models.DataModel.Accessories;
 
-public partial class Block : DccTable {
+[DebuggerDisplay("Block: {SystemId}: {Name} @  {DccAddress} => State: {State}")]
+public partial class Block : Accessory, IAccessory {
     [ObservableProperty] private string? _sensor;
 
     [ObservableProperty]

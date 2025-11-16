@@ -4,14 +4,12 @@ using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Services;
 using DCCPanelController.View.Base;
 using Microsoft.Extensions.Logging;
-using Turnout = DCCPanelController.Models.DataModel.Turnout;
+using Turnout = DCCPanelController.Models.DataModel.Accessories.Turnout;
 
 namespace DCCPanelController.View;
 
 public partial class TurnoutsEditViewModel : BaseViewModel {
     private readonly             ILogger<TurnoutsEditViewModel> _logger;
-    [ObservableProperty] private bool                           _isManualControlled;
-    [ObservableProperty] private bool                           _isServerControlled;
     [ObservableProperty] private string                         _title;
     [ObservableProperty] private Turnout                        _turnout;
 
@@ -20,8 +18,6 @@ public partial class TurnoutsEditViewModel : BaseViewModel {
         Turnout = turnout;
         ConnectionService = connectionService;
         Title = Turnout?.Name ?? "Turnout Properties";
-        IsServerControlled = Turnout?.IsEditable == false;
-        IsManualControlled = Turnout?.IsEditable == true;
     }
 
     private ConnectionService ConnectionService { get; }

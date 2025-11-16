@@ -5,15 +5,17 @@ using DCCPanelController.Clients;
 using DCCPanelController.Helpers;
 using DCCPanelController.Helpers.Logging;
 using DCCPanelController.Models.DataModel;
+using DCCPanelController.Models.DataModel.Accessories;
 using DCCPanelController.Services;
 using DCCPanelController.Services.ProfileService;
 using DCCPanelController.View.Base;
 using Microsoft.Extensions.Logging;
 using Syncfusion.Maui.Toolkit.BottomSheet;
+using Block = DCCPanelController.Models.DataModel.Accessories.Block;
 
 namespace DCCPanelController.View;
 
-public partial class BlocksViewModel : TablesViewModel<Block>
+public partial class BlocksViewModel : AccessoryViewModel<Block>
 {
     private const string _labelID     = "ID";
     private const string _labelName   = "Block";
@@ -71,7 +73,7 @@ public partial class BlocksViewModel : TablesViewModel<Block>
     protected override IReadOnlyDictionary<string, Func<Block, IComparable>> Sorters => new Dictionary<string, Func<Block, IComparable>>
     {
         [_labelName]   = x => x.Name ?? "",
-        [_labelID]     = x => x.Id ?? "",
+        [_labelID]     = x => x.SystemId ?? "",
         [_labelSensor] = x => x.Sensor ?? "",
         [_labelState]  = x => x.IsOccupied
     };
@@ -91,7 +93,7 @@ public partial class BlocksViewModel : TablesViewModel<Block>
     {
         if (block == null) return;
         block.IsOccupied = !block.IsOccupied;
-        if (!string.IsNullOrEmpty(block.Id))
+        if (!string.IsNullOrEmpty(block.SystemId))
         {
             if (ConnectionService.Client is { State: DccClientState.Connected } client)
                 await client.SendBlockCmdAsync(block, block.IsOccupied)!;
@@ -127,9 +129,9 @@ public partial class BlocksViewModel : TablesViewModel<Block>
     {
         var block = new Block
         {
-            Id = TableAnalyser<Block>.GetUniqueID(Blocks.ToList()),
+            SystemId = TableAnalyser<Block>.GetUniqueID(Blocks.ToList()),
             Name = "New Block",
-            IsEditable = true,
+            Source = AccessorySource.Manual
         };
         Blocks.Add(block);
         await _profileService.SaveAsync();

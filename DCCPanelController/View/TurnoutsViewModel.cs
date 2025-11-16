@@ -5,6 +5,7 @@ using DCCPanelController.Clients;
 using DCCPanelController.Helpers;
 using DCCPanelController.Helpers.Logging;
 using DCCPanelController.Models.DataModel;
+using DCCPanelController.Models.DataModel.Accessories;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Services;
 using DCCPanelController.Services.ProfileService;
@@ -14,7 +15,7 @@ using Syncfusion.Maui.Toolkit.BottomSheet;
 
 namespace DCCPanelController.View;
 
-public partial class TurnoutsViewModel : TablesViewModel<Turnout> {
+public partial class TurnoutsViewModel : AccessoryViewModel<Turnout> {
     private const string _labelID      = "ID";
     private const string _labelName    = "User Name";
     private const string _labelState   = "State";
@@ -41,7 +42,7 @@ public partial class TurnoutsViewModel : TablesViewModel<Turnout> {
         PropertyChanged += (_, args) => {
             if (args.PropertyName == nameof(SelectedTurnout)) {
                 IsTurnoutSelected = SelectedTurnout != null;
-                CanDelTurnout = _profileService.ActiveProfile?.Settings?.ClientSettings?.SupportsManualEntries == true && IsSupported && SelectedTurnout?.IsEditable == true;
+                CanDelTurnout = _profileService.ActiveProfile?.Settings?.ClientSettings?.SupportsManualEntries == true && IsSupported;
             }
         };
     }
@@ -77,7 +78,7 @@ public partial class TurnoutsViewModel : TablesViewModel<Turnout> {
     protected override IReadOnlyDictionary<string, Func<Turnout, IComparable>> Sorters =>
         new Dictionary<string, Func<Turnout, IComparable>> {
             [_labelName] = x => x.Name ?? "",
-            [_labelID] = x => x.Id ?? "",
+            [_labelID] = x => x.SystemId ?? "",
             [_labelAddress] = x => x.DccAddress.ToString() ?? "",
             [_labelState] = x => x.State
         };
@@ -119,11 +120,11 @@ public partial class TurnoutsViewModel : TablesViewModel<Turnout> {
     [RelayCommand]
     private async Task AddTurnoutAsync() {
         var turnout = new Turnout {
-            Id = TableAnalyser<Turnout>.GetUniqueID(Turnouts.ToList()),
+            SystemId = TableAnalyser<Turnout>.GetUniqueID(Turnouts.ToList()),
             Name = "New Turnout",
             State = TurnoutStateEnum.Closed,
             Default = TurnoutStateEnum.Closed,
-            IsEditable = true,
+            Source = AccessorySource.Manual,
         };
 
         Turnouts.Add(turnout);

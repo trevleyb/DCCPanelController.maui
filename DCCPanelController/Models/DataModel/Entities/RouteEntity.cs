@@ -34,7 +34,7 @@ public partial class RouteEntity : BaseClasses.ButtonEntity, IInteractiveEntity 
         "on the control panel.";
 
     [JsonIgnore]
-    public Route? Route => Parent?.Route(Id);
+    public Accessories.Route? Route => Parent?.Route(Id);
 
     [JsonIgnore] protected override int RotationFactor => 90;
 

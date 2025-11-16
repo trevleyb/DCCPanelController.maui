@@ -33,9 +33,9 @@ public abstract class TrackTile : Tile, ITileTrack {
            .Track(nameof(IsPath), () => IsPath);
 
         if (Entity is TrackEntity { Occupancy: { } occupancy }) {
-            if (occupancy.Id == entity?.Occupancy?.Id) IsOccupied = occupancy.IsOccupied;
+            if (occupancy.SystemId == entity?.Occupancy?.SystemId) IsOccupied = occupancy.IsOccupied;
             occupancy.PropertyChanged += (sender, args) => {
-                if (occupancy.Id == entity?.Occupancy?.Id) {
+                if (occupancy.SystemId == entity?.Occupancy?.SystemId) {
                     IsOccupied = occupancy.IsOccupied;
                 }
             };

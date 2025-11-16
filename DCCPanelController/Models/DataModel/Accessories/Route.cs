@@ -1,17 +1,12 @@
-using System.Text.Json.Serialization;
+using System.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Models.DataModel.Entities;
 
-namespace DCCPanelController.Models.DataModel;
+namespace DCCPanelController.Models.DataModel.Accessories;
 
-public partial class Route : DccTable {
+[DebuggerDisplay("Route: {SystemId}: {Name} @  {DccAddress} => State: {State}")]
+public partial class Route : Accessory, IAccessory {
     [ObservableProperty] private RouteStateEnum _state = RouteStateEnum.Unknown;
-
-    /// <summary>
-    ///     Represents a Turnout with its current state.
-    ///     This is controlled by data that comes in via the Withrottle Interface
-    /// </summary>
-    public Route() { }
 
     public event EventHandler<RouteStateEnum>? StateChanged;
     partial void OnStateChanged(RouteStateEnum value) => StateChanged?.Invoke(this, value);

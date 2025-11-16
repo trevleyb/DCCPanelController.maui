@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
+using DCCPanelController.Models.DataModel.Accessories;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.DataModel.Entities.Interfaces;
 using DCCPanelController.Models.DataModel.Helpers;
@@ -21,14 +22,14 @@ public partial class Profile : ObservableObject {
     [ObservableProperty] private string                          _profileName;
     [ObservableProperty] private string                          _profileNotes;
     
-    [ObservableProperty] private Panels                          _panels;
-    [ObservableProperty] private Settings                        _settings;
-    [ObservableProperty] private UiObservableCollection<Light>   _lights;
-    [ObservableProperty] private UiObservableCollection<Block>   _blocks;
-    [ObservableProperty] private UiObservableCollection<Route>   _routes;
-    [ObservableProperty] private UiObservableCollection<Sensor>  _sensors;
-    [ObservableProperty] private UiObservableCollection<Signal>  _signals;
-    [ObservableProperty] private UiObservableCollection<Turnout> _turnouts;
+    [ObservableProperty] private Panels                             _panels;
+    [ObservableProperty] private Settings                           _settings;
+    [ObservableProperty] private UiObservableCollection<Light>      _lights;
+    [ObservableProperty] private UiObservableCollection<Block>      _blocks;
+    [ObservableProperty] private UiObservableCollection<Route>      _routes;
+    [ObservableProperty] private UiObservableCollection<Sensor>     _sensors;
+    [ObservableProperty] private UiObservableCollection<Signal>     _signals;
+    [ObservableProperty] private UiObservableCollection<Turnout>    _turnouts;
 
     [ObservableProperty] private DateTime           _fastClock;
     [ObservableProperty] private PowerStateEnum     _powerState;
@@ -53,12 +54,12 @@ public partial class Profile : ObservableObject {
 
     public string Version { get; set; } = "1.0.1"; // Ensure we increment this version number when making changes to the schema
 
-    public Turnout? Turnout(string id) => Turnouts.FirstOrDefault(t => t.Id == id);
-    public Route? Route(string id) => Routes.FirstOrDefault(r => r.Id == id);
-    public Signal? Signal(string id) => Signals.FirstOrDefault(s => s.Id == id);
-    public Block? Block(string id) => Blocks.FirstOrDefault(s => s.Id == id);
-    public Sensor? Sensor(string id) => Sensors.FirstOrDefault(s => s.Id == id);
-    public Light? Light(string id) => Lights.FirstOrDefault(s => s.Id == id);
+    public Turnout? Turnout(string id)  => Turnouts.FirstOrDefault(t => t.SystemId == id);
+    public Route?   Route(string id)    => Routes.FirstOrDefault(r => r.SystemId == id);
+    public Signal?  Signal(string id)   => Signals.FirstOrDefault(s => s.SystemId == id);
+    public Block?   Block(string id)    => Blocks.FirstOrDefault(s => s.SystemId == id);
+    public Sensor?  Sensor(string id)   => Sensors.FirstOrDefault(s => s.SystemId == id);
+    public Light?   Light(string id)    => Lights.FirstOrDefault(s => s.SystemId == id);
 
     public void Validate(ILogger logger) => ProfileValidator.Validate(this, logger);
     
@@ -113,10 +114,10 @@ public partial class Profile : ObservableObject {
         RefreshSensors();
     }
 
-    public void RefreshTurnouts() => RefreshCollection(Turnouts, t => t is { IsEditable: false, IsModified: false });
-    public void RefreshRoutes() => RefreshCollection(Routes, t => t is { IsEditable    : false, IsModified: false });
-    public void RefreshBlocks() => RefreshCollection(Blocks, t => t is { IsEditable    : false, IsModified: false });
-    public void RefreshSignals() => RefreshCollection(Signals, t => t is { IsEditable  : false, IsModified: false });
-    public void RefreshSensors() => RefreshCollection(Sensors, t => t is { IsEditable  : false, IsModified: false });
-    public void RefreshLights() => RefreshCollection(Lights, t => t is { IsEditable    : false, IsModified: false });
+    public void RefreshTurnouts() => RefreshCollection(Turnouts, t => t is { Source: not AccessorySource.Manual and not AccessorySource.Imported });
+    public void RefreshRoutes() => RefreshCollection(Routes, t => t is { Source    : not AccessorySource.Manual and not AccessorySource.Imported });
+    public void RefreshBlocks() => RefreshCollection(Blocks, t => t is { Source    : not AccessorySource.Manual and not AccessorySource.Imported });
+    public void RefreshSignals() => RefreshCollection(Signals, t => t is { Source  : not AccessorySource.Manual and not AccessorySource.Imported });
+    public void RefreshSensors() => RefreshCollection(Sensors, t => t is { Source  : not AccessorySource.Manual and not AccessorySource.Imported });
+    public void RefreshLights() => RefreshCollection(Lights, t => t is { Source    : not AccessorySource.Manual and not AccessorySource.Imported });
 }

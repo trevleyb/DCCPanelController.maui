@@ -1,4 +1,5 @@
 using DCCPanelController.Models.DataModel;
+using DCCPanelController.Models.DataModel.Accessories;
 using DCCPanelController.Models.DataModel.Entities.Interfaces;
 
 namespace DCCPanelController.View.Properties.DynamicProperties.Renderers;
@@ -26,13 +27,13 @@ internal sealed class TurnoutRenderer : BaseRenderer, IPropertyRenderer {
         picker.ItemsSource = turnouts;
         picker.ItemDisplayBinding = new Binding(nameof(Turnout.DisplayFormat));
         if (row.OriginalValue is string s) {
-            var item = turnouts.FirstOrDefault(b => b.Id == s) ?? turnouts.FirstOrDefault(b => b.Name == s);
+            var item = turnouts.FirstOrDefault(b => b.SystemId == s) ?? turnouts.FirstOrDefault(b => b.Name == s);
             picker.SelectedItem = item;
         }
         picker.SelectedIndexChanged += (s2, e2) => {
             if (picker.SelectedIndex < turnouts.Count && picker.SelectedIndex >= 0) {
                 var item = turnouts[picker.SelectedIndex];
-                SetValue(row, item.Id);
+                SetValue(row, item.SystemId);
             }
         };
         picker.IsEnabled = !row.Field.Meta.IsReadOnlyInRunMode;

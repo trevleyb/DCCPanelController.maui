@@ -2,6 +2,10 @@ using DCCPanelController.Clients.Discovery;
 using DCCPanelController.Clients.Helpers;
 using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel;
+using DCCPanelController.Models.DataModel.Accessories;
+using Block = DCCPanelController.Models.DataModel.Accessories.Block;
+using Light = DCCPanelController.Models.DataModel.Accessories.Light;
+using Route = DCCPanelController.Models.DataModel.Accessories.Route;
 
 namespace DCCPanelController.Clients;
 

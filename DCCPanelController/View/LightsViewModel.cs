@@ -5,15 +5,17 @@ using DCCPanelController.Clients;
 using DCCPanelController.Helpers;
 using DCCPanelController.Helpers.Logging;
 using DCCPanelController.Models.DataModel;
+using DCCPanelController.Models.DataModel.Accessories;
 using DCCPanelController.Services;
 using DCCPanelController.Services.ProfileService;
 using DCCPanelController.View.Base;
 using Microsoft.Extensions.Logging;
 using Syncfusion.Maui.Toolkit.BottomSheet;
+using Light = DCCPanelController.Models.DataModel.Accessories.Light;
 
 namespace DCCPanelController.View;
 
-public partial class LightsViewModel : TablesViewModel<Light>
+public partial class LightsViewModel : AccessoryViewModel<Light>
 {
     private const string _labelID    = "ID";
     private const string _labelName  = "Light";
@@ -68,7 +70,7 @@ public partial class LightsViewModel : TablesViewModel<Light>
     protected override IReadOnlyDictionary<string, Func<Light, IComparable>> Sorters => new Dictionary<string, Func<Light, IComparable>>
     {
         [_labelName]  = x => x.Name ?? "",
-        [_labelID]    = x => x.Id ?? "",
+        [_labelID]    = x => x.SystemId ?? "",
         [_labelState] = x => x.State
     };
 
@@ -86,7 +88,7 @@ public partial class LightsViewModel : TablesViewModel<Light>
     {
         if (light == null) return;
         light.State = !light.State;
-        if (!string.IsNullOrEmpty(light.Id))
+        if (!string.IsNullOrEmpty(light.SystemId))
         {
             if (ConnectionService.Client is { State: DccClientState.Connected } client)
                 await client.SendLightCmdAsync(light, light.State)!;
@@ -123,9 +125,9 @@ public partial class LightsViewModel : TablesViewModel<Light>
     {
         var light = new Light
         {
-            Id = TableAnalyser<Light>.GetUniqueID(Lights.ToList()),
+            SystemId = TableAnalyser<Light>.GetUniqueID(Lights.ToList()),
             Name = "New Light",
-            IsEditable = true,
+            Source = AccessorySource.Manual,
         };
         Lights.Add(light);
         await _profileService.SaveAsync();

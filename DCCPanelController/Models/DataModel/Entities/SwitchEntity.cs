@@ -27,7 +27,7 @@ public partial class SwitchEntity : BaseClasses.ButtonEntity, IInteractiveEntity
     public SwitchEntity(SwitchEntity entity) : base(entity) { }
 
     [JsonIgnore]
-    public Light? Light => Parent?.Light(Id);
+    public Accessories.Light? Light => Parent?.Light(Id);
 
     [JsonIgnore] protected override int RotationFactor => 90;
     [JsonIgnore] public override string EntityName => "Switch";

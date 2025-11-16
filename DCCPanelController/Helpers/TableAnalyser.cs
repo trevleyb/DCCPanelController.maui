@@ -1,9 +1,10 @@
 using System.Text.RegularExpressions;
 using DCCPanelController.Models.DataModel;
+using DCCPanelController.Models.DataModel.Accessories;
 
 namespace DCCPanelController.Helpers;
 
-public class TableAnalyser<T>  where T : IDccTable {
+public class TableAnalyser<T>  where T : IAccessory {
     public static string GetUniqueID(List<T> collection) => AnalyzeCollection(collection).NewUniqueId;
 
     public static (string MostCommonPrefix, string NewUniqueId) AnalyzeCollection(List<T> collection) {
@@ -11,7 +12,7 @@ public class TableAnalyser<T>  where T : IDccTable {
         var patternNumbers = new Dictionary<string, List<(int number, string originalFormat)>>();
 
         foreach (var item in collection) {
-            var id = item.Id ?? "1";
+            var id = item.SystemId ?? "1";
 
             // Extract prefix, number, and suffix
             var (prefix, number, suffix, originalFormat) = ExtractPrefixNumberSuffix(id);

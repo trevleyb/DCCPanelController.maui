@@ -5,6 +5,7 @@ using DCCPanelController.Clients;
 using DCCPanelController.Helpers;
 using DCCPanelController.Helpers.Logging;
 using DCCPanelController.Models.DataModel;
+using DCCPanelController.Models.DataModel.Accessories;
 using DCCPanelController.Services;
 using DCCPanelController.Services.ProfileService;
 using DCCPanelController.View.Base;
@@ -13,7 +14,7 @@ using Syncfusion.Maui.Toolkit.BottomSheet;
 
 namespace DCCPanelController.View;
 
-public partial class SensorsViewModel : TablesViewModel<Sensor>
+public partial class SensorsViewModel : AccessoryViewModel<Sensor>
 {
     private const string _labelID    = "ID";
     private const string _labelName  = "Sensor";
@@ -70,7 +71,7 @@ public partial class SensorsViewModel : TablesViewModel<Sensor>
     protected override IReadOnlyDictionary<string, Func<Sensor, IComparable>> Sorters => new Dictionary<string, Func<Sensor, IComparable>>
     {
         [_labelName]  = x => x.Name ?? "",
-        [_labelID]    = x => x.Id ?? "",
+        [_labelID]    = x => x.SystemId ?? "",
         [_labelState] = x => x.State
     };
 
@@ -88,7 +89,7 @@ public partial class SensorsViewModel : TablesViewModel<Sensor>
     {
         if (sensor == null) return;
         sensor.State = !sensor.State;
-        if (!string.IsNullOrEmpty(sensor.Id))
+        if (!string.IsNullOrEmpty(sensor.SystemId))
         {
             if (ConnectionService.Client is { State: DccClientState.Connected } client)
                 await client.SendSensorCmdAsync(sensor, sensor.State)!;
@@ -124,9 +125,9 @@ public partial class SensorsViewModel : TablesViewModel<Sensor>
     {
         var sensor = new Sensor
         {
-            Id = TableAnalyser<Sensor>.GetUniqueID(Sensors.ToList()),
+            SystemId = TableAnalyser<Sensor>.GetUniqueID(Sensors.ToList()),
             Name = "New Sensor",
-            IsEditable = true,
+            Source = AccessorySource.Manual,
         };
         Sensors.Add(sensor);
         await _profileService.SaveAsync();

@@ -1,10 +1,9 @@
-// New file: Actions/ActionExecutor.cs
-
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using DCCPanelController.Helpers.Logging;
+using DCCPanelController.Models.DataModel.Accessories;
 using DCCPanelController.Services;
 using Microsoft.Extensions.Logging;
 
@@ -49,7 +48,7 @@ public static class ActionExecutor {
                     try {
                         await client.SendTurnoutCmdAsync(t, ts != TurnoutStateEnum.Closed);
                     } catch (Exception ex) {
-                        LogHelper.Logger.LogWarning($"Turnout command failed for {t.Id}: {ex.Message}");
+                        LogHelper.Logger.LogWarning($"Turnout command failed for {t.SystemId}: {ex.Message}");
                     }
                 }
             }

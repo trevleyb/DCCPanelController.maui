@@ -1,18 +1,17 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Models.DataModel;
+using DCCPanelController.Models.DataModel.Accessories;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Services;
 using DCCPanelController.View.Base;
 using Microsoft.Extensions.Logging;
-using Turnout = DCCPanelController.Models.DataModel.Turnout;
+using Turnout = DCCPanelController.Models.DataModel.Accessories.Turnout;
 
 namespace DCCPanelController.View;
 
 public partial class SensorsEditViewModel : BaseViewModel {
     private readonly             ILogger<SensorsEditViewModel> _logger;
-    [ObservableProperty] private bool                          _isManualControlled;
-    [ObservableProperty] private bool                          _isServerControlled;
     [ObservableProperty] private string                        _title;
     [ObservableProperty] private Sensor                        _sensor;
 
@@ -21,8 +20,6 @@ public partial class SensorsEditViewModel : BaseViewModel {
         Sensor = sensor;
         ConnectionService = connectionService;
         Title = Sensor?.Name ?? "Sensor Properties";
-        IsServerControlled = Sensor?.IsEditable == false;
-        IsManualControlled = Sensor?.IsEditable == true;
     }
 
     private ConnectionService ConnectionService { get; }

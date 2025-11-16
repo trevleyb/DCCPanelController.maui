@@ -10,7 +10,11 @@ using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Clients.Jmri.Events;
 using DCCPanelController.Helpers;
-using Microsoft.Extensions.Logging; // JMRI event args
+using DCCPanelController.Models.DataModel.Accessories;
+using Microsoft.Extensions.Logging;
+using Block = DCCPanelController.Models.DataModel.Accessories.Block;
+using Light = DCCPanelController.Models.DataModel.Accessories.Light;
+using Route = DCCPanelController.Models.DataModel.Accessories.Route; // JMRI event args
 
 namespace DCCPanelController.Clients.Jmri;
 
@@ -228,28 +232,28 @@ public sealed class JmriDccClient : DccClientBase, IDccClient, IDisposable {
     }
 
     // -------------------- Commands --------------------
-    public Task<IResult> SendTurnoutCmdAsync(Turnout t, bool thrown) => SendWrap(() => SetTurnoutStateAsync(t.Id ?? t.Name ?? "", thrown),
-        $"Setting turnout {t.Name}({t.Id}) to {(thrown ? "THROWN" : "CLOSED")}",
+    public Task<IResult> SendTurnoutCmdAsync(Turnout t, bool thrown) => SendWrap(() => SetTurnoutStateAsync(t.SystemId ?? t.Name ?? "", thrown),
+        $"Setting turnout {t.Name}({t.SystemId}) to {(thrown ? "THROWN" : "CLOSED")}",
         DccClientOperation.Turnout);
 
-    public Task<IResult> SendRouteCmdAsync(Route r, bool active) => SendWrap(() => SetRouteStateAsync(r.Id ?? r.Name ?? "", active),
-        $"Setting route {r.Name}({r.Id}) to {(active ? "ACTIVE" : "INACTIVE")}",
+    public Task<IResult> SendRouteCmdAsync(Route r, bool active) => SendWrap(() => SetRouteStateAsync(r.SystemId ?? r.Name ?? "", active),
+        $"Setting route {r.Name}({r.SystemId}) to {(active ? "ACTIVE" : "INACTIVE")}",
         DccClientOperation.Route);
 
-    public Task<IResult> SendSignalCmdAsync(Signal s, SignalAspectEnum aspect) => SendWrap(() => SetSignalAppearanceAsync(s.Id ?? s.Name ?? "", aspect.ToString()),
-        $"Setting signal {s.Name}({s.Id}) to {aspect}",
+    public Task<IResult> SendSignalCmdAsync(Signal s, SignalAspectEnum aspect) => SendWrap(() => SetSignalAppearanceAsync(s.SystemId ?? s.Name ?? "", aspect.ToString()),
+        $"Setting signal {s.Name}({s.SystemId}) to {aspect}",
         DccClientOperation.Signal);
 
-    public Task<IResult> SendLightCmdAsync(Light l, bool on) => SendWrap(() => SetLightStateAsync(l.Id ?? l.Name ?? "", on),
-        $"Setting light {l.Name}({l.Id}) to {(on ? "ON" : "OFF")}",
+    public Task<IResult> SendLightCmdAsync(Light l, bool on) => SendWrap(() => SetLightStateAsync(l.SystemId ?? l.Name ?? "", on),
+        $"Setting light {l.Name}({l.SystemId}) to {(on ? "ON" : "OFF")}",
         DccClientOperation.Light);
 
-    public Task<IResult> SendBlockCmdAsync(Block b, bool allocated) => SendWrap(() => SetBlockAllocatedAsync(b.Id ?? b.Name ?? "", allocated),
-        $"Setting block {b.Name}({b.Id}) to {(allocated ? "OCCUPIED" : "FREE")}",
+    public Task<IResult> SendBlockCmdAsync(Block b, bool allocated) => SendWrap(() => SetBlockAllocatedAsync(b.SystemId ?? b.Name ?? "", allocated),
+        $"Setting block {b.Name}({b.SystemId}) to {(allocated ? "OCCUPIED" : "FREE")}",
         DccClientOperation.Block);
 
-    public Task<IResult> SendSensorCmdAsync(Sensor s, bool active) => SendWrap(() => SetSensorStateAsync(s.Id ?? s.Name ?? "", active),
-        $"Setting sensor {s.Name}({s.Id}) to {(active ? "ON" : "OFF")}",
+    public Task<IResult> SendSensorCmdAsync(Sensor s, bool active) => SendWrap(() => SetSensorStateAsync(s.SystemId ?? s.Name ?? "", active),
+        $"Setting sensor {s.Name}({s.SystemId}) to {(active ? "ON" : "OFF")}",
         DccClientOperation.Sensor);
 
     private async Task<IResult> SendWrap(Func<Task> send, string log, DccClientOperation op) {
@@ -467,40 +471,40 @@ public sealed class JmriDccClient : DccClientBase, IDccClient, IDisposable {
     private void OnTurnoutChanged(JmriTurnoutEventArgs e) {
         // JMRI: 2=Closed, 4=Thrown
         var closed = e.State == 2;
-        UpdateTurnout(e.Name, e.UserName, closed ? TurnoutStateEnum.Closed : TurnoutStateEnum.Thrown);
+        UpdateTurnout(e.Name, e.UserName, closed ? TurnoutStateEnum.Closed : TurnoutStateEnum.Thrown, AccessorySource.Jmri);
         OnClientMessage($"Turnout {e.Name} {(closed ? "CLOSED" : "THROWN")}", DccClientOperation.Turnout, DccClientMessageType.Inbound);
     }
 
     private void OnRouteChanged(JmriRouteEventArgs e) {
         // JMRI: 2=Active, 4=Inactive
         var active = e.State == 2;
-        UpdateRoute(e.Name, e.UserName, active ? RouteStateEnum.Active : RouteStateEnum.Inactive);
+        UpdateRoute(e.Name, e.UserName, active ? RouteStateEnum.Active : RouteStateEnum.Inactive, AccessorySource.Jmri);
         OnClientMessage($"Route {e.Name} {(active ? "ACTIVE" : "INACTIVE")}", DccClientOperation.Route, DccClientMessageType.Inbound);
     }
 
     private void OnSensorChanged(JmriSensorEventArgs e) {
         // JMRI: 2=Active, 4=Inactive
         var on = e.State == 2;
-        UpdateSensor(e.Name, e.UserName, on);
+        UpdateSensor(e.Name, e.UserName, on, AccessorySource.Jmri);
         OnClientMessage($"Sensor {e.Name} {(on ? "ON" : "OFF")}", DccClientOperation.Sensor, DccClientMessageType.Inbound);
     }
 
     private void OnLightChanged(JmriLightEventArgs e) {
         // JMRI: 2=Active, 4=Inactive
         var on = e.State == 2;
-        UpdateLight(e.Name, e.UserName, on);
+        UpdateLight(e.Name, e.UserName, on, AccessorySource.Jmri);
         OnClientMessage($"Light {e.Name} {(on ? "ON" : "OFF")}", DccClientOperation.Light, DccClientMessageType.Inbound);
     }
 
     private void OnBlockChanged(JmriBlockEventArgs e) {
         // JMRI: 2=Occupied, 4=Unoccupied
         var occ = e.State == 2;
-        UpdateBlock(e.Name, e.UserName, occ, e.SensorName);
+        UpdateBlock(e.Name, e.UserName, occ, AccessorySource.Jmri, e.SensorName);
         OnClientMessage($"Block {e.Name} {(occ ? "OCCUPIED" : "FREE")}", DccClientOperation.Block, DccClientMessageType.Inbound);
     }
 
     private void OnSignalChanged(JmriSignalEventArgs e) {
-        UpdateSignal(e.Name, e.UserName, SignalAspectEnum.Off);
+        UpdateSignal(e.Name, e.UserName, SignalAspectEnum.Off, AccessorySource.Jmri);
         OnClientMessage($"Signal {e.Name} appearance={e.Appearance}", DccClientOperation.Signal, DccClientMessageType.Inbound);
     }
 

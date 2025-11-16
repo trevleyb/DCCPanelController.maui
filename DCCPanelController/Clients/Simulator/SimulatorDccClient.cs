@@ -3,7 +3,11 @@ using DCCPanelController.Clients.Discovery;
 using DCCPanelController.Clients.Helpers;
 using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel;
+using DCCPanelController.Models.DataModel.Accessories;
 using DCCPanelController.Models.DataModel.Entities;
+using Block = DCCPanelController.Models.DataModel.Accessories.Block;
+using Light = DCCPanelController.Models.DataModel.Accessories.Light;
+using Route = DCCPanelController.Models.DataModel.Accessories.Route;
 
 namespace DCCPanelController.Clients.Simulator {
     /// <summary>
@@ -123,61 +127,61 @@ namespace DCCPanelController.Clients.Simulator {
         // -------------------- Commands --------------------
 
         public Task<IResult> SendTurnoutCmdAsync(Turnout t, bool thrown) {
-            if (string.IsNullOrWhiteSpace(t.Id) || string.IsNullOrWhiteSpace(t.Name))
+            if (string.IsNullOrWhiteSpace(t.SystemId) || string.IsNullOrWhiteSpace(t.Name))
                 return Task.FromResult<IResult>(Result.Fail("Invalid Turnout Id/Name"));
 
-            UpdateTurnout(t.Id, t.Name, thrown ? TurnoutStateEnum.Thrown : TurnoutStateEnum.Closed);
-            OnClientMessage($"Sim TX: turnout {t.Id} {(thrown ? "THROWN" : "CLOSED")}",
+            UpdateTurnout(t.SystemId, t.Name, thrown ? TurnoutStateEnum.Thrown : TurnoutStateEnum.Closed, AccessorySource.Manual);
+            OnClientMessage($"Sim TX: turnout {t.SystemId} {(thrown ? "THROWN" : "CLOSED")}",
                 DccClientOperation.Turnout, DccClientMessageType.Outbound);
             return Task.FromResult<IResult>(Result.Ok());
         }
 
         public Task<IResult> SendRouteCmdAsync(Route r, bool active) {
-            if (string.IsNullOrWhiteSpace(r.Id) || string.IsNullOrWhiteSpace(r.Name))
+            if (string.IsNullOrWhiteSpace(r.SystemId) || string.IsNullOrWhiteSpace(r.Name))
                 return Task.FromResult<IResult>(Result.Fail("Invalid Route Id/Name"));
 
-            UpdateRoute(r.Id, r.Name, active ? RouteStateEnum.Active : RouteStateEnum.Inactive);
-            OnClientMessage($"Sim TX: route {r.Id} {(active ? "ACTIVE" : "INACTIVE")}",
+            UpdateRoute(r.SystemId, r.Name, active ? RouteStateEnum.Active : RouteStateEnum.Inactive, AccessorySource.Manual);
+            OnClientMessage($"Sim TX: route {r.SystemId} {(active ? "ACTIVE" : "INACTIVE")}",
                 DccClientOperation.Route, DccClientMessageType.Outbound);
             return Task.FromResult<IResult>(Result.Ok());
         }
 
         public Task<IResult> SendSignalCmdAsync(Signal s, SignalAspectEnum aspect) {
-            if (string.IsNullOrWhiteSpace(s.Id) || string.IsNullOrWhiteSpace(s.Name))
+            if (string.IsNullOrWhiteSpace(s.SystemId) || string.IsNullOrWhiteSpace(s.Name))
                 return Task.FromResult<IResult>(Result.Fail("Invalid Signal Id/Name"));
 
-            UpdateSignal(s.Id, s.Name, aspect);
-            OnClientMessage($"Sim TX: signal {s.Id} → {aspect}",
+            UpdateSignal(s.SystemId, s.Name, aspect, AccessorySource.Manual);
+            OnClientMessage($"Sim TX: signal {s.SystemId} → {aspect}",
                 DccClientOperation.Signal, DccClientMessageType.Outbound);
             return Task.FromResult<IResult>(Result.Ok());
         }
 
         public Task<IResult> SendLightCmdAsync(Light l, bool isActive) {
-            if (string.IsNullOrWhiteSpace(l.Id) || string.IsNullOrWhiteSpace(l.Name))
+            if (string.IsNullOrWhiteSpace(l.SystemId) || string.IsNullOrWhiteSpace(l.Name))
                 return Task.FromResult<IResult>(Result.Fail("Invalid Light Id/Name"));
 
-            UpdateLight(l.Id, l.Name, isActive);
-            OnClientMessage($"Sim TX: light {l.Id} {(isActive ? "ON" : "OFF")}",
+            UpdateLight(l.SystemId, l.Name, isActive, AccessorySource.Manual);
+            OnClientMessage($"Sim TX: light {l.SystemId} {(isActive ? "ON" : "OFF")}",
                 DccClientOperation.Light, DccClientMessageType.Outbound);
             return Task.FromResult<IResult>(Result.Ok());
         }
 
         public Task<IResult> SendBlockCmdAsync(Block b, bool isOccupied) {
-            if (string.IsNullOrWhiteSpace(b.Id) || string.IsNullOrWhiteSpace(b.Name))
+            if (string.IsNullOrWhiteSpace(b.SystemId) || string.IsNullOrWhiteSpace(b.Name))
                 return Task.FromResult<IResult>(Result.Fail("Invalid Block Id/Name"));
 
-            UpdateBlock(b.Id, b.Name, isOccupied, b.Sensor ?? "");
-            OnClientMessage($"Sim TX: block {b.Id} {(isOccupied ? "OCCUPIED" : "FREE")}",
+            UpdateBlock(b.SystemId, b.Name, isOccupied, AccessorySource.Manual, b.Sensor ?? "");
+            OnClientMessage($"Sim TX: block {b.SystemId} {(isOccupied ? "OCCUPIED" : "FREE")}",
                 DccClientOperation.Block, DccClientMessageType.Outbound);
             return Task.FromResult<IResult>(Result.Ok());
         }
 
         public Task<IResult> SendSensorCmdAsync(Sensor s, bool isOccupied) {
-            if (string.IsNullOrWhiteSpace(s.Id) || string.IsNullOrWhiteSpace(s.Name))
+            if (string.IsNullOrWhiteSpace(s.SystemId) || string.IsNullOrWhiteSpace(s.Name))
                 return Task.FromResult<IResult>(Result.Fail("Invalid Sensor Id/Name"));
 
-            UpdateSensor(s.Id, s.Name, isOccupied);
-            OnClientMessage($"Sim TX: sensor {s.Id} {(isOccupied ? "ON" : "OFF")}",
+            UpdateSensor(s.SystemId, s.Name, isOccupied, AccessorySource.Manual);
+            OnClientMessage($"Sim TX: sensor {s.SystemId} {(isOccupied ? "ON" : "OFF")}",
                 DccClientOperation.Sensor, DccClientMessageType.Outbound);
             return Task.FromResult<IResult>(Result.Ok());
         }
@@ -270,44 +274,44 @@ namespace DCCPanelController.Clients.Simulator {
         public static void SeedEntities(Profile profile, int seedCount = 1) {
             var rand = new Random();
             for (var i = 101; i < 101 + seedCount; i++) {
-                if (profile.Turnouts.Count(x => x.Id == $"NT{i}") == 0)
-                    profile.Turnouts.Add(new Turnout() { Id = $"NT{i}", Name = $"Turnout {i}", DccAddress = i, IsEditable = true, State = rand.Next(2) == 0 ? TurnoutStateEnum.Closed : TurnoutStateEnum.Thrown });
+                if (profile.Turnouts.Count(x => x.SystemId == $"NT{i}") == 0)
+                    profile.Turnouts.Add(new Turnout() { SystemId = $"NT{i}", Name = $"Turnout {i}", DccAddress = i, Source = AccessorySource.Manual, State = rand.Next(2) == 0 ? TurnoutStateEnum.Closed : TurnoutStateEnum.Thrown });
             }
 
             for (var i = 201; i < 201 + seedCount; i++) {
-                if (profile.Routes.Count(x => x.Id == $"RT{i}") == 0)
-                    profile.Routes.Add(new Route() { Id = $"RT{i}", Name = $"Route {i}", DccAddress = i, IsEditable = true, State = RouteStateEnum.Inactive });
+                if (profile.Routes.Count(x => x.SystemId == $"RT{i}") == 0)
+                    profile.Routes.Add(new Route() { SystemId = $"RT{i}", Name = $"Route {i}", DccAddress = i, Source = AccessorySource.Manual, State = RouteStateEnum.Inactive });
             }
 
             for (var i = 301; i < 301 + seedCount; i++) {
-                if (profile.Sensors.Count(x => x.Id == $"SN{i}") == 0)
-                    profile.Sensors.Add(new Sensor() { Id = $"SN{i}", Name = $"Sensor {i}", DccAddress = i, IsEditable = true, State = rand.Next(2) == 0 });
+                if (profile.Sensors.Count(x => x.SystemId == $"SN{i}") == 0)
+                    profile.Sensors.Add(new Sensor() { SystemId = $"SN{i}", Name = $"Sensor {i}", DccAddress = i, Source = AccessorySource.Manual, State = rand.Next(2) == 0 });
             }
 
             for (var i = 401; i < 401 + seedCount; i++) {
-                if (profile.Lights.Count(x => x.Id == $"LT{i}") == 0)
-                    profile.Lights.Add(new Light() { Id = $"LT{i}", Name = $"Light {i}", DccAddress = i, IsEditable = true, State = rand.Next(2) == 0 });
+                if (profile.Lights.Count(x => x.SystemId == $"LT{i}") == 0)
+                    profile.Lights.Add(new Light() { SystemId = $"LT{i}", Name = $"Light {i}", DccAddress = i, Source = AccessorySource.Manual, State = rand.Next(2) == 0 });
             }
 
             for (var i = 501; i < 501 + seedCount; i++) {
-                if (profile.Blocks.Count(x => x.Id == $"BL{i}") == 0)
-                    profile.Blocks.Add(new Block() { Id = $"BL{i}", Name = $"Block {i}", DccAddress = i, IsEditable = true, Sensor = "SN1", IsOccupied = rand.Next(2) == 0 });
+                if (profile.Blocks.Count(x => x.SystemId == $"BL{i}") == 0)
+                    profile.Blocks.Add(new Block() { SystemId = $"BL{i}", Name = $"Block {i}", DccAddress = i, Sensor = "SN1", Source = AccessorySource.Manual, IsOccupied = rand.Next(2) == 0 });
             }
 
             for (var i = 601; i < 601 + seedCount; i++) {
-                if (profile.Signals.Count(x => x.Id == $"SG{i}") == 0)
-                    profile.Signals.Add(new Signal() { Id = $"SG{i}", Name = $"Signal {i}", DccAddress = i, IsEditable = true, Aspect = "Clear" });
+                if (profile.Signals.Count(x => x.SystemId == $"SG{i}") == 0)
+                    profile.Signals.Add(new Signal() { SystemId = $"SG{i}", Name = $"Signal {i}", DccAddress = i, Source = AccessorySource.Manual, Aspect = "Clear" });
             }
         }
 
-        public (string? id, string? name) Pick(IEnumerable<IDccTable> collection) {
+        public (string? id, string? name) Pick(IEnumerable<IAccessory> collection) {
             var table = collection.ToList();
             var count = table.Count;
             if (count > 0) {
                 var idx = _rand.Next(count);
                 if (idx < count) {
                     var obj = table[idx];
-                    var (id, name) = (obj.Id, obj.Name);
+                    var (id, name) = (obj.SystemId, obj.Name);
                     if (id is { } && name is { }) return(id, name);
                 }
             }
@@ -324,7 +328,7 @@ namespace DCCPanelController.Clients.Simulator {
                     var (id, name) = Pick(Profile.Turnouts);
                     if (id is { } && name is { }) {
                         var thrown = _rand.Next(2) == 0;
-                        UpdateTurnout(id, name, thrown ? TurnoutStateEnum.Thrown : TurnoutStateEnum.Closed);
+                        UpdateTurnout(id, name, thrown ? TurnoutStateEnum.Thrown : TurnoutStateEnum.Closed, AccessorySource.Manual);
                         OnClientMessage($"Sim flip: {id} {(thrown ? "THROWN" : "CLOSED")}", DccClientOperation.Turnout, DccClientMessageType.Inbound);
                     }
 
@@ -336,7 +340,7 @@ namespace DCCPanelController.Clients.Simulator {
                     var (id, name) = Pick(Profile.Lights);
                     if (id is { } && name is { }) {
                         var on = _rand.Next(2) == 0;
-                        UpdateLight(id, name, on);
+                        UpdateLight(id, name, on, AccessorySource.Manual);
                         OnClientMessage($"Sim flip: {id} {(on ? "ON" : "OFF")}", DccClientOperation.Light, DccClientMessageType.Inbound);
                     }
 
@@ -348,7 +352,7 @@ namespace DCCPanelController.Clients.Simulator {
                     var (id, name) = Pick(Profile.Blocks);
                     if (id is { } && name is { }) {
                         var occ = _rand.Next(2) == 0;
-                        UpdateBlock(id, name, occ);
+                        UpdateBlock(id, name, occ, AccessorySource.Manual);
                         OnClientMessage($"Sim flip: {id} {(occ ? "OCCUPIED" : "FREE")}", DccClientOperation.Block, DccClientMessageType.Inbound);
                     }
                     break;

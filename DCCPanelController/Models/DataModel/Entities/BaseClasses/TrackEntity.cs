@@ -33,7 +33,7 @@ public abstract partial class TrackEntity : Entity {
 
     [JsonIgnore] protected override int RotationFactor => 45;
 
-    [JsonIgnore] public Block? Occupancy {
+    [JsonIgnore] public Accessories.Block? Occupancy {
         get {
             if (string.IsNullOrEmpty(OccupancyBlock)) return null;
             return Parent?.Block(OccupancyBlock) ?? null;

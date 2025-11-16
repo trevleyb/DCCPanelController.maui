@@ -15,21 +15,21 @@
         <HorizontalStackLayout HeightRequest="40">
             <Label WidthRequest="175" Text="System Name (ID)" VerticalOptions="Center"/>
             <Border Padding="0,0,0,0" Style="{StaticResource EntryBorderStyle}">
-                <Entry Margin="5" Style="{StaticResource EntryStyle}" HorizontalOptions="Fill" IsEnabled="{Binding Turnout.IsEditable}" Text="{Binding Turnout.Id}"/>
+                <Entry Margin="5" Style="{StaticResource EntryStyle}" HorizontalOptions="Fill" Text="{Binding Turnout.Id}"/>
             </Border>
         </HorizontalStackLayout>
 
         <HorizontalStackLayout HeightRequest="40">
             <Label WidthRequest="175" HorizontalOptions="Start" Text="User Name" VerticalOptions="Center"/>
             <Border Padding="0,0,0,0" Style="{StaticResource EntryBorderStyle}">
-                <Entry Margin="5"  Style="{StaticResource EntryStyle}" HorizontalOptions="Fill" IsEnabled="{Binding Turnout.IsEditable}" Text="{Binding Turnout.Name}"/>
+                <Entry Margin="5"  Style="{StaticResource EntryStyle}" HorizontalOptions="Fill"  Text="{Binding Turnout.Name}"/>
             </Border>
         </HorizontalStackLayout>
 
         <HorizontalStackLayout HeightRequest="40">
             <Label WidthRequest="175" HorizontalOptions="Start" Text="DCC Address" VerticalOptions="Center"/>
             <Border Padding="0,0,0,0" Style="{StaticResource EntryBorderStyle}" WidthRequest="60">
-                <Entry Keyboard="Numeric" Margin="5" Style="{StaticResource EntryStyle}" HorizontalOptions="Fill" IsEnabled="{Binding Turnout.CanEditDccAddress}" Text="{Binding Turnout.DccAddress}">
+                <Entry Keyboard="Numeric" Margin="5" Style="{StaticResource EntryStyle}" HorizontalOptions="Fill" Text="{Binding Turnout.DccAddress}">
                     <Entry.Behaviors>
                         <toolkit:NumericValidationBehavior
                             Flags="ValidateOnValueChanged"
@@ -40,8 +40,6 @@
                     </Entry.Behaviors>
                 </Entry>
             </Border>
-            <Label Margin="5,0,5,0" HorizontalOptions="Start" Text="Locked?" VerticalOptions="Center"/>
-            <Switch Margin="0,5,0,5" IsToggled="{Binding Turnout.DccAddressLocked}"/>
         </HorizontalStackLayout>
 
         <HorizontalStackLayout HeightRequest="40">
@@ -78,13 +76,6 @@
                  HeightRequest="1"
                  VerticalOptions="End"
                  HorizontalOptions="FillAndExpand"/>
-
-        <Label HorizontalOptions="Start" VerticalOptions="End" FontFamily="OpenSansLight"
-               MaximumWidthRequest="500" LineBreakMode="WordWrap" IsVisible="{Binding IsManualControlled}"
-               Text="This turnout is a manual turnout and will only work if your system allows undefined turnouts to be sent commands."/>
-        <Label HorizontalOptions="Start" VerticalOptions="End" FontFamily="OpenSansLight"
-               MaximumWidthRequest="500" LineBreakMode="WordWrap" IsVisible="{Binding IsServerControlled}"
-               Text="This turnout is managed by the server. You cannot change the System Name or User Name and if you delete this turnout, it will be recreated if it exists on the server."/>
 
     </StackLayout>
 </ContentView>

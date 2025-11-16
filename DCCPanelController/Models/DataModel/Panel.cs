@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
+using DCCPanelController.Models.DataModel.Accessories;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.DataModel.Entities.Interfaces;
 using DCCPanelController.Models.DataModel.Helpers;
@@ -41,12 +42,12 @@ public partial class Panel : ObservableObject, IEntityGeneratingID {
     [JsonIgnore]
     public string Title => string.IsNullOrEmpty(Id) ? "DCC Panel Controller" : Id;
 
-    [JsonIgnore] public ObservableCollection<Block> Blocks => Panels?.Profile?.Blocks ?? [];
-    [JsonIgnore] public ObservableCollection<Route> Routes => Panels?.Profile?.Routes ?? [];
-    [JsonIgnore] public ObservableCollection<Turnout> Turnouts => Panels?.Profile?.Turnouts ?? [];
-    [JsonIgnore] public ObservableCollection<Signal> Signals => Panels?.Profile?.Signals ?? [];
-    [JsonIgnore] public ObservableCollection<Sensor> Sensors => Panels?.Profile?.Sensors ?? [];
-    [JsonIgnore] public ObservableCollection<Light> Lights => Panels?.Profile?.Lights ?? [];
+    [JsonIgnore] public ObservableCollection<Block>     Blocks      => Panels?.Profile?.Blocks ?? [];
+    [JsonIgnore] public ObservableCollection<Route>     Routes      => Panels?.Profile?.Routes ?? [];
+    [JsonIgnore] public ObservableCollection<Turnout>   Turnouts    => Panels?.Profile?.Turnouts ?? [];
+    [JsonIgnore] public ObservableCollection<Signal>    Signals     => Panels?.Profile?.Signals ?? [];
+    [JsonIgnore] public ObservableCollection<Sensor>    Sensors     => Panels?.Profile?.Sensors ?? [];
+    [JsonIgnore] public ObservableCollection<Light>     Lights      => Panels?.Profile?.Lights ?? [];
 
     public string NextID(Panel? targetPanel = null) {
         targetPanel ??= this;
@@ -73,17 +74,17 @@ public partial class Panel : ObservableObject, IEntityGeneratingID {
         return foundItem;
     }
 
-    public Block? Block(string id) => Blocks.FirstOrDefault(x => x.Id != null && x.Id.Equals(id, StringComparison.InvariantCultureIgnoreCase)) ?? Blocks.FirstOrDefault(x => x.Name != null && x.Name.Equals(id, StringComparison.InvariantCultureIgnoreCase));
+    public Accessories.Block? Block(string id) => Blocks.FirstOrDefault(x => x.SystemId != null && x.SystemId.Equals(id, StringComparison.InvariantCultureIgnoreCase)) ?? Blocks.FirstOrDefault(x => x.Name != null && x.Name.Equals(id, StringComparison.InvariantCultureIgnoreCase));
 
-    public Route? Route(string id) => Routes.FirstOrDefault(x => x.Id != null && x.Id.Equals(id, StringComparison.InvariantCultureIgnoreCase)) ?? Routes.FirstOrDefault(x => x.Name != null && x.Name.Equals(id, StringComparison.InvariantCultureIgnoreCase));
+    public Accessories.Route? Route(string id) => Routes.FirstOrDefault(x => x.SystemId != null && x.SystemId.Equals(id, StringComparison.InvariantCultureIgnoreCase)) ?? Routes.FirstOrDefault(x => x.Name != null && x.Name.Equals(id, StringComparison.InvariantCultureIgnoreCase));
 
-    public Turnout? Turnout(string id) => Turnouts.FirstOrDefault(x => x.Id != null && x.Id.Equals(id, StringComparison.InvariantCultureIgnoreCase)) ?? Turnouts.FirstOrDefault(x => x.Name != null && x.Name.Equals(id, StringComparison.InvariantCultureIgnoreCase));
+    public Turnout? Turnout(string id) => Turnouts.FirstOrDefault(x => x.SystemId != null && x.SystemId.Equals(id, StringComparison.InvariantCultureIgnoreCase)) ?? Turnouts.FirstOrDefault(x => x.Name != null && x.Name.Equals(id, StringComparison.InvariantCultureIgnoreCase));
 
-    public Signal? Signal(string id) => Signals.FirstOrDefault(x => x.Id != null && x.Id.Equals(id, StringComparison.InvariantCultureIgnoreCase)) ?? Signals.FirstOrDefault(x => x.Name != null && x.Name.Equals(id, StringComparison.InvariantCultureIgnoreCase));
+    public Signal? Signal(string id) => Signals.FirstOrDefault(x => x.SystemId != null && x.SystemId.Equals(id, StringComparison.InvariantCultureIgnoreCase)) ?? Signals.FirstOrDefault(x => x.Name != null && x.Name.Equals(id, StringComparison.InvariantCultureIgnoreCase));
 
-    public Sensor? Sensor(string id) => Sensors.FirstOrDefault(x => x.Id != null && x.Id.Equals(id, StringComparison.InvariantCultureIgnoreCase)) ?? Sensors.FirstOrDefault(x => x.Name != null && x.Name.Equals(id, StringComparison.InvariantCultureIgnoreCase));
+    public Sensor? Sensor(string id) => Sensors.FirstOrDefault(x => x.SystemId != null && x.SystemId.Equals(id, StringComparison.InvariantCultureIgnoreCase)) ?? Sensors.FirstOrDefault(x => x.Name != null && x.Name.Equals(id, StringComparison.InvariantCultureIgnoreCase));
 
-    public Light? Light(string id) => Lights.FirstOrDefault(x => x.Id != null && x.Id.Equals(id, StringComparison.InvariantCultureIgnoreCase)) ?? Lights.FirstOrDefault(x => x.Name != null && x.Name.Equals(id, StringComparison.InvariantCultureIgnoreCase));
+    public Accessories.Light? Light(string id) => Lights.FirstOrDefault(x => x.SystemId != null && x.SystemId.Equals(id, StringComparison.InvariantCultureIgnoreCase)) ?? Lights.FirstOrDefault(x => x.Name != null && x.Name.Equals(id, StringComparison.InvariantCultureIgnoreCase));
 
     public Entity AddEntity(Entity entity) {
         entity.Parent = this;

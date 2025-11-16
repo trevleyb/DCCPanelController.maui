@@ -19,7 +19,7 @@ public class ActionButtonTile : Tile, ITileInteractive {
 
         foreach (var turnout in entity.TurnoutPanelActions) {
             //var turnoutEnt = entity?.Parent?.GetTurnoutEntity(turnout.ActionID);
-            var turnoutRef = entity.Parent?.Turnouts.FirstOrDefault(t => t.Id == turnout.ActionID);
+            var turnoutRef = entity.Parent?.Turnouts.FirstOrDefault(t => t.SystemId == turnout.ActionID);
             turnoutRef?.StateChanged += TurnoutRefOnStateChanged;
         }
     }
