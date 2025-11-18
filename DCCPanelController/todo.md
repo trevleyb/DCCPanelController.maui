@@ -17,7 +17,8 @@
 - [ ] Add copyright notices for fonts
 
 ## Panels
-- [ ] Chelsea and Balmain Sample Panels 
+- [x] Chelsea and Balmain Sample Panels 
+- [x] Chelsea and Balmain Sample Panels 
 - [ ] Introduction to DCC Panel Controller Panels
 - [ ] Fix references in Piedmont Southern panel
 
