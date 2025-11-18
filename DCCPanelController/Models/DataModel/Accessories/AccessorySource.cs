@@ -5,8 +5,8 @@ namespace DCCPanelController.Models.DataModel.Accessories;
 /// </summary>
 public enum AccessorySource {
     Unknown     = 0,
-    Jmri        = 1,
-    WiThrottle  = 2,
-    Manual      = 3,
-    Imported    = 4
+    Manual      = 1,
+    Jmri        = 2,
+    WiThrottle  = 3,
+    Simulator   = 4,
 }

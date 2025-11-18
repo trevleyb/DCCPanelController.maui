@@ -15,8 +15,7 @@ using Light = DCCPanelController.Models.DataModel.Accessories.Light;
 
 namespace DCCPanelController.View;
 
-public partial class LightsViewModel : AccessoryViewModel<Light>
-{
+public partial class LightsViewModel : AccessoryViewModel<Light> {
     private const string _labelID    = "ID";
     private const string _labelName  = "Light";
     private const string _labelState = "Lit?";
@@ -24,8 +23,7 @@ public partial class LightsViewModel : AccessoryViewModel<Light>
     private readonly ILogger<LightsViewModel> _logger;
 
     [ObservableProperty] private Light? _selectedLight;
-    [ObservableProperty] private bool _isLightSelected;
-    [ObservableProperty] private bool _canAddLight;
+    [ObservableProperty] private bool   _isLightSelected;
 
     [ObservableProperty] private string _columnLabelID    = _labelID;
     [ObservableProperty] private string _columnLabelName  = _labelName;
@@ -34,19 +32,16 @@ public partial class LightsViewModel : AccessoryViewModel<Light>
     private SfBottomSheet? _bottomSheet;
 
     public LightsViewModel(ILogger<LightsViewModel> logger, ProfileService profileService, ConnectionService connectionService)
-        : base(profileService, connectionService)
-    {
+        : base(profileService, connectionService) {
         _logger = logger;
 
-        PropertyChanged += (_, args) =>
-        {
+        PropertyChanged += (_, args) => {
             if (args.PropertyName == nameof(SelectedLight))
                 IsLightSelected = SelectedLight != null;
         };
     }
 
-    public ObservableCollection<Light> Lights
-    {
+    public ObservableCollection<Light> Lights {
         get => Items;
         private set => Items = value;
     }
@@ -57,25 +52,22 @@ public partial class LightsViewModel : AccessoryViewModel<Light>
 
     public void SetNavigationReferences(SfBottomSheet bottomSheet) => _bottomSheet = bottomSheet;
 
-    public void SetToolbarItems()
-    {
+    public void SetToolbarItems() {
         IsSupported = _profileService.ActiveProfile?.Settings?.ClientSettings?.Capabilities.Contains(DccClientCapability.Lights) ?? false;
-        CanAddLight = _profileService.ActiveProfile?.Settings?.ClientSettings?.SupportsManualEntries == true && IsSupported;
     }
 
     protected override string DefaultSortKey => _labelName;
 
     protected override ObservableCollection<Light> ResolveCollection(Profile profile) => profile.Lights;
 
-    protected override IReadOnlyDictionary<string, Func<Light, IComparable>> Sorters => new Dictionary<string, Func<Light, IComparable>>
-    {
-        [_labelName]  = x => x.Name ?? "",
-        [_labelID]    = x => x.SystemId ?? "",
-        [_labelState] = x => x.State
-    };
+    protected override IReadOnlyDictionary<string, Func<Light, IComparable>> Sorters =>
+        new Dictionary<string, Func<Light, IComparable>> {
+            [_labelName] = x => x.Name ?? "",
+            [_labelID] = x => x.SystemId ?? "",
+            [_labelState] = x => x.State
+        };
 
-    protected override void UpdateColumnLabels()
-    {
+    protected override void UpdateColumnLabels() {
         ColumnLabelID = LabelWithArrow(_labelID, _labelID);
         ColumnLabelName = LabelWithArrow(_labelName, _labelName);
         ColumnLabelState = LabelWithArrow(_labelState, _labelState);
@@ -84,33 +76,29 @@ public partial class LightsViewModel : AccessoryViewModel<Light>
     protected override void OnItemsRebound() => OnPropertyChanged(nameof(Lights));
 
     [RelayCommand]
-    public async Task ToggleLightState(Light? light)
-    {
+    public async Task ToggleLightState(Light? light) {
         if (light == null) return;
         light.State = !light.State;
-        if (!string.IsNullOrEmpty(light.SystemId))
-        {
+        if (!string.IsNullOrEmpty(light.SystemId)) {
             if (ConnectionService.Client is { State: DccClientState.Connected } client)
                 await client.SendLightCmdAsync(light, light.State)!;
         }
     }
 
     [RelayCommand]
-    private async Task RefreshLightsAsync()
-    {
+    private async Task RefreshLightsAsync() {
         IsBusy = true;
-        try
-        {
+        try {
             _profileService.ActiveProfile?.RefreshLights();
             if (ConnectionService.Client is { } client) await client.ForceRefreshAsync();
             OnPropertyChanged(nameof(Lights));
+        } finally {
+            IsBusy = false;
         }
-        finally { IsBusy = false; }
     }
 
     [RelayCommand]
-    private async Task DeleteLightAsync(Light? light)
-    {
+    private async Task DeleteLightAsync(Light? light) {
         light ??= SelectedLight;
         if (light is null) return;
         Lights.Remove(light);
@@ -121,14 +109,13 @@ public partial class LightsViewModel : AccessoryViewModel<Light>
     }
 
     [RelayCommand]
-    private async Task AddLightAsync()
-    {
-        var light = new Light
-        {
+    private async Task AddLightAsync() {
+        var light = new Light {
             SystemId = TableAnalyser<Light>.GetUniqueID(Lights.ToList()),
             Name = "New Light",
             Source = AccessorySource.Manual,
         };
+
         Lights.Add(light);
         await _profileService.SaveAsync();
         OnPropertyChanged(nameof(Lights));
@@ -137,18 +124,16 @@ public partial class LightsViewModel : AccessoryViewModel<Light>
     }
 
     [RelayCommand]
-    public async Task EditLightAsync(Light? light)
-    {
+    public async Task EditLightAsync(Light? light) {
         light ??= SelectedLight;
-        try
-        {
-            if (light is { } && _bottomSheet is { } sheet)
-            {
+        try {
+            if (light is { } && _bottomSheet is { } sheet) {
                 var vm = new LightsEditViewModel(LogHelper.CreateLogger<LightsEditViewModel>(), light, ConnectionService);
                 sheet.BottomSheetContent = vm.CreatePropertiesView();
                 sheet.ContentWidthMode = (DeviceInfo.Platform == DevicePlatform.iOS && DeviceInfo.Current.Idiom == DeviceIdiom.Phone)
                     ? BottomSheetContentWidthMode.Full
                     : BottomSheetContentWidthMode.Custom;
+
                 if (sheet.ContentWidthMode == BottomSheetContentWidthMode.Custom)
                     sheet.BottomSheetContentWidth = 400;
 
@@ -161,11 +146,10 @@ public partial class LightsViewModel : AccessoryViewModel<Light>
                 sheet.IsVisible = true;
                 sheet.Show();
             }
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             _logger.LogCritical("Error Launching Light Properties Page: " + ex.Message);
         }
+
         OnPropertyChanged(nameof(Lights));
     }
 }

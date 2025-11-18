@@ -26,7 +26,6 @@ public partial class BlocksViewModel : AccessoryViewModel<Block>
 
     [ObservableProperty] private Block? _selectedBlock;
     [ObservableProperty] private bool _isBlockSelected;
-    [ObservableProperty] private bool _canAddBlock;
 
     [ObservableProperty] private string _columnLabelID     = _labelID;
     [ObservableProperty] private string _columnLabelName   = _labelName;
@@ -60,10 +59,8 @@ public partial class BlocksViewModel : AccessoryViewModel<Block>
 
     public void SetNavigationReferences(SfBottomSheet bottomSheet) => _bottomSheet = bottomSheet;
 
-    public void SetToolbarItems()
-    {
+    public void SetToolbarItems() {
         IsSupported = _profileService.ActiveProfile?.Settings?.ClientSettings?.Capabilities.Contains(DccClientCapability.Blocks) ?? false;
-        CanAddBlock = _profileService.ActiveProfile?.Settings?.ClientSettings?.SupportsManualEntries == true && IsSupported;
     }
 
     protected override string DefaultSortKey => _labelName;

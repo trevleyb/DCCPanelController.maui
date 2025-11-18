@@ -5,6 +5,7 @@ using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Clients;
 using DCCPanelController.Helpers;
 using DCCPanelController.Helpers.Logging;
+using DCCPanelController.Models.DataModel.Accessories;
 using DCCPanelController.Models.DataModel.Entities;
 using Microsoft.Extensions.Logging;
 
@@ -121,10 +122,28 @@ public partial class ConnectionService : ObservableObject {
         // Run exactly once for this connection kind.
         if (Interlocked.Exchange(ref _initOnceFlag, 1) != 0) return;
         try {
+            await SetAccessorySourceToUnknown();
             await SetTurnoutsToDefaultState();
             await ResetOccupancyStates();
         } catch (Exception ex) {
             _logger.LogError(ex, "Post-connect initialization failed.");
+        }
+    }
+
+    /// <summary>
+    /// For any accessories, if the accessory is marked as Manual, then leave it alone. But if it
+    /// is marked as another system, then we switch it to UNKNOWN and then we will update it once
+    /// we get the data from the connected system. 
+    /// </summary>
+    private async Task SetAccessorySourceToUnknown() {
+        var profile = _profileService.ActiveProfile;
+        if (profile is { }) {
+            foreach (var accessory in profile.Blocks.Where(b => b.Source != AccessorySource.Manual)) accessory.Source = AccessorySource.Unknown;
+            foreach (var accessory in profile.Routes.Where(b => b.Source != AccessorySource.Manual)) accessory.Source = AccessorySource.Unknown;
+            foreach (var accessory in profile.Lights.Where(b => b.Source != AccessorySource.Manual)) accessory.Source = AccessorySource.Unknown;
+            foreach (var accessory in profile.Sensors.Where(b => b.Source != AccessorySource.Manual)) accessory.Source = AccessorySource.Unknown;
+            foreach (var accessory in profile.Signals.Where(b => b.Source != AccessorySource.Manual)) accessory.Source = AccessorySource.Unknown;
+            foreach (var accessory in profile.Turnouts.Where(b => b.Source != AccessorySource.Manual)) accessory.Source = AccessorySource.Unknown;
         }
     }
 

@@ -1,16 +1,16 @@
+using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Models.DataModel.Accessories;
 using DCCPanelController.Models.DataModel.Entities;
-using DCCPanelController.Models.DataModel.Entities.Interfaces;
 using DCCPanelController.Models.DataModel.Helpers;
 using DCCPanelController.Models.DataModel.Repository;
 using DCCPanelController.View.Helpers;
 using Microsoft.Extensions.Logging;
 
 namespace DCCPanelController.Models.DataModel;
-
 
 public partial class Profile : ObservableObject {
     
@@ -114,10 +114,10 @@ public partial class Profile : ObservableObject {
         RefreshSensors();
     }
 
-    public void RefreshTurnouts() => RefreshCollection(Turnouts, t => t is { Source: not AccessorySource.Manual and not AccessorySource.Imported });
-    public void RefreshRoutes() => RefreshCollection(Routes, t => t is { Source    : not AccessorySource.Manual and not AccessorySource.Imported });
-    public void RefreshBlocks() => RefreshCollection(Blocks, t => t is { Source    : not AccessorySource.Manual and not AccessorySource.Imported });
-    public void RefreshSignals() => RefreshCollection(Signals, t => t is { Source  : not AccessorySource.Manual and not AccessorySource.Imported });
-    public void RefreshSensors() => RefreshCollection(Sensors, t => t is { Source  : not AccessorySource.Manual and not AccessorySource.Imported });
-    public void RefreshLights() => RefreshCollection(Lights, t => t is { Source    : not AccessorySource.Manual and not AccessorySource.Imported });
+    public void RefreshTurnouts() => RefreshCollection(Turnouts, t => t is { Source: not AccessorySource.Manual});
+    public void RefreshRoutes() => RefreshCollection(Routes, t => t is { Source    : not AccessorySource.Manual});
+    public void RefreshBlocks() => RefreshCollection(Blocks, t => t is { Source    : not AccessorySource.Manual});
+    public void RefreshSignals() => RefreshCollection(Signals, t => t is { Source  : not AccessorySource.Manual});
+    public void RefreshSensors() => RefreshCollection(Sensors, t => t is { Source  : not AccessorySource.Manual});
+    public void RefreshLights() => RefreshCollection(Lights, t => t is { Source    : not AccessorySource.Manual});
 }

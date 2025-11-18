@@ -20,11 +20,11 @@ namespace DCCPanelController.Models.DataModel.Accessories;
 /// </summary>
 public abstract partial class Accessory : ObservableObject, IEquatable<Accessory>, IComparable<Accessory> {
     
-    [ObservableProperty] private string? _systemId;
-    [ObservableProperty] private string? _name;
-    [ObservableProperty] private int? _dccAddress;
-    [ObservableProperty] private AccessorySource _source = AccessorySource.Unknown;
-    [ObservableProperty] private bool _isValidForCurrentConnection;
+    [ObservableProperty] private string?              _systemId;
+    [ObservableProperty] private string?              _name;
+    [ObservableProperty] private int?                 _dccAddress;
+    [ObservableProperty] private bool                 _isValidForCurrentConnection;
+    [ObservableProperty] private AccessorySource      _source      = AccessorySource.Unknown;
     [ObservableProperty] private AccessoryBindingMode _bindingMode = AccessoryBindingMode.Unbound;
 
     [JsonIgnore] public string DisplayFormat => $"{(SystemId ?? "Unnamed")} ({(DccAddress.HasValue ? DccAddress.Value.ToString() : "—")})";

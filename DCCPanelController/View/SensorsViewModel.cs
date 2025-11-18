@@ -14,8 +14,7 @@ using Syncfusion.Maui.Toolkit.BottomSheet;
 
 namespace DCCPanelController.View;
 
-public partial class SensorsViewModel : AccessoryViewModel<Sensor>
-{
+public partial class SensorsViewModel : AccessoryViewModel<Sensor> {
     private const string _labelID    = "ID";
     private const string _labelName  = "Sensor";
     private const string _labelState = "Occupied?";
@@ -23,7 +22,6 @@ public partial class SensorsViewModel : AccessoryViewModel<Sensor>
     private readonly ILogger<SensorsViewModel> _logger;
 
     [ObservableProperty] private bool _isSensorSelected;
-    [ObservableProperty] private bool _canAddSensor;
 
     [ObservableProperty] private string _columnLabelID    = _labelID;
     [ObservableProperty] private string _columnLabelName  = _labelName;
@@ -32,19 +30,16 @@ public partial class SensorsViewModel : AccessoryViewModel<Sensor>
     private SfBottomSheet? _bottomSheet;
 
     public SensorsViewModel(ILogger<SensorsViewModel> logger, ProfileService profileService, ConnectionService connectionService)
-        : base(profileService, connectionService)
-    {
+        : base(profileService, connectionService) {
         _logger = logger;
 
-        PropertyChanged += (_, args) =>
-        {
+        PropertyChanged += (_, args) => {
             if (args.PropertyName == nameof(SelectedSensor))
                 IsSensorSelected = SelectedSensor != null;
         };
     }
 
-    public ObservableCollection<Sensor> Sensors
-    {
+    public ObservableCollection<Sensor> Sensors {
         get => Items;
         private set => Items = value;
     }
@@ -57,26 +52,22 @@ public partial class SensorsViewModel : AccessoryViewModel<Sensor>
 
     public void SetNavigationReferences(SfBottomSheet bottomSheet) => _bottomSheet = bottomSheet;
 
-    public void SetToolbarItems()
-    {
-        // Sensors support is currently disabled in original code
+    public void SetToolbarItems() {
         IsSupported = false;
-        CanAddSensor = _profileService.ActiveProfile?.Settings?.ClientSettings?.SupportsManualEntries == true && IsSupported;
     }
 
     protected override string DefaultSortKey => _labelName;
 
     protected override ObservableCollection<Sensor> ResolveCollection(Profile profile) => profile.Sensors;
 
-    protected override IReadOnlyDictionary<string, Func<Sensor, IComparable>> Sorters => new Dictionary<string, Func<Sensor, IComparable>>
-    {
-        [_labelName]  = x => x.Name ?? "",
-        [_labelID]    = x => x.SystemId ?? "",
-        [_labelState] = x => x.State
-    };
+    protected override IReadOnlyDictionary<string, Func<Sensor, IComparable>> Sorters =>
+        new Dictionary<string, Func<Sensor, IComparable>> {
+            [_labelName] = x => x.Name ?? "",
+            [_labelID] = x => x.SystemId ?? "",
+            [_labelState] = x => x.State
+        };
 
-    protected override void UpdateColumnLabels()
-    {
+    protected override void UpdateColumnLabels() {
         ColumnLabelID = LabelWithArrow(_labelID, _labelID);
         ColumnLabelName = LabelWithArrow(_labelName, _labelName);
         ColumnLabelState = LabelWithArrow(_labelState, _labelState);
@@ -85,32 +76,28 @@ public partial class SensorsViewModel : AccessoryViewModel<Sensor>
     protected override void OnItemsRebound() => OnPropertyChanged(nameof(Sensors));
 
     [RelayCommand(AllowConcurrentExecutions = false)]
-    public async Task ToggleSensorState(Sensor? sensor)
-    {
+    public async Task ToggleSensorState(Sensor? sensor) {
         if (sensor == null) return;
         sensor.State = !sensor.State;
-        if (!string.IsNullOrEmpty(sensor.SystemId))
-        {
+        if (!string.IsNullOrEmpty(sensor.SystemId)) {
             if (ConnectionService.Client is { State: DccClientState.Connected } client)
                 await client.SendSensorCmdAsync(sensor, sensor.State)!;
         }
     }
 
     [RelayCommand]
-    private async Task RefreshSensorsAsync()
-    {
+    private async Task RefreshSensorsAsync() {
         IsBusy = true;
-        try
-        {
+        try {
             _profileService.ActiveProfile?.RefreshSensors();
             if (ConnectionService.Client is { } client) await client.ForceRefreshAsync();
+        } finally {
+            IsBusy = false;
         }
-        finally { IsBusy = false; }
     }
 
     [RelayCommand]
-    private async Task DeleteSensorAsync(Sensor? sensor)
-    {
+    private async Task DeleteSensorAsync(Sensor? sensor) {
         sensor ??= SelectedSensor;
         if (sensor is null) return;
         Sensors.Remove(sensor);
@@ -121,14 +108,13 @@ public partial class SensorsViewModel : AccessoryViewModel<Sensor>
     }
 
     [RelayCommand]
-    private async Task AddSensorAsync()
-    {
-        var sensor = new Sensor
-        {
+    private async Task AddSensorAsync() {
+        var sensor = new Sensor {
             SystemId = TableAnalyser<Sensor>.GetUniqueID(Sensors.ToList()),
             Name = "New Sensor",
             Source = AccessorySource.Manual,
         };
+
         Sensors.Add(sensor);
         await _profileService.SaveAsync();
         OnPropertyChanged(nameof(Sensors));
@@ -137,18 +123,16 @@ public partial class SensorsViewModel : AccessoryViewModel<Sensor>
     }
 
     [RelayCommand]
-    private async Task EditSensorAsync(Sensor? sensor)
-    {
+    private async Task EditSensorAsync(Sensor? sensor) {
         sensor ??= SelectedSensor;
-        try
-        {
-            if (sensor is { } && _bottomSheet is { } sheet)
-            {
+        try {
+            if (sensor is { } && _bottomSheet is { } sheet) {
                 var vm = new SensorsEditViewModel(LogHelper.CreateLogger<SensorsEditViewModel>(), sensor, ConnectionService);
                 sheet.BottomSheetContent = vm.CreatePropertiesView();
                 sheet.ContentWidthMode = (DeviceInfo.Platform == DevicePlatform.iOS && DeviceInfo.Current.Idiom == DeviceIdiom.Phone)
                     ? BottomSheetContentWidthMode.Full
                     : BottomSheetContentWidthMode.Custom;
+
                 if (sheet.ContentWidthMode == BottomSheetContentWidthMode.Custom)
                     sheet.BottomSheetContentWidth = 400;
 
@@ -161,11 +145,10 @@ public partial class SensorsViewModel : AccessoryViewModel<Sensor>
                 sheet.IsVisible = true;
                 sheet.Show();
             }
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             _logger.LogCritical("Error Launching Sensor Properties Page: " + ex.Message);
         }
+
         OnPropertyChanged(nameof(Sensors));
     }
 }

@@ -23,8 +23,6 @@ public partial class TurnoutsViewModel : AccessoryViewModel<Turnout> {
 
     private readonly ILogger<TurnoutsViewModel> _logger;
 
-    [ObservableProperty] private bool _canDelTurnout;
-    [ObservableProperty] private bool _canAddTurnout;
     [ObservableProperty] private bool _isTurnoutSelected;
 
     // Header labels with sort arrows
@@ -42,7 +40,6 @@ public partial class TurnoutsViewModel : AccessoryViewModel<Turnout> {
         PropertyChanged += (_, args) => {
             if (args.PropertyName == nameof(SelectedTurnout)) {
                 IsTurnoutSelected = SelectedTurnout != null;
-                CanDelTurnout = _profileService.ActiveProfile?.Settings?.ClientSettings?.SupportsManualEntries == true && IsSupported;
             }
         };
     }
@@ -67,8 +64,6 @@ public partial class TurnoutsViewModel : AccessoryViewModel<Turnout> {
 
     public void SetToolbarItems() {
         IsSupported = _profileService.ActiveProfile?.Settings?.ClientSettings?.Capabilities.Contains(DccClientCapability.Turnouts) ?? false;
-        CanAddTurnout = _profileService.ActiveProfile?.Settings?.ClientSettings?.SupportsManualEntries == true && IsSupported;
-        CanDelTurnout = _profileService.ActiveProfile?.Settings?.ClientSettings?.SupportsManualEntries == true && IsSupported;
     }
 
     protected override string DefaultSortKey => _labelName;

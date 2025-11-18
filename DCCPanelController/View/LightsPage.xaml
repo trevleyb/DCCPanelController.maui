@@ -17,8 +17,7 @@
     xmlns:accessories="clr-namespace:DCCPanelController.Models.DataModel.Accessories">
 
     <ContentPage.ToolbarItems>
-        <ToolbarItem
-            Command="{Binding AddLightCommand}" IsEnabled="{Binding CanAddLight}" IconImageSource="{Binding CanAddLight, Converter={StaticResource BoolToIcon}, ConverterParameter=plus_circle}"/>
+        <ToolbarItem Command="{Binding AddLightCommand}" IconImageSource="plus_circle_active.png}"/>
 
         <ToolbarItem
             Command="{Binding DeleteLightCommand}" IsEnabled="{Binding IsLightSelected}"
@@ -71,7 +70,7 @@
     <Grid>
     <StackLayout x:Name="MainStackLayout">
         <Grid
-            ColumnDefinitions="120,*,90"
+            ColumnDefinitions="120,*,90, 80"
             HorizontalOptions="Fill">
             <Button
                 Command="{Binding SortByColumnCommand}"
@@ -93,6 +92,11 @@
                 Grid.Column="2"
                 Style="{StaticResource ColumnLabel}"
                 Text="{Binding ColumnLabelState}"/>
+
+            <Label Text="Source"
+                   Grid.Column="3"
+                   Style="{StaticResource ColumnLabel}"/>
+
         </Grid>
         <BoxView
             BackgroundColor="{StaticResource Primary}"
@@ -122,7 +126,7 @@
                             <!-- <Grid Style="{StaticResource SelectableItemStyle}"> -->
                             <Grid>
                             <StackLayout Padding="0">
-                                <Grid ColumnDefinitions="120,*,70,15" Margin="0,5,0,5" Padding="0">
+                                <Grid ColumnDefinitions="120,*,70,15,80" Margin="0,5,0,5" Padding="0">
                                     <Label
                                         Grid.Column="0"
                                         Margin="10,0,0,0"
@@ -211,6 +215,15 @@
                                                 x:DataType="{x:Type view:LightsViewModel}"/>
                                         </Image.GestureRecognizers>
                                     </Image>
+                                    
+                                    <Label
+                                        Grid.Column="4"
+                                        HorizontalOptions="FillAndExpand"
+                                        LineBreakMode="WordWrap"
+                                        Style="{StaticResource MediumLabel}"
+                                        Text="{Binding Source}"
+                                        VerticalOptions="Center" />
+
                                 </Grid>
                                 <BoxView
                                     BackgroundColor="{StaticResource Primary}"
