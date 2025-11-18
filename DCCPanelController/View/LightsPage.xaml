@@ -17,7 +17,9 @@
     xmlns:accessories="clr-namespace:DCCPanelController.Models.DataModel.Accessories">
 
     <ContentPage.ToolbarItems>
-        <ToolbarItem Command="{Binding AddLightCommand}" IconImageSource="plus_circle_active.png}"/>
+        <ToolbarItem Command="{Binding AddLightCommand}" 
+                     IsEnabled="{Binding CanAddNewAccessory}"
+                     IconImageSource="{Binding CanAddNewAccessory, Converter={StaticResource BoolToIcon}, ConverterParameter=plus_circle}"/>
 
         <ToolbarItem
             Command="{Binding DeleteLightCommand}" IsEnabled="{Binding IsLightSelected}"

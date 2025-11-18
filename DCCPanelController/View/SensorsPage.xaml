@@ -18,7 +18,9 @@
 
     <ContentPage.ToolbarItems>
         <ToolbarItem
-            Command="{Binding AddSensorCommand}" IconImageSource="plus_circle_active.png}"/>
+            Command="{Binding AddSensorCommand}"
+            IsEnabled="{Binding CanAddNewAccessory}"
+            IconImageSource="{Binding CanAddNewAccessory, Converter={StaticResource BoolToIcon}, ConverterParameter=plus_circle}"/>
 
         <ToolbarItem
             Command="{Binding DeleteSensorCommand}" IsEnabled="{Binding IsSensorSelected}"

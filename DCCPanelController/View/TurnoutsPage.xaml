@@ -19,7 +19,9 @@
 
     <ContentPage.ToolbarItems>
         <ToolbarItem
-            Command="{Binding AddTurnoutCommand}" IconImageSource="plus_circle_active.png" />
+            Command="{Binding AddTurnoutCommand}"
+            IsEnabled="{Binding CanAddNewAccessory}"
+            IconImageSource="{Binding CanAddNewAccessory, Converter={StaticResource BoolToIcon}, ConverterParameter=plus_circle}" />
 
         <ToolbarItem
             Command="{Binding DeleteTurnoutCommand}" IsEnabled="{Binding IsTurnoutSelected}"
