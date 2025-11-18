@@ -222,17 +222,23 @@ namespace DCCPanelController.Clients.WiThrottle {
             return Task.FromResult<IResult>(Result.Ok());
         }
 
-        // ---- Commands (supported: Turnouts & Routes per your proxy) ---------
-
+        // ----------------------------------------------------------------------------------------------------------
+        // Commands (supported: Turnouts & Routes) 
+        // ----------------------------------------------------------------------------------------------------------
         public async Task<IResult> SendTurnoutCmdAsync(Turnout turnout, bool thrown) {
             if (State != DccClientState.Connected || _stream is null) return Result.Fail("Not connected to WiThrottle server");
             if (string.IsNullOrEmpty(turnout.SystemId)) return Result.Fail("Invalid Turnout Id provided.");
 
             try {
-                // Reuse your existing command object; it exposes Command string
-                var cmd = new TurnoutCommand(turnout.SystemId, thrown ? TurnoutStateEnum.Thrown : TurnoutStateEnum.Closed);
+                var turnoutId = turnout.Source == AccessorySource.WiThrottle && !string.IsNullOrEmpty(turnout.SystemId)
+                    ? turnout.SystemId
+                    : (turnout.DccAddress is > 0 ? turnout.DccAddress.Value.ToString() : string.Empty);
+
+                if (string.IsNullOrWhiteSpace(turnoutId)) return Result.Fail("Invalid Turnout Id provided.");
+                
+                var cmd = new TurnoutCommand(turnoutId, thrown ? TurnoutStateEnum.Thrown : TurnoutStateEnum.Closed);
                 await SendRawAsync(cmd.Command);
-                OnClientMessage($"Setting turnout {turnout.Name}({turnout.SystemId}) to {(thrown ? "THROWN" : "CLOSED")}", DccClientOperation.Turnout, DccClientMessageType.Outbound);
+                OnClientMessage($"Setting turnout {turnout.Name}({turnoutId}) to {(thrown ? "THROWN" : "CLOSED")}", DccClientOperation.Turnout, DccClientMessageType.Outbound);
                 return Result.Ok();
             } catch (Exception ex) {
                 return Result.Fail(ex, "Failed to send turnout command to WiThrottle server");
@@ -244,11 +250,15 @@ namespace DCCPanelController.Clients.WiThrottle {
             if (string.IsNullOrEmpty(route.SystemId)) return Result.Fail("Invalid Route Id provided.");
 
             try {
-                // Your proxy sends a RouteCommand without an active flag; mirror that.
-                var cmd = new RouteCommand(route.SystemId);
+                var routeId = route.Source == AccessorySource.WiThrottle && !string.IsNullOrEmpty(route.SystemId)
+                    ? route.SystemId
+                    : (route.DccAddress is > 0 ? route.DccAddress.Value.ToString() : string.Empty);
+
+                if (string.IsNullOrWhiteSpace(routeId)) return Result.Fail("Invalid Route Id provided.");
+
+                var cmd = new RouteCommand(routeId);
                 await SendRawAsync(cmd.Command);
-                OnClientMessage($"Setting route {route.Name}({route.SystemId}) to {(active ? "ACTIVE" : "INACTIVE")}",
-                    DccClientOperation.Route, DccClientMessageType.Outbound);
+                OnClientMessage($"Setting route {route.Name}({routeId}) to {(active ? "ACTIVE" : "INACTIVE")}", DccClientOperation.Route, DccClientMessageType.Outbound);
                 return Result.Ok();
             } catch (Exception ex) {
                 return Result.Fail(ex, "Failed to send route command to WiThrottle server");
@@ -362,8 +372,7 @@ namespace DCCPanelController.Clients.WiThrottle {
                         t.StateEnum == TurnoutStateEnum.Thrown
                             ? Models.DataModel.Entities.TurnoutStateEnum.Thrown
                             : Models.DataModel.Entities.TurnoutStateEnum.Closed, AccessorySource.WiThrottle);
-                    OnClientMessage($"Turnout Change Event: {t.SystemName}=>{t.State}",
-                        DccClientOperation.Turnout, DccClientMessageType.Inbound);
+                    OnClientMessage($"Turnout Change Event: {t.SystemName}=>{t.State}", DccClientOperation.Turnout, DccClientMessageType.Inbound);
                 break;
 
                 case RouteEvent r:
@@ -371,8 +380,7 @@ namespace DCCPanelController.Clients.WiThrottle {
                         r.StateEnum == RouteStateEnum.Active
                             ? Models.DataModel.Entities.RouteStateEnum.Active
                             : Models.DataModel.Entities.RouteStateEnum.Inactive, AccessorySource.WiThrottle);
-                    OnClientMessage($"Route Change Event: {r.SystemName}=>{r.State}",
-                        DccClientOperation.Route, DccClientMessageType.Inbound);
+                    OnClientMessage($"Route Change Event: {r.SystemName}=>{r.State}", DccClientOperation.Route, DccClientMessageType.Inbound);
                 break;
 
                 case FastClockEvent fc:
