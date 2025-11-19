@@ -30,19 +30,19 @@ public abstract partial class Accessory : ObservableObject, IEquatable<Accessory
     [JsonIgnore] public string DisplayFormat => $"{(SystemId ?? "Unnamed")} ({(DccAddress.HasValue ? DccAddress.Value.ToString() : "—")})";
 
     // Tracks whether DccAddress was explicitly edited vs inferred from SystemId.
-    private bool dccAddressHasBeenExplicitlySet;
+    private bool _dccAddressHasBeenExplicitlySet;
 
     partial void OnSystemIdChanged(string? value) {
         // If the user hasn't explicitly edited DccAddress, try to infer it
         // from the new SystemId (e.g., "NT432" -> 432).
-        if (!dccAddressHasBeenExplicitlySet) {
+        if (!_dccAddressHasBeenExplicitlySet) {
             InferDccAddressFromSystemId();
         }
     }
 
     partial void OnDccAddressChanged(int? value) {
         // Any explicit change via the property marks it as "explicit".
-        dccAddressHasBeenExplicitlySet = value.HasValue;
+        _dccAddressHasBeenExplicitlySet = value.HasValue;
     }
 
     // -----------------------------
@@ -100,7 +100,7 @@ public abstract partial class Accessory : ObservableObject, IEquatable<Accessory
     /// Useful after bulk imports when you want to auto-fill addresses from IDs.
     /// </summary>
     public void EnsureDccAddressInitialized() {
-        if (!dccAddressHasBeenExplicitlySet && !DccAddress.HasValue) {
+        if (!_dccAddressHasBeenExplicitlySet && !DccAddress.HasValue) {
             InferDccAddressFromSystemId();
         }
     }

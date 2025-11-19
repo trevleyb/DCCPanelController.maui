@@ -31,6 +31,9 @@ public static class JsonOptions {
             new JsonEnumToStringConverter<TextAlignmentHorizontalEnum>(),
             new JsonEnumToStringConverter<TextAlignmentVerticalEnum>(),
 
+            new JsonEnumToStringConverter<AccessorySource>(),
+            new JsonEnumToStringConverter<AccessoryBindingMode>(),
+            
             // We can filter to only save certain Accessories but currently write all of them
             // ------------------------------------------------------------------------------
             
