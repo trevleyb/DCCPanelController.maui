@@ -18,8 +18,8 @@ public partial class ColorPickerButton : ContentView {
     private                ColorPickerGridViewModel? _vm;
 
     public ColorPickerButton() {
-        InitializeComponent();
         BindingContext = this;
+        InitializeComponent();
     }
 
     public Color ActiveColor => SelectedColor ?? DefaultColor ?? Colors.White;

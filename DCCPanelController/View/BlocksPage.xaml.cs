@@ -9,10 +9,9 @@ public partial class BlocksPage : ContentPage {
 
     public BlocksPage(ILogger<BlocksPage> logger, BlocksViewModel viewModel) {
         _logger = logger;
-        InitializeComponent();
         BindingContext = viewModel;
-
         viewModel.SetNavigationReferences(BottomSheet);
+        InitializeComponent();
 
         SafeAreaEdges = SafeAreaEdges.None;
         var safeInsets = On<iOS>().SafeAreaInsets();

@@ -9,8 +9,8 @@ public partial class RoutesPage : ContentPage {
 
     public RoutesPage(ILogger<RoutesPage> logger, RoutesViewModel viewModel) {
         _logger = logger;
-        InitializeComponent();
         BindingContext = viewModel;
+        InitializeComponent();
 
         SafeAreaEdges = SafeAreaEdges.None;
         var safeInsets = On<iOS>().SafeAreaInsets();

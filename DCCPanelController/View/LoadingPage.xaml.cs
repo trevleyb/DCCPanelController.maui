@@ -38,10 +38,10 @@ public partial class LoadingPage : ContentPage, INotifyPropertyChanged {
     public new bool IsBusy { get; private set; }
 
     public LoadingPage() {
-        InitializeComponent();
         BindingContext = this;
+        InitializeComponent();
 
-        VersionLabel.Text = $"v{AppInfo.Current.VersionString} ({AppInfo.Current.BuildString})";
+        VersionLabel.Text = $"v{AppInfo.Current.VersionString}";
 
         SplashLogo.SizeChanged += (_, __) => UpdateVersionOffset();
         SizeChanged += (_, __) => UpdateVersionOffset();

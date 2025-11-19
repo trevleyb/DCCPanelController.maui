@@ -5,8 +5,8 @@ namespace DCCPanelController.View;
 
 public partial class ServerMessagesPage : ContentPage {
     public ServerMessagesPage(ServerMessagesViewModel viewModel) {
-        InitializeComponent();
         BindingContext = viewModel;
+        InitializeComponent();
 
         SafeAreaEdges = SafeAreaEdges.None;
         var safeInsets = On<iOS>().SafeAreaInsets();

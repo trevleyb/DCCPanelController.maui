@@ -14,15 +14,15 @@ public partial class PanelViewer {
     private int _minSpan    = 1;
 
     public PanelViewer(ILogger<PanelViewer> logger, PanelViewerViewModel viewModel, ConnectionService connectionService) {
-        InitializeComponent();
-        SetItemTemplate(DeviceDisplay.MainDisplayInfo.Height > DeviceDisplay.MainDisplayInfo.Width ? "HorizontalTemplate" : "VerticalTemplate");
-
         _logger = logger;
         _connectionService = connectionService;
         _viewModel = viewModel;
         _viewModel.NavigationService = Navigation;
 
         BindingContext = viewModel;
+        InitializeComponent();
+        SetItemTemplate(DeviceDisplay.MainDisplayInfo.Height > DeviceDisplay.MainDisplayInfo.Width ? "HorizontalTemplate" : "VerticalTemplate");
+
         Title = $"{_viewModel.Panels?.Profile?.ProfileName ?? "Unknown Profile"}";
 
         DeviceDisplay.MainDisplayInfoChanged += OnDisplayInfoChanged;

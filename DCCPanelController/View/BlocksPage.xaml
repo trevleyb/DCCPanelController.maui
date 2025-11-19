@@ -3,13 +3,10 @@
 <ContentPage
     IconImageSource="route_active.png"
     Title="Blocks List"
-    ios:Page.UseSafeArea="False"
     x:Name="Page"
     x:Class="DCCPanelController.View.BlocksPage"
     x:DataType="view:BlocksViewModel"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-    xmlns:dataModel="clr-namespace:DCCPanelController.Models.DataModel"
-    xmlns:ios="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
     xmlns:view="clr-namespace:DCCPanelController.View"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:bottomSheet="http://schemas.syncfusion.com/maui/toolkit"
@@ -98,7 +95,7 @@
                     Style="{StaticResource ColumnLabel}"
                     Text="{Binding ColumnLabelState}" />
 
-                <Label Text="Source"
+                <Button Text="Source"
                        Grid.Column="4"
                        Style="{StaticResource ColumnLabel}"/>
 

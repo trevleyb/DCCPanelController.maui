@@ -19,8 +19,6 @@ public partial class OperatePage : ContentPage, INotifyPropertyChanged {
     private          ConnectionService?   _connectionService;
 
     public OperatePage(ILogger<OperatePage> logger, OperateViewModel viewModel, ProfileService profileService, ConnectionService connectionService) {
-        InitializeComponent();
-
         _logger = logger;
         _profileService = profileService;
         _connectionService = connectionService;
@@ -30,6 +28,8 @@ public partial class OperatePage : ContentPage, INotifyPropertyChanged {
         _viewModel.PropertyChanged += ViewModelOnPropertyChanged;
 
         BindingContext = _viewModel;
+        InitializeComponent();
+
         SetChromeVisible(!( _profileService?.ActiveProfile?.Settings?.StartFullScreen ?? false ));
     }
 

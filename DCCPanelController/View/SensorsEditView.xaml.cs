@@ -8,11 +8,11 @@ public partial class SensorsEditView : ContentView {
     private readonly SensorsEditViewModel     _viewModel;
 
     public SensorsEditView(ILogger<SensorsEditViewModel> logger, SensorsEditViewModel viewModel) {
-        InitializeComponent();
         _logger = logger;
         _viewModel = viewModel;
         _viewModel.Sensor.PropertyChanged += ViewModelOnPropertyChanged;
         BindingContext = _viewModel;
+        InitializeComponent();
     }
 
     private void ViewModelOnPropertyChanged(object? sender, PropertyChangedEventArgs e) {

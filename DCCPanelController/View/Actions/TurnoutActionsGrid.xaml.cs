@@ -5,10 +5,10 @@ namespace DCCPanelController.View.Actions;
 
 public partial class TurnoutActionsGrid : ContentView {
     public TurnoutActionsGrid(TurnoutActions actions, ActionsContext context, List<string> availableTurnouts, Action? changedAction) {
-        InitializeComponent();
         var viewModel = new TurnoutActionsGridViewModel(actions, context, availableTurnouts, changedAction);
         viewModel.ActionsGridListView = ListView;
         BindingContext = viewModel;
         Resources["Vm"] = viewModel;
+        InitializeComponent();
     }
 }

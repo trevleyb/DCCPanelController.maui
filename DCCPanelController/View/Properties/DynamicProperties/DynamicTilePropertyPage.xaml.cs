@@ -39,8 +39,8 @@ public partial class DynamicTilePropertyPage {
     public  SfPopup? Popup;
 
     private DynamicTilePropertyPage(double width, double height) {
-        InitializeComponent();
         BindingContext = this;
+        InitializeComponent();
         Width = width;
         Height = height;
     }

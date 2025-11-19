@@ -27,7 +27,6 @@ public partial class PanelEditor : ContentPage {
     public PanelEditor(ILogger<PanelEditor> logger, Panel panel, ProfileService profileService, ConnectionService connectionService) : base() {
         _logger = logger;
 
-        InitializeComponent();
         if (panel.Cols <= 0) panel.Cols = 18;
         if (panel.Rows <= 0) panel.Rows = 10;
 
@@ -42,6 +41,7 @@ public partial class PanelEditor : ContentPage {
         _viewModel.PropertyChanged += ViewModelOnPropertyChanged;
 
         BindingContext = _viewModel;
+        InitializeComponent();
 
         AppStateService.Instance.IsEditingPanel = true;
         AppStateService.Instance.SelectedTileSet += InstanceOnSelectedTileSet;

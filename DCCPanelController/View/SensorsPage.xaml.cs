@@ -9,8 +9,8 @@ public partial class SensorsPage : ContentPage {
 
     public SensorsPage(ILogger<SensorsPage> logger, SensorsViewModel viewModel) {
         _logger = logger;
-        InitializeComponent();
         BindingContext = viewModel;
+        InitializeComponent();
 
         viewModel.SetNavigationReferences(BottomSheet);
 

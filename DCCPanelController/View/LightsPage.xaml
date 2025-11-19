@@ -95,7 +95,7 @@
                 Style="{StaticResource ColumnLabel}"
                 Text="{Binding ColumnLabelState}"/>
 
-            <Label Text="Source"
+            <Button Text="Source"
                    Grid.Column="3"
                    Style="{StaticResource ColumnLabel}"/>
 

@@ -5,7 +5,7 @@
         <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net10.0-windows10.0.19041.0</TargetFrameworks>
 
         <!-- Uncomment to also build the tizen app. You will need to install tizen by following this: https://github.com/Samsung/Tizen.NET -->
-        <!-- <TargetFrameworks>$(TargetFrameworks);net9.0-tizen</TargetFrameworks> -->
+        <!-- <TargetFrameworks>$(TargetFrameworks);net10.0-tizen</TargetFrameworks> -->
 
         <!-- Note for MacCatalyst:
         The default runtime is maccatalyst-x64, except in Release config, in which case the default is maccatalyst-x64;maccatalyst-arm64.
@@ -24,13 +24,13 @@
         <MauiEnableXamlCBindingWithSourceCompilation>true</MauiEnableXamlCBindingWithSourceCompilation>
         <MauiStrictXamlCompilation>false</MauiStrictXamlCompilation>
 
-        <ApplicationTitle>DCC Panel Controller</ApplicationTitle>
+        <ApplicationTitle>DCCPanelController</ApplicationTitle>
         <ApplicationId>com.trevleyb.dccpanelcontroller</ApplicationId>
         <ApplicationDisplayVersion>$(Version)</ApplicationDisplayVersion>
         <ApplicationVersion>$(VersionHeight)</ApplicationVersion>
 
-        <Title>DCC Panel Controller</Title>
-        <Product>DCC Panel Controller</Product>
+        <Title>DCCPanelController</Title>
+        <Product>DCCPanelController</Product>
         <Authors>Trevor Leybourne</Authors>
         <Company>trevleyb</Company>
         <LangVersion>preview</LangVersion>
@@ -47,7 +47,7 @@
 
     </PropertyGroup>
 
-    <PropertyGroup Condition="'$(TargetFramework)' == 'net9.0-ios' and '$(Configuration)' == 'Debug'">
+    <PropertyGroup Condition="'$(TargetFramework)' == 'net10.0-ios' and '$(Configuration)' == 'Debug'">
         <CodesignKey>Apple Development: TREVOR GRANT LEYBOURNE (WBT6U58HVN)</CodesignKey>
         <CodesignProvision>cce36aac-e0be-4a8f-a0d8-3fb6a5d830bf</CodesignProvision>
         <MtouchLink>None</MtouchLink>
@@ -59,7 +59,7 @@
         <GenerateDebugSymbols>true</GenerateDebugSymbols>
     </PropertyGroup>
 
-    <PropertyGroup Condition="'$(TargetFramework)' == 'net9.0-ios' and '$(Configuration)' == 'Release'">
+    <PropertyGroup Condition="'$(TargetFramework)' == 'net10.0-ios' and '$(Configuration)' == 'Release'">
         <CodesignKey>Apple Distribution: TREVOR GRANT LEYBOURNE (3FBC48TFF3)</CodesignKey>
         <CodesignProvision>2b8112e8-5818-4df3-a757-1bc3ec50a939</CodesignProvision>
 
@@ -252,8 +252,7 @@
         <PackageReference Include="Svg.Skia" Version="3.2.1" />
         <PackageReference Include="Syncfusion.Maui.Toolkit" Version="1.0.7" />
     </ItemGroup>
-
-
+    
     <ItemGroup>
         <MauiXaml Update="View\Components\ColorPickerButton.xaml">
             <SubType>Designer</SubType>
@@ -491,18 +490,6 @@
           <DependentUpon>AboutSettings.xaml</DependentUpon>
           <SubType>Code</SubType>
         </Compile>
-    </ItemGroup>
-
-    <ItemGroup Condition="'$(TargetFramework)' == 'net9.0-ios'">
-        <PackageReference Include="SkiaSharp.NativeAssets.iOS" Version="3.119.0" />
-    </ItemGroup>
-
-    <ItemGroup Condition="'$(TargetFramework)' == 'net9.0-maccatalyst'">
-        <PackageReference Include="SkiaSharp.NativeAssets.MacCatalyst" Version="3.119.0" />
-    </ItemGroup>
-
-    <ItemGroup Condition="'$(TargetFramework)' == 'net9.0-android'">
-        <PackageReference Include="SkiaSharp.NativeAssets.Android" Version="3.119.0" />
     </ItemGroup>
 
     <ItemGroup>

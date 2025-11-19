@@ -6,8 +6,8 @@ namespace DCCPanelController.View;
 
 public partial class UnifiedSettingsPage : ContentPage {
     public UnifiedSettingsPage(ILogger<UnifiedSettingsPage> logger, UnifiedSettingsViewModel vm) {
-        InitializeComponent();
         BindingContext = vm;
+        InitializeComponent();
     }
 
     protected override void OnAppearing() {

@@ -12,6 +12,7 @@
             <converters:PaletteIconConverter x:Key="PaletteIconConverter"/>
             <converters:MultiBoolToIconConverter x:Key="MultiBoolToIcon"/>
             <converters:ConnectionIconConverter x:Key="ConnectionIconConverter"/>
+            <converters:EnumToLabelConverter x:Key="EnumToLabelConverter"/>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Resources/Styles/Colors.xaml"/>
                 <ResourceDictionary Source="Resources/Styles/Styles.xaml"/>

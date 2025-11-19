@@ -7,9 +7,9 @@ public partial class PanelPropertyPage : ContentView {
     public readonly PanelPropertyViewModel ViewModel;
 
     public PanelPropertyPage(PanelPropertyViewModel viewModel) {
-        InitializeComponent();
         ViewModel = viewModel;
         BindingContext = ViewModel;
+        InitializeComponent();
         RowsStepper.Minimum = GetMaxRows(ViewModel.Panel);
         ColsStepper.Minimum = GetMaxCols(ViewModel.Panel);
     }

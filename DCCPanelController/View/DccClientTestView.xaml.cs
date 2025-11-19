@@ -10,8 +10,8 @@ public partial class DccClientTestView : ContentPage {
     private ILogger<DccClientTestView> _logger;
     public DccClientTestView(ILogger<DccClientTestView> logger, ProfileService prf, ConnectionService svc) {
         _logger = logger;
-        InitializeComponent();
         BindingContext = new DccClientTestViewModel(prf,svc);
+        InitializeComponent();
         
         this.Appearing += (s, e) => {
             if (BindingContext is DccClientTestViewModel vm) {

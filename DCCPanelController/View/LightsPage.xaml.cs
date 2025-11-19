@@ -9,10 +9,9 @@ public partial class LightsPage : ContentPage {
 
     public LightsPage(ILogger<LightsPage> logger, LightsViewModel viewModel) {
         _logger = logger;
-        InitializeComponent();
         BindingContext = viewModel;
-
         viewModel.SetNavigationReferences(BottomSheet);
+        InitializeComponent();
 
         SafeAreaEdges = SafeAreaEdges.None;
         var safeInsets = On<iOS>().SafeAreaInsets();

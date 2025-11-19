@@ -16,8 +16,8 @@ public partial class TestPage : ContentPage {
     //private readonly GridGestureHelper _gridGestures;
 
     public TestPage(TestPageViewModel viewModel) {
-        InitializeComponent();
         BindingContext = viewModel;
+        InitializeComponent();
     }
 
     protected override void OnSizeAllocated(double width, double height) {

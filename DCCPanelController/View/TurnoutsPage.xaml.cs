@@ -9,13 +9,12 @@ public partial class TurnoutsPage : ContentPage {
     private readonly TurnoutsViewModel     _viewModel;
 
     public TurnoutsPage(ILogger<TurnoutsPage> logger, TurnoutsViewModel viewModel) {
-        InitializeComponent();
         _logger = logger;
         _viewModel = viewModel;
-        BindingContext = _viewModel;
         _viewModel.SetNavigationReferences(BottomSheet);
+        BindingContext = _viewModel;
+        InitializeComponent();
         SafeAreaEdges = SafeAreaEdges.None;
-        var safeInsets = On<iOS>().SafeAreaInsets();
     }
 
     protected override void OnAppearing() {
