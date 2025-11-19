@@ -27,7 +27,7 @@ internal sealed class ActionsTurnoutRenderer : BaseRenderer, IPropertyRenderer {
 
                 var availableTurnouts =
                     (entity.Parent?.Turnouts ?? Enumerable.Empty<Turnout>())
-                    .Select(t => t.SystemId).Where(id => id is { }).Cast<string>().ToList();
+                    .Select(t => t.Id).Where(id => id is { }).Cast<string>().ToList();
                 
                 // Next, get the current value of the Actions' Collection to pass to the control
                 // ----------------------------------------------------------------------------

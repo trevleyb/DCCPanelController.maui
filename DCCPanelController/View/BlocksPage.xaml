@@ -67,7 +67,7 @@
     <Grid>
         <StackLayout x:Name="MainStackLayout">
             <Grid
-                ColumnDefinitions="150,*,120,120,80"
+                ColumnDefinitions="150,*,120,80,120"
                 HorizontalOptions="Fill">
                 <Button
                     Command="{Binding SortByColumnCommand}"
@@ -88,15 +88,16 @@
                     Grid.Column="2"
                     Style="{StaticResource ColumnLabel}"
                     Text="{Binding ColumnLabelSensor}" />
+                
                 <Button
                     Command="{Binding SortByColumnCommand}"
                     CommandParameter="{Binding LabelState}"
-                    Grid.Column="3"
+                    Grid.Column="4"
                     Style="{StaticResource ColumnLabel}"
                     Text="{Binding ColumnLabelState}" />
 
                 <Button Text="Source"
-                       Grid.Column="4"
+                       Grid.Column="3"
                        Style="{StaticResource ColumnLabel}"/>
 
             </Grid>
@@ -125,7 +126,7 @@
                             <DataTemplate x:DataType="accessories:Block">
                                 <Grid Style="{StaticResource SelectableItemStyle}">
                                     <StackLayout Padding="0">
-                                        <Grid ColumnDefinitions="150,*,120,80,40,80" Margin="0,5,0,5" Padding="0">
+                                        <Grid ColumnDefinitions="150,*,120,80,80,40" Margin="0,5,0,5" Padding="0">
                                             <Label
                                                 Grid.Column="0"
                                                 HorizontalOptions="Start"
@@ -150,7 +151,7 @@
                                                 Text="{Binding Sensor}"
                                                 VerticalOptions="Center" />
                                             <Label
-                                                Grid.Column="3"
+                                                Grid.Column="4"
                                                 HorizontalOptions="Start"
                                                 Style="{StaticResource MediumLabel}"
                                                 Text="{Binding State}"
@@ -186,7 +187,7 @@
                                                 </Label.GestureRecognizers>
                                             </Label>
                                             <Image
-                                                Grid.Column="4"
+                                                Grid.Column="5"
                                                 HeightRequest="32"
                                                 HorizontalOptions="End"
                                                 VerticalOptions="Center"
@@ -226,7 +227,7 @@
                                             </Image>
 
                                             <Label
-                                                Grid.Column="5"
+                                                Grid.Column="3"
                                                 HorizontalOptions="FillAndExpand"
                                                 LineBreakMode="WordWrap"
                                                 Style="{StaticResource MediumLabel}"
@@ -234,10 +235,6 @@
                                                 VerticalOptions="Center" />
 
                                         </Grid>
-                                        <BoxView
-                                            BackgroundColor="{StaticResource Primary}"
-                                            HeightRequest="1"
-                                            HorizontalOptions="FillAndExpand" />
                                     </StackLayout>
                                 </Grid>
                             </DataTemplate>

@@ -3,7 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace DCCPanelController.Models.DataModel.Accessories;
 
-[DebuggerDisplay("Light: {SystemId}: {Name} @  {DccAddress} => State: {State}")]
+[DebuggerDisplay("Light: {Id}: {Name} @  {DccAddress} => State: {State}")]
 public partial class Light : Accessory, IAccessory {
     [ObservableProperty] private bool _state;
     

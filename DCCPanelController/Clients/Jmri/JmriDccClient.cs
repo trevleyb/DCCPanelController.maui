@@ -232,28 +232,28 @@ public sealed class JmriDccClient : DccClientBase, IDccClient, IDisposable {
     }
 
     // -------------------- Commands --------------------
-    public Task<IResult> SendTurnoutCmdAsync(Turnout t, bool thrown) => SendWrap(() => SetTurnoutStateAsync(t.SystemId ?? t.Name ?? "", thrown),
-        $"Setting turnout {t.Name}({t.SystemId}) to {(thrown ? "THROWN" : "CLOSED")}",
+    public Task<IResult> SendTurnoutCmdAsync(Turnout t, bool thrown) => SendWrap(() => SetTurnoutStateAsync(t.Id ?? t.Name ?? "", thrown),
+        $"Setting turnout {t.Name}({t.Id}) to {(thrown ? "THROWN" : "CLOSED")}",
         DccClientOperation.Turnout);
 
-    public Task<IResult> SendRouteCmdAsync(Route r, bool active) => SendWrap(() => SetRouteStateAsync(r.SystemId ?? r.Name ?? "", active),
-        $"Setting route {r.Name}({r.SystemId}) to {(active ? "ACTIVE" : "INACTIVE")}",
+    public Task<IResult> SendRouteCmdAsync(Route r, bool active) => SendWrap(() => SetRouteStateAsync(r.Id ?? r.Name ?? "", active),
+        $"Setting route {r.Name}({r.Id}) to {(active ? "ACTIVE" : "INACTIVE")}",
         DccClientOperation.Route);
 
-    public Task<IResult> SendSignalCmdAsync(Signal s, SignalAspectEnum aspect) => SendWrap(() => SetSignalAppearanceAsync(s.SystemId ?? s.Name ?? "", aspect.ToString()),
-        $"Setting signal {s.Name}({s.SystemId}) to {aspect}",
+    public Task<IResult> SendSignalCmdAsync(Signal s, SignalAspectEnum aspect) => SendWrap(() => SetSignalAppearanceAsync(s.Id ?? s.Name ?? "", aspect.ToString()),
+        $"Setting signal {s.Name}({s.Id}) to {aspect}",
         DccClientOperation.Signal);
 
-    public Task<IResult> SendLightCmdAsync(Light l, bool on) => SendWrap(() => SetLightStateAsync(l.SystemId ?? l.Name ?? "", on),
-        $"Setting light {l.Name}({l.SystemId}) to {(on ? "ON" : "OFF")}",
+    public Task<IResult> SendLightCmdAsync(Light l, bool on) => SendWrap(() => SetLightStateAsync(l.Id ?? l.Name ?? "", on),
+        $"Setting light {l.Name}({l.Id}) to {(on ? "ON" : "OFF")}",
         DccClientOperation.Light);
 
-    public Task<IResult> SendBlockCmdAsync(Block b, bool allocated) => SendWrap(() => SetBlockAllocatedAsync(b.SystemId ?? b.Name ?? "", allocated),
-        $"Setting block {b.Name}({b.SystemId}) to {(allocated ? "OCCUPIED" : "FREE")}",
+    public Task<IResult> SendBlockCmdAsync(Block b, bool allocated) => SendWrap(() => SetBlockAllocatedAsync(b.Id ?? b.Name ?? "", allocated),
+        $"Setting block {b.Name}({b.Id}) to {(allocated ? "OCCUPIED" : "FREE")}",
         DccClientOperation.Block);
 
-    public Task<IResult> SendSensorCmdAsync(Sensor s, bool active) => SendWrap(() => SetSensorStateAsync(s.SystemId ?? s.Name ?? "", active),
-        $"Setting sensor {s.Name}({s.SystemId}) to {(active ? "ON" : "OFF")}",
+    public Task<IResult> SendSensorCmdAsync(Sensor s, bool active) => SendWrap(() => SetSensorStateAsync(s.Id ?? s.Name ?? "", active),
+        $"Setting sensor {s.Name}({s.Id}) to {(active ? "ON" : "OFF")}",
         DccClientOperation.Sensor);
 
     private async Task<IResult> SendWrap(Func<Task> send, string log, DccClientOperation op) {

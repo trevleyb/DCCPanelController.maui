@@ -36,13 +36,14 @@ public abstract partial class DccClientBase(Profile profile) : ObservableObject 
     private void UpdateTurnoutCore(string id, string name, TurnoutStateEnum state, AccessorySource source, int? dccAddress = null) {
         if (Profile.Turnouts is { } collection) {
             Turnout? entity = null;
-            entity ??= Profile.Turnouts.FirstOrDefault(x => x.SystemId == id) ?? null;
+            entity ??= Profile.Turnouts.FirstOrDefault(x => x.Id == id) ?? null;
             entity ??= Profile.Turnouts.FirstOrDefault(x => x.Name == name) ?? null;
             if (entity is { }) {
                 entity.State = state;
+                entity.Source = source;
             } else {
                 entity = new Turnout {
-                    SystemId = id,
+                    Id = id,
                     Name = name,
                     DccAddress = dccAddress ?? id.FromDccAddressString(),
                     Source = source,
@@ -56,13 +57,14 @@ public abstract partial class DccClientBase(Profile profile) : ObservableObject 
     private void UpdateRouteCore(string id, string name, RouteStateEnum state, AccessorySource source, int? dccAddress = null) {
         if (Profile.Routes is { } collection) {
             Route? entity = null;
-            entity ??= Profile.Routes.FirstOrDefault(x => x.SystemId == id) ?? null;
+            entity ??= Profile.Routes.FirstOrDefault(x => x.Id == id) ?? null;
             entity ??= Profile.Routes.FirstOrDefault(x => x.Name == name) ?? null;
             if (entity is { }) {
                 entity.State = state;
+                entity.Source = source;
             } else {
                 entity = new Route {
-                    SystemId = id,
+                    Id = id,
                     Name = name,
                     State = state,
                     Source = source,
@@ -76,13 +78,14 @@ public abstract partial class DccClientBase(Profile profile) : ObservableObject 
     private void UpdateSensorCore(string id, string name, bool isOccupied, AccessorySource source, int? dccAddress = null) {
         if (Profile.Sensors is { } collection) {
             Sensor? entity = null;
-            entity ??= Profile.Sensors.FirstOrDefault(x => x.SystemId == id) ?? null;
+            entity ??= Profile.Sensors.FirstOrDefault(x => x.Id == id) ?? null;
             entity ??= Profile.Sensors.FirstOrDefault(x => x.Name == name) ?? null;
             if (entity is { }) {
                 entity.State = isOccupied;
+                entity.Source = source;
             } else {
                 entity = new Sensor {
-                    SystemId = id,
+                    Id = id,
                     Name = name,
                     Source = source,
                     DccAddress = dccAddress ?? id.FromDccAddressString(),
@@ -96,14 +99,15 @@ public abstract partial class DccClientBase(Profile profile) : ObservableObject 
     private void UpdateBlockCore(string id, string name, bool isOccupied, AccessorySource source, string? sensor, int? dccAddress = null) {
         if (Profile.Blocks is { } collection) {
             Block? entity = null;
-            entity ??= Profile.Blocks.FirstOrDefault(x => x.SystemId == id) ?? null;
+            entity ??= Profile.Blocks.FirstOrDefault(x => x.Id == id) ?? null;
             entity ??= Profile.Blocks.FirstOrDefault(x => x.Name == name) ?? null;
             if (entity is { }) {
                 entity.IsOccupied = isOccupied;
+                entity.Source = source;
                 if (sensor is {}) entity.Sensor = sensor;
             } else {
                 entity = new Block {
-                    SystemId = id,
+                    Id = id,
                     Name = name,
                     IsOccupied = isOccupied,
                     DccAddress = dccAddress ?? id.FromDccAddressString(),
@@ -118,13 +122,14 @@ public abstract partial class DccClientBase(Profile profile) : ObservableObject 
     private void UpdateLightCore(string id, string name, bool isOn, AccessorySource source, int? dccAddress = null) {
         if (Profile.Lights is { } collection) {
             Light? entity = null;
-            entity ??= Profile.Lights.FirstOrDefault(x => x.SystemId == id) ?? null;
+            entity ??= Profile.Lights.FirstOrDefault(x => x.Id == id) ?? null;
             entity ??= Profile.Lights.FirstOrDefault(x => x.Name == name) ?? null;
             if (entity is { }) {
                 entity.State = isOn;
+                entity.Source = source;
             } else {
                 entity = new Light {
-                    SystemId = id,
+                    Id = id,
                     Name = name,
                     DccAddress = dccAddress ?? id.FromDccAddressString(),
                     Source = source,
@@ -138,13 +143,14 @@ public abstract partial class DccClientBase(Profile profile) : ObservableObject 
     private void UpdateSignalCore(string id, string name, SignalAspectEnum aspect, AccessorySource source, int? dccAddress = null) {
         if (Profile.Signals is { } collection) {
             Signal? entity = null;
-            entity ??= Profile.Signals.FirstOrDefault(x => x.SystemId == id) ?? null;
+            entity ??= Profile.Signals.FirstOrDefault(x => x.Id == id) ?? null;
             entity ??= Profile.Signals.FirstOrDefault(x => x.Name == name) ?? null;
             if (entity is { }) {
                 entity.Aspect = aspect.ToString();
+                entity.Source = source;
             } else {
                 entity = new Signal {
-                    SystemId = id,
+                    Id = id,
                     Name = name,
                     DccAddress = dccAddress ?? id.FromDccAddressString(),
                     Source = source,

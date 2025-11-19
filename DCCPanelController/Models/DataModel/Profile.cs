@@ -54,12 +54,12 @@ public partial class Profile : ObservableObject {
 
     public string Version { get; set; } = "1.0.1"; // Ensure we increment this version number when making changes to the schema
 
-    public Turnout? Turnout(string id)  => Turnouts.FirstOrDefault(t => t.SystemId == id);
-    public Route?   Route(string id)    => Routes.FirstOrDefault(r => r.SystemId == id);
-    public Signal?  Signal(string id)   => Signals.FirstOrDefault(s => s.SystemId == id);
-    public Block?   Block(string id)    => Blocks.FirstOrDefault(s => s.SystemId == id);
-    public Sensor?  Sensor(string id)   => Sensors.FirstOrDefault(s => s.SystemId == id);
-    public Light?   Light(string id)    => Lights.FirstOrDefault(s => s.SystemId == id);
+    public Turnout? Turnout(string id)  => Turnouts.FirstOrDefault(t => t.Id == id);
+    public Route?   Route(string id)    => Routes.FirstOrDefault(r => r.Id == id);
+    public Signal?  Signal(string id)   => Signals.FirstOrDefault(s => s.Id == id);
+    public Block?   Block(string id)    => Blocks.FirstOrDefault(s => s.Id == id);
+    public Sensor?  Sensor(string id)   => Sensors.FirstOrDefault(s => s.Id == id);
+    public Light?   Light(string id)    => Lights.FirstOrDefault(s => s.Id == id);
 
     public void Validate(ILogger logger) => ProfileValidator.Validate(this, logger);
     

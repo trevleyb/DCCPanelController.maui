@@ -15,7 +15,7 @@ public static class EntityHelper {
         const StringComparison cmp = StringComparison.InvariantCultureIgnoreCase;
 
         // 1) Id match
-        item = source.FirstOrDefault(x => string.Equals(x.SystemId, key, cmp));
+        item = source.FirstOrDefault(x => string.Equals(x.Id, key, cmp));
         if (item is { }) return true;
 
         // 2) Name match

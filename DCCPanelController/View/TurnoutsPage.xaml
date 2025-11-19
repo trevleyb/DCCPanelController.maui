@@ -78,21 +78,23 @@
                     Margin="10,0,0,0"
                     Style="{StaticResource ColumnLabel}"
                     Text="{Binding ColumnLabelID}" />
+
                 <Button
                     Command="{Binding SortByColumnCommand}"
                     CommandParameter="{Binding LabelName}"
                     Grid.Column="1"
                     Style="{StaticResource ColumnLabel}"
                     Text="{Binding ColumnLabelName}" />
+
                 <Button
                     Command="{Binding SortByColumnCommand}"
                     CommandParameter="{Binding LabelState}"
-                    Grid.Column="2"
+                    Grid.Column="3"
                     Style="{StaticResource ColumnLabel}"
                     Text="{Binding ColumnLabelState}" />
                 
                 <Button Text="Source"
-                       Grid.Column="3"
+                       Grid.Column="2"
                         Style="{StaticResource ColumnLabel}"/>
             </Grid>
             <BoxView
@@ -125,7 +127,7 @@
                             <DataTemplate x:DataType="accessories:Turnout">
                                 <Grid>
                                     <StackLayout Padding="0">
-                                        <Grid ColumnDefinitions="120,*,100,80" Margin="0,5,0,5" Padding="0">
+                                        <Grid ColumnDefinitions="120,*,80,100" Margin="0,5,0,5" Padding="0">
                                             <Label
                                                 Grid.Column="0"
                                                 Margin="10,0,0,0"
@@ -143,8 +145,17 @@
                                                 Text="{Binding Name}"
                                                 VerticalOptions="Center" />
                                             <Label
-                                                IsVisible="False"
                                                 Grid.Column="2"
+                                                IsEnabled="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, x:DataType=view:TurnoutsViewModel, Path=IsConnected}"
+                                                HorizontalOptions="Start"
+                                                LineBreakMode="WordWrap"
+                                                Style="{StaticResource MediumLabel}"
+                                                Text="{Binding Source, Converter={StaticResource EnumToLabelConverter}}"
+                                                VerticalOptions="Center"/>
+
+                                            <Label
+                                                IsVisible="False"
+                                                Grid.Column="3"
                                                 HorizontalOptions="Start"
                                                 Style="{StaticResource MediumLabel}"
                                                 Text="{Binding State}"
@@ -190,7 +201,7 @@
                                                 InputTransparent="False"
                                                 IsEnabled="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, Path=IsConnected, x:DataType=view:TurnoutsViewModel}"
                                                 CanToggleState="true"
-                                                Grid.Column="2"
+                                                Grid.Column="3"
                                                 Margin="0,0,10,0"
                                                 State="{Binding State}"
                                                 Turnout="{Binding .}">
@@ -214,19 +225,8 @@
                                                 </components:TurnoutStateControl.GestureRecognizers>
                                             </components:TurnoutStateControl>
             
-                                            <Label
-                                                Grid.Column="3"
-                                                HorizontalOptions="FillAndExpand"
-                                                LineBreakMode="WordWrap"
-                                                Style="{StaticResource MediumLabel}"
-                                                Text="{Binding Source, Converter={StaticResource EnumToLabelConverter}}"
-                                                VerticalOptions="Center"/>
-            
+           
                                         </Grid>
-                                        <BoxView
-                                            BackgroundColor="{StaticResource Primary}"
-                                            HeightRequest="1"
-                                            HorizontalOptions="FillAndExpand" />
                                     </StackLayout>
                                 </Grid>
                             </DataTemplate>

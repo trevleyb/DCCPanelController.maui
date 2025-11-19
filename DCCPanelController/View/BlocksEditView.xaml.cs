@@ -24,6 +24,6 @@ public partial class BlocksEditView : ContentView {
     }
 
     private void Picker_OnSelectedIndexChanged(object? sender, EventArgs e) {
-        if (sender is Picker { SelectedItem: Sensor sensor }) _viewModel?.Block?.Sensor = sensor.SystemId;
+        if (sender is Picker { SelectedItem: Sensor sensor }) _viewModel?.Block?.Sensor = sensor.Id;
     }
 }

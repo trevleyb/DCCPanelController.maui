@@ -192,7 +192,7 @@ public partial class ConnectionService : ObservableObject {
         if ( profile is {} && (force || profile?.Settings.SetTurnoutStatesOnStartup == true)) {
             if (Client is { State: DccClientState.Connected }) {
                 foreach (var turnout in profile.Turnouts) {
-                    if (turnout.Default != TurnoutStateEnum.Unknown && !string.IsNullOrEmpty(turnout.SystemId)) {
+                    if (turnout.Default != TurnoutStateEnum.Unknown && !string.IsNullOrEmpty(turnout.Id)) {
                         await Client.SendTurnoutCmdAsync(turnout, turnout.Default == TurnoutStateEnum.Thrown);
                         await Task.Delay(10);   // A short delay to allow messages to send
                     }

@@ -3,7 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace DCCPanelController.Models.DataModel.Accessories;
 
-[DebuggerDisplay("Signal: {SystemId}: {Name} @  {DccAddress} => State: {State}")]
+[DebuggerDisplay("Signal: {Id}: {Name} @  {DccAddress} => State: {State}")]
 
 public partial class Signal : Accessory, IAccessory {
     [ObservableProperty] private string  _aspect = "Off";

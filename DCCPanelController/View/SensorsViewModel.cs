@@ -63,7 +63,7 @@ public partial class SensorsViewModel : AccessoryViewModel<Sensor> {
     protected override IReadOnlyDictionary<string, Func<Sensor, IComparable>> Sorters =>
         new Dictionary<string, Func<Sensor, IComparable>> {
             [_labelName] = x => x.Name ?? "",
-            [_labelID] = x => x.SystemId ?? "",
+            [_labelID] = x => x.Id ?? "",
             [_labelState] = x => x.State
         };
 
@@ -79,7 +79,7 @@ public partial class SensorsViewModel : AccessoryViewModel<Sensor> {
     public async Task ToggleSensorState(Sensor? sensor) {
         if (sensor == null) return;
         sensor.State = !sensor.State;
-        if (!string.IsNullOrEmpty(sensor.SystemId)) {
+        if (!string.IsNullOrEmpty(sensor.Id)) {
             if (ConnectionService.Client is { State: DccClientState.Connected } client)
                 await client.SendSensorCmdAsync(sensor, sensor.State)!;
         }
@@ -110,7 +110,7 @@ public partial class SensorsViewModel : AccessoryViewModel<Sensor> {
     [RelayCommand]
     private async Task AddSensorAsync() {
         var sensor = new Sensor {
-            SystemId = TableAnalyser<Sensor>.GetUniqueID(Sensors.ToList()),
+            Id = TableAnalyser<Sensor>.GetUniqueID(Sensors.ToList()),
             Name = "New Sensor",
             Source = AccessorySource.Manual,
         };

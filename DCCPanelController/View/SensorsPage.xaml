@@ -221,10 +221,6 @@
                                         VerticalOptions="Center" />
 
                                 </Grid>
-                                <BoxView
-                                    BackgroundColor="{StaticResource Primary}"
-                                    HeightRequest="1"
-                                    HorizontalOptions="FillAndExpand"/>
                             </StackLayout>
                             </Grid>    
                         </DataTemplate>

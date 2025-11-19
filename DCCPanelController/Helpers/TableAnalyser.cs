@@ -12,7 +12,7 @@ public class TableAnalyser<T>  where T : IAccessory {
         var patternNumbers = new Dictionary<string, List<(int number, string originalFormat)>>();
 
         foreach (var item in collection) {
-            var id = item.SystemId ?? "1";
+            var id = item.Id ?? "1";
 
             // Extract prefix, number, and suffix
             var (prefix, number, suffix, originalFormat) = ExtractPrefixNumberSuffix(id);

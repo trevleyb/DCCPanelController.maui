@@ -3,7 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace DCCPanelController.Models.DataModel.Accessories;
 
-[DebuggerDisplay("Sensor: {SystemId}: {Name} @  {DccAddress} => State: {State}")]
+[DebuggerDisplay("Sensor: {Id}: {Name} @  {DccAddress} => State: {State}")]
 public partial class Sensor : Accessory, IAccessory {
     [ObservableProperty] private bool    _state;
 

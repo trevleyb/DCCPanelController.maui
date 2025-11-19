@@ -218,7 +218,7 @@ public partial class PanelEditorViewModel : ObservableObject {
         if (button is { } && turnouts.Count > 0) {
             button.TurnoutPanelActions.Clear();
             foreach (var turnout in turnouts) {
-                if (string.IsNullOrEmpty(turnout?.Turnout?.SystemId)) continue;
+                if (string.IsNullOrEmpty(turnout?.Turnout?.Id)) continue;
                 button.TurnoutPanelActions.Add(new TurnoutAction() {
                     ActionID = turnout.Id,
                     WhenClosed = direction == TurnoutStateEnum.Closed ? TurnoutStateEnum.Closed : TurnoutStateEnum.Thrown,

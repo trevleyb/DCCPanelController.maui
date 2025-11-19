@@ -164,7 +164,7 @@ public partial class PanelEditor : ContentPage {
                     var selectedEntity = _viewModel.SelectedTiles[0].Entity;
                     SelectionText.Text = $"Selected Tile: {selectedEntity.EntityName} @ Layer:{selectedEntity.Layer} ";
                     if (selectedEntity is TurnoutEntity turnout) {
-                        SelectionText.Text += $" ({turnout.Id ?? "Undefined"} [DCC={turnout.Turnout?.Name}@{turnout.Turnout?.SystemId ?? "000"}])";
+                        SelectionText.Text += $" ({turnout.Id ?? "Undefined"} [DCC={turnout.Turnout?.Name}@{turnout.Turnout?.Id ?? "000"}])";
                         break;
                     } else if (selectedEntity is IEntityID entityID) {
                         SelectionText.Text += $" ({entityID.Id})";

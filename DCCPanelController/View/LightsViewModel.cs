@@ -68,7 +68,7 @@ public partial class LightsViewModel : AccessoryViewModel<Light> {
     protected override IReadOnlyDictionary<string, Func<Light, IComparable>> Sorters =>
         new Dictionary<string, Func<Light, IComparable>> {
             [_labelName] = x => x.Name ?? "",
-            [_labelID] = x => x.SystemId ?? "",
+            [_labelID] = x => x.Id ?? "",
             [_labelState] = x => x.State
         };
 
@@ -84,7 +84,7 @@ public partial class LightsViewModel : AccessoryViewModel<Light> {
     public async Task ToggleLightState(Light? light) {
         if (light == null) return;
         light.State = !light.State;
-        if (!string.IsNullOrEmpty(light.SystemId)) {
+        if (!string.IsNullOrEmpty(light.Id)) {
             if (ConnectionService.Client is { State: DccClientState.Connected } client)
                 await client.SendLightCmdAsync(light, light.State)!;
         }
@@ -116,7 +116,7 @@ public partial class LightsViewModel : AccessoryViewModel<Light> {
     [RelayCommand]
     private async Task AddLightAsync() {
         var light = new Light {
-            SystemId = TableAnalyser<Light>.GetUniqueID(Lights.ToList()),
+            Id = TableAnalyser<Light>.GetUniqueID(Lights.ToList()),
             Name = "New Light",
             Source = AccessorySource.Manual,
         };

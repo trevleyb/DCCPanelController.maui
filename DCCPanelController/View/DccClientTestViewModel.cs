@@ -184,37 +184,37 @@ public partial class DccClientTestViewModel : ObservableObject {
     partial void OnLightChanged(Light? value) => RefreshCurrentStates();
 
     // ---------- Senders ----------
-    private string? TurnoutId => Turnout?.SystemId ?? "";
+    private string? TurnoutId => Turnout?.Id ?? "";
     [ObservableProperty] private Turnout?         _turnout;
     [ObservableProperty] private TurnoutStateEnum _turnoutDesired      = TurnoutStateEnum.Closed;
     [ObservableProperty] private string           _turnoutCurrentText  = "–";
     [ObservableProperty] private Color            _turnoutCurrentColor = Colors.Gray;
 
-    private string? RouteId => Route?.SystemId ?? "";
+    private string? RouteId => Route?.Id ?? "";
     [ObservableProperty] private Route?         _route;
     [ObservableProperty] private RouteStateEnum _routeDesired      = RouteStateEnum.Inactive;
     [ObservableProperty] private string         _routeCurrentText  = "–";
     [ObservableProperty] private Color          _routeCurrentColor = Colors.Gray;
 
-    private string? SensorId => Sensor?.SystemId ?? "";
+    private string? SensorId => Sensor?.Id ?? "";
     [ObservableProperty] private Sensor? _sensor;
     [ObservableProperty] private string  _sensorDesired      = "Off";
     [ObservableProperty] private string  _sensorCurrentText  = "–";
     [ObservableProperty] private Color   _sensorCurrentColor = Colors.Gray;
 
-    private string? LightId => Light?.SystemId ?? "";
+    private string? LightId => Light?.Id ?? "";
     [ObservableProperty] private Light? _light;
     [ObservableProperty] private string _lightDesired      = "Off";
     [ObservableProperty] private string _lightCurrentText  = "–";
     [ObservableProperty] private Color  _lightCurrentColor = Colors.Gray;
 
-    private string? BlockId => Block?.SystemId ?? "";
+    private string? BlockId => Block?.Id ?? "";
     [ObservableProperty] private Block? _block;
     [ObservableProperty] private string _blockDesired      = "Free";
     [ObservableProperty] private string _blockCurrentText  = "–";
     [ObservableProperty] private Color  _blockCurrentColor = Colors.Gray;
 
-    private string? SignalId => Signal?.SystemId ?? "";
+    private string? SignalId => Signal?.Id ?? "";
     [ObservableProperty] private Signal?          _signal;
     [ObservableProperty] private SignalAspectEnum _signalDesired      = SignalAspectEnum.Clear;
     [ObservableProperty] private string           _signalCurrentText  = "–";
@@ -228,32 +228,32 @@ public partial class DccClientTestViewModel : ObservableObject {
 
     [RelayCommand] private async Task SendTurnoutAsync() => await SendWrap(async c => {
             if (string.IsNullOrWhiteSpace(TurnoutId)) return;
-            await c.SendTurnoutCmdAsync(new Turnout { SystemId = TurnoutId, Name = TurnoutId }, TurnoutDesired == TurnoutStateEnum.Thrown);
+            await c.SendTurnoutCmdAsync(new Turnout { Id = TurnoutId, Name = TurnoutId }, TurnoutDesired == TurnoutStateEnum.Thrown);
         }, DccClientOperation.Turnout, $"TX Turnout {TurnoutId} → {TurnoutDesired}");
 
     [RelayCommand] private async Task SendRouteAsync() => await SendWrap(async c => {
             if (string.IsNullOrWhiteSpace(RouteId)) return;
-            await c.SendRouteCmdAsync(new Route { SystemId = RouteId, Name = RouteId }, RouteDesired == RouteStateEnum.Active);
+            await c.SendRouteCmdAsync(new Route { Id = RouteId, Name = RouteId }, RouteDesired == RouteStateEnum.Active);
         }, DccClientOperation.Route, $"TX Route {RouteId} → {RouteDesired}");
 
     [RelayCommand] private async Task SendSensorAsync() => await SendWrap(async c => {
             if (string.IsNullOrWhiteSpace(SensorId)) return;
-            await c.SendSensorCmdAsync(new Sensor { SystemId = SensorId, Name = SensorId }, SensorDesired == "On");
+            await c.SendSensorCmdAsync(new Sensor { Id = SensorId, Name = SensorId }, SensorDesired == "On");
         }, DccClientOperation.Sensor, $"TX Sensor {SensorId} → {SensorDesired}");
 
     [RelayCommand] private async Task SendLightAsync() => await SendWrap(async c => {
             if (string.IsNullOrWhiteSpace(LightId)) return;
-            await c.SendLightCmdAsync(new Light { SystemId = LightId, Name = LightId }, LightDesired == "On");
+            await c.SendLightCmdAsync(new Light { Id = LightId, Name = LightId }, LightDesired == "On");
         }, DccClientOperation.Light, $"TX Light {LightId} → {LightDesired}");
 
     [RelayCommand] private async Task SendBlockAsync() => await SendWrap(async c => {
             if (string.IsNullOrWhiteSpace(BlockId)) return;
-            await c.SendBlockCmdAsync(new Block { SystemId = BlockId, Name = BlockId }, BlockDesired == "Occupied");
+            await c.SendBlockCmdAsync(new Block { Id = BlockId, Name = BlockId }, BlockDesired == "Occupied");
         }, DccClientOperation.Block, $"TX Block {BlockId} → {BlockDesired}");
 
     [RelayCommand] private async Task SendSignalAsync() => await SendWrap(async c => {
             if (string.IsNullOrWhiteSpace(SignalId)) return;
-            await c.SendSignalCmdAsync(new Signal { SystemId = SignalId, Name = SignalId }, SignalDesired);
+            await c.SendSignalCmdAsync(new Signal { Id = SignalId, Name = SignalId }, SignalDesired);
         }, DccClientOperation.Signal, $"TX Signal {SignalId} → {SignalDesired}");
 
     private async Task SendWrap(Func<IDccClient, Task> sender, DccClientOperation operation, string log) {

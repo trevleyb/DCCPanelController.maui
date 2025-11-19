@@ -10,9 +10,9 @@ public enum AccessoryBindingMode {
     Unbound = 0,
 
     /// <summary>
-    /// Use the SystemId string as-is (e.g. "NT432", "LT12").
+    /// Use the Id string as-is (e.g. "NT432", "LT12").
     /// </summary>
-    SystemId = 1,
+    Id = 1,
 
     /// <summary>
     /// Use the numeric DCC address as a bare numeric name (e.g. "432").

@@ -22,7 +22,7 @@ public partial class BlocksEditViewModel : BaseViewModel {
         _logger = logger;
         Block = block;
         Sensors = sensors;
-        Sensor = sensors.FirstOrDefault(x => x?.SystemId == block?.Sensor);
+        Sensor = sensors.FirstOrDefault(x => x?.Id == block?.Sensor);
         ConnectionService = connectionService;
         Title = Block?.Name ?? "Block Properties";
     }

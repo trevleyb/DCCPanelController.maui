@@ -1,7 +1,7 @@
 namespace DCCPanelController.Models.DataModel.Accessories;
 
 public interface IAccessory {
-    string? SystemId { get; set; }
+    string? Id { get; set; }
     string? Name { get; set; }
     int? DccAddress { get; set; }
     bool IsValidForCurrentConnection { get; set; }

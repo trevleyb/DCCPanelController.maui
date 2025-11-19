@@ -38,11 +38,11 @@ public static class PanelValidator {
         var profile = panel.Panels.Profile;
 
         // Helpers (case-insensitive)
-        bool HasTurnout(string id) => !string.IsNullOrWhiteSpace(id) && profile.Turnouts.Any(t => string.Equals(t.SystemId, id, StringComparison.InvariantCultureIgnoreCase));
-        bool HasRoute(string id) => !string.IsNullOrWhiteSpace(id) && profile.Routes.Any(r => string.Equals(r.SystemId, id, StringComparison.InvariantCultureIgnoreCase));
-        bool HasLight(string id) => !string.IsNullOrWhiteSpace(id) && profile.Lights.Any(l => string.Equals(l.SystemId, id, StringComparison.InvariantCultureIgnoreCase));
+        bool HasTurnout(string id) => !string.IsNullOrWhiteSpace(id) && profile.Turnouts.Any(t => string.Equals(t.Id, id, StringComparison.InvariantCultureIgnoreCase));
+        bool HasRoute(string id) => !string.IsNullOrWhiteSpace(id) && profile.Routes.Any(r => string.Equals(r.Id, id, StringComparison.InvariantCultureIgnoreCase));
+        bool HasLight(string id) => !string.IsNullOrWhiteSpace(id) && profile.Lights.Any(l => string.Equals(l.Id, id, StringComparison.InvariantCultureIgnoreCase));
         bool HasTurnoutName(string name) => !string.IsNullOrWhiteSpace(name) && profile.Turnouts.Any(t => string.Equals(t.Name, name, StringComparison.InvariantCultureIgnoreCase));
-        string TurnoutIdFromName(string name) => profile.Turnouts.First(t => string.Equals(t.Name, name, StringComparison.InvariantCultureIgnoreCase)).SystemId ?? "";
+        string TurnoutIdFromName(string name) => profile.Turnouts.First(t => string.Equals(t.Name, name, StringComparison.InvariantCultureIgnoreCase)).Id ?? "";
 
         // 1) TurnoutButtonEntity.TurnoutID must exist in Profile.Turnouts
         foreach (var tButton in panel.GetPanelEntitiesByType<TurnoutButtonEntity>()) {

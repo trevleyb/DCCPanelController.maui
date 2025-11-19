@@ -54,7 +54,7 @@ public partial class RoutesViewModel : AccessoryViewModel<Route>
     protected override IReadOnlyDictionary<string, Func<Route, IComparable>> Sorters => new Dictionary<string, Func<Route, IComparable>>
     {
         [_labelName]  = x => x.Name ?? "",
-        [_labelID]    = x => x.SystemId ?? "",
+        [_labelID]    = x => x.Id ?? "",
         [_labelState] = x => x.State
     };
 
@@ -89,7 +89,7 @@ public partial class RoutesViewModel : AccessoryViewModel<Route>
             RouteStateEnum.Inactive => RouteStateEnum.Active,
             _                       => RouteStateEnum.Active,
         };
-        if (!string.IsNullOrEmpty(route.SystemId))
+        if (!string.IsNullOrEmpty(route.Id))
         {
             if (ConnectionService.Client is { State: DccClientState.Connected } client)
                 await client.SendRouteCmdAsync(route, true)!;

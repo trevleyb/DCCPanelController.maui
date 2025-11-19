@@ -70,7 +70,7 @@ public partial class BlocksViewModel : AccessoryViewModel<Block>
     protected override IReadOnlyDictionary<string, Func<Block, IComparable>> Sorters => new Dictionary<string, Func<Block, IComparable>>
     {
         [_labelName]   = x => x.Name ?? "",
-        [_labelID]     = x => x.SystemId ?? "",
+        [_labelID]     = x => x.Id ?? "",
         [_labelSensor] = x => x.Sensor ?? "",
         [_labelState]  = x => x.IsOccupied
     };
@@ -90,7 +90,7 @@ public partial class BlocksViewModel : AccessoryViewModel<Block>
     {
         if (block == null) return;
         block.IsOccupied = !block.IsOccupied;
-        if (!string.IsNullOrEmpty(block.SystemId))
+        if (!string.IsNullOrEmpty(block.Id))
         {
             if (ConnectionService.Client is { State: DccClientState.Connected } client)
                 await client.SendBlockCmdAsync(block, block.IsOccupied)!;
@@ -126,7 +126,7 @@ public partial class BlocksViewModel : AccessoryViewModel<Block>
     {
         var block = new Block
         {
-            SystemId = TableAnalyser<Block>.GetUniqueID(Blocks.ToList()),
+            Id = TableAnalyser<Block>.GetUniqueID(Blocks.ToList()),
             Name = "New Block",
             Source = AccessorySource.Manual
         };

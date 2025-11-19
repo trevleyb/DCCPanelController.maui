@@ -227,11 +227,11 @@ namespace DCCPanelController.Clients.WiThrottle {
         // ----------------------------------------------------------------------------------------------------------
         public async Task<IResult> SendTurnoutCmdAsync(Turnout turnout, bool thrown) {
             if (State != DccClientState.Connected || _stream is null) return Result.Fail("Not connected to WiThrottle server");
-            if (string.IsNullOrEmpty(turnout.SystemId)) return Result.Fail("Invalid Turnout Id provided.");
+            if (string.IsNullOrEmpty(turnout.Id)) return Result.Fail("Invalid Turnout Id provided.");
 
             try {
-                var turnoutId = turnout.Source == AccessorySource.WiThrottle && !string.IsNullOrEmpty(turnout.SystemId)
-                    ? turnout.SystemId
+                var turnoutId = turnout.Source == AccessorySource.WiThrottle && !string.IsNullOrEmpty(turnout.Id)
+                    ? turnout.Id
                     : (turnout.DccAddress is > 0 ? turnout.DccAddress.Value.ToString() : string.Empty);
 
                 if (string.IsNullOrWhiteSpace(turnoutId)) return Result.Fail("Invalid Turnout Id provided.");
@@ -247,11 +247,11 @@ namespace DCCPanelController.Clients.WiThrottle {
 
         public async Task<IResult> SendRouteCmdAsync(Route route, bool active) {
             if (State != DccClientState.Connected || _stream is null) return Result.Fail("Not connected to WiThrottle server");
-            if (string.IsNullOrEmpty(route.SystemId)) return Result.Fail("Invalid Route Id provided.");
+            if (string.IsNullOrEmpty(route.Id)) return Result.Fail("Invalid Route Id provided.");
 
             try {
-                var routeId = route.Source == AccessorySource.WiThrottle && !string.IsNullOrEmpty(route.SystemId)
-                    ? route.SystemId
+                var routeId = route.Source == AccessorySource.WiThrottle && !string.IsNullOrEmpty(route.Id)
+                    ? route.Id
                     : (route.DccAddress is > 0 ? route.DccAddress.Value.ToString() : string.Empty);
 
                 if (string.IsNullOrWhiteSpace(routeId)) return Result.Fail("Invalid Route Id provided.");

@@ -74,17 +74,17 @@ public partial class Panel : ObservableObject, IEntityGeneratingID {
         return foundItem;
     }
 
-    public Accessories.Block? Block(string id) => Blocks.FirstOrDefault(x => x.SystemId != null && x.SystemId.Equals(id, StringComparison.InvariantCultureIgnoreCase)) ?? Blocks.FirstOrDefault(x => x.Name != null && x.Name.Equals(id, StringComparison.InvariantCultureIgnoreCase));
+    public Accessories.Block? Block(string id) => Blocks.FirstOrDefault(x => x.Id != null && x.Id.Equals(id, StringComparison.InvariantCultureIgnoreCase)) ?? Blocks.FirstOrDefault(x => x.Name != null && x.Name.Equals(id, StringComparison.InvariantCultureIgnoreCase));
 
-    public Accessories.Route? Route(string id) => Routes.FirstOrDefault(x => x.SystemId != null && x.SystemId.Equals(id, StringComparison.InvariantCultureIgnoreCase)) ?? Routes.FirstOrDefault(x => x.Name != null && x.Name.Equals(id, StringComparison.InvariantCultureIgnoreCase));
+    public Accessories.Route? Route(string id) => Routes.FirstOrDefault(x => x.Id != null && x.Id.Equals(id, StringComparison.InvariantCultureIgnoreCase)) ?? Routes.FirstOrDefault(x => x.Name != null && x.Name.Equals(id, StringComparison.InvariantCultureIgnoreCase));
 
-    public Turnout? Turnout(string id) => Turnouts.FirstOrDefault(x => x.SystemId != null && x.SystemId.Equals(id, StringComparison.InvariantCultureIgnoreCase)) ?? Turnouts.FirstOrDefault(x => x.Name != null && x.Name.Equals(id, StringComparison.InvariantCultureIgnoreCase));
+    public Turnout? Turnout(string id) => Turnouts.FirstOrDefault(x => x.Id != null && x.Id.Equals(id, StringComparison.InvariantCultureIgnoreCase)) ?? Turnouts.FirstOrDefault(x => x.Name != null && x.Name.Equals(id, StringComparison.InvariantCultureIgnoreCase));
 
-    public Signal? Signal(string id) => Signals.FirstOrDefault(x => x.SystemId != null && x.SystemId.Equals(id, StringComparison.InvariantCultureIgnoreCase)) ?? Signals.FirstOrDefault(x => x.Name != null && x.Name.Equals(id, StringComparison.InvariantCultureIgnoreCase));
+    public Signal? Signal(string id) => Signals.FirstOrDefault(x => x.Id != null && x.Id.Equals(id, StringComparison.InvariantCultureIgnoreCase)) ?? Signals.FirstOrDefault(x => x.Name != null && x.Name.Equals(id, StringComparison.InvariantCultureIgnoreCase));
 
-    public Sensor? Sensor(string id) => Sensors.FirstOrDefault(x => x.SystemId != null && x.SystemId.Equals(id, StringComparison.InvariantCultureIgnoreCase)) ?? Sensors.FirstOrDefault(x => x.Name != null && x.Name.Equals(id, StringComparison.InvariantCultureIgnoreCase));
+    public Sensor? Sensor(string id) => Sensors.FirstOrDefault(x => x.Id != null && x.Id.Equals(id, StringComparison.InvariantCultureIgnoreCase)) ?? Sensors.FirstOrDefault(x => x.Name != null && x.Name.Equals(id, StringComparison.InvariantCultureIgnoreCase));
 
-    public Accessories.Light? Light(string id) => Lights.FirstOrDefault(x => x.SystemId != null && x.SystemId.Equals(id, StringComparison.InvariantCultureIgnoreCase)) ?? Lights.FirstOrDefault(x => x.Name != null && x.Name.Equals(id, StringComparison.InvariantCultureIgnoreCase));
+    public Accessories.Light? Light(string id) => Lights.FirstOrDefault(x => x.Id != null && x.Id.Equals(id, StringComparison.InvariantCultureIgnoreCase)) ?? Lights.FirstOrDefault(x => x.Name != null && x.Name.Equals(id, StringComparison.InvariantCultureIgnoreCase));
 
     public Entity AddEntity(Entity entity) {
         entity.Parent = this;

@@ -26,13 +26,13 @@ internal sealed class LightRenderer : BaseRenderer, IPropertyRenderer {
         picker.ItemsSource = lights;
         picker.ItemDisplayBinding = new Binding(nameof(Light.DisplayFormat));
         if (row.OriginalValue is string s) {
-            var item = lights.FirstOrDefault(b => b.SystemId == s) ?? lights.FirstOrDefault(b => b.Name == s);
+            var item = lights.FirstOrDefault(b => b.Id == s) ?? lights.FirstOrDefault(b => b.Name == s);
             picker.SelectedItem = item;
         }
         picker.SelectedIndexChanged += (s2, e2) => {
             if (picker.SelectedIndex < lights.Count && picker.SelectedIndex >= 0) {
                 var item = lights[picker.SelectedIndex];
-                SetValue(row, item.SystemId);
+                SetValue(row, item.Id);
             }
         };
         picker.IsEnabled = !row.Field.Meta.IsReadOnlyInRunMode;

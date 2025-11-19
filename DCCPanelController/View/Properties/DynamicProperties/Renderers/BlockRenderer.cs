@@ -26,13 +26,13 @@ internal sealed class BlockRenderer : BaseRenderer, IPropertyRenderer {
         picker.ItemsSource = blocks;
         picker.ItemDisplayBinding = new Binding(nameof(Block.DisplayFormat));
         if (row.OriginalValue is string s) {
-            var item = blocks.FirstOrDefault(b => b.SystemId == s) ?? blocks.FirstOrDefault(b => b.Name == s);
+            var item = blocks.FirstOrDefault(b => b.Id == s) ?? blocks.FirstOrDefault(b => b.Name == s);
             picker.SelectedItem = item;
         }
         picker.SelectedIndexChanged += (s2, e2) => {
             if (picker.SelectedIndex < blocks.Count && picker.SelectedIndex >= 0) {
                 var item = blocks[picker.SelectedIndex];
-                SetValue(row, item.SystemId);
+                SetValue(row, item.Id);
             }
         };
         picker.IsEnabled = !row.Field.Meta.IsReadOnlyInRunMode;

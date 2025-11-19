@@ -73,7 +73,7 @@ public partial class TurnoutsViewModel : AccessoryViewModel<Turnout> {
     protected override IReadOnlyDictionary<string, Func<Turnout, IComparable>> Sorters =>
         new Dictionary<string, Func<Turnout, IComparable>> {
             [_labelName] = x => x.Name ?? "",
-            [_labelID] = x => x.SystemId ?? "",
+            [_labelID] = x => x.Id ?? "",
             [_labelAddress] = x => x.DccAddress.ToString() ?? "",
             [_labelState] = x => x.State
         };
@@ -115,7 +115,7 @@ public partial class TurnoutsViewModel : AccessoryViewModel<Turnout> {
     [RelayCommand]
     private async Task AddTurnoutAsync() {
         var turnout = new Turnout {
-            SystemId = TableAnalyser<Turnout>.GetUniqueID(Turnouts.ToList()),
+            Id = TableAnalyser<Turnout>.GetUniqueID(Turnouts.ToList()),
             Name = "New Turnout",
             State = TurnoutStateEnum.Closed,
             Default = TurnoutStateEnum.Closed,

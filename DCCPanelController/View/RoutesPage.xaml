@@ -58,7 +58,7 @@
     <Grid>
         <StackLayout x:Name="MainStackLayout">
             <Grid
-                ColumnDefinitions="120,*,100"
+                ColumnDefinitions="120,*,80,100"
                 HorizontalOptions="Fill">
                 <Button
                     Command="{Binding SortByColumnCommand}"
@@ -77,9 +77,13 @@
                 <Button
                     Command="{Binding SortByColumnCommand}"
                     CommandParameter="{Binding LabelState}"
-                    Grid.Column="2"
+                    Grid.Column="3"
                     Style="{StaticResource ColumnLabel}"
                     Text="{Binding ColumnLabelState}" />
+
+                <Button Text="Source"
+                        Grid.Column="2"
+                        Style="{StaticResource ColumnLabel}"/>
             </Grid>
             <BoxView
                 BackgroundColor="{StaticResource Primary}"
@@ -106,7 +110,7 @@
                             <DataTemplate x:DataType="accessories:Route">
                                 <Grid Style="{StaticResource SelectableItemStyle}">
                                     <StackLayout Padding="0">
-                                        <Grid ColumnDefinitions="120,*,75,20" Margin="0,5,0,5" Padding="0"
+                                        <Grid ColumnDefinitions="120,*,80,75,20" Margin="0,5,0,5" Padding="0"
                                               Style="{StaticResource SelectableItemStyle}">
                                             <Grid.GestureRecognizers>
                                                 <TapGestureRecognizer
@@ -130,8 +134,18 @@
                                                 Style="{StaticResource MediumLabel}"
                                                 Text="{Binding Name}"
                                                 VerticalOptions="Center" />
+                                            
                                             <Label
                                                 Grid.Column="2"
+                                                IsEnabled="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, x:DataType=view:TurnoutsViewModel, Path=IsConnected}"
+                                                HorizontalOptions="Start"
+                                                LineBreakMode="WordWrap"
+                                                Style="{StaticResource MediumLabel}"
+                                                Text="{Binding Source, Converter={StaticResource EnumToLabelConverter}}"
+                                                VerticalOptions="Center"/>
+                                           
+                                            <Label
+                                                Grid.Column="3"
                                                 HorizontalOptions="Start"
                                                 Style="{StaticResource MediumLabel}"
                                                 Text="{Binding State}"
@@ -170,7 +184,7 @@
                                                 </Label.Triggers>
                                             </Label>
                                             <Image
-                                                Grid.Column="3"
+                                                Grid.Column="4"
                                                 HeightRequest="32"
                                                 HorizontalOptions="End"
                                                 VerticalOptions="Center"
@@ -209,10 +223,6 @@
                                                 </Image.Triggers>
                                             </Image>
                                         </Grid>
-                                        <BoxView
-                                            BackgroundColor="{StaticResource Primary}"
-                                            HeightRequest="1"
-                                            HorizontalOptions="FillAndExpand" />
                                     </StackLayout>
                                 </Grid>
                             </DataTemplate>

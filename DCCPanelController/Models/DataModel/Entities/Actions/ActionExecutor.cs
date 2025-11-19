@@ -48,7 +48,7 @@ public static class ActionExecutor {
                     try {
                         await client.SendTurnoutCmdAsync(t, ts != TurnoutStateEnum.Closed);
                     } catch (Exception ex) {
-                        LogHelper.Logger.LogWarning($"Turnout command failed for {t.SystemId}: {ex.Message}");
+                        LogHelper.Logger.LogWarning($"Turnout command failed for {t.Id}: {ex.Message}");
                     }
                 }
             }

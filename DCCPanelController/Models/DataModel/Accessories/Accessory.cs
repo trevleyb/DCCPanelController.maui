@@ -11,32 +11,32 @@ namespace DCCPanelController.Models.DataModel.Accessories;
 /// addressed over a WiThrottle-style connection.
 ///
 /// Rules:
-/// - SystemId is primary when the server knows about it (PTL/PRL).
+/// - Id is primary when the server knows about it (PTL/PRL).
 /// - DccAddress is editable; if not set explicitly, we infer it from trailing digits
-///   of SystemId (e.g. "NT432" -> 432).
+///   of Id (e.g. "NT432" -> 432).
 /// - On each connection, we validate against that server's system IDs.
-///   If valid, we send SystemId. If not, and numeric fallback is allowed,
+///   If valid, we send Id. If not, and numeric fallback is allowed,
 ///   we send DccAddress as a pure numeric name.
 /// </summary>
 public abstract partial class Accessory : ObservableObject, IEquatable<Accessory>, IComparable<Accessory> {
     
-    [ObservableProperty] private string?              _systemId;
+    [ObservableProperty] private string?              _id;
     [ObservableProperty] private string?              _name;
     [ObservableProperty] private int?                 _dccAddress;
     [ObservableProperty] private bool                 _isValidForCurrentConnection;
     [ObservableProperty] private AccessorySource      _source      = AccessorySource.Unknown;
     [ObservableProperty] private AccessoryBindingMode _bindingMode = AccessoryBindingMode.Unbound;
 
-    [JsonIgnore] public string DisplayFormat => $"{(SystemId ?? "Unnamed")} ({(DccAddress.HasValue ? DccAddress.Value.ToString() : "—")})";
+    [JsonIgnore] public string DisplayFormat => $"{(Id ?? "Unnamed")} ({(DccAddress.HasValue ? DccAddress.Value.ToString() : "—")})";
 
-    // Tracks whether DccAddress was explicitly edited vs inferred from SystemId.
+    // Tracks whether DccAddress was explicitly edited vs inferred from Id.
     private bool _dccAddressHasBeenExplicitlySet;
 
-    partial void OnSystemIdChanged(string? value) {
+    partial void OnIdChanged(string? value) {
         // If the user hasn't explicitly edited DccAddress, try to infer it
-        // from the new SystemId (e.g., "NT432" -> 432).
+        // from the new Id (e.g., "NT432" -> 432).
         if (!_dccAddressHasBeenExplicitlySet) {
-            InferDccAddressFromSystemId();
+            InferDccAddressFromId();
         }
     }
 
@@ -55,7 +55,7 @@ public abstract partial class Accessory : ObservableObject, IEquatable<Accessory
     /// </summary>
     public string? GetCommandIdentifier() {
         return BindingMode switch {
-            AccessoryBindingMode.SystemId when!string.IsNullOrWhiteSpace(SystemId) => SystemId!.Trim(),
+            AccessoryBindingMode.Id when!string.IsNullOrWhiteSpace(Id) => Id!.Trim(),
             AccessoryBindingMode.NumericDccAddress when DccAddress.HasValue => DccAddress.Value.ToString(),
             _ => null
         };
@@ -65,18 +65,18 @@ public abstract partial class Accessory : ObservableObject, IEquatable<Accessory
     /// Re-evaluates how this accessory should be bound for the current connection,
     /// given the set of known system IDs (from PTL/PRL) and server capabilities.
     /// </summary>
-    public void UpdateBindingForConnection(ISet<string> knownSystemIds, AccessoryCapabilities? capabilities = null) {
+    public void UpdateBindingForConnection(ISet<string> knownIds, AccessoryCapabilities? capabilities = null) {
         capabilities ??= AccessoryCapabilities.Default;
 
         BindingMode = AccessoryBindingMode.Unbound;
         IsValidForCurrentConnection = false;
 
-        var trimmedSystemId = SystemId?.Trim();
+        var trimmedId = Id?.Trim();
 
-        // 1. Prefer a direct SystemId match from the server's PTL/PRL.
-        if (!string.IsNullOrEmpty(trimmedSystemId) &&
-            knownSystemIds.Contains(trimmedSystemId)) {
-            BindingMode = AccessoryBindingMode.SystemId;
+        // 1. Prefer a direct Id match from the server's PTL/PRL.
+        if (!string.IsNullOrEmpty(trimmedId) &&
+            knownIds.Contains(trimmedId)) {
+            BindingMode = AccessoryBindingMode.Id;
             IsValidForCurrentConnection = true;
             return;
         }
@@ -96,12 +96,12 @@ public abstract partial class Accessory : ObservableObject, IEquatable<Accessory
     }
 
     /// <summary>
-    /// Ensures DccAddress is populated if possible using the current SystemId.
+    /// Ensures DccAddress is populated if possible using the current Id.
     /// Useful after bulk imports when you want to auto-fill addresses from IDs.
     /// </summary>
     public void EnsureDccAddressInitialized() {
         if (!_dccAddressHasBeenExplicitlySet && !DccAddress.HasValue) {
-            InferDccAddressFromSystemId();
+            InferDccAddressFromId();
         }
     }
 
@@ -110,10 +110,10 @@ public abstract partial class Accessory : ObservableObject, IEquatable<Accessory
     // -----------------------------
 
     /// <summary>
-    /// Attempts to infer DCC address from trailing digits of SystemId (e.g. "NT432" -> 432).
+    /// Attempts to infer DCC address from trailing digits of Id (e.g. "NT432" -> 432).
     /// This implements your JMRI-style assumption: NTnnn / LTnnn => DccAddress nnn.
     /// </summary>
-    public void InferDccAddressFromSystemId() => InferDccAddressFrom(SystemId); 
+    public void InferDccAddressFromId() => InferDccAddressFrom(Id); 
     
     public void InferDccAddressFrom(string? id) {
         if (string.IsNullOrWhiteSpace(id)) return;
@@ -132,23 +132,23 @@ public abstract partial class Accessory : ObservableObject, IEquatable<Accessory
             DccAddress = address;
             OnPropertyChanged(nameof(DccAddress));
 
-            // dccAddressHasBeenExplicitlySet remains false so future SystemId changes
+            // dccAddressHasBeenExplicitlySet remains false so future Id changes
             // can re-infer if needed.
         }
     }
     
     // --- Equality & ordering (by Id, then DccAddress, then Name) ---
-    public bool Equals(Accessory? other) => other is not null && string.Equals(SystemId, other.SystemId, StringComparison.OrdinalIgnoreCase);
+    public bool Equals(Accessory? other) => other is not null && string.Equals(Id, other.Id, StringComparison.OrdinalIgnoreCase);
     public override bool Equals(object? obj) => obj is Accessory acc && Equals(acc);
 
-    public override int GetHashCode() => (SystemId ?? string.Empty).ToUpperInvariant().GetHashCode();
+    public override int GetHashCode() => (Id ?? string.Empty).ToUpperInvariant().GetHashCode();
 
     public int CompareTo(Accessory? other) {
         if (other is null) return 1;
         var byAddr = DccAddress == other.DccAddress;
         if (byAddr) return 0;
         var byName = string.Compare(Name, other.Name, StringComparison.OrdinalIgnoreCase);
-        return byName != 0 ? byName : string.Compare(SystemId, other.SystemId, StringComparison.OrdinalIgnoreCase);
+        return byName != 0 ? byName : string.Compare(Id, other.Id, StringComparison.OrdinalIgnoreCase);
     }
 
     // --- Internals ---

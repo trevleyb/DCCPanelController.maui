@@ -19,8 +19,8 @@ public partial class TurnoutsEditView : ContentView {
         if (e is { PropertyName: nameof(TurnoutsEditViewModel.Turnout.Name) }) {
             _viewModel.Title = string.IsNullOrEmpty(_viewModel.Turnout.Name) ? "Turnout Properties" : _viewModel.Turnout.Name;
         }
-        if (e is { PropertyName: nameof(TurnoutsEditViewModel.Turnout.SystemId) }) {
-            _viewModel.Turnout.InferDccAddressFrom(_viewModel.Turnout.SystemId);
+        if (e is { PropertyName: nameof(TurnoutsEditViewModel.Turnout.Id) }) {
+            _viewModel.Turnout.InferDccAddressFrom(_viewModel.Turnout.Id);
         }
 
     }
