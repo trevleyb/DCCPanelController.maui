@@ -8,7 +8,7 @@
     xmlns:components="clr-namespace:DCCPanelController.View.Components"
     xmlns:view="clr-namespace:DCCPanelController.View"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:dataModel="clr-namespace:DCCPanelController.Models.DataModel">
+    xmlns:dataModel="clr-namespace:DCCPanelController.Models.DataModel.Accessories">
 
     <StackLayout>
         <HorizontalStackLayout HeightRequest="40">

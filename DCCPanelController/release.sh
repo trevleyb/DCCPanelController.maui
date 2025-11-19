@@ -2,11 +2,11 @@
 set -euo pipefail
 
 # ========== CONFIG ==========
-FRAMEWORK="net9.0-ios"
+FRAMEWORK="net10.0-ios"
 CONFIGURATION="Release"
 PROJECT_PATH="./"          # path to your .csproj or solution directory
 OUTPUT_ROOT="./artifacts"  # where to copy the .ipa
-XCODESWITCH="/Applications/Xcode164.app/Contents/Developer"   # or your specific Xcode path
+XCODESWITCH="/Applications/Xcode.app/Contents/Developer" 
 
 # Optional signing params (uncomment and set if you need explicit values)
 # CODESIGN_KEY='Apple Distribution: Your Company Name'
@@ -20,10 +20,14 @@ echo "== Cleaning output =="
 rm -rf "$OUTPUT_ROOT"
 mkdir -p "$OUTPUT_ROOT"
 
-echo "== dotnet clean =="
-dotnet clean "$PROJECT_PATH" -c "$CONFIGURATION"
+echo "== Remove all obj and bin =="
+pwd
 rm -rf "$PROJECT_PATH/bin"
 rm -rf "$PROJECT_PATH/obj"
+
+echo "== dotnet clean =="
+dotnet clean "$PROJECT_PATH" -c "$CONFIGURATION"
+
 
 echo "== dotnet restore =="
 dotnet restore "$PROJECT_PATH"

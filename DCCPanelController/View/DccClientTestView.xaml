@@ -8,7 +8,7 @@
     xmlns:view="clr-namespace:DCCPanelController.View"
     xmlns:clients="clr-namespace:DCCPanelController.Clients"
     xmlns:system="clr-namespace:System;assembly=System.Runtime"
-    xmlns:dataModel="clr-namespace:DCCPanelController.Models.DataModel"
+    xmlns:dataModel="clr-namespace:DCCPanelController.Models.DataModel.Accessories"
     xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     xmlns:helpers="clr-namespace:DCCPanelController.View.Helpers"
     xmlns:markdig="clr-namespace:Markdig;assembly=Markdig"

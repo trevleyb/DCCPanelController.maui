@@ -4,12 +4,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:view="clr-namespace:DCCPanelController.View"
              xmlns:tileSelectors="clr-namespace:DCCPanelController.View.TileSelectors"
-             xmlns:ios="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
              xmlns:controlPanel="clr-namespace:DCCPanelController.View.ControlPanel"
              xmlns:services="clr-namespace:DCCPanelController.Services"
-             xmlns:components="clr-namespace:DCCPanelController.View.Components"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
-             ios:Page.UseSafeArea="false"
              x:DataType="view:PanelEditorViewModel"
              Title="{Binding Panel.Title}"
              x:Class="DCCPanelController.View.PanelEditor">
