@@ -49,7 +49,8 @@
 
     <PropertyGroup Condition="'$(TargetFramework)' == 'net10.0-ios' and '$(Configuration)' == 'Debug'">
         <CodesignKey>Apple Development: TREVOR GRANT LEYBOURNE (WBT6U58HVN)</CodesignKey>
-        <CodesignProvision>cce36aac-e0be-4a8f-a0d8-3fb6a5d830bf</CodesignProvision>
+        <CodesignProvision>cc7f965e-588c-413b-9623-e99bd77ee3fe</CodesignProvision>
+        <CodesignEntitlements>Platforms/iOS/Entitlements.plist</CodesignEntitlements>
         <MtouchLink>None</MtouchLink>
         <MtouchExtraArgs>--debug -v -v -v</MtouchExtraArgs>
         <Optimize>false</Optimize>
@@ -61,8 +62,8 @@
 
     <PropertyGroup Condition="'$(TargetFramework)' == 'net10.0-ios' and '$(Configuration)' == 'Release'">
         <CodesignKey>Apple Distribution: TREVOR GRANT LEYBOURNE (3FBC48TFF3)</CodesignKey>
-        <CodesignProvision>2b8112e8-5818-4df3-a757-1bc3ec50a939</CodesignProvision>
-
+        <CodesignProvision>a425e3b2-0ea0-41ab-98cc-4b5e4c28f954</CodesignProvision>
+        <CodesignEntitlements>Platforms/iOS/Entitlements.plist</CodesignEntitlements>
         <MtouchLink>SdkOnly</MtouchLink>         <!-- or Full if you’re sure; SdkOnly is safer for MAUI -->
         <UseInterpreter>false</UseInterpreter>   <!-- Interpreter must be off for App Store -->
         <Optimize>true</Optimize>

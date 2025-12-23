@@ -1,4 +1,4 @@
-sudo xcode-select -s /Applications/Xcode164.app/Contents/Developer
+sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
 
 dotnet publish -f net9.0-ios -c Release
 

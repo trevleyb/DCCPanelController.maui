@@ -4,17 +4,20 @@ set -euo pipefail
 # ========== CONFIG ==========
 FRAMEWORK="net10.0-ios"
 CONFIGURATION="Release"
-PROJECT_PATH="./"          # path to your .csproj or solution directory
+PROJECT_PATH="."          # path to your .csproj or solution directory
 OUTPUT_ROOT="./artifacts"  # where to copy the .ipa
 XCODESWITCH="/Applications/Xcode.app/Contents/Developer" 
 
+CODESIGN_KEY='Apple Distribution: TREVOR GRANT LEYBOURNE (3FBC48TFF3)'
+CODESIGN_PROVISION='a425e3b2-0ea0-41ab-98cc-4b5e4c28f954'
+    
 # Optional signing params (uncomment and set if you need explicit values)
 # CODESIGN_KEY='Apple Distribution: Your Company Name'
 # CODESIGN_PROVISION='Your Provisioning Profile Name Or UUID'
 # ========== END CONFIG ==========
 
-echo "== Switching Xcode =="
-sudo xcode-select -s "$XCODESWITCH"
+#echo "== Switching Xcode =="
+#sudo xcode-select -s "$XCODESWITCH"
 
 echo "== Cleaning output =="
 rm -rf "$OUTPUT_ROOT"
@@ -28,7 +31,6 @@ rm -rf "$PROJECT_PATH/obj"
 echo "== dotnet clean =="
 dotnet clean "$PROJECT_PATH" -c "$CONFIGURATION"
 
-
 echo "== dotnet restore =="
 dotnet restore "$PROJECT_PATH"
 
@@ -39,13 +41,9 @@ PUBLISH_ARGS=(
   -c "$CONFIGURATION"
   -p:ArchiveOnBuild=true
   -p:BuildIpa=true
+  -p:CodesignKey="$CODESIGN_KEY"
+  -p:CodesignProvision="$CODESIGN_PROVISION"
 )
-
-# If you need explicit signing, uncomment:
-# PUBLISH_ARGS+=(
-#   -p:CodesignKey="$CODESIGN_KEY"
-#   -p:CodesignProvision="$CODESIGN_PROVISION"
-# )
 
 dotnet publish "${PUBLISH_ARGS[@]}"
 
@@ -68,6 +66,8 @@ echo "Found IPA: $IPA_PATH"
 echo "== Copying IPA to artifacts =="
 DEST_IPA="$OUTPUT_ROOT/$(basename "$IPA_PATH")"
 cp "$IPA_PATH" "$DEST_IPA"
+
+codesign -d --entitlements :- artifacts/DCCPanelController.ipa
 
 echo "== Done =="
 echo "IPA ready for Transporter:"
