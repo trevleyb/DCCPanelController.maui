@@ -67,7 +67,12 @@ echo "== Copying IPA to artifacts =="
 DEST_IPA="$OUTPUT_ROOT/$(basename "$IPA_PATH")"
 cp "$IPA_PATH" "$DEST_IPA"
 
-codesign -d --entitlements :- artifacts/DCCPanelController.ipa
+echo "== Checking if IPA is signed =="
+cd $OUTPUT_ROOT
+unzip -q DCCPanelController.ipa 
+codesign -d --entitlements - --xml Payload/DCCPanelController.app | plutil -p -
+rm -rf Payload
+cd ..
 
 echo "== Done =="
 echo "IPA ready for Transporter:"
