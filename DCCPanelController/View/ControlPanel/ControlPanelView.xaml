@@ -20,6 +20,7 @@
             VerticalOptions="Fill"/>
 
         <ActivityIndicator
+            Scale="3.0"
             HorizontalOptions="Center"
             VerticalOptions="Center"
             IsRunning="{Binding Source={x:Reference ControlPanelViewRoot}, Path=IsPanelDrawing}"

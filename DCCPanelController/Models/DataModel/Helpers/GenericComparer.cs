@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text.Json.Serialization;
@@ -19,40 +20,46 @@ public static class GenericComparer {
         return AreEqualInternal(obj1, obj2, options, visited, 0);
     }
 
-    private static bool CompareResult(bool result, string? message = "", object? obj1 = null, object? obj2 = null, [CallerLineNumber] int lineNumber = 0) =>
-        //if (!result) Debug.WriteLine($"[{lineNumber}] {message}: {obj1} == {obj2} = {result}");
-        result;
+    private static bool CompareResult(bool result, GenericComparerOptions? options, string? message = "", object? obj1 = null, object? obj2 = null, [CallerLineNumber] int lineNumber = 0) {
+        if (!result && (options?.IsDebugMode ?? false)) {
+            Debug.WriteLine($"[{lineNumber}] {message}: {obj1} == {obj2} = {result}");
+        }
+        return result;
+    }
 
     private static bool AreEqualInternal(object? obj1, object? obj2,
         GenericComparerOptions options,
         HashSet<(object, object)> visited, int depth) {
 
-        if (obj1 == null && obj2 == null) return CompareResult(true, "Both Objects are Null");
-        if (obj1 == null || obj2 == null) return CompareResult(false, "One of the objects is null");
+        if (obj1 == null && obj2 == null) return CompareResult(true, options, "Both Objects are Null");
+        if (obj1 == null || obj2 == null) return CompareResult(false, options, "One of the objects is null");
 
         // Check depth limit
-        if (depth >= options.MaxDepth) return CompareResult(true, "Max Depth exceeded");
+        if (depth >= options.MaxDepth) return CompareResult(true, options, "Max Depth exceeded");
 
         // Check for circular references
         var objPair = (obj1, obj2);
-        if (!visited.Add(objPair)) return CompareResult(true, "Have already visited this pair");
+        if (!visited.Add(objPair)) return CompareResult(true, options, "Have already visited this pair");
 
         // Different types are not equal
         var type = obj1.GetType();
-        if (type != obj2.GetType()) return CompareResult(false, "Types of objects are not the same");
+        if (type != obj2.GetType()) return CompareResult(false, options, "Types of objects are not the same");
 
         // Handle simple types, enums, and Nullable<>
-        if (IsSimpleType(type)) return CompareResult(obj1.Equals(obj2), "IsSimpleType Comparison", obj1, obj2);
-        if (type.IsEnum) return CompareResult(obj1.Equals(obj2), "IsEnum Types Comparison", obj1, obj2);
-        if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>)) return CompareResult(obj1.Equals(obj2), "Generic Types Comparison", obj1, obj2);
+        if (IsSimpleType(type)) {
+            var areSame = obj1.Equals(obj2);
+            return CompareResult(obj1.Equals(obj2), options, "IsSimpleType Comparison", obj1, obj2);
+        }
+        if (type.IsEnum) return CompareResult(obj1.Equals(obj2), options, "IsEnum Types Comparison", obj1, obj2);
+        if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>)) return CompareResult(obj1.Equals(obj2), options, "Generic Types Comparison", obj1, obj2);
 
         // Handle collections
         if (obj1 is IEnumerable enum1 && obj2 is IEnumerable enum2 && type != typeof(string)) {
-            return CompareResult(CollectionsAreEqual(enum1, enum2, options, visited, depth), "Collections Comparison", enum1, enum2);
+            return CompareResult(CollectionsAreEqual(enum1, enum2, options, visited, depth), options, "Collections Comparison", enum1, enum2);
         }
 
         // Handle complex objects using reflection
-        return CompareResult(ObjectsAreEqual(obj1, obj2, options, visited, depth), "Complex Types Comparison", obj1, obj2);
+        return CompareResult(ObjectsAreEqual(obj1, obj2, options, visited, depth), options, "Complex Types Comparison", obj1, obj2);
     }
 
     private static bool CollectionsAreEqual(IEnumerable enum1, IEnumerable enum2,
@@ -148,7 +155,8 @@ public class GenericComparerOptions {
     public bool IncludePrivateProperties { get; init; } = false;
     public bool CompareCollectionsOrdered { get; init; } = true;
     public bool ThrowOnPropertyAccessError { get; init; } = false;
-
+    public bool IsDebugMode { get; set; } = false;
+    
     public HashSet<string> IgnoreProperties { get; init; } = new(StringComparer.OrdinalIgnoreCase) { "Parent", "Navigation", "Panels", "Guid" };
     public HashSet<Type> IgnorePropertyTypes { get; init; } = [typeof(INavigation)];
     public HashSet<Type> IgnorePropertiesWithAttributes { get; set; } = [typeof(JsonIgnoreAttribute)];

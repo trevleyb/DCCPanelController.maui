@@ -4,16 +4,27 @@
 
     BackgroundColor             : Top Menu and Title Bar           
     ForegroundColor             : The Icons on the Top Menu Bar
-    TabBarBackgroundColor       : The Tab Bar at the bottom of the Page
     TitleColor                  : The title in the middle of the Top Menu Bar
     UnselectedColor             : When multiple tabs (Turnouts etc) the not selected options
     ForegroundColor             : When multiple tabs (Turnouts etc) the selected option
 
+    TabBarBackgroundColor       : The Tab Bar at the bottom of the Page
     TabBarForegroundColor       : The selected Tab Bar Icon
-    TabBarTitleColor            : The Selected tab bar text
+    TabBarTitleColor            : The Selected Tab Bar text
     TabBarUnselectedColor       : The unselected Tab Bar Icon
     TabBarDisabledColor         : If the tab bar icon is disabled
 
+-->
+
+<!-- 
+    TitleColor="{Binding Source={x:Static services:AppStateService.Instance}, Path=ShellForegroundColor}"
+    UnselectedColor="{Binding Source={x:Static services:AppStateService.Instance}, Path=ShellUnselectedColor}"
+
+    TabBarBackgroundColor="{Binding Source={x:Static services:AppStateService.Instance}, Path=ShellBackgroundColor}" 
+    TabBarForegroundColor="{Binding Source={x:Static services:AppStateService.Instance}, Path=TabBarForegroundColor}"
+    TabBarTitleColor="{Binding Source={x:Static services:AppStateService.Instance}, Path=TabBarForegroundColor}"
+    TabBarUnselectedColor="{Binding Source={x:Static services:AppStateService.Instance}, Path=TabBarUnselectedColor}"
+    TabBarDisabledColor="{Binding Source={x:Static services:AppStateService.Instance},   Path=TabBarDisabledColor}"
 -->
 
 <Shell
@@ -23,17 +34,19 @@
 
     BackgroundColor="{Binding Source={x:Static services:AppStateService.Instance}, Path=ShellBackgroundColor}"
     ForegroundColor="{Binding Source={x:Static services:AppStateService.Instance}, Path=ShellForegroundColor}"
-    TabBarBackgroundColor="{Binding Source={x:Static services:AppStateService.Instance}, Path=ShellBackgroundColor}"
+
     TitleColor="{Binding Source={x:Static services:AppStateService.Instance}, Path=ShellForegroundColor}"
     UnselectedColor="{Binding Source={x:Static services:AppStateService.Instance}, Path=ShellUnselectedColor}"
 
+    TabBarBackgroundColor="{Binding Source={x:Static services:AppStateService.Instance}, Path=TabBarBackgroundColor}" 
     TabBarForegroundColor="{Binding Source={x:Static services:AppStateService.Instance}, Path=TabBarForegroundColor}"
     TabBarTitleColor="{Binding Source={x:Static services:AppStateService.Instance}, Path=TabBarForegroundColor}"
     TabBarUnselectedColor="{Binding Source={x:Static services:AppStateService.Instance}, Path=TabBarUnselectedColor}"
     TabBarDisabledColor="{Binding Source={x:Static services:AppStateService.Instance},   Path=TabBarDisabledColor}"
 
-    PresentationMode="Animated"
+    PresentationMode="ModalAnimated"
     FlyoutBehavior="Disabled"
+    
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:iOsSpecific="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
     xmlns:view="clr-namespace:DCCPanelController.View"

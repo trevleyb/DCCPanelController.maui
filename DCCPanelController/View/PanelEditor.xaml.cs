@@ -25,23 +25,22 @@ public partial class PanelEditor : ContentPage {
     private readonly PanelEditorViewModel       _viewModel;
     
     public PanelEditor(ILogger<PanelEditor> logger, Panel panel, ProfileService profileService, ConnectionService connectionService) : base() {
-        _logger = logger;
+        InitializeComponent();
 
+        _logger = logger;
         if (panel.Cols <= 0) panel.Cols = 18;
         if (panel.Rows <= 0) panel.Rows = 10;
-
+        
         _viewModel = new PanelEditorViewModel(_logger, panel, profileService, connectionService, this, PanelView, PanelEditorContainer) {
             GridVisible = true,
             EditMode = EditModeEnum.Move,
         };
-        
-        PanelView.TileSelected += PanelViewOnTileSelected;
-        PanelView.TileChanged += PanelViewOnTileChanged;
-        PanelView.TileTapped += PanelViewOnTileTapped;
-        _viewModel.PropertyChanged += ViewModelOnPropertyChanged;
-
         BindingContext = _viewModel;
-        InitializeComponent();
+        
+        PanelView.TileSelected      += PanelViewOnTileSelected;
+        PanelView.TileChanged       += PanelViewOnTileChanged;
+        PanelView.TileTapped        += PanelViewOnTileTapped;
+        _viewModel.PropertyChanged  += ViewModelOnPropertyChanged;
 
         AppStateService.Instance.IsEditingPanel = true;
         AppStateService.Instance.SelectedTileSet += InstanceOnSelectedTileSet;

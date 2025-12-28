@@ -60,10 +60,9 @@ public partial class PanelEditorViewModel : ObservableObject {
     [NotifyPropertyChangedFor(nameof(ShowEditTextBox))]
     [ObservableProperty] private bool _isProcessing;
 
-    [ObservableProperty] private Panel _panel;
-
-    private PanelPropertyViewModel? _propertyPage;
-    private Panel                   _original;
+    [ObservableProperty] private Panel  _panel;
+    private Panel                       _original;
+    private PanelPropertyViewModel?     _propertyPage;
 
     [NotifyPropertyChangedFor(nameof(SelectedEntities))]
     [NotifyPropertyChangedFor(nameof(HasSelectedEntities))]
@@ -312,7 +311,7 @@ public partial class PanelEditorViewModel : ObservableObject {
             IsProcessing = false;
             OnPropertyChanged(nameof(CanPressBackButton));
         }
-        
+        HavePropertiesChanged = false;
     }
 
     // Take a snapshot/thumbnail of the panel and return it as a base64 string.

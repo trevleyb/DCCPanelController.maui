@@ -19,10 +19,12 @@ public partial class AppStateService : ObservableObject, INotifyPropertyChanged 
     [ObservableProperty] private Color _shellBackgroundColor  = StyleHelper.FromStyle("Primary");
     [ObservableProperty] private Color _shellForegroundColor  = Colors.White;
     [ObservableProperty] private Color _shellUnselectedColor  = Colors.GhostWhite;
+
+    [ObservableProperty] private Color _tabBarTitleColor      = StyleHelper.FromStyle("Primary");
+    [ObservableProperty] private Color _tabBarUnselectedColor = Colors.DarkGray;
+    [ObservableProperty] private Color _tabBarBackgroundColor = StyleHelper.FromStyle("Primary");
+    [ObservableProperty] private Color _tabBarForegroundColor = StyleHelper.FromStyle("Primary");
     [ObservableProperty] private Color _tabBarDisabledColor   = Colors.LightGray;
-    [ObservableProperty] private Color _tabBarForegroundColor = Colors.White;
-    [ObservableProperty] private Color _tabBarTitleColor      = Colors.White;
-    [ObservableProperty] private Color _tabBarUnselectedColor = Colors.GhostWhite;
     
     [ObservableProperty] private bool  _showEditOptions       = true;
     [ObservableProperty] private bool  _hideEditOptions       = false;
@@ -86,28 +88,12 @@ public partial class AppStateService : ObservableObject, INotifyPropertyChanged 
 
                 var constrastCvt = new ContrastToBackgroundConverter();
 
-                TabBarTitleColor        = constrastCvt.Convert(Colors.White, typeof(Color), ShellBackgroundColor, CultureInfo.CurrentCulture) as Color ?? Colors.White;
-                TabBarForegroundColor   = constrastCvt.Convert(Colors.White, typeof(Color), ShellBackgroundColor, CultureInfo.CurrentCulture) as Color ?? Colors.White;
-                TabBarUnselectedColor   = constrastCvt.Convert(Colors.CornflowerBlue, typeof(Color), ShellBackgroundColor, CultureInfo.CurrentCulture) as Color ?? Colors.White;
+                TabBarTitleColor        = constrastCvt.Convert(StyleHelper.FromStyle("Primary"), typeof(Color), ShellBackgroundColor, CultureInfo.CurrentCulture) as Color ?? Colors.White;
+                TabBarForegroundColor   = constrastCvt.Convert(StyleHelper.FromStyle("Primary"), typeof(Color), ShellBackgroundColor, CultureInfo.CurrentCulture) as Color ?? Colors.White;
+                TabBarBackgroundColor   = constrastCvt.Convert(StyleHelper.FromStyle("Primary"), typeof(Color), ShellBackgroundColor, CultureInfo.CurrentCulture) as Color ?? Colors.White;
+                TabBarUnselectedColor   = constrastCvt.Convert(Colors.DarkGrey, typeof(Color), ShellBackgroundColor, CultureInfo.CurrentCulture) as Color ?? Colors.White;
                 TabBarDisabledColor     = constrastCvt.Convert(Colors.LightGray, typeof(Color), ShellBackgroundColor, CultureInfo.CurrentCulture) as Color ?? Colors.White;
                 ShellUnselectedColor    = constrastCvt.Convert(Colors.CornflowerBlue, typeof(Color), ShellBackgroundColor, CultureInfo.CurrentCulture) as Color ?? Colors.White;
-                
-                // Set up the other colors based on what the background color is
-                // If it is dark, set the foreground colors light, otherwise set them to be dark. 
-                // ------------------------------------------------------------------------------
-                // if (AppleCrayonColors.IsColorLight(ShellBackgroundColor)) {
-                //     TabBarTitleColor = Colors.Black;      // Text Color
-                //     TabBarForegroundColor = Colors.Black; // Icon Color
-                //     TabBarUnselectedColor = Colors.LightGray;
-                //     TabBarDisabledColor = Colors.LightSlateGray;
-                //     ShellUnselectedColor = Colors.LightGrey;
-                // } else {
-                //     TabBarTitleColor = Colors.White;      // Text Color
-                //     TabBarForegroundColor = Colors.White; // Icon Color
-                //     TabBarUnselectedColor = Colors.DarkGray;
-                //     TabBarDisabledColor = Colors.DarkSlateGray;
-                //     ShellUnselectedColor = Colors.DarkGray;
-                // }
             }
         }
     }

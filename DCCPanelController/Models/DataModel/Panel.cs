@@ -8,6 +8,7 @@ using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.DataModel.Entities.Interfaces;
 using DCCPanelController.Models.DataModel.Helpers;
 using DCCPanelController.Models.DataModel.Repository;
+using DCCPanelController.Services;
 
 namespace DCCPanelController.Models.DataModel;
 
@@ -101,9 +102,16 @@ public partial class Panel : ObservableObject, IEntityGeneratingID {
     public T CreateEntityFrom<T>(T entity, Panel? realParent = null, bool generateNextID = true) where T : Entity {
         var cloned = entity.Clone() as T ?? throw new InvalidOperationException();
         if (cloned.Layer < 0) cloned.Layer = EntityPresets.DefaultLayer(cloned);
-        if (realParent != null) cloned.Parent = realParent; // Set the Panel that owns this entity
-        if (cloned is IEntityGeneratingID clonedID && entity is IEntityGeneratingID entityID) {
-            clonedID.Id = generateNextID ? clonedID.NextID(realParent) : entityID.Id;
+        if (realParent != null) cloned.Parent = realParent;
+        
+        // If this is a clone to make a full new copy, then generating the IDs
+        // but if we are doing a true clone, then we need to clone the IDs
+        // -----------------------------------------------------------------------
+        
+        if (cloned is IEntityGeneratingID clonedGeneratingID && entity is IEntityGeneratingID entityGeneratingID) {
+            clonedGeneratingID.Id = generateNextID ? clonedGeneratingID.NextID(realParent) : entityGeneratingID.Id;
+        } else if (cloned is IEntityID clonedID && entity is IEntityID entityID) {
+            clonedID.Id = entityID.Id;
         }
         return cloned ?? throw new InvalidOperationException();
     }
@@ -140,6 +148,8 @@ public partial class Panel : ObservableObject, IEntityGeneratingID {
             var entityClone = clone.CreateEntityFrom(entity, clone, generateNewId);
             clone.AddEntity(entityClone);
         }
+
+        if (!IsEqualTo(clone)) Debug.WriteLine("Clone did not make a correct copy.");
         return clone;
     }
 
@@ -156,8 +166,9 @@ public partial class Panel : ObservableObject, IEntityGeneratingID {
     public bool IsEqualTo(Panel panel) {
         var comparerOptions = new GenericComparerOptions {
             MaxDepth = 5,
+            IsDebugMode = AppStateService.Instance.DebugMode,
             IncludePrivateProperties = false,
-            CompareCollectionsOrdered = false, // For entity collections
+            CompareCollectionsOrdered = false, 
             IgnoreProperties = { "Parent", "Navigation", "Panels", "Guid", "Base64Image" },
         };
 
