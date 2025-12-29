@@ -18,7 +18,7 @@ public class GridGestureHelper : IDisposable {
     public bool EnableDoubleTap { get; set; } = true;
 
     private       DateTime _lastTapUtc        = DateTime.MinValue;
-    private const int      DoubleTapThreshold = 250;
+    private const int      DoubleTapThreshold = 350;
     private const double   DragSlopPx         = 3.5;
 
     // Debouce Support
@@ -99,9 +99,9 @@ public class GridGestureHelper : IDisposable {
         _grid.GestureRecognizers.Add(pointerRecognizer);
 
         // Tap recognition
-        _gridTap = new TapGestureRecognizer();
-        _gridTap.Tapped += OnTapped;
-        _grid.GestureRecognizers.Add(_gridTap);
+        //_gridTap = new TapGestureRecognizer();
+        //_gridTap.Tapped += OnTapped;
+        //_grid.GestureRecognizers.Add(_gridTap);
 
         // Long press recognition
         _gridTouch = new TouchBehavior();
@@ -224,6 +224,7 @@ public class GridGestureHelper : IDisposable {
         _tappedCol = gridCell.Col;
         _tappedRow = gridCell.Row;
         _longPressStartPos = e.GetPosition(_grid) ?? new Point(0, 0);
+        _pointerDownPos = e.GetPosition(_grid);
 
         LogHelper.Logger.LogDebug($"OnPointerPressed: {gridCell.Col},{gridCell.Row} @ {_longPressStartPos}");
         
@@ -240,7 +241,6 @@ public class GridGestureHelper : IDisposable {
         }
 
         // Prepare for potential grid selection on empty cells - but don't start yet
-        _pointerDownPos = e.GetPosition(_grid);
         _selectionStartCol = gridCell.Col;
         _selectionStartRow = gridCell.Row;
         IsSelecting = false;

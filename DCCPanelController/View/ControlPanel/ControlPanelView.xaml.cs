@@ -205,9 +205,6 @@ public partial class ControlPanelView {
     private async void GridGesturesOnSingleTap(object? sender, GridGestureEventArgs e) {
         try {
 
-            // Lets see if we actualy get here
-            ClickSounds.PlayError1SoundAsync();
-            
             if (DesignMode) {
                 // Look up the tile if it is in this grid. If no tiles, reset selected
                 // -------------------------------------------------------------------
