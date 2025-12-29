@@ -92,10 +92,10 @@ public class GridGestureHelper : IDisposable {
 
         // Pointer events for manual dragging and selection
         var pointerRecognizer = new PointerGestureRecognizer();
-        pointerRecognizer.PointerPressed += OnPointerPressed;
-        pointerRecognizer.PointerMoved += OnPointerMoved;
-        pointerRecognizer.PointerReleased += OnPointerReleased;
-        pointerRecognizer.PointerExited += OnPointerExited;
+        pointerRecognizer.PointerPressed    += OnPointerPressed;
+        pointerRecognizer.PointerMoved      += OnPointerMoved;
+        pointerRecognizer.PointerReleased   += OnPointerReleased;
+        pointerRecognizer.PointerExited     += OnPointerExited;
         _grid.GestureRecognizers.Add(pointerRecognizer);
 
         // Tap recognition
@@ -215,15 +215,21 @@ public class GridGestureHelper : IDisposable {
         _longPressDetected = false;
 
         var cell = GridPositionHelper.GetGridPosition(e.GetPosition(_grid), _grid);
-        if (cell is not { } gridCell) return;
+        if (cell is not { } gridCell) {
+            LogHelper.Logger.LogDebug($"OnPointerPressed no cell found: {e.GetPosition(_grid) ?? new Point(-1, -1)}");
+            return;
+        }
 
         // Store the tapped position for long press events (which don't have position info)
         _tappedCol = gridCell.Col;
         _tappedRow = gridCell.Row;
         _longPressStartPos = e.GetPosition(_grid) ?? new Point(0, 0);
 
+        LogHelper.Logger.LogDebug($"OnPointerPressed: {gridCell.Col},{gridCell.Row} @ {_longPressStartPos}");
+        
         //var tilesAtPosition = GridPositionHelper.GetTilesAt(gridCell.Col, gridCell.Row, _grid);
         var tilesAtPosition = GridPositionHelper.GetTilesCovering(gridCell.Col, gridCell.Row, _grid);
+        LogHelper.Logger.LogDebug($"Tiles found at position: {tilesAtPosition.Count}");
 
         // Check for potential tile drag in design mode
         if (tilesAtPosition.Count > 0) {
@@ -320,7 +326,8 @@ public class GridGestureHelper : IDisposable {
 
     private void OnPointerReleased(object? sender, PointerEventArgs e) {
         var currentPos = e.GetPosition(_grid) ?? new Point(0, 0);
-
+        LogHelper.Logger.LogDebug($"OnPointerReleased: {currentPos.X},{currentPos.Y}");
+        
         _lastMoveProcessedMs = 0;
         _lastProcessedCol = -1;
         _lastProcessedRow = -1;
@@ -364,6 +371,9 @@ public class GridGestureHelper : IDisposable {
                 var gestureArgs = new GridGestureEventArgs(sender, _tappedCol, _tappedRow);
                 LogHelper.Logger.LogDebug($"OnPointerReleased: LongPress called: {gestureArgs.TapCount}");
                 LongPress?.Invoke(this, gestureArgs);
+
+                // Don't reset gesture state yet - let OnTapped see the long press state
+                return;
             }
         }
         ResetGestureState();
