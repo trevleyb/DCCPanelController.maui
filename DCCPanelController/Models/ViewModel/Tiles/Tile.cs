@@ -12,6 +12,7 @@ using Microsoft.Extensions.Logging;
 namespace DCCPanelController.Models.ViewModel.Tiles;
 
 [DebuggerDisplay("{Entity.EntityName} @ {Entity.Col},{Entity.Row}")]
+[Foundation.Preserve(AllMembers = true)]
 public abstract class Tile : ContentView, ITile, IDisposable {
     // @formatter:off
     public Entity   Entity          { get; init; }
@@ -107,6 +108,7 @@ public abstract class Tile : ContentView, ITile, IDisposable {
                 Content.SetBinding(ZIndexProperty, new Binding(nameof(Entity.Layer), BindingMode.OneWay, source: Entity));
                 Content.SetBinding(IsVisibleProperty, new Binding(nameof(Entity.IsEnabled), BindingMode.OneWay, source: Entity));
             }
+            this.BackgroundColor = Colors.Transparent;
         } finally {
             PropertyChanged += OnTilePropertyChanged;
             Entity.PropertyChanged += OnTilePropertyChanged;

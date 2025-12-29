@@ -77,6 +77,7 @@ public partial class ControlPanelView {
         // ---------------------------------------------------------------
         _dynamicGrid.HorizontalOptions = LayoutOptions.Fill;
         _dynamicGrid.VerticalOptions = LayoutOptions.Fill;
+        _dynamicGrid.ZIndex = DesignMode ? 5 : 20;
         AbsoluteLayout.SetLayoutFlags(_dynamicGrid, AbsoluteLayoutFlags.All);
         AbsoluteLayout.SetLayoutBounds(_dynamicGrid, new Rect(0, 0, 1, 1));
 
@@ -203,6 +204,10 @@ public partial class ControlPanelView {
 
     private async void GridGesturesOnSingleTap(object? sender, GridGestureEventArgs e) {
         try {
+
+            // Lets see if we actualy get here
+            ClickSounds.PlayError1SoundAsync();
+            
             if (DesignMode) {
                 // Look up the tile if it is in this grid. If no tiles, reset selected
                 // -------------------------------------------------------------------
