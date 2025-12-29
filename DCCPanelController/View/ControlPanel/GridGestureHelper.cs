@@ -327,7 +327,7 @@ public class GridGestureHelper : IDisposable {
     private void OnPointerReleased(object? sender, PointerEventArgs e) {
         var currentPos = e.GetPosition(_grid) ?? new Point(0, 0);
         LogHelper.Logger.LogDebug($"OnPointerReleased: {currentPos.X},{currentPos.Y}");
-        
+
         _lastMoveProcessedMs = 0;
         _lastProcessedCol = -1;
         _lastProcessedRow = -1;
@@ -343,6 +343,7 @@ public class GridGestureHelper : IDisposable {
             _tileDragActive = false;
             _draggedTile = null;
             _gestureOwner = GestureOwner.None;
+            ResetGestureState();
             return;
         }
 
@@ -353,10 +354,12 @@ public class GridGestureHelper : IDisposable {
                 var selectionArgs = new GridSelectionEventArgs(_selectionStartCol, _selectionStartRow, gridCell.Col, gridCell.Row);
                 GridSelectionCompleted?.Invoke(this, selectionArgs);
             }
+            ResetGestureState();
+            return;
         }
 
         // Check for long press on release (if timer detected it and pointer didn't move much)
-        else if (_longPressDetected && !_lpInvokedThisPress) {
+        if (_longPressDetected && !_lpInvokedThisPress) {
             var dx = Math.Abs(currentPos.X - _longPressStartPos.X);
             var dy = Math.Abs(currentPos.Y - _longPressStartPos.Y);
 
@@ -371,11 +374,43 @@ public class GridGestureHelper : IDisposable {
                 var gestureArgs = new GridGestureEventArgs(sender, _tappedCol, _tappedRow);
                 LogHelper.Logger.LogDebug($"OnPointerReleased: LongPress called: {gestureArgs.TapCount}");
                 LongPress?.Invoke(this, gestureArgs);
-
-                // Don't reset gesture state yet - let OnTapped see the long press state
+                ResetGestureState();
                 return;
             }
         }
+
+        // Handle tap - no other gesture claimed this pointer release
+        if (_pointerDownPos is { } startPos && !TapsSuppressed()) {
+            var dx = Math.Abs(currentPos.X - startPos.X);
+            var dy = Math.Abs(currentPos.Y - startPos.Y);
+
+            // Only treat as tap if pointer didn't move much
+            if (dx < DragSlopPx && dy < DragSlopPx) {
+                var cell = GridPositionHelper.GetGridPosition(currentPos, _grid);
+                if (cell is { } gridCell) {
+                    _gestureOwner = GestureOwner.Tap;
+                    var args = new GridGestureEventArgs(sender, gridCell.Col, gridCell.Row);
+
+                    LogHelper.Logger.LogDebug($"OnPointerReleased: Tap detected at {gridCell.Col},{gridCell.Row}");
+
+                    if (!EnableDoubleTap) {
+                        // Fire single-tap immediately
+                        args.TapCount = 1;
+                        SingleTap?.Invoke(this, args);
+                        _gestureOwner = GestureOwner.None;
+                    } else {
+                        // Double-tap enabled → use timer logic
+                        lock (_tapLock) {
+                            _tapCount++;
+                            _tapTimer?.Dispose();
+                            _tapTimer = new Timer(OnTapTimerElapsed, args,
+                                DoubleTapThreshold, Timeout.Infinite);
+                        }
+                    }
+                }
+            }
+        }
+
         ResetGestureState();
     }
 
