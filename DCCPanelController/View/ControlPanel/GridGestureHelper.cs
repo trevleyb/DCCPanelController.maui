@@ -128,7 +128,7 @@ public class GridGestureHelper : IDisposable {
 
     #region Gesture Event Handlers
     private void OnTapped(object? sender, TappedEventArgs e) {
-        FileLogger.Log($"OnTapped called: {e.Buttons} LP={_longPressActive} TapSuppressed={TapsSuppressed()} GestureOwner={_gestureOwner}");
+        LogHelper.Logger.LogDebug($"OnTapped called: {e.Buttons} LP={_longPressActive} TapSuppressed={TapsSuppressed()} GestureOwner={_gestureOwner}");
         if (_longPressActive || TapsSuppressed() || _gestureOwner == GestureOwner.LongPress || IsSelecting)
             return;
 
@@ -136,7 +136,7 @@ public class GridGestureHelper : IDisposable {
         var args = new GridGestureEventArgs(sender, pos.Col, pos.Row);
 
         if (!EnableDoubleTap) {
-            FileLogger.Log($"SingleTap called: {e.Buttons} GestureOwner={_gestureOwner}");
+            LogHelper.Logger.LogDebug($"SingleTap called: {e.Buttons} GestureOwner={_gestureOwner}");
             // Fire single-tap immediately
             args.TapCount = 1;
             SingleTap?.Invoke(this, args);
@@ -176,17 +176,17 @@ public class GridGestureHelper : IDisposable {
             } else {
                 switch (count) {
                     case 1:
-                        FileLogger.Log($"OnTapTimerElapsed: Count = 1");
+                        LogHelper.Logger.LogDebug($"OnTapTimerElapsed: Count = 1");
                         SingleTap?.Invoke(this, gestureArgs);
                     break;
 
                     case 2:
-                        FileLogger.Log($"OnTapTimerElapsed: Count = 2");
+                        LogHelper.Logger.LogDebug($"OnTapTimerElapsed: Count = 2");
                         DoubleTap?.Invoke(this, gestureArgs);
                     break;
 
                     case>= 3:
-                        FileLogger.Log($"OnTapTimerElapsed: Count > 2");
+                        LogHelper.Logger.LogDebug($"OnTapTimerElapsed: Count > 2");
                         // Could add TripleTap event if needed
                     break;
                 }
@@ -196,7 +196,7 @@ public class GridGestureHelper : IDisposable {
     }
 
     private async void OnLongPress(object? sender, LongPressCompletedEventArgs e) {
-        FileLogger.Log($"OnLongPress called");
+        LogHelper.Logger.LogDebug($"OnLongPress called");
         try {
             if (IsSelecting || _tileDragActive) return;
             if (_lpInvokedThisPress) return;
@@ -209,7 +209,7 @@ public class GridGestureHelper : IDisposable {
 
     #region Pointer Event Handlers
     private void OnPointerPressed(object? sender, PointerEventArgs e) {
-        FileLogger.Log($"OnPointerPressed called: {_longPressActive} {_longPressDetected} {_lpInvokedThisPress}");
+        LogHelper.Logger.LogDebug($"OnPointerPressed called: {_longPressActive} {_longPressDetected} {_lpInvokedThisPress}");
         _lpInvokedThisPress = false;
         _longPressActive = false;
         _longPressDetected = false;
@@ -362,7 +362,7 @@ public class GridGestureHelper : IDisposable {
                 SuppressTapsFor(500);
 
                 var gestureArgs = new GridGestureEventArgs(sender, _tappedCol, _tappedRow);
-                FileLogger.Log($"OnPointerReleased: LongPress called: {gestureArgs.TapCount}");
+                LogHelper.Logger.LogDebug($"OnPointerReleased: LongPress called: {gestureArgs.TapCount}");
                 LongPress?.Invoke(this, gestureArgs);
             }
         }
