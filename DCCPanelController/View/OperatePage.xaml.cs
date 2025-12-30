@@ -112,7 +112,14 @@ public partial class OperatePage : ContentPage, INotifyPropertyChanged {
     }
 
     private void SetChromeVisible(bool show) {
+#if IOS
         Shell.SetTabBarIsVisible(this, show);
+#elif MACCATALYST
+        // On MacCatalyst, always show the tab bar as it's the primary navigation
+        Shell.SetTabBarIsVisible(this, true);
+#else
+        Shell.SetTabBarIsVisible(this, show);
+#endif
         Shell.SetNavBarIsVisible(this, show);
         _viewModel.IsMaximized = !show;
 
