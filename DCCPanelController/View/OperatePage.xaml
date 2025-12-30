@@ -48,14 +48,15 @@
 
     <ContentPage.Content>
         <Grid>
+            <Grid.GestureRecognizers>
+                <SwipeGestureRecognizer Direction="Right" Command="{Binding SwipeLeftCommand}"/>
+                <SwipeGestureRecognizer Direction="Left" Command="{Binding SwipeRightCommand}"/>
+            </Grid.GestureRecognizers>
+            
             <Grid RowDefinitions="*,auto,auto" HorizontalOptions="Fill" VerticalOptions="Fill">
                 <Grid Grid.Row="0" x:Name="MainGrid" HorizontalOptions="Fill" VerticalOptions="Fill">
                     <Grid
                         BackgroundColor="{Binding PanelBackgroundColor, Converter={StaticResource ColorFallbackConverter}}">
-                        <Grid.GestureRecognizers>
-                            <SwipeGestureRecognizer Direction="Left" Command="{Binding SwipeLeftCommand}"/>
-                            <SwipeGestureRecognizer Direction="Right" Command="{Binding SwipeRightCommand}"/>
-                        </Grid.GestureRecognizers>
 
                         <!-- Active Panel View -->
                         <controlPanel:ControlPanelView
