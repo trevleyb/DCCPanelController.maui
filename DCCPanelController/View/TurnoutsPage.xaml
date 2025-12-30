@@ -234,11 +234,18 @@
                     </CollectionView>
                 </Grid>
             </RefreshView>
-
+            
             <BoxView
                 BackgroundColor="{StaticResource Primary}"
                 HeightRequest="1"
                 HorizontalOptions="FillAndExpand" />
+
+            <Grid HorizontalOptions="Center" VerticalOptions="End" Margin="10">
+                <VerticalStackLayout>
+                <Label HorizontalOptions="Center" Text="Turnouts are normally defined in the DCC System but Manual Turnouts can be added and the DCC Address will be used to control the turnout. " />
+                <Label HorizontalOptions="Center" Text="To refresh the current set of Turnouts, Use the Refresh Button and turn on the DCC Connection using tyhe connection button." />
+                </VerticalStackLayout>
+            </Grid>
 
         </StackLayout>
 
