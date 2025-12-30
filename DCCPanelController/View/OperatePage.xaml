@@ -324,59 +324,63 @@
                 </Border>
             </Grid>
             
-            <!-- Not connected Overlay -->
-            <Grid IsVisible="{Binding NeedToConnectFirst}"
-                  BackgroundColor="WhiteSmoke"
-                  Opacity="0.75"
-                  HorizontalOptions="Fill"
-                  VerticalOptions="Fill">
+            <!-- ============================================================== -->
+            <!-- Not connected Overlay                                          -->
+            <!-- Need to think about this, not happy with how this is working   -->
+            <!-- ============================================================== -->
 
-                <Border BackgroundColor="White"
-                        StrokeShape="RoundRectangle 25"
-                        Stroke="{StaticResource Primary}"
-                        StrokeThickness="3"
-                        HorizontalOptions="Fill"
-                        VerticalOptions="Fill"
-                        WidthRequest="325"
-                        HeightRequest="120"
-                        Opacity="1">
-                    
-                    <Border.GestureRecognizers>
-                        <TapGestureRecognizer Command="{Binding ToggleConnectionCommand}"/>
-                    </Border.GestureRecognizers>
-
-                    <HorizontalStackLayout
-                        BackgroundColor="White"
-                        HorizontalOptions="Fill" VerticalOptions="Center">
-                        <VerticalStackLayout Margin="20,0,20,0">
-                        <Label Text="Connect to the DCC system"
-                               HorizontalOptions="Fill"
-                               VerticalOptions="Fill"
-                               FontSize="15"
-                               TextColor="Black"/>
-                        <Label Text="before this page is operational."
-                               HorizontalOptions="Fill"
-                               VerticalOptions="Fill"
-                               FontSize="15"
-                               TextColor="Black"/>
-                        </VerticalStackLayout>
-                        <Image Source="{Binding ConnectionIconPng}" VerticalOptions="Center" Scale="1.5">
-                            <Image.Behaviors>
-                                <toolkit:IconTintColorBehavior TintColor="{Binding ConnectionColor, Mode=OneWay}"/>
-                            </Image.Behaviors>
-                            <Image.Triggers>
-                                <DataTrigger TargetType="Image" Binding="{Binding Path=IsMaximized}" Value="True">
-                                    <Setter Property="Margin" Value="5,0,0,-20" />
-                                </DataTrigger>
-                                <DataTrigger TargetType="Image" Binding="{Binding Path=IsMaximized}" Value="False">
-                                    <Setter Property="Margin" Value="5,0,0,0" />
-                                </DataTrigger>
-                            </Image.Triggers>
-                        </Image>
-
-                    </HorizontalStackLayout>
-                </Border>
-            </Grid>
+            <!-- <Grid IsVisible="{Binding NeedToConnectFirst}" -->
+            <!--       BackgroundColor="WhiteSmoke" -->
+            <!--       Opacity="0.75" -->
+            <!--       HorizontalOptions="Fill" -->
+            <!--       VerticalOptions="Fill"> -->
+            <!-- -->
+            <!--     <Border BackgroundColor="White" -->
+            <!--             StrokeShape="RoundRectangle 25" -->
+            <!--             Stroke="{StaticResource Primary}" -->
+            <!--             StrokeThickness="3" -->
+            <!--             HorizontalOptions="Fill" -->
+            <!--             VerticalOptions="Fill" -->
+            <!--             WidthRequest="325" -->
+            <!--             HeightRequest="120" -->
+            <!--             Opacity="1"> -->
+            <!--          -->
+            <!--         <Border.GestureRecognizers> -->
+            <!--             <TapGestureRecognizer Command="{Binding ToggleConnectionCommand}"/> -->
+            <!--         </Border.GestureRecognizers> -->
+            <!-- -->
+            <!--         <HorizontalStackLayout -->
+            <!--             BackgroundColor="White" -->
+            <!--             HorizontalOptions="Fill" VerticalOptions="Center"> -->
+            <!--             <VerticalStackLayout Margin="20,0,20,0"> -->
+            <!--             <Label Text="Connect to the DCC system" -->
+            <!--                    HorizontalOptions="Fill" -->
+            <!--                    VerticalOptions="Fill" -->
+            <!--                    FontSize="15" -->
+            <!--                    TextColor="Black"/> -->
+            <!--             <Label Text="before this page is operational." -->
+            <!--                    HorizontalOptions="Fill" -->
+            <!--                    VerticalOptions="Fill" -->
+            <!--                    FontSize="15" -->
+            <!--                    TextColor="Black"/> -->
+            <!--             </VerticalStackLayout> -->
+            <!--             <Image Source="{Binding ConnectionIconPng}" VerticalOptions="Center" Scale="1.5"> -->
+            <!--                 <Image.Behaviors> -->
+            <!--                     <toolkit:IconTintColorBehavior TintColor="{Binding ConnectionColor, Mode=OneWay}"/> -->
+            <!--                 </Image.Behaviors> -->
+            <!--                 <Image.Triggers> -->
+            <!--                     <DataTrigger TargetType="Image" Binding="{Binding Path=IsMaximized}" Value="True"> -->
+            <!--                         <Setter Property="Margin" Value="5,0,0,-20" /> -->
+            <!--                     </DataTrigger> -->
+            <!--                     <DataTrigger TargetType="Image" Binding="{Binding Path=IsMaximized}" Value="False"> -->
+            <!--                         <Setter Property="Margin" Value="5,0,0,0" /> -->
+            <!--                     </DataTrigger> -->
+            <!--                 </Image.Triggers> -->
+            <!--             </Image> -->
+            <!-- -->
+            <!--         </HorizontalStackLayout> -->
+            <!--     </Border> -->
+            <!-- </Grid> -->
 
         </Grid>
     </ContentPage.Content>
