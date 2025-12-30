@@ -28,11 +28,10 @@ public partial class PaletteSelector {
     private void OnTileCollectionDragStarting(object? sender, DragStartingEventArgs e) {
         SelectedItem = null;
         try {
-            if ((sender as GestureRecognizer)?.Parent?.BindingContext is PaletteItem item && e.Data.Properties is { } props) {
+            if ((sender as ContentView)?.BindingContext is PaletteItem item && e.Data.Properties is { } props) {
                 props["Tile"] = item.Tile;
                 return;
             }
-
             e.Cancel = true;
         } catch (Exception ex) {
             LogHelper.Logger.LogWarning("Error selecting tile: " + ex.Message);
@@ -48,13 +47,14 @@ public partial class PaletteSelector {
             }
         }
 
-        SelectedItem = null;
-        if (e.CurrentSelection is { Count: > 0 }) SelectedItem = e.CurrentSelection[0] as PaletteItem;
+        var newSelection = e.CurrentSelection is { Count: > 0 } ? e.CurrentSelection[0] as PaletteItem : null;
+        if (newSelection == SelectedItem) SelectedItem = null;
+        if (newSelection != SelectedItem) SelectedItem = newSelection;
     }
 
     private void OnItemTapped(object? sender, TappedEventArgs e) {
         if (sender is ContentView { BindingContext: PaletteItem item }) {
-            SelectedItem = item;
+            SelectedItem = SelectedItem == item ? null : item;
         }
     }
 

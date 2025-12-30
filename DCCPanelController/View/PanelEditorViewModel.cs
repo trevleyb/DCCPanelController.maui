@@ -278,6 +278,9 @@ public partial class PanelEditorViewModel : ObservableObject {
             if (result) await SaveAsync();
         }
         ExitViaBackButton = true;
+
+        // Allow UI to settle before navigation
+        await Task.Delay(50);
         await Shell.Current.GoToAsync("..");
     }
 
@@ -286,9 +289,12 @@ public partial class PanelEditorViewModel : ObservableObject {
         ClearSelectedItem();
         IsProcessing = true;
         OnPropertyChanged(nameof(CanPressBackButton));
-        
+
         await SaveAsync();
         ExitViaBackButton = true;
+
+        // Allow UI to settle before navigation
+        await Task.Delay(50);
         await Shell.Current.GoToAsync("..");
 
         IsProcessing = false;

@@ -77,7 +77,6 @@ public partial class ControlPanelView {
         // ---------------------------------------------------------------
         _dynamicGrid.HorizontalOptions = LayoutOptions.Fill;
         _dynamicGrid.VerticalOptions = LayoutOptions.Fill;
-        _dynamicGrid.ZIndex = DesignMode ? 5 : 20;
         AbsoluteLayout.SetLayoutFlags(_dynamicGrid, AbsoluteLayoutFlags.All);
         AbsoluteLayout.SetLayoutBounds(_dynamicGrid, new Rect(0, 0, 1, 1));
 
