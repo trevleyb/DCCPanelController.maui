@@ -39,7 +39,7 @@
                 <Border Padding="0" WidthRequest="250" HeightRequest="35" Style="{StaticResource EntryBorderStyle}">
                     <Entry Margin="10,0,10,0" HorizontalOptions="Fill" Text="{Binding WiThrottleSettings.Name}"/>
                 </Border>
-                <ImageButton Margin="2,0,0,0" Aspect="Center"
+                <ImageButton Margin="-40,0,0,0" Aspect="Center"
                              Source="target.png" WidthRequest="15" HeightRequest="15"
                              Command="{Binding DefaultDeviceNameClickedCommand }">
                     <ImageButton.Behaviors>
@@ -52,7 +52,7 @@
 
         <HorizontalStackLayout Margin="0,0,10,10">
             <Label Text="Auto Set Connection Details?" HorizontalOptions="Start" Style="{StaticResource MediumLabel}"
-                   VerticalOptions="Center" WidthRequest="260"/>
+                   VerticalOptions="Center" WidthRequest="220"/>
             <Switch IsToggled="{Binding SetAutomatically, Mode=TwoWay}"
                     OnColor="{StaticResource Primary}"
                     ThumbColor="{StaticResource Gray200}"/>
