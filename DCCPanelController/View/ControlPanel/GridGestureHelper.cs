@@ -35,7 +35,7 @@ public class GridGestureHelper : IDisposable {
     private GestureOwner _gestureOwner = GestureOwner.None;
 
     // Gesture recognizers (kept as references for enable/disable)
-    private TapGestureRecognizer? _gridTap;
+    // private TapGestureRecognizer? _gridTap;
     private TouchBehavior?        _gridTouch;
 
     private int  _lastDragCol;
@@ -472,7 +472,7 @@ public class GridGestureHelper : IDisposable {
     ///     Enable or disable gesture recognition
     /// </summary>
     public void SetGesturesEnabled(bool enabled) {
-        _gridTap?.SetValue(VisualElement.IsEnabledProperty, enabled);
+        //_gridTap?.SetValue(VisualElement.IsEnabledProperty, enabled);
         _gridTouch?.SetValue(VisualElement.IsEnabledProperty, enabled);
     }
     #endregion

@@ -10,11 +10,11 @@ public partial class BlocksEditView : ContentView {
     private readonly BlocksEditViewModel     _viewModel;
 
     public BlocksEditView(ILogger<BlocksEditViewModel> logger, BlocksEditViewModel viewModel) {
+        InitializeComponent();
         _logger = logger;
         _viewModel = viewModel;
         _viewModel.Block.PropertyChanged += ViewModelOnPropertyChanged;
         BindingContext = _viewModel;
-        InitializeComponent();
     }
 
     private void ViewModelOnPropertyChanged(object? sender, PropertyChangedEventArgs e) {

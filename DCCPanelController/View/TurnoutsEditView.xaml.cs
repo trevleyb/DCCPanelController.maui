@@ -8,11 +8,11 @@ public partial class TurnoutsEditView : ContentView {
     private readonly TurnoutsEditViewModel     _viewModel;
 
     public TurnoutsEditView(ILogger<TurnoutsEditViewModel> logger, TurnoutsEditViewModel viewModel) {
+        InitializeComponent();
         _logger = logger;
         _viewModel = viewModel;
         _viewModel.Turnout.PropertyChanged += ViewModelOnPropertyChanged;
         BindingContext = _viewModel;
-        InitializeComponent();
     }
 
     private void ViewModelOnPropertyChanged(object? sender, PropertyChangedEventArgs e) {

@@ -96,6 +96,9 @@ public partial class ConnectionService : ObservableObject {
                     _currentClientKind = newKind;
                 }
 
+                // Clear the Source of the items so they will be updated by the connection. 
+                await SetAccessorySourceToUnknown();
+
                 var connectResult = await Client.ConnectAsync(); // wraps inner.ConnectAsync()
                 if (connectResult.IsFailure) {
                     OnConnectionChanged(DccClientState.Error);
@@ -122,7 +125,6 @@ public partial class ConnectionService : ObservableObject {
         // Run exactly once for this connection kind.
         if (Interlocked.Exchange(ref _initOnceFlag, 1) != 0) return;
         try {
-            await SetAccessorySourceToUnknown();
             await SetTurnoutsToDefaultState();
             await ResetOccupancyStates();
         } catch (Exception ex) {

@@ -346,7 +346,7 @@ namespace DCCPanelController.Clients.WiThrottle {
                     if (eventsProp?.GetValue(clientMsg) is System.Collections.IEnumerable events) {
                         foreach (var ev in events) MapEvent(ev as IClientEvent);
                     }
-                break;
+                    break;
             }
         }
 
@@ -371,7 +371,7 @@ namespace DCCPanelController.Clients.WiThrottle {
                     UpdateTurnout(t.SystemName, t.UserName,
                         t.StateEnum == TurnoutStateEnum.Thrown
                             ? Models.DataModel.Entities.TurnoutStateEnum.Thrown
-                            : Models.DataModel.Entities.TurnoutStateEnum.Closed, AccessorySource.WiThrottle);
+                            : Models.DataModel.Entities.TurnoutStateEnum.Closed, t.Source);
                     OnClientMessage($"Turnout Change Event: {t.SystemName}=>{t.State}", DccClientOperation.Turnout, DccClientMessageType.Inbound);
                 break;
 
@@ -379,7 +379,7 @@ namespace DCCPanelController.Clients.WiThrottle {
                     UpdateRoute(r.SystemName, r.UserName,
                         r.StateEnum == RouteStateEnum.Active
                             ? Models.DataModel.Entities.RouteStateEnum.Active
-                            : Models.DataModel.Entities.RouteStateEnum.Inactive, AccessorySource.WiThrottle);
+                            : Models.DataModel.Entities.RouteStateEnum.Inactive, r.Source);
                     OnClientMessage($"Route Change Event: {r.SystemName}=>{r.State}", DccClientOperation.Route, DccClientMessageType.Inbound);
                 break;
 

@@ -297,7 +297,7 @@
                         StrokeThickness="3"
                         HorizontalOptions="Center"
                         VerticalOptions="Center"
-                        WidthRequest="200"
+                        WidthRequest="325"
                         HeightRequest="120"
                         Opacity="1"
                         Margin="20"
@@ -325,7 +325,7 @@
             </Grid>
             
             <!-- Not connected Overlay -->
-            <Grid IsVisible="{Binding ConnectionState, Converter={StaticResource ShowNotConnectingStateConverter}}"
+            <Grid IsVisible="{Binding NeedToConnectFirst}"
                   BackgroundColor="WhiteSmoke"
                   Opacity="0.75"
                   HorizontalOptions="Fill"
@@ -338,7 +338,7 @@
                         HorizontalOptions="Fill"
                         VerticalOptions="Fill"
                         WidthRequest="325"
-                        HeightRequest="80"
+                        HeightRequest="120"
                         Opacity="1">
                     
                     <Border.GestureRecognizers>

@@ -31,7 +31,7 @@ public partial class OperateViewModel : ConnectionViewModel {
     [ObservableProperty] private bool                         _showGrid;
     [ObservableProperty] private bool                         _showPath;
     [ObservableProperty] private bool                         _isConnecting;
-
+    
     [NotifyPropertyChangedFor(nameof(HideWelcomePage))]
     [ObservableProperty] private bool _showWelcomePage;
 
@@ -39,7 +39,8 @@ public partial class OperateViewModel : ConnectionViewModel {
     public Color IndicatorSelectedColor => (Color)App.Current.Resources["Primary"];
     public Color ProfileNameColor => (Color)App.Current.Resources["Primary"];
     
-    public bool   HaveClosedWelcome;
+    public bool NeedToConnectFirst => IsNotConnected && !ShowWelcomePage;
+    public bool HaveClosedWelcome;
 
     public OperateViewModel(ILogger<OperateViewModel> logger, ProfileService profileService, ConnectionService connectionService) : base(profileService, connectionService) {
         _logger = logger;
@@ -172,6 +173,7 @@ public partial class OperateViewModel : ConnectionViewModel {
     }
 
     private void RaiseAllProperties() {
+        OnPropertyChanged(nameof(NeedToConnectFirst));
         OnPropertyChanged(nameof(ActivePanel));
         OnPropertyChanged(nameof(ShowWelcomePage));
         OnPropertyChanged(nameof(HideWelcomePage));

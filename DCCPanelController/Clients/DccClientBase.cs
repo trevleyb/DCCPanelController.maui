@@ -21,89 +21,89 @@ public abstract partial class DccClientBase(Profile profile) : ObservableObject 
 
     protected Profile Profile = profile;
 
-    protected void UpdateTurnout(string id, string name, TurnoutStateEnum state, AccessorySource source, int? dccAddress = null) => OnUi(() => UpdateTurnoutCore(id, name, state, source, dccAddress));
-    protected void UpdateRoute(string id, string name, RouteStateEnum state, AccessorySource source, int? dccAddress = null) => OnUi(() => UpdateRouteCore(id, name, state, source, dccAddress));
-    protected void UpdateSensor(string id, string name, bool isOccupied, AccessorySource source, int? dccAddress = null) => OnUi(() => UpdateSensorCore(id, name, isOccupied, source, dccAddress));
-    protected void UpdateBlock(string id, string name, bool isOccupied, AccessorySource source, string? sensor = null, int? dccAddress = null) => OnUi(() => UpdateBlockCore(id, name, isOccupied, source, sensor, dccAddress));
-    protected void UpdateLight(string id, string name, bool isOn, AccessorySource source, int? dccAddress = null) => OnUi(() => UpdateLightCore(id, name, isOn, source, dccAddress));
-    protected void UpdateSignal(string id, string name, SignalAspectEnum aspect, AccessorySource source, int? dccAddress = null) => OnUi(() => UpdateSignalCore(id, name, aspect, source, dccAddress));
+    protected void UpdateTurnout(string id, string name, TurnoutStateEnum state, AccessorySource? source = null, int? dccAddress = null) => OnUi(() => UpdateTurnoutCore(id, name, state, source, dccAddress));
+    protected void UpdateRoute(string id, string name, RouteStateEnum state, AccessorySource? source = null, int? dccAddress = null) => OnUi(() => UpdateRouteCore(id, name, state, source, dccAddress));
+    protected void UpdateSensor(string id, string name, bool isOccupied, AccessorySource? source = null, int? dccAddress = null) => OnUi(() => UpdateSensorCore(id, name, isOccupied, source, dccAddress));
+    protected void UpdateBlock(string id, string name, bool isOccupied, AccessorySource? source = null, string? sensor = null, int? dccAddress = null) => OnUi(() => UpdateBlockCore(id, name, isOccupied, source, sensor, dccAddress));
+    protected void UpdateLight(string id, string name, bool isOn, AccessorySource? source = null, int? dccAddress = null) => OnUi(() => UpdateLightCore(id, name, isOn, source, dccAddress));
+    protected void UpdateSignal(string id, string name, SignalAspectEnum aspect, AccessorySource? source = null, int? dccAddress = null) => OnUi(() => UpdateSignalCore(id, name, aspect, source, dccAddress));
     protected void UpdateFastClock(DateTime? fastClock, FastClockStateEnum state) => OnUi(() => UpdateFastClockCore(fastClock, state));
     protected void UpdatePowerState(PowerStateEnum state) => OnUi(() => UpdatePowerStateCore(state));
     
     // Helper methods for populating the Profile data with new data that 
     // has been received from a server. 
     // ---------------------------------------------------------------------------
-    private void UpdateTurnoutCore(string id, string name, TurnoutStateEnum state, AccessorySource source, int? dccAddress = null) {
+    private void UpdateTurnoutCore(string id, string name, TurnoutStateEnum state, AccessorySource? source = null, int? dccAddress = null) {
         if (Profile.Turnouts is { } collection) {
             Turnout? entity = null;
             entity ??= Profile.Turnouts.FirstOrDefault(x => x.Id == id) ?? null;
             entity ??= Profile.Turnouts.FirstOrDefault(x => x.Name == name) ?? null;
             if (entity is { }) {
                 entity.State = state;
-                entity.Source = source;
+                if (source is {} updateSource) entity.Source = updateSource;
             } else {
                 entity = new Turnout {
                     Id = id,
                     Name = name,
                     DccAddress = dccAddress ?? id.FromDccAddressString(),
-                    Source = source,
                     State = state,
                 };
+                if (source is {} updateSource) entity.Source = updateSource;
                 collection.Add(entity);
             }
         }
     }
 
-    private void UpdateRouteCore(string id, string name, RouteStateEnum state, AccessorySource source, int? dccAddress = null) {
+    private void UpdateRouteCore(string id, string name, RouteStateEnum state, AccessorySource? source = null, int? dccAddress = null) {
         if (Profile.Routes is { } collection) {
             Route? entity = null;
             entity ??= Profile.Routes.FirstOrDefault(x => x.Id == id) ?? null;
             entity ??= Profile.Routes.FirstOrDefault(x => x.Name == name) ?? null;
             if (entity is { }) {
                 entity.State = state;
-                entity.Source = source;
+                if (source is {} updateSource) entity.Source = updateSource;
             } else {
                 entity = new Route {
                     Id = id,
                     Name = name,
                     State = state,
-                    Source = source,
                     DccAddress = dccAddress ?? id.FromDccAddressString(),
                 };
+                if (source is {} updateSource) entity.Source = updateSource;
                 collection.Add(entity);
             }
         }
     }
 
-    private void UpdateSensorCore(string id, string name, bool isOccupied, AccessorySource source, int? dccAddress = null) {
+    private void UpdateSensorCore(string id, string name, bool isOccupied, AccessorySource? source = null, int? dccAddress = null) {
         if (Profile.Sensors is { } collection) {
             Sensor? entity = null;
             entity ??= Profile.Sensors.FirstOrDefault(x => x.Id == id) ?? null;
             entity ??= Profile.Sensors.FirstOrDefault(x => x.Name == name) ?? null;
             if (entity is { }) {
                 entity.State = isOccupied;
-                entity.Source = source;
+                if (source is {} updateSource) entity.Source = updateSource;
             } else {
                 entity = new Sensor {
                     Id = id,
                     Name = name,
-                    Source = source,
                     DccAddress = dccAddress ?? id.FromDccAddressString(),
                     State = isOccupied,
                 };
+                if (source is {} updateSource) entity.Source = updateSource;
                 collection.Add(entity);
             }
         }
     }
 
-    private void UpdateBlockCore(string id, string name, bool isOccupied, AccessorySource source, string? sensor, int? dccAddress = null) {
+    private void UpdateBlockCore(string id, string name, bool isOccupied, AccessorySource? source = null, string? sensor = null, int? dccAddress = null) {
         if (Profile.Blocks is { } collection) {
             Block? entity = null;
             entity ??= Profile.Blocks.FirstOrDefault(x => x.Id == id) ?? null;
             entity ??= Profile.Blocks.FirstOrDefault(x => x.Name == name) ?? null;
             if (entity is { }) {
                 entity.IsOccupied = isOccupied;
-                entity.Source = source;
+                if (source is {} updateSource) entity.Source = updateSource;
                 if (sensor is {}) entity.Sensor = sensor;
             } else {
                 entity = new Block {
@@ -112,50 +112,50 @@ public abstract partial class DccClientBase(Profile profile) : ObservableObject 
                     IsOccupied = isOccupied,
                     DccAddress = dccAddress ?? id.FromDccAddressString(),
                     Sensor = sensor ?? "",
-                    Source = source,
                 };
+                if (source is {} updateSource) entity.Source = updateSource;
                 collection.Add(entity);
             }
         }
     }
 
-    private void UpdateLightCore(string id, string name, bool isOn, AccessorySource source, int? dccAddress = null) {
+    private void UpdateLightCore(string id, string name, bool isOn, AccessorySource? source = null, int? dccAddress = null) {
         if (Profile.Lights is { } collection) {
             Light? entity = null;
             entity ??= Profile.Lights.FirstOrDefault(x => x.Id == id) ?? null;
             entity ??= Profile.Lights.FirstOrDefault(x => x.Name == name) ?? null;
             if (entity is { }) {
                 entity.State = isOn;
-                entity.Source = source;
+                if (source is {} updateSource) entity.Source = updateSource;
             } else {
                 entity = new Light {
                     Id = id,
                     Name = name,
                     DccAddress = dccAddress ?? id.FromDccAddressString(),
-                    Source = source,
                     State = isOn,
                 };
+                if (source is {} updateSource) entity.Source = updateSource;
                 collection.Add(entity);
             }
         }
     }
 
-    private void UpdateSignalCore(string id, string name, SignalAspectEnum aspect, AccessorySource source, int? dccAddress = null) {
+    private void UpdateSignalCore(string id, string name, SignalAspectEnum aspect, AccessorySource? source = null, int? dccAddress = null) {
         if (Profile.Signals is { } collection) {
             Signal? entity = null;
             entity ??= Profile.Signals.FirstOrDefault(x => x.Id == id) ?? null;
             entity ??= Profile.Signals.FirstOrDefault(x => x.Name == name) ?? null;
             if (entity is { }) {
                 entity.Aspect = aspect.ToString();
-                entity.Source = source;
+                if (source is {} updateSource) entity.Source = updateSource;
             } else {
                 entity = new Signal {
                     Id = id,
                     Name = name,
                     DccAddress = dccAddress ?? id.FromDccAddressString(),
-                    Source = source,
                     Aspect = aspect.ToString(),
                 };
+                if (source is {} updateSource) entity.Source = updateSource;
                 collection.Add(entity);
             }
         }

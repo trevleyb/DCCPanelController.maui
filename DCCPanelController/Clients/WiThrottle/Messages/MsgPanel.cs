@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using DCCPanelController.Clients.WiThrottle.Events;
+using DCCPanelController.Models.DataModel.Accessories;
 
 namespace DCCPanelController.Clients.WiThrottle.Messages;
 
@@ -18,11 +19,10 @@ public class MsgPanel : ClientMsg, IClientMsg {
         case "PTL":
             try {
                 var entries = commandStr.Split("]\\[");
-
                 foreach (var entry in entries) {
                     if (string.IsNullOrEmpty(entry)) continue;
                     var parts = entry.Split("}|{");
-                    if (parts.Length == 3) Add(new TurnoutEvent(parts[0], parts[1], parts[2]));
+                    if (parts.Length == 3) Add(new TurnoutEvent(parts[0], parts[1], parts[2], AccessorySource.WiThrottle));
                 }
             } catch (Exception ex) {
                 Trace.WriteLine($"Error parsing turnout list: {ex.Message}");

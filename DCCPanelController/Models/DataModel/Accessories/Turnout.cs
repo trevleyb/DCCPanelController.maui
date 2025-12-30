@@ -4,7 +4,7 @@ using DCCPanelController.Models.DataModel.Entities;
 
 namespace DCCPanelController.Models.DataModel.Accessories;
 
-[DebuggerDisplay("Turnout: {Id}: {Name} @  {DccAddress} => State: {State}")]
+[DebuggerDisplay("Turnout: {Id}: {Name} @  {DccAddress} => State: {State} => {Source}")]
 public partial class Turnout : Accessory, IAccessory {
     [ObservableProperty] private TurnoutStateEnum _state   = TurnoutStateEnum.Unknown;
     [ObservableProperty] private TurnoutStateEnum _default = TurnoutStateEnum.Unknown;

@@ -8,11 +8,11 @@ public partial class LightsEditView : ContentView {
     private readonly LightsEditViewModel     _viewModel;
 
     public LightsEditView(ILogger<LightsEditViewModel> logger, LightsEditViewModel viewModel) {
+        InitializeComponent();
         _logger = logger;
         _viewModel = viewModel;
         _viewModel.Light.PropertyChanged += ViewModelOnPropertyChanged;
         BindingContext = _viewModel;
-        InitializeComponent();
     }
 
     private void ViewModelOnPropertyChanged(object? sender, PropertyChangedEventArgs e) {

@@ -4,7 +4,7 @@ using DCCPanelController.Models.DataModel.Entities;
 
 namespace DCCPanelController.Models.DataModel.Accessories;
 
-[DebuggerDisplay("Route: {Id}: {Name} @  {DccAddress} => State: {State}")]
+[DebuggerDisplay("Route: {Id}: {Name} @  {DccAddress} => State: {State} => {Source}")]
 public partial class Route : Accessory, IAccessory {
     [ObservableProperty] private RouteStateEnum _state = RouteStateEnum.Unknown;
 

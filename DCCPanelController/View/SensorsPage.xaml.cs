@@ -8,11 +8,10 @@ public partial class SensorsPage : ContentPage {
     private readonly ILogger<SensorsPage> _logger;
 
     public SensorsPage(ILogger<SensorsPage> logger, SensorsViewModel viewModel) {
-        _logger = logger;
-        BindingContext = viewModel;
         InitializeComponent();
-
+        _logger = logger;
         viewModel.SetNavigationReferences(BottomSheet);
+        BindingContext = viewModel;
 
         SafeAreaEdges = SafeAreaEdges.None;
         var safeInsets = On<iOS>().SafeAreaInsets();
