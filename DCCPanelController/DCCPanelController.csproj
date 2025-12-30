@@ -333,6 +333,9 @@
         <MauiXaml Update="View\AboutSettings.xaml">
           <SubType>Designer</SubType>
         </MauiXaml>
+        <MauiXaml Update="View\Accessories.xaml">
+          <SubType>Designer</SubType>
+        </MauiXaml>
     </ItemGroup>
 
     <ItemGroup>
@@ -489,6 +492,10 @@
         </Compile>
         <Compile Update="View\AboutSettings.xaml.cs">
           <DependentUpon>AboutSettings.xaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="View\Accessories.xaml.cs">
+          <DependentUpon>Accessories.xaml</DependentUpon>
           <SubType>Code</SubType>
         </Compile>
     </ItemGroup>
