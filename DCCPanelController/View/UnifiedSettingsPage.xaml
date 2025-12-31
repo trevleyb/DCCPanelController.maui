@@ -144,9 +144,17 @@
                             OnColor="{StaticResource Primary}"
                             ThumbColor="{StaticResource Gray200}"/>
 
-                    <Label Grid.Column="0" Grid.Row="10" Margin="0,0,5,0" Text="Title Bar Shows?"
+                    <Label Grid.Column="0" Grid.Row="10" Margin="0,0,5,0" Text="Startup Sound?"
                            Style="{StaticResource MediumLabel}" VerticalOptions="Center"/>
-                    <FlexLayout Grid.Column="1" Grid.Row="10" Wrap="Wrap" AlignItems="Start" Padding="0">
+                    <Switch Grid.Column="1" Grid.Row="10"
+                            IsToggled="{Binding Settings.PlayStartupSound}"
+                            OnColor="{StaticResource Primary}"
+                            ThumbColor="{StaticResource Gray200}"/>
+
+                    
+                    <Label Grid.Column="0" Grid.Row="11" Margin="0,0,5,0" Text="Title Bar Shows?"
+                           Style="{StaticResource MediumLabel}" VerticalOptions="Center"/>
+                    <FlexLayout Grid.Column="1" Grid.Row="11" Wrap="Wrap" AlignItems="Start" Padding="0">
                         <RadioButton Content="Panel Name"
                                      IsChecked="{Binding Settings.TitleBarDisplay, 
                                                          Converter={StaticResource TitleBarEnumConverter}, 
@@ -163,15 +171,8 @@
                                                          ConverterParameter={x:Static entities:TitleBarTextDisplayEnum.Blank}}"
                                      GroupName="TitleBarType"/>
                     </FlexLayout>
-
-                    <!-- <Label Grid.Column="0" Grid.Row="8" Margin="0,0,5,0" Text="Startup Sound?" -->
-                    <!--        Style="{StaticResource MediumLabel}" VerticalOptions="Center"/> -->
-                    <!-- <Switch Grid.Column="1" Grid.Row="8" -->
-                    <!--         IsToggled="{Binding Settings.PlayStartupSound}" -->
-                    <!--         OnColor="{StaticResource Primary}" -->
-                    <!--         ThumbColor="{StaticResource Gray200}"/> -->
-
-                    <FlexLayout Grid.Column="0" Grid.Row="11" Grid.ColumnSpan="2">
+                    
+                    <FlexLayout Grid.Column="0" Grid.Row="12" Grid.ColumnSpan="2">
                         <Button ImageSource="save.png"
                                 Command="{Binding SaveCommand}"
                                 HorizontalOptions="Center"

@@ -49,8 +49,9 @@
     <ContentPage.Content>
         <Grid>
             <Grid.GestureRecognizers>
-                <SwipeGestureRecognizer Direction="Right" Command="{Binding SwipeLeftCommand}"/>
-                <SwipeGestureRecognizer Direction="Left" Command="{Binding SwipeRightCommand}"/>
+                <!-- <SwipeGestureRecognizer Direction="Right" Command="{Binding SwipeLeftCommand}" Threshold="50"/> -->
+                <!-- <SwipeGestureRecognizer Direction="Left" Command="{Binding SwipeRightCommand}" Threshold="50"/> -->
+                <PanGestureRecognizer PanUpdated="OnPanUpdated"/>
             </Grid.GestureRecognizers>
             
             <Grid RowDefinitions="*,auto,auto" HorizontalOptions="Fill" VerticalOptions="Fill">

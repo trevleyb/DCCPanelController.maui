@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Models.DataModel.Entities;
 
@@ -20,4 +21,7 @@ public partial class Turnout : Accessory, IAccessory {
         };
         State = newState;
     }
+    
+    [JsonIgnore] public string DisplayFormat => $"{(Id ?? "Unnamed")} : {Name} ({(DccAddress.HasValue ? DccAddress.Value.ToString() : "—")})";
+
 }

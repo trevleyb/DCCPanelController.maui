@@ -34,11 +34,10 @@
 
     BackgroundColor="{Binding Source={x:Static services:AppStateService.Instance}, Path=ShellBackgroundColor}"
     ForegroundColor="{Binding Source={x:Static services:AppStateService.Instance}, Path=ShellForegroundColor}"
-
     TitleColor="{Binding Source={x:Static services:AppStateService.Instance}, Path=ShellForegroundColor}"
     UnselectedColor="{Binding Source={x:Static services:AppStateService.Instance}, Path=ShellUnselectedColor}"
 
-    TabBarBackgroundColor="{Binding Source={x:Static services:AppStateService.Instance}, Path=TabBarBackgroundColor}" 
+    TabBarBackgroundColor="{Binding Source={x:Static services:AppStateService.Instance}, Path=TabBarBackgroundColor}"
     TabBarForegroundColor="{Binding Source={x:Static services:AppStateService.Instance}, Path=TabBarForegroundColor}"
     TabBarTitleColor="{Binding Source={x:Static services:AppStateService.Instance}, Path=TabBarForegroundColor}"
     TabBarUnselectedColor="{Binding Source={x:Static services:AppStateService.Instance}, Path=TabBarUnselectedColor}"

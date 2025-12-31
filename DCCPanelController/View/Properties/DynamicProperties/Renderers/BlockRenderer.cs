@@ -5,7 +5,7 @@ using Block = DCCPanelController.Models.DataModel.Accessories.Block;
 namespace DCCPanelController.View.Properties.DynamicProperties.Renderers;
 
 internal sealed class BlockRenderer : BaseRenderer, IPropertyRenderer {
-    protected override int FieldWidth => 200;
+    protected override int FieldWidth => -1;
     public bool CanRender(PropertyContext ctx) => ctx.EditorKind == EditorKinds.Block;
 
     public object CreateView(PropertyContext ctx) {

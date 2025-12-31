@@ -15,6 +15,8 @@ public partial class Block : Accessory, IAccessory {
     [JsonIgnore]
     public string State => IsOccupied ? "Occupied" : "Free";
     
+    [JsonIgnore] public string DisplayFormat => $"{(Id ?? "Unnamed")} : {Name} ({(DccAddress.HasValue ? DccAddress.Value.ToString() : "—")})";
+    
     public event EventHandler<bool>? StateChanged;
     partial void OnIsOccupiedChanged(bool value) => StateChanged?.Invoke(this, value);
     public void ToggleState() {

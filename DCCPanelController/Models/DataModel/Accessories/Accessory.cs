@@ -6,6 +6,16 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace DCCPanelController.Models.DataModel.Accessories;
 
+public interface IAccessory {
+    string? Id { get; set; }
+    string? Name { get; set; }
+    int? DccAddress { get; set; }
+    bool IsValidForCurrentConnection { get; set; }
+    AccessorySource Source { get; set; }
+    AccessoryBindingMode BindingMode { get; set; }
+    string DisplayFormat { get; }
+}
+
 /// <summary>
 /// Base class for all accessories (turnouts, routes, signals, etc.) that can be
 /// addressed over a WiThrottle-style connection.
@@ -26,8 +36,6 @@ public abstract partial class Accessory : ObservableObject, IEquatable<Accessory
     [ObservableProperty] private bool                 _isValidForCurrentConnection;
     [ObservableProperty] private AccessorySource      _source      = AccessorySource.Unknown;
     [ObservableProperty] private AccessoryBindingMode _bindingMode = AccessoryBindingMode.Unbound;
-
-    [JsonIgnore] public string DisplayFormat => $"{(Id ?? "Unnamed")} ({(DccAddress.HasValue ? DccAddress.Value.ToString() : "—")})";
 
     // Tracks whether DccAddress was explicitly edited vs inferred from Id.
     private bool _dccAddressHasBeenExplicitlySet;

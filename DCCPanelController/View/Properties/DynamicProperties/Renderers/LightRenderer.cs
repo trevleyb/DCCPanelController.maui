@@ -5,7 +5,7 @@ using Light = DCCPanelController.Models.DataModel.Accessories.Light;
 namespace DCCPanelController.View.Properties.DynamicProperties.Renderers;
 
 internal sealed class LightRenderer : BaseRenderer, IPropertyRenderer {
-    protected override int FieldWidth => 200;
+    protected override int FieldWidth => -1;
     public bool CanRender(PropertyContext ctx) => ctx.EditorKind == EditorKinds.Light;
 
     public object CreateView(PropertyContext ctx) {

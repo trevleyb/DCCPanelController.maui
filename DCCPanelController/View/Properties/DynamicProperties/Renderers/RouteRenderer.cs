@@ -5,7 +5,7 @@ using Route = DCCPanelController.Models.DataModel.Accessories.Route;
 namespace DCCPanelController.View.Properties.DynamicProperties.Renderers;
 
 internal sealed class RouteRenderer : BaseRenderer, IPropertyRenderer {
-    protected override int FieldWidth => 200;
+    protected override int FieldWidth => -1;
     public bool CanRender(PropertyContext ctx) => ctx.EditorKind == EditorKinds.Route;
 
     public object CreateView(PropertyContext ctx) {

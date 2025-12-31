@@ -5,7 +5,7 @@ using DCCPanelController.Models.DataModel.Entities.Interfaces;
 namespace DCCPanelController.View.Properties.DynamicProperties.Renderers;
 
 internal sealed class TurnoutRenderer : BaseRenderer, IPropertyRenderer {
-    protected override int FieldWidth => 200;
+    protected override int FieldWidth => -1;
     public bool CanRender(PropertyContext ctx) => ctx.EditorKind == EditorKinds.Turnout;
 
     public object CreateView(PropertyContext ctx) {

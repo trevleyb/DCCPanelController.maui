@@ -132,6 +132,37 @@ public partial class OperatePage : ContentPage, INotifyPropertyChanged {
     private void UnmaximizeFab_Clicked(object? sender, EventArgs e) => SetChromeVisible(true);
     private void HideUnHideTabBar(object? sender, EventArgs e) => ToggleChrome(sender, e);
 
+    // Pan gesture for better swipe detection on physical devices
+    private double _panTotalX;
+    private const double SwipeThreshold = 100;
+
+    private void OnPanUpdated(object? sender, PanUpdatedEventArgs e) {
+        switch (e.StatusType) {
+            case GestureStatus.Started:
+                _panTotalX = 0;
+                break;
+
+            case GestureStatus.Running:
+                _panTotalX += e.TotalX;
+                break;
+
+            case GestureStatus.Completed:
+                if (Math.Abs(_panTotalX) > SwipeThreshold) {
+                    if (_panTotalX > 0) {
+                        _viewModel?.SwipeRightCommand?.Execute(null);
+                    } else {
+                        _viewModel?.SwipeLeftCommand?.Execute(null);
+                    }
+                }
+                _panTotalX = 0;
+                break;
+
+            case GestureStatus.Canceled:
+                _panTotalX = 0;
+                break;
+        }
+    }
+
     // private void HideUnHideTabBar(object? sender, EventArgs e) {
     //     if (BindingContext is OperateViewModel viewModel) {
     //         SetTabBarState(!viewModel.IsMaximized);

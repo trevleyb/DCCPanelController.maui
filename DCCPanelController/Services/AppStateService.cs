@@ -88,12 +88,17 @@ public partial class AppStateService : ObservableObject, INotifyPropertyChanged 
 
                 var constrastCvt = new ContrastToBackgroundConverter();
 
-                TabBarTitleColor        = constrastCvt.Convert(StyleHelper.FromStyle("Primary"), typeof(Color), ShellBackgroundColor, CultureInfo.CurrentCulture) as Color ?? Colors.White;
-                TabBarForegroundColor   = constrastCvt.Convert(StyleHelper.FromStyle("Primary"), typeof(Color), ShellBackgroundColor, CultureInfo.CurrentCulture) as Color ?? Colors.White;
-                TabBarBackgroundColor   = constrastCvt.Convert(StyleHelper.FromStyle("Primary"), typeof(Color), ShellBackgroundColor, CultureInfo.CurrentCulture) as Color ?? Colors.White;
-                TabBarUnselectedColor   = constrastCvt.Convert(Colors.DarkGrey, typeof(Color), ShellBackgroundColor, CultureInfo.CurrentCulture) as Color ?? Colors.White;
-                TabBarDisabledColor     = constrastCvt.Convert(Colors.LightGray, typeof(Color), ShellBackgroundColor, CultureInfo.CurrentCulture) as Color ?? Colors.White;
-                ShellUnselectedColor    = constrastCvt.Convert(Colors.CornflowerBlue, typeof(Color), ShellBackgroundColor, CultureInfo.CurrentCulture) as Color ?? Colors.White;
+                // TabBar background stays same as Shell background
+                TabBarBackgroundColor = ShellBackgroundColor;
+
+                // Now contrast all TabBar colors against the TabBar background
+                TabBarForegroundColor   = constrastCvt.Convert(StyleHelper.FromStyle("Primary"), typeof(Color), TabBarBackgroundColor, CultureInfo.CurrentCulture) as Color ?? Colors.White;
+                TabBarTitleColor        = TabBarForegroundColor;  // Selected tab title uses same as selected icon
+                TabBarUnselectedColor   = constrastCvt.Convert(Colors.Gray, typeof(Color), TabBarBackgroundColor, CultureInfo.CurrentCulture) as Color ?? Colors.Gray;
+                TabBarDisabledColor     = constrastCvt.Convert(Colors.LightGray, typeof(Color), TabBarBackgroundColor, CultureInfo.CurrentCulture) as Color ?? Colors.LightGray;
+
+                // Shell unselected color contrasted against Shell background
+                ShellUnselectedColor    = constrastCvt.Convert(Colors.Gray, typeof(Color), ShellBackgroundColor, CultureInfo.CurrentCulture) as Color ?? Colors.Gray;
             }
         }
     }

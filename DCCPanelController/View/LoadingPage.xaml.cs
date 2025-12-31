@@ -4,6 +4,7 @@ using System.Runtime.CompilerServices;
 using System.Text.Json;
 using DCCPanelController.Helpers;
 using DCCPanelController.Helpers.Logging;
+using DCCPanelController.Models.ViewModel.Helpers;
 using DCCPanelController.Services;
 using DCCPanelController.Services.ProfileService;
 using DCCPanelController.View.Helpers;
@@ -22,7 +23,7 @@ public partial class LoadingPage : ContentPage, INotifyPropertyChanged {
 
     private readonly SemaphoreSlim _once = new(1, 1);
 
-    private string _statusText = "Starting…";
+    private string _statusText = "Starting";
     private double _progress;
 
     public string StatusText {
@@ -100,43 +101,43 @@ public partial class LoadingPage : ContentPage, INotifyPropertyChanged {
             #endif
             
             // 1)
-            await StepAsync("Loading profile…", ++step/steps, () => profileService.InitializeAsync());
+            await StepAsync("Loading profile", ++step/steps, () => profileService.InitializeAsync());
 
             // 2)
-            await StepAsync("Validating catalog…", ++step/steps, () => profileService.ValidateCatalog());
+            await StepAsync("Validating catalog", ++step/steps, () => profileService.ValidateCatalog());
             
             // 2.5)
             var mauiContext = Handler?.MauiContext;
-            await StepAsync("Validating installed fonts…", ++step/steps, await ValidateFontsAsync(mauiContext));
+            await StepAsync("Validating installed fonts", ++step/steps, await ValidateFontsAsync(mauiContext));
             
             // 3)
-            await StepAsync("Initialising connection service…", ++step/steps, () => connectionService.InitializeAsync());
+            await StepAsync("Initialising connection service", ++step/steps, () => connectionService.InitializeAsync());
 
             // 4)
-            await StepAsync("Preparing help system…",++step/steps, () => HelpService.Current.InitializeAsync(true));
+            await StepAsync("Preparing help system",++step/steps, () => HelpService.Current.InitializeAsync(true));
 
             // 5)
-            await StepAsync("Validating bundled content…", ++step/steps, ValidateBundleAsync);
+            await StepAsync("Validating bundled content", ++step/steps, ValidateBundleAsync);
 
             // 6)
-            await StepAsync("Checking extracted content…", ++step/steps, ValidateExtractedAsync);
+            await StepAsync("Checking extracted content", ++step/steps, ValidateExtractedAsync);
 
             // 7)
-            await StepAsync("Building palette cache…", ++step/steps, async () => {
+            await StepAsync("Building palette cache", ++step/steps, async () => {
                 PaletteCache.PrebuildPalette("Side");
                 PaletteCache.PrebuildPalette("Bottom");
                 await Task.CompletedTask;
             });
 
             // 8)
-            await StepAsync("Playing startup sound…", ++step/steps, async () => {
-                if (profileService.ActiveProfile?.Settings?.PlayStartupSound == true) {}
-                    // Removed this as it was annoying
-                    //await ClickSounds.PlayStartupSoundAsync();
+            await StepAsync("Playing startup sound", ++step/steps, async () => {
+                if (profileService.ActiveProfile?.Settings?.PlayStartupSound == true) {
+                    await ClickSounds.PlayStartupSoundAsync();
+                }
             });
 
             // 9)
-            await StepAsync("Starting UI…", ++step/steps, async () => {
+            await StepAsync("Starting UI", ++step/steps, async () => {
                 await MainThread.InvokeOnMainThreadAsync(() => {
                     var shell = services.GetRequiredService<AppShell>();
                     var window = Application.Current?.Windows[0];

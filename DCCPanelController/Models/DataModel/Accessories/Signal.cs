@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace DCCPanelController.Models.DataModel.Accessories;
@@ -9,5 +10,7 @@ public partial class Signal : Accessory, IAccessory {
 
     public event EventHandler<string>? AspectChanged;
     partial void OnAspectChanged(string value) => AspectChanged?.Invoke(this, value);
+
+    [JsonIgnore] public string DisplayFormat => $"{(Id ?? "Unnamed")} : {Name} ({(DccAddress.HasValue ? DccAddress.Value.ToString() : "—")})";
 
 }
