@@ -9,6 +9,7 @@ using DCCPanelController.Helpers.Logging;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.DataModel.Entities.Interfaces;
+using DCCPanelController.Models.DataModel.Helpers;
 using DCCPanelController.Models.ViewModel.Helpers;
 using DCCPanelController.Models.ViewModel.Interfaces;
 using DCCPanelController.Models.ViewModel.PathFinder;
@@ -291,7 +292,14 @@ public partial class ControlPanelView {
         try {
             if (DesignMode && DebugMode.IsDebug) {
                 var tile = GridPositionHelper.GetTrackTilesAt(e.Col, e.Row, _dynamicGrid).FirstOrDefault();
-                /* We are currently doing nothing on long-press in design mode */
+                if (tile is TrackStraightTile or TrackCornerTile) {
+                    // Select all connected Straight, Platform, Corner etc tiles
+                    var connectedTiles = FindAllConnectedTrackTiles(tile);
+                    ClearAllSelectedTiles();
+                    foreach (var connectedTile in connectedTiles) {
+                        MarkTileSelected(connectedTile);
+                    }
+                }
             } else {
                 var tile = GridPositionHelper.GetTrackTilesAt(e.Col, e.Row, _dynamicGrid).FirstOrDefault();
                 if (tile is TrackTile trackTile) await _pathTracer.StartPathTracing(trackTile);
@@ -730,6 +738,74 @@ public partial class ControlPanelView {
 
         foreach (var tile in unselectedTilesInRange) MarkTileSelected(tile);
         foreach (var tile in selectedTilesOutsideRange) MarkTileUnSelected(tile);
+    }
+
+    /// <summary>
+    ///     Find all tiles connected to the starting track tile by following track connections
+    /// </summary>
+    private List<ITile> FindAllConnectedTrackTiles(ITile startTile) {
+        var connectedTiles = new List<ITile>();
+        var visited = new HashSet<TrackEntity>();
+        var queue = new Queue<TrackEntity>();
+
+        if (startTile.Entity is not TrackEntity startTrack) return connectedTiles;
+
+        queue.Enqueue(startTrack);
+        visited.Add(startTrack);
+
+        while (queue.Count > 0) {
+            var currentTrack = queue.Dequeue();
+
+            // Find the tile for this track entity
+            var currentTile = _dynamicGrid.Children
+                .OfType<TrackTile>()
+                .FirstOrDefault(t => t.Entity == currentTrack);
+
+            if (currentTile != null) connectedTiles.Add(currentTile);
+
+            // Get connections for the current track
+            var connections = currentTrack.Connections;
+            if (connections == null) continue;
+
+            // Check all 8 directions
+            var rotatedConnections = connections.GetConnections(currentTrack.Rotation);
+            for (var direction = 0; direction < EntityConnections.MaxDirections; direction++) {
+                var connectionType = rotatedConnections[direction];
+
+                // Skip if no connection in this direction
+                if (connectionType == ConnectionType.None) continue;
+
+                // Calculate neighbor position
+                var offset = EntityConnections.GetDirectionOffset(direction);
+                var neighborCol = currentTrack.Col + offset.dx;
+                var neighborRow = currentTrack.Row + offset.dy;
+
+                // Find track entity at neighbor position
+                var neighborTrack = Panel?.GetEntityAtPosition(neighborCol, neighborRow) as TrackEntity;
+
+                // Skip if no track or already visited
+                if (neighborTrack == null || visited.Contains(neighborTrack)) continue;
+
+                // Only include Straight and Corner entities (and their variations like Platform)
+                if (neighborTrack is StraightEntity or CornerEntity) {
+                    // Check if the neighbor has a connection back to us
+                    var neighborConnections = neighborTrack.Connections;
+                    if (neighborConnections != null) {
+                        var oppositeDirection = (direction + 4) % EntityConnections.MaxDirections;
+                        var neighborRotatedConnections = neighborConnections.GetConnections(neighborTrack.Rotation);
+                        var neighborConnectionType = neighborRotatedConnections[oppositeDirection];
+
+                        // Only add if there's a valid connection back
+                        if (neighborConnectionType != ConnectionType.None) {
+                            visited.Add(neighborTrack);
+                            queue.Enqueue(neighborTrack);
+                        }
+                    }
+                }
+            }
+        }
+
+        return connectedTiles;
     }
     #endregion
 

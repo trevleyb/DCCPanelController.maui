@@ -29,7 +29,11 @@
         <Setter Property="TextColor" Value="{StaticResource White}"/>
         <Setter Property="BackgroundColor" Value="{StaticResource Primary}"/>
         <Setter Property="FontFamily" Value="OpenSansRegular"/>
-        <Setter Property="FontSize" Value="18"/>
+        <Setter Property="FontSize">
+            <Setter.Value>
+                <OnIdiom x:TypeArguments="x:Double" Phone="15" Tablet="18" Desktop="20"/>
+            </Setter.Value>
+        </Setter>
         <Setter Property="BorderWidth" Value="0"/>
         <Setter Property="CornerRadius" Value="8"/>
         <Setter Property="Padding" Value="14,10"/>
@@ -55,7 +59,12 @@
         <Setter Property="TextColor" Value="{StaticResource White}"/>
         <Setter Property="BackgroundColor" Value="{StaticResource Primary}"/>
         <Setter Property="FontFamily" Value="OpenSansRegular"/>
-        <Setter Property="FontSize" Value="18"/>
+        <Setter Property="FontSize">
+            <Setter.Value>
+                <OnIdiom x:TypeArguments="x:Double" Phone="15" Tablet="18" Desktop="20"/>
+            </Setter.Value>
+        </Setter>
+
         <Setter Property="BorderWidth" Value="0"/>
         <Setter Property="CornerRadius" Value="20"/>
         <Setter Property="Padding" Value="14,10"/>
@@ -66,8 +75,7 @@
                 <VisualStateGroup x:Name="CommonStates">
                     <VisualState x:Name="Normal">
                         <VisualState.Setters>
-                            <Setter Property="Background"
-                                    Value="{StaticResource LightBackground}"/>
+                            <Setter Property="Background" Value="{StaticResource LightBackground}"/>
                             <Setter Property="TextColor" Value="{StaticResource Primary}"/>
                             <Setter Property="BorderColor" Value="{StaticResource Primary}"/>
                             <Setter Property="BorderWidth" Value="2"/>
@@ -77,12 +85,9 @@
                     </VisualState>
                     <VisualState x:Name="Disabled">
                         <VisualState.Setters>
-                            <Setter Property="Background"
-                                    Value="{StaticResource LightBackground}"/>
-                            <Setter Property="TextColor"
-                                    Value="{StaticResource PrimaryDisabled}"/>
-                            <Setter Property="BorderColor"
-                                    Value="{StaticResource PrimaryDisabled}"/>
+                            <Setter Property="Background" Value="{StaticResource LightBackground}"/>
+                            <Setter Property="TextColor" Value="{StaticResource PrimaryDisabled}"/>
+                            <Setter Property="BorderColor" Value="{StaticResource PrimaryDisabled}"/>
                             <Setter Property="BorderWidth" Value="2"/>
                             <Setter Property="HeightRequest" Value="40"/>
                             <Setter Property="CornerRadius" Value="20"/>
@@ -119,7 +124,12 @@
                 Value="{StaticResource Gray900}"/>
         <Setter Property="BackgroundColor" Value="Transparent"/>
         <Setter Property="FontFamily" Value="OpenSansRegular"/>
-        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="FontSize">
+            <Setter.Value>
+                <OnIdiom x:TypeArguments="x:Double" Phone="14" Tablet="15" Desktop="20"/>
+            </Setter.Value>
+        </Setter>
+
         <Setter Property="MinimumHeightRequest" Value="44"/>
         <Setter Property="MinimumWidthRequest" Value="44"/>
         <Setter Property="VisualStateManager.VisualStateGroups">
@@ -142,9 +152,12 @@
                 Value="{StaticResource Black}"/>
         <Setter Property="BackgroundColor" Value="Transparent"/>
         <Setter Property="FontFamily" Value="OpenSansRegular"/>
-        <Setter Property="FontSize" Value="14"/>
-        <Setter Property="PlaceholderColor"
-                Value="{StaticResource Gray200}"/>
+        <Setter Property="FontSize">
+            <Setter.Value>
+                <OnIdiom x:TypeArguments="x:Double" Phone="14" Tablet="15" Desktop="20"/>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="PlaceholderColor" Value="{StaticResource Gray200}"/>
         <Setter Property="MinimumHeightRequest" Value="44"/>
         <Setter Property="MinimumWidthRequest" Value="44"/>
         <Setter Property="VisualStateManager.VisualStateGroups">
@@ -189,7 +202,11 @@
                 Value="{StaticResource Black}"/>
         <Setter Property="BackgroundColor" Value="Transparent"/>
         <Setter Property="FontFamily" Value="OpenSansRegular"/>
-        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="FontSize">
+            <Setter.Value>
+                <OnIdiom x:TypeArguments="x:Double" Phone="14" Tablet="15" Desktop="20"/>
+            </Setter.Value>
+        </Setter>
         <Setter Property="VisualStateManager.VisualStateGroups">
             <VisualStateGroupList>
                 <VisualStateGroup x:Name="CommonStates">
@@ -213,7 +230,11 @@
     <Style TargetType="Label" x:Key="Headline">
         <Setter Property="TextColor"
                 Value="{StaticResource MidnightBlue}"/>
-        <Setter Property="FontSize" Value="32"/>
+        <Setter Property="FontSize">
+            <Setter.Value>
+                <OnIdiom x:TypeArguments="x:Double" Phone="24" Tablet="32" Desktop="32"/>
+            </Setter.Value>
+        </Setter>
         <Setter Property="HorizontalOptions" Value="Center"/>
         <Setter Property="HorizontalTextAlignment" Value="Center"/>
     </Style>
@@ -221,7 +242,11 @@
     <Style TargetType="Label" x:Key="SubHeadline">
         <Setter Property="TextColor"
                 Value="{StaticResource MidnightBlue}"/>
-        <Setter Property="FontSize" Value="24"/>
+        <Setter Property="FontSize">
+            <Setter.Value>
+                <OnIdiom x:TypeArguments="x:Double" Phone="20" Tablet="24" Desktop="24"/>
+            </Setter.Value>
+        </Setter>
         <Setter Property="HorizontalOptions" Value="Center"/>
         <Setter Property="HorizontalTextAlignment" Value="Center"/>
     </Style>
@@ -288,7 +313,11 @@
                             <Setter Property="Margin" Value="0,0,0,0"/>
                             <Setter Property="VerticalOptions" Value="Center"/>
                             <Setter Property="HorizontalOptions" Value="Start"/>
-                            <Setter Property="FontSize" Value="16"/>
+                            <Setter Property="FontSize">
+                                <Setter.Value>
+                                    <OnIdiom x:TypeArguments="x:Double" Phone="14" Tablet="15" Desktop="15"/>
+                                </Setter.Value>
+                            </Setter>
                             <Setter Property="TextColor" Value="{StaticResource Primary}"/>
                             <Setter Property="BorderWidth" Value="0"/>
                             <Setter Property="Background" Value="{StaticResource Transparent}"/>
@@ -301,7 +330,11 @@
                             <Setter Property="Margin" Value="0,0,0,0"/>
                             <Setter Property="VerticalOptions" Value="Center"/>
                             <Setter Property="HorizontalOptions" Value="Start"/>
-                            <Setter Property="FontSize" Value="16"/>
+                            <Setter Property="FontSize">
+                                <Setter.Value>
+                                    <OnIdiom x:TypeArguments="x:Double" Phone="14" Tablet="15" Desktop="15"/>
+                                </Setter.Value>
+                            </Setter>
                             <Setter Property="TextColor" Value="{StaticResource PrimaryDisabled}"/>
                             <Setter Property="BorderWidth" Value="0"/>
                             <Setter Property="Background" Value="{StaticResource Transparent}"/>

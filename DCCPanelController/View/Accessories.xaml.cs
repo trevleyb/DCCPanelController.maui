@@ -10,19 +10,38 @@ public partial class AccessoriesPage : ContentPage {
         InitializeComponent();
     }
 
-    private async void OnTurnoutsClicked(object? sender, EventArgs e) {
-        await Shell.Current.GoToAsync("//Accessories/Turnouts");
+    private void OnTurnoutsClicked(object? sender, EventArgs e) {
+        SwitchToTab("Turnouts");
     }
 
-    private async void OnRoutesClicked(object? sender, EventArgs e) {
-        await Shell.Current.GoToAsync("//Accessories/Routes");
+    private void OnRoutesClicked(object? sender, EventArgs e) {
+        SwitchToTab("Routes");
     }
 
-    private async void OnBlocksClicked(object? sender, EventArgs e) {
-        await Shell.Current.GoToAsync("//Accessories/Blocks");
+    private void OnBlocksClicked(object? sender, EventArgs e) {
+        SwitchToTab("Blocks");
     }
 
-    private async void OnLightsClicked(object? sender, EventArgs e) {
-        await Shell.Current.GoToAsync("//Accessories/Lights");
+    private void OnLightsClicked(object? sender, EventArgs e) {
+        SwitchToTab("Lights");
+    }
+
+    private void SwitchToTab(string tabTitle) {
+        var accessoriesTab = Shell.Current.Items
+            .OfType<FlyoutItem>()
+            .FirstOrDefault()?
+            .Items.OfType<Tab>()
+            .FirstOrDefault(t => t.Title == "Accessories");
+
+        if (accessoriesTab != null) {
+            var targetShellContent = accessoriesTab.Items
+                .OfType<ShellContent>()
+                .FirstOrDefault(sc => sc.Title == tabTitle);
+
+            if (targetShellContent != null) {
+                Shell.Current.CurrentItem = accessoriesTab;
+                accessoriesTab.CurrentItem = targetShellContent;
+            }
+        }
     }
 }
