@@ -114,14 +114,15 @@ public static class GridPositionHelper {
     /// </summary>
     public static ITile? GetTopmostTileCovering(int col, int row, Grid grid) => GetTilesCovering(col, row, grid).FirstOrDefault();
 
-    public static List<ITile> GetTilesCovering(int col, int row, Grid grid) =>
+    public static List<ITile> GetTilesCovering(int col, int row, Grid grid, bool includeHidden = false) =>
         grid.Children
             .OfType<ITile>()
             .Where(t =>
                 col >= t.Entity.Col &&
                 col < t.Entity.Col + t.Entity.Width &&
                 row >= t.Entity.Row &&
-                row < t.Entity.Row + t.Entity.Height)
+                row < t.Entity.Row + t.Entity.Height &&
+                (includeHidden || t.Entity.IsVisible))
             .OrderByDescending(t => t.Entity.Layer)
             .ToList();
     #endregion

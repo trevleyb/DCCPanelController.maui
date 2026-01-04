@@ -1,5 +1,6 @@
 using DCCPanelController.Resources.Styles;
 using DCCPanelController.Services;
+using Microsoft.Extensions.Logging;
 
 namespace DCCPanelController.View.Properties.DynamicProperties.Renderers;
 
@@ -11,6 +12,7 @@ internal sealed class ImageRenderer : BaseRenderer, IPropertyRenderer {
     public bool CanRender(PropertyContext ctx) => ctx.EditorKind == EditorKinds.Image;
 
     public object CreateView(PropertyContext ctx) {
+        try {
         var row = ctx.Row;
         try {
             var spinner = new ActivityIndicator {
@@ -111,6 +113,10 @@ internal sealed class ImageRenderer : BaseRenderer, IPropertyRenderer {
             return WrapWithLabel(ctx, stack);
         } catch {
             return new InvalidRenderer("Error generating Image.");
+        }
+        } catch (Exception ex) {
+            Logger.LogError(ex, "Error creating Image Renderer for property {PropertyName}", ctx.Row?.Field?.Meta?.Label);
+            return new InvalidRenderer(ex.Message).CreateView(ctx);
         }
     }
 

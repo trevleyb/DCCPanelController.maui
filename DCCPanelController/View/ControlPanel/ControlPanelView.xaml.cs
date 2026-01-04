@@ -62,6 +62,7 @@ public partial class ControlPanelView {
         SetupDynamicGridGestures(_dynamicGrid);
         SetupGridOverlays();
         SizeChanged += OnSizeChangedDebounced;
+        foreach (var entity in Panel?.Entities ?? Enumerable.Empty<Entity>()) entity.IsVisible = true;
     }
     #endregion
 
@@ -204,7 +205,6 @@ public partial class ControlPanelView {
 
     private async void GridGesturesOnSingleTap(object? sender, GridGestureEventArgs e) {
         try {
-
             if (DesignMode) {
                 // Look up the tile if it is in this grid. If no tiles, reset selected
                 // -------------------------------------------------------------------
@@ -255,7 +255,7 @@ public partial class ControlPanelView {
                 if (tile is { }) OnTileTapped(tile, 1);
             }
         } catch (Exception ex) {
-            _logger.LogError($"Error in GridGesturesOnSingleTap: {ex.Message}");
+            _logger.LogError(ex, "Error in GridGesturesOnSingleTap at col:{Col} row:{Row}", e.Col, e.Row);
         }
     }
 
@@ -284,7 +284,7 @@ public partial class ControlPanelView {
                 if (tile is { }) OnTileTapped(tile, 2);
             }
         } catch (Exception ex) {
-            _logger.LogError($"Error in GridGesturesOnDoubleTap: {ex.Message}");
+            _logger.LogError(ex, "Error in GridGesturesOnDoubleTap at col:{Col} row:{Row}", e.Col, e.Row);
         }
     }
 
@@ -305,7 +305,7 @@ public partial class ControlPanelView {
                 if (tile is TrackTile trackTile) await _pathTracer.StartPathTracing(trackTile);
             }
         } catch (Exception ex) {
-            _logger.LogError($"Error in OnOperateModeLongPress: {ex.Message}");
+            _logger.LogError(ex, "Error in GridGesturesOnLongPress at col:{Col} row:{Row}", e.Col, e.Row);
         }
     }
 
@@ -336,7 +336,7 @@ public partial class ControlPanelView {
                 }
             }
         } catch (Exception ex) {
-            _logger.LogError($"Error in GridGesturesOnTileDragStarted: {ex.Message}");
+            _logger.LogError(ex, "Error in GridGesturesOnTileDragStarted");
         }
     }
 
@@ -355,7 +355,7 @@ public partial class ControlPanelView {
             }
             }
         } catch (Exception ex) {
-            _logger.LogError($"Error in GridGesturesOnTileDragMoved: {ex.Message}");
+            _logger.LogError(ex, "Error in GridGesturesOnTileDragMoved");
         }
     }
 
@@ -391,7 +391,7 @@ public partial class ControlPanelView {
                 ClearAllSelectedTiles();
             }
         } catch (Exception ex) {
-            _logger.LogError($"Error in GridGesturesOnTileDragCompleted: {ex.Message}");
+            _logger.LogError(ex, "Error in GridGesturesOnTileDragCompleted");
         }
     }
 
@@ -399,7 +399,7 @@ public partial class ControlPanelView {
         try {
             RemoveHighlights();
         } catch (Exception ex) {
-            _logger.LogError($"Error in GridGesturesOnTileDragCancelled: {ex.Message}");
+            _logger.LogError(ex, "Error in GridGesturesOnTileDragCancelled");
         }
     }
 
@@ -409,7 +409,7 @@ public partial class ControlPanelView {
             AppStateService.Instance.SelectedTile = null;
             ClearAllSelectedTiles();
         } catch (Exception ex) {
-            _logger.LogError($"Error in GridGesturesOnGridSelectionStarted: {ex.Message}");
+            _logger.LogError(ex, "Error in GridGesturesOnGridSelectionStarted");
         }
     }
 
@@ -418,7 +418,7 @@ public partial class ControlPanelView {
             UpdateSelectorView(e.AbsStartCol, e.AbsStartRow, e.AbsEndCol, e.AbsEndRow);
             MarkTilesSelectedInGrid(e.AbsStartCol, e.AbsStartRow, e.AbsEndCol, e.AbsEndRow);
         } catch (Exception ex) {
-            _logger.LogError($"Error in GridGesturesOnGridSelectionChanged: {ex.Message}");
+            _logger.LogError(ex, "Error in GridGesturesOnGridSelectionChanged");
         }
     }
 
@@ -427,7 +427,7 @@ public partial class ControlPanelView {
             RemoveSelectorView();
             MarkTilesSelectedInGrid(e.AbsStartCol, e.AbsStartRow, e.AbsEndCol, e.AbsEndRow);
         } catch (Exception ex) {
-            _logger.LogError($"Error in GridGesturesOnGridSelectionCompleted: {ex.Message}");
+            _logger.LogError(ex, "Error in GridGesturesOnGridSelectionCompleted");
         }
     }
 
@@ -436,7 +436,7 @@ public partial class ControlPanelView {
             RemoveSelectorView();
             ClearAllSelectedTiles();
         } catch (Exception ex) {
-            _logger.LogError($"Error in GridGesturesOnGridSelectionCancelled: {ex.Message}");
+            _logger.LogError(ex, "Error in GridGesturesOnGridSelectionCancelled");
         }
     }
     #endregion
@@ -515,7 +515,7 @@ public partial class ControlPanelView {
                     // ------------------------------------------------------------------------------
                     await AddEntitiesToGrid(Panel);
                 } catch (Exception ex) {
-                    _logger.LogError($"Error in DrawPanel: {ex.Message}");
+                    _logger.LogError(ex, "Error in DrawPanel called from {memberName}@{sourceLineNumber}", memberName, sourceLineNumber);
                 } finally {
                     IsPanelDrawing = false;
                 }
@@ -532,7 +532,7 @@ public partial class ControlPanelView {
 
         try {
             _dynamicGrid.BatchBegin();
-            foreach (var entity in panel.Entities.OrderBy(x => x.Layer)) {
+            foreach (var entity in panel.Entities.OrderBy(x => x.Layer).Where(x => x.IsVisible)) {
                 AddEntityToGrid(entity);
             }
         } finally {
@@ -720,95 +720,128 @@ public partial class ControlPanelView {
     private void RemoveSelectorView() => _overlayGridSelection.IsActive = false;
 
     private void MarkTilesSelectedInGrid(int startCol, int startRow, int endCol, int endRow) {
+        try {
         // @formatter:off
         var unselectedTilesInRange = _dynamicGrid.Children
             .OfType<ITile>().Where(tile =>
                 tile.Entity.Col >= startCol && tile.Entity.Col <= endCol &&
                 tile.Entity.Row >= startRow && tile.Entity.Row <= endRow &&
-                !tile.IsSelected)
+                tile is { IsSelected: false, Entity.IsVisible: true })
                 .ToList();
 
         var selectedTilesOutsideRange = _dynamicGrid.Children
             .OfType<ITile>().Where(tile =>
-                tile.IsSelected &&
+                tile is { IsSelected: true, Entity.IsVisible: true } &&
                 (tile.Entity.Col < startCol || tile.Entity.Col > endCol ||
-                tile.Entity.Row < startRow || tile.Entity.Row > endRow))
+                 tile.Entity.Row < startRow || tile.Entity.Row > endRow))
                 .ToList();
-        // @formatter:on
+            // @formatter:on
 
-        foreach (var tile in unselectedTilesInRange) MarkTileSelected(tile);
-        foreach (var tile in selectedTilesOutsideRange) MarkTileUnSelected(tile);
+            foreach (var tile in unselectedTilesInRange) MarkTileSelected(tile);
+            foreach (var tile in selectedTilesOutsideRange) MarkTileUnSelected(tile);
+        } catch (Exception ex) {
+            _logger.LogError(ex, "Error in MarkTilesSelectedInGrid for range ({startCol},{startRow}) to ({endCol},{endRow})", startCol, startRow, endCol, endRow);
+        }
     }
 
     /// <summary>
     ///     Find all tiles connected to the starting track tile by following track connections
     /// </summary>
     private List<ITile> FindAllConnectedTrackTiles(ITile startTile) {
-        var connectedTiles = new List<ITile>();
-        var visited = new HashSet<TrackEntity>();
-        var queue = new Queue<TrackEntity>();
+        try {
+            var connectedTiles = new List<ITile>();
+            var visited = new HashSet<TrackEntity>();
+            var queue = new Queue<TrackEntity>();
 
-        if (startTile.Entity is not TrackEntity startTrack) return connectedTiles;
+            if (startTile.Entity is not TrackEntity startTrack) return connectedTiles;
 
-        queue.Enqueue(startTrack);
-        visited.Add(startTrack);
+            queue.Enqueue(startTrack);
+            visited.Add(startTrack);
 
-        while (queue.Count > 0) {
-            var currentTrack = queue.Dequeue();
+            while (queue.Count > 0) {
+                var currentTrack = queue.Dequeue();
 
-            // Find the tile for this track entity
-            var currentTile = _dynamicGrid.Children
-                .OfType<TrackTile>()
-                .FirstOrDefault(t => t.Entity == currentTrack);
+                // Find the tile for this track entity
+                var currentTile = _dynamicGrid.Children
+                                              .OfType<TrackTile>()
+                                              .FirstOrDefault(t => t.Entity == currentTrack);
 
-            if (currentTile != null) connectedTiles.Add(currentTile);
+                if (currentTile != null) connectedTiles.Add(currentTile);
 
-            // Get connections for the current track
-            var connections = currentTrack.Connections;
-            if (connections == null) continue;
+                // Get connections for the current track
+                var connections = currentTrack.Connections;
+                if (connections == null) continue;
 
-            // Check all 8 directions
-            var rotatedConnections = connections.GetConnections(currentTrack.Rotation);
-            for (var direction = 0; direction < EntityConnections.MaxDirections; direction++) {
-                var connectionType = rotatedConnections[direction];
+                // Check all 8 directions
+                var rotatedConnections = connections.GetConnections(currentTrack.Rotation);
+                for (var direction = 0; direction < EntityConnections.MaxDirections; direction++) {
+                    var connectionType = rotatedConnections[direction];
 
-                // Skip if no connection in this direction
-                if (connectionType == ConnectionType.None) continue;
+                    // Skip if no connection in this direction
+                    if (connectionType == ConnectionType.None) continue;
 
-                // Calculate neighbor position
-                var offset = EntityConnections.GetDirectionOffset(direction);
-                var neighborCol = currentTrack.Col + offset.dx;
-                var neighborRow = currentTrack.Row + offset.dy;
+                    // Calculate neighbor position
+                    var offset = EntityConnections.GetDirectionOffset(direction);
+                    var neighborCol = currentTrack.Col + offset.dx;
+                    var neighborRow = currentTrack.Row + offset.dy;
 
-                // Find track entity at neighbor position
-                var neighborTrack = Panel?.GetEntityAtPosition(neighborCol, neighborRow) as TrackEntity;
+                    // Find track entity at neighbor position
+                    var neighborTrack = Panel?.GetEntityAtPosition(neighborCol, neighborRow) as TrackEntity;
 
-                // Skip if no track or already visited
-                if (neighborTrack == null || visited.Contains(neighborTrack)) continue;
+                    // Skip if no track or already visited
+                    if (neighborTrack == null || visited.Contains(neighborTrack)) continue;
 
-                // Only include Straight and Corner entities (and their variations like Platform)
-                if (neighborTrack is StraightEntity or CornerEntity) {
-                    // Check if the neighbor has a connection back to us
-                    var neighborConnections = neighborTrack.Connections;
-                    if (neighborConnections != null) {
-                        var oppositeDirection = (direction + 4) % EntityConnections.MaxDirections;
-                        var neighborRotatedConnections = neighborConnections.GetConnections(neighborTrack.Rotation);
-                        var neighborConnectionType = neighborRotatedConnections[oppositeDirection];
+                    // Only include Straight and Corner entities (and their variations like Platform)
+                    if (neighborTrack is StraightEntity or CornerEntity) {
+                        // Check if the neighbor has a connection back to us
+                        var neighborConnections = neighborTrack.Connections;
+                        if (neighborConnections != null) {
+                            var oppositeDirection = (direction + 4) % EntityConnections.MaxDirections;
+                            var neighborRotatedConnections = neighborConnections.GetConnections(neighborTrack.Rotation);
+                            var neighborConnectionType = neighborRotatedConnections[oppositeDirection];
 
-                        // Only add if there's a valid connection back
-                        if (neighborConnectionType != ConnectionType.None) {
-                            visited.Add(neighborTrack);
-                            queue.Enqueue(neighborTrack);
+                            // Only add if there's a valid connection back
+                            if (neighborConnectionType != ConnectionType.None) {
+                                visited.Add(neighborTrack);
+                                queue.Enqueue(neighborTrack);
+                            }
                         }
                     }
                 }
             }
-        }
 
-        return connectedTiles;
+            return connectedTiles;
+        } catch (Exception ex) {
+            _logger.LogError(ex, "Error in FindAllConnectedTrackTiles starting from tile at ({Col},{Row})", startTile.Entity.Col, startTile.Entity.Row);
+            return new List<ITile>();
+        }
     }
     #endregion
 
+    #region Hide and UnHide all Non-Track Pieces
+    public async Task SetNonTrackVisibility(TrackVisibilityEnum visibility) {
+        // Make all the tiles UnSelected
+        // -----------------------------------------------------------
+        ClearAllSelectedTiles();
+        
+        // Set the visibility (and selectablility) of the tiles. 
+        // -----------------------------------------------------------
+        try {
+            foreach (var entity in Panel?.Entities ?? Enumerable.Empty<Entity>()) {
+                entity.IsVisible = visibility switch {
+                    TrackVisibilityEnum.All       => true,
+                    TrackVisibilityEnum.Tracks    => entity is TrackEntity,
+                    TrackVisibilityEnum.NonTracks => entity is not TrackEntity,
+                    _                             => entity.IsVisible
+                };
+            }
+            await DrawPanel();
+        } catch (Exception ex) {
+            _logger.LogError(ex, "Error in HideNonTrackPieces with Track State :{TrackVisible}", visibility);
+        }
+    }
+    #endregion
+    
     #region Move or Copy Selected
     /// <summary>
     ///     Entry point for a MOVE ot COPY operation on a Double-Click
@@ -837,7 +870,7 @@ public partial class ControlPanelView {
                     RemoveHighlights();
                     MarkAllSelectedTiles();
                 } catch (Exception ex) {
-                    _logger.LogError("Error marking tiles in Error: {Message}", ex.Message);
+                    _logger.LogError(ex, "Error marking tiles in Error for position ({anchorCol},{anchorRow})", anchorCol, anchorRow);
                 }
             });
 
@@ -863,7 +896,7 @@ public partial class ControlPanelView {
                     HighlightCell(cell.Rects.col, cell.Rects.row, cell.Rects.width, cell.Rects.height, cell.InBounds ? CellHighlightAction.Selected : CellHighlightAction.Error);
                 }
             } catch (Exception ex) {
-                _logger.LogError("Error marking for move or copy tiles: {Message}", ex.Message);
+                _logger.LogError(ex, "Error marking for move or copy tiles at position ({anchorCol},{anchorRow})", anchorCol, anchorRow);
             }
         });
     }
@@ -891,7 +924,7 @@ public partial class ControlPanelView {
                     }
                 }
             } catch (Exception ex) {
-                _logger.LogError(ex,$"Error moving tiles: {ex.Message}");
+                _logger.LogError(ex, "Error moving tiles to position ({anchorCol},{anchorRow})", anchorCol, anchorRow);
             }
 
             MarkAllSelectedTiles();
@@ -922,7 +955,7 @@ public partial class ControlPanelView {
                     foreach (var tile in tilesToCopy) MarkTileSelected(tile);
                 }
             } catch (Exception ex) {
-                _logger.LogError(ex,"Error copying tiles: {Message}", ex.Message);
+                _logger.LogError(ex, "Error copying tiles to position ({anchorCol},{anchorRow})", anchorCol, anchorRow);
             }
 
             ClearAllSelectedTiles();
@@ -1056,7 +1089,7 @@ public partial class ControlPanelView {
                 }
             }
         } catch (Exception ex) {
-            _logger.LogError("ERROR: Error dropping item: {ExMessage} ", ex.Message);
+            _logger.LogError(ex, "Error dropping item on panel");
         }
     }
     #endregion
@@ -1113,7 +1146,7 @@ public partial class ControlPanelView {
                 await panel.DrawPanel();
             }
         } catch (Exception ex) {
-            LogHelper.Logger.LogWarning($"ERROR: OnDesignModeChanged: {ex.Message}");
+            LogHelper.Logger.LogError(ex, "Error in OnDesignModeChanged");
         }
     }
 
@@ -1138,8 +1171,8 @@ public partial class ControlPanelView {
                 control.ClearAllSelectedTiles();
                 await control.ForceRefreshAsync();
             }
-        } catch (Exception e) {
-            LogHelper.Logger.LogWarning($"ERROR: OnPanelChanged: {e.Message}");
+        } catch (Exception ex) {
+            LogHelper.Logger.LogError(ex, "Error in OnPanelChanged");
         }
     }
 

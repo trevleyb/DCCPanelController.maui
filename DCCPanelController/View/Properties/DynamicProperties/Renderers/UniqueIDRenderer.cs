@@ -1,5 +1,6 @@
 using DCCPanelController.Models.DataModel.Entities.Interfaces;
 using DCCPanelController.Models.DataModel.Helpers;
+using Microsoft.Extensions.Logging;
 
 namespace DCCPanelController.View.Properties.DynamicProperties.Renderers;
 
@@ -7,6 +8,7 @@ internal sealed class UniqueIDRenderer : BaseRenderer, IPropertyRenderer {
     public bool CanRender(PropertyContext ctx) => ctx.EditorKind == EditorKinds.Text;
 
     public object CreateView(PropertyContext ctx) {
+        try {
         var entity = ctx.FirstOwnerAs<IEntity>();
         if (entity == null) return new InvalidRenderer("Cant find owning Object: UniqueID Renderer").CreateView(ctx);
 
@@ -22,6 +24,10 @@ internal sealed class UniqueIDRenderer : BaseRenderer, IPropertyRenderer {
         };
         entry.IsEnabled = !row.Field.Meta.IsReadOnlyInRunMode;
         return WrapWithLabel(ctx, AddBorder(entry));
+        } catch (Exception ex) {
+            Logger.LogError(ex, "Error creating UniqueID Renderer for property {PropertyName}", ctx.Row?.Field?.Meta?.Label);
+            return new InvalidRenderer(ex.Message).CreateView(ctx);
+        }
     }
 
     private bool IsIDValid(string value, IEntity entity) {

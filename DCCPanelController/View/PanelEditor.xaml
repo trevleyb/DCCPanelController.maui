@@ -40,6 +40,12 @@
             Command="{Binding Path=ToggleGridCommand}"/>
 
         <ToolbarItem
+            IconImageSource="{Binding CanToggleNonTrackVisible, Converter={StaticResource BoolToIcon}, ConverterParameter=eye}"
+            Text="NonTrack" x:Name="NonTrackToolbar"
+            IsEnabled="{Binding CanToggleNonTrackVisible}"
+            Command="{Binding Path=ToggleNonTrackVisibleCommand}"/>
+
+        <ToolbarItem
             IsEnabled="{Binding CanToggleGrid}"
             IconImageSource="{Binding PaletteState, Converter={StaticResource PaletteIconConverter}}"
             Text="Palette"

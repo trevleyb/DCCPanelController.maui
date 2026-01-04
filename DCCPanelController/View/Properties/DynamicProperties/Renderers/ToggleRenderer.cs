@@ -1,4 +1,5 @@
 using DCCPanelController.Resources.Styles;
+using Microsoft.Extensions.Logging;
 
 namespace DCCPanelController.View.Properties.DynamicProperties.Renderers;
 
@@ -6,6 +7,7 @@ internal sealed class ToggleRenderer : BaseRenderer, IPropertyRenderer {
     public bool CanRender(PropertyContext ctx) => ctx.EditorKind == EditorKinds.Toggle;
 
     public object CreateView(PropertyContext ctx) {
+        try {
         var row = ctx.Row;
         var sw = new Switch {
             IsToggled = row.OriginalValue as bool? ?? false,
@@ -28,5 +30,9 @@ internal sealed class ToggleRenderer : BaseRenderer, IPropertyRenderer {
         sw.Toggled += (s, e) => SetValue(row, e.Value);
         sw.IsEnabled = !row.Field.Meta.IsReadOnlyInRunMode;
         return WrapWithLabel(ctx, sw);
+        } catch (Exception ex) {
+            Logger.LogError(ex, "Error creating Toggle Renderer for property {PropertyName}", ctx.Row?.Field?.Meta?.Label);
+            return new InvalidRenderer(ex.Message).CreateView(ctx);
+        }
     }
 }

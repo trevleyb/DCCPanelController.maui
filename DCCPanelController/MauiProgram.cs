@@ -139,7 +139,7 @@ public static class MauiProgram {
         Log.Information("Logger Initialised.");
     }
 
-    private static string GetLogFilePath() => Path.Combine(LogHelper.GetLogDirectory(), "dccpanelcontroller.log");
+    private static string GetLogFilePath() => DirectoryHelper.GetLogFile();
 
     public static class ServiceHelper {
         private static IServiceProvider? ServiceProvider { get; set; }

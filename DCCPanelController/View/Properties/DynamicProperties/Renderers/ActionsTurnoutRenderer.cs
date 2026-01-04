@@ -5,6 +5,7 @@ using DCCPanelController.Models.DataModel.Entities.Actions;
 using DCCPanelController.Models.DataModel.Entities.Interfaces;
 using DCCPanelController.Models.DataModel.Helpers;
 using DCCPanelController.View.Actions;
+using Microsoft.Extensions.Logging;
 
 namespace DCCPanelController.View.Properties.DynamicProperties.Renderers;
 
@@ -42,6 +43,7 @@ internal sealed class ActionsTurnoutRenderer : BaseRenderer, IPropertyRenderer {
                 }
             }
         } catch (Exception ex) {
+            Logger.LogError(ex, "Error creating ActionsTurnout Renderer for property {PropertyName}", ctx.Row?.Field?.Meta?.Label);
             return new InvalidRenderer($"Unable to create a Action {ex.Message}");
         }
         return new InvalidRenderer("Entity is not an Action.");

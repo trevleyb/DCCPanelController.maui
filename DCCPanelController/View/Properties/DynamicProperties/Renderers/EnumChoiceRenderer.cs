@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
+using Microsoft.Extensions.Logging;
 
 namespace DCCPanelController.View.Properties.DynamicProperties.Renderers;
 
@@ -13,6 +14,7 @@ internal sealed class EnumChoiceRenderer : BaseRenderer, IPropertyRenderer {
     }
 
     public object CreateView(PropertyContext ctx) {
+        try {
         var row = ctx.Row;
         var propType = row.Field.Accessor.PropertyType;
         var enumType = Nullable.GetUnderlyingType(propType) ?? propType;
@@ -48,6 +50,10 @@ internal sealed class EnumChoiceRenderer : BaseRenderer, IPropertyRenderer {
 
         // wrap with your standard label/description/error grid
         return WrapWithLabel(ctx, AddBorder(picker));
+        } catch (Exception ex) {
+            Logger.LogError(ex, "Error creating EnumChoice Renderer for property {PropertyName}", ctx.Row?.Field?.Meta?.Label);
+            return new InvalidRenderer(ex.Message).CreateView(ctx);
+        }
     }
 
     private static List<(string Text, object? Value)> BuildEnumItems(Type enumType, bool includeNone) {

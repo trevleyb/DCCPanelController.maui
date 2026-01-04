@@ -208,9 +208,6 @@ public partial class LoadingPage : ContentPage, INotifyPropertyChanged {
                 if (!r.FileExists || !r.PlatformResolved) {
                     LogHelper.Logger.LogInformation($"❌[FONT] {r.Font.Alias} INVALID: {r.Detail}");
                 }
-                else {
-                    LogHelper.Logger.LogInformation($"✅[FONT] {r.Font.Alias} OK: {r.Detail}");
-                }
             }
         });
         return () => Task.CompletedTask;

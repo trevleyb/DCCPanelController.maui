@@ -1,3 +1,5 @@
+using Microsoft.Extensions.Logging;
+
 namespace DCCPanelController.View.Properties.DynamicProperties.Renderers;
 
 internal sealed class PasswordRenderer : BaseRenderer, IPropertyRenderer {
@@ -6,6 +8,7 @@ internal sealed class PasswordRenderer : BaseRenderer, IPropertyRenderer {
     public bool CanRender(PropertyContext ctx) => ctx.EditorKind == EditorKinds.Password;
 
     public object CreateView(PropertyContext ctx) {
+        try {
         var row = ctx.Row;
         var entry = new Entry {
             IsPassword = true,
@@ -16,5 +19,9 @@ internal sealed class PasswordRenderer : BaseRenderer, IPropertyRenderer {
         entry.TextChanged += (s, e) => SetValue(row, e.NewTextValue);
         entry.IsEnabled = !row.Field.Meta.IsReadOnlyInRunMode;
         return WrapWithLabel(ctx, AddBorder(entry));
+        } catch (Exception ex) {
+            Logger.LogError(ex, "Error creating Password Renderer for property {PropertyName}", ctx.Row?.Field?.Meta?.Label);
+            return new InvalidRenderer(ex.Message).CreateView(ctx);
+        }
     }
 }

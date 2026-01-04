@@ -1,5 +1,6 @@
 using System.Reflection;
 using DCCPanelController.View.Components;
+using Microsoft.Extensions.Logging;
 
 // <-- your ColorPickerButton namespace
 
@@ -10,6 +11,7 @@ public sealed class ColorPickerRenderer : BaseRenderer, IPropertyRenderer {
     public bool CanRender(PropertyContext ctx) => ctx.EditorKind == EditorKinds.Color;
 
     public object CreateView(PropertyContext ctx) {
+        try {
         var row = ctx.Row;
         var picker = new ColorPickerButton {
             SelectedColor = TryGetRowColor(row, out var start) ? start : null,
@@ -23,6 +25,10 @@ public sealed class ColorPickerRenderer : BaseRenderer, IPropertyRenderer {
             }
         };
         return WrapWithLabel(ctx, picker);
+        } catch (Exception ex) {
+            Logger.LogError(ex, "Error creating Color Renderer for property {PropertyName}", ctx.Row?.Field?.Meta?.Label);
+            return new InvalidRenderer(ex.Message).CreateView(ctx);
+        }
     }
 
     // Read a Color from the row's value (supports Color or hex string)

@@ -1,5 +1,6 @@
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities.Interfaces;
+using Microsoft.Extensions.Logging;
 using Block = DCCPanelController.Models.DataModel.Accessories.Block;
 
 namespace DCCPanelController.View.Properties.DynamicProperties.Renderers;
@@ -9,36 +10,44 @@ internal sealed class BlockRenderer : BaseRenderer, IPropertyRenderer {
     public bool CanRender(PropertyContext ctx) => ctx.EditorKind == EditorKinds.Block;
 
     public object CreateView(PropertyContext ctx) {
-        var entity = ctx.FirstOwnerAs<IEntity>();
-        if (entity == null) return new InvalidRenderer("Cant find owning Object: Block Renderer").CreateView(ctx);
+        try {
+            var entity = ctx.FirstOwnerAs<IEntity>();
+            if (entity == null) return new InvalidRenderer("Cant find owning Object: Block Renderer").CreateView(ctx);
 
-        var blocks = entity.Parent?.Blocks.ToList() ?? [];
-        if (blocks.Count == 0) return new InvalidRenderer("No Available Blocks").CreateView(ctx);
+            var blocks = entity.Parent?.Blocks.ToList() ?? [];
+            if (blocks.Count == 0) return new InvalidRenderer("No Available Blocks").CreateView(ctx);
 
-        var row = ctx.Row;
-        var picker = new Picker {
-            TextColor = Colors.Black,
-            FontSize = FieldFontSize,
-            Margin = new Thickness(5, 0, 0, 0),
-            HorizontalOptions = LayoutOptions.Fill,
-            VerticalOptions = LayoutOptions.Center,
-        };
-        picker.ItemsSource = blocks;
-        picker.ItemDisplayBinding = new Binding(nameof(Block.DisplayFormat));
-        if (row.OriginalValue is string s) {
-            var item = blocks.FirstOrDefault(b => b.Id == s) ?? blocks.FirstOrDefault(b => b.Name == s);
-            picker.SelectedItem = item;
-        }
-        picker.SelectedIndexChanged += (s2, e2) => {
-            if (picker.SelectedIndex < blocks.Count && picker.SelectedIndex >= 0) {
-                var item = blocks[picker.SelectedIndex];
-                SetValue(row, item.Id);
+            var row = ctx.Row;
+            var picker = new Picker {
+                TextColor = Colors.Black,
+                FontSize = FieldFontSize,
+                Margin = new Thickness(5, 0, 0, 0),
+                HorizontalOptions = LayoutOptions.Fill,
+                VerticalOptions = LayoutOptions.Center,
+            };
+
+            picker.ItemsSource = blocks;
+            picker.ItemDisplayBinding = new Binding(nameof(Block.DisplayFormat));
+            if (row.OriginalValue is string s) {
+                var item = blocks.FirstOrDefault(b => b.Id == s) ?? blocks.FirstOrDefault(b => b.Name == s);
+                picker.SelectedItem = item;
             }
-        };
-        picker.IsEnabled = !row.Field.Meta.IsReadOnlyInRunMode;
 
-        var wrapped = WrapPicker(ctx, picker, GetFieldWidth(ctx));
-        return WrapWithLabel(ctx, AddBorder(wrapped));
+            picker.SelectedIndexChanged += (s2, e2) => {
+                if (picker.SelectedIndex < blocks.Count && picker.SelectedIndex >= 0) {
+                    var item = blocks[picker.SelectedIndex];
+                    SetValue(row, item.Id);
+                }
+            };
+
+            picker.IsEnabled = !row.Field.Meta.IsReadOnlyInRunMode;
+
+            var wrapped = WrapPicker(ctx, picker, GetFieldWidth(ctx));
+            return WrapWithLabel(ctx, AddBorder(wrapped));
+        } catch (Exception ex) {
+            Logger.LogError(ex, "Error creating Block Renderer for property {PropertyName}", ctx.Row.Field.Meta.Label);
+            return new InvalidRenderer(ex.Message).CreateView(ctx);
+        }
     }
 
     private int SelectedIndex(string value, List<Block> blocks) => blocks.FindIndex(i => i.Name == value);

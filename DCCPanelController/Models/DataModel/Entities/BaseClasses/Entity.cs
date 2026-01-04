@@ -18,7 +18,7 @@ public abstract partial class Entity() : ObservableObject, IEntity {
     [ObservableProperty] private int  _row;              // What Grid Position (Vertical) is this component?
     [ObservableProperty] private int  _width     = 1;    // What width is this component?
     [ObservableProperty] private bool _isEnabled = true; // Is this item actually in use?
-
+    
     [ObservableProperty] [property: Editable("Layer", "A higher number places this tile on top of tiles with a lower number.", 9, "Visibility")]
     private int _layer = -1;
 
@@ -50,7 +50,8 @@ public abstract partial class Entity() : ObservableObject, IEntity {
     [JsonIgnore] public Guid Guid { get; init; } = Guid.NewGuid();
     [JsonIgnore] protected abstract int RotationFactor { get; }
     [JsonIgnore] public Panel? Parent { get; set; }
-
+    [JsonIgnore] public bool IsVisible { get; set; } = true;
+    
     public abstract Entity Clone();
 
     public virtual void RotateLeft() => Rotation = (Rotation - RotationFactor + 360) % 360;

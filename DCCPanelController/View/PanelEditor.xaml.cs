@@ -33,6 +33,7 @@ public partial class PanelEditor : ContentPage {
         
         _viewModel = new PanelEditorViewModel(_logger, panel, profileService, connectionService, this, PanelView, PanelEditorContainer) {
             GridVisible = true,
+            TrackVisibility = TrackVisibilityEnum.All,
             EditMode = EditModeEnum.Move,
         };
         BindingContext = _viewModel;
@@ -194,11 +195,22 @@ public partial class PanelEditor : ContentPage {
             case nameof(PanelEditorViewModel.HavePropertiesChanged):
             break;
 
+            case nameof(PanelEditorViewModel.TrackVisibility):
+                
+                var visibiltyIcon = _viewModel.TrackVisibility switch {
+                    TrackVisibilityEnum.All       => "eye",
+                    TrackVisibilityEnum.Tracks    => "eye_track",
+                    TrackVisibilityEnum.NonTracks => "eye_nontrack",
+                    _                             => "eye",
+                };
+                ToolbarIconHelper.BindIcon(NonTrackToolbar, nameof(_viewModel.TrackVisibility), visibiltyIcon);
+                break;
+
             case nameof(PanelEditorViewModel.GridVisible):
                 PanelView.ShowGrid = _viewModel.GridVisible;
                 var gridIcon = _viewModel.GridVisible ? "grid_on" : "grid_off";
                 ToolbarIconHelper.BindIcon(GridToolbar, nameof(_viewModel.CanToggleGrid), gridIcon);
-            break;
+                break;
 
             case nameof(PanelEditorViewModel.EditMode):
                 PanelView.EditMode = _viewModel.EditMode;
@@ -209,7 +221,7 @@ public partial class PanelEditor : ContentPage {
                     _                 => "move",
                 };
                 ToolbarIconHelper.BindIcon(ModeToolbar, nameof(_viewModel.CanSetModes), editIcon);
-            break;
+                break;
         }
     }
     #endregion

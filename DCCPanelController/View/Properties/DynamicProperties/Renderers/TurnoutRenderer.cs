@@ -1,6 +1,7 @@
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Accessories;
 using DCCPanelController.Models.DataModel.Entities.Interfaces;
+using Microsoft.Extensions.Logging;
 
 namespace DCCPanelController.View.Properties.DynamicProperties.Renderers;
 
@@ -9,6 +10,7 @@ internal sealed class TurnoutRenderer : BaseRenderer, IPropertyRenderer {
     public bool CanRender(PropertyContext ctx) => ctx.EditorKind == EditorKinds.Turnout;
 
     public object CreateView(PropertyContext ctx) {
+        try {
         var entity = ctx.FirstOwnerAs<IEntity>();
         if (entity == null) return new InvalidRenderer("Cant find owning Turnout: Turnout Renderer").CreateView(ctx);
 
@@ -45,6 +47,10 @@ internal sealed class TurnoutRenderer : BaseRenderer, IPropertyRenderer {
 
         var wrapped = WrapPicker(ctx, picker, GetFieldWidth(ctx));
         return WrapWithLabel(ctx, AddBorder(wrapped));
+        } catch (Exception ex) {
+            Logger.LogError(ex, "Error creating Turnout Renderer for property {PropertyName}", ctx.Row?.Field?.Meta?.Label);
+            return new InvalidRenderer(ex.Message).CreateView(ctx);
+        }
     }
 
     private int SelectedIndex(string value, List<Turnout> turnouts) => turnouts.FindIndex(i => i.Name == value);

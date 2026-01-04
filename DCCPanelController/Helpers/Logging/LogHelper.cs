@@ -36,24 +36,8 @@ public static class LogHelper {
     public static ILogger CreateLogger(string categoryName) => _loggerFactory?.CreateLogger(categoryName) ??
                                                                throw new InvalidOperationException("LogHelper has not been initialized.");
 
-    public static string GetLogDirectory() {
-        var logDirectory = "";
-
-        #if IOS || MACCATALYST
-        logDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Logs");
-        #elif ANDROID
-        logDirectory = Path.Combine(FileSystem.Current.AppDataDirectory, "Logs");
-        #elif WINDOWS
-        logDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "DCCPanelController", "Logs");
-        #else
-        logDirectory = Path.Combine(FileSystem.Current.AppDataDirectory, "Logs");
-        #endif
-        Directory.CreateDirectory(logDirectory);
-        return Path.Combine(logDirectory, "dccpanelcontroller.log");
-    }
-
     public static async Task<string[]> GetLogFilesAsync() {
-        var logDirectory = GetLogDirectory();
+        var logDirectory = DirectoryHelper.GetLogDirectory();
         if (!Directory.Exists(logDirectory)) return[];
 
         return Directory.GetFiles(logDirectory, "*.log")
@@ -63,7 +47,7 @@ public static class LogHelper {
 
     public static async Task<string> GetLatestLogContentAsync() {
         var logFiles = await GetLogFilesAsync();
-        if (logFiles.Length == 0) return"No log files found.";
+        if (logFiles.Length == 0) return "No log files found.";
 
         try {
             return await File.ReadAllTextAsync(logFiles[0]);

@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
+using Microsoft.Extensions.Logging;
 using Microsoft.Maui.Layouts;
 
 namespace DCCPanelController.View.Properties.DynamicProperties.Renderers;
@@ -13,6 +14,7 @@ internal sealed class EnumRadioRenderer : BaseRenderer, IPropertyRenderer {
     }
 
     public object CreateView(PropertyContext ctx) {
+        try {
         var row = ctx.Row;
         var propType = row.Field.Accessor.PropertyType;
         var enumType = Nullable.GetUnderlyingType(propType) ?? propType;
@@ -49,6 +51,10 @@ internal sealed class EnumRadioRenderer : BaseRenderer, IPropertyRenderer {
 
         stack.HorizontalOptions = LayoutOptions.Fill;
         return WrapWithLabel(ctx, stack);
+        } catch (Exception ex) {
+            Logger.LogError(ex, "Error creating EnumRadio Renderer for property {PropertyName}", ctx.Row?.Field?.Meta?.Label);
+            return new InvalidRenderer(ex.Message).CreateView(ctx);
+        }
     }
 
     private static List<(string Text, object? Value)> BuildEnumItems(Type enumType, bool includeNone) {

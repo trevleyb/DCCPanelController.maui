@@ -1,3 +1,5 @@
+using Microsoft.Extensions.Logging;
+
 namespace DCCPanelController.View.Properties.DynamicProperties.Renderers;
 
 internal sealed class ChoiceRenderer : BaseRenderer, IPropertyRenderer {
@@ -5,6 +7,7 @@ internal sealed class ChoiceRenderer : BaseRenderer, IPropertyRenderer {
     public bool CanRender(PropertyContext ctx) => ctx.EditorKind == EditorKinds.Choice;
 
     public object CreateView(PropertyContext ctx) {
+        try {
         var row = ctx.Row;
         var picker = new Picker {
             // BUG: If you have title, it doesn't work.
@@ -23,5 +26,9 @@ internal sealed class ChoiceRenderer : BaseRenderer, IPropertyRenderer {
         picker.SelectedIndexChanged += (s2, e2) => SetValue(row, picker.SelectedItem);
         picker.IsEnabled = !row.Field.Meta.IsReadOnlyInRunMode;
         return WrapWithLabel(ctx, AddBorder(picker));
+        } catch (Exception ex) {
+            Logger.LogError(ex, "Error creating Choice Renderer for property {PropertyName}", ctx.Row?.Field?.Meta?.Label);
+            return new InvalidRenderer(ex.Message).CreateView(ctx);
+        }
     }
 }

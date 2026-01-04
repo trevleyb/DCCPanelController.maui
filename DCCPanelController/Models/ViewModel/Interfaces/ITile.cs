@@ -10,8 +10,9 @@ public interface ITile {
     public double TileHeight { get; }
     public double GridSize { get; set; }
 
-    bool IsDesignMode { get; set; }
-    bool IsSelected { get; set; }
+    bool IsDesignMode   { get; set; }
+    bool IsSelected     { get; set; }
+    
     void ForceRedraw(string memberName = "", int sourceLineNumber = 0);
     public event EventHandler<TileChangedEventArgs>? TileChanged;
 }

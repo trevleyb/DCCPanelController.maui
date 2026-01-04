@@ -22,10 +22,10 @@ public static class JsonRepository {
             if (string.IsNullOrWhiteSpace(fileName)) throw new ArgumentNullException(nameof(profile.Filename));
             await File.WriteAllTextAsync(fileName, jsonString);
             Logger.LogInformation("Saved Data: {fileName}", fileName);
+            LoggingLevelHelper.SetLogLevel(profile.Settings.LogLevel);
         } catch (Exception ex) {
-            Logger.LogError("Unable to SAVE Data: {Message}", ex.Message);
+            Logger.LogError(ex, "Unable to SAVE Data from {caller}:{lineNumber}", caller, lineNumber);
         }
-        LoggingLevelHelper.SetLogLevel(profile.Settings.LogLevel);
     }
 
     public static void Save(Profile profile, [CallerMemberName] string caller = "", [CallerLineNumber] int lineNumber = 0) {
@@ -37,15 +37,16 @@ public static class JsonRepository {
             if (string.IsNullOrWhiteSpace(fileName)) throw new ArgumentNullException(nameof(profile.Filename));
             File.WriteAllText(fileName, jsonString);
             Logger.LogInformation("Saved Data: {fileName}", fileName);
+            LoggingLevelHelper.SetLogLevel(profile.Settings.LogLevel);
         } catch (Exception ex) {
-            Logger.LogError("Unable to SAVE Data: {Message}", ex.Message);
+            Logger.LogError(ex, "Unable to SAVE Data from {caller}:{lineNumber}", caller, lineNumber);
         }
-        LoggingLevelHelper.SetLogLevel(profile.Settings.LogLevel);
     }
 
     public static async Task<Profile?> LoadAsync(string profileName, [CallerMemberName] string caller = "", [CallerLineNumber] int lineNumber = 0) {
-        var filePath = GetStorageFilePath(profileName);
         try {
+            var filePath = GetStorageFilePath(profileName);
+
             if (File.Exists(filePath)) {
                 try {
                     var jsonString = await File.ReadAllTextAsync(filePath);
@@ -53,7 +54,7 @@ public static class JsonRepository {
 
                     // FUTURE: Add Support for difference Schema Versions and conversion between them
                     var version = GetSchemaVersion(jsonString);
-                    LogHelper.Logger.LogInformation($"Profile Version: {version} | Repository Version: {Version}");
+                    Logger.LogInformation("Profile Version: {version} | Repository Version: {Version}", version, Version);
 
                     var profile = JsonSerializer.Deserialize<Profile?>(jsonString, JsonOptions.Options) ?? throw new ApplicationException("Could not deserialize settings.");
                     LoggingLevelHelper.SetLogLevel(profile.Settings.LogLevel);
@@ -61,14 +62,14 @@ public static class JsonRepository {
                     profile.Validate(Logger);
                     return profile;
                 } catch (Exception ex) {
-                    Logger.LogError("Could not deserialize settings. New set created: {Message}", ex.Message);
+                    Logger.LogError(ex, "Could not deserialize settings from {caller}:{lineNumber}. New set created", caller, lineNumber);
                     return null;
                 }
             }
             Logger.LogInformation("File not found: {profileName}", profileName);
             return null;
         } catch (Exception ex) {
-            Logger.LogWarning("Could not access Profile. New Profile created. {Message}", ex.Message);
+            Logger.LogError(ex, "Could not access Profile from {caller}:{lineNumber}. New Profile created", caller, lineNumber);
             return null;
         }
     }
@@ -100,9 +101,12 @@ public static class JsonRepository {
     public static void Delete(Profile profile) {
         try {
             var filePath = GetStorageFilePath(profile.Filename);
-            if (File.Exists(filePath)) File.Delete(filePath);
+            if (File.Exists(filePath)) {
+                File.Delete(filePath);
+                Logger.LogInformation("Deleted profile: {fileName}", profile.Filename);
+            }
         } catch (Exception ex) {
-            Logger.LogWarning("Could not delete settings. {Message}", ex.Message);
+            Logger.LogWarning(ex, "Could not delete profile: {fileName}", profile.Filename);
         }
     }
 
@@ -110,7 +114,7 @@ public static class JsonRepository {
         try {
             return JsonSerializer.Serialize(profile, JsonOptions.Options);
         } catch (Exception ex) {
-            Logger.LogWarning("Could not deserialize Profile. Trying to Reload Existing {Message}", ex.Message);
+            Logger.LogError(ex, "Could not serialize Profile for download: {fileName}", profile.Filename);
             return string.Empty;
         }
     }
@@ -121,25 +125,43 @@ public static class JsonRepository {
     public static async Task<Profile?> UploadProfile(string jsonString) {
         try {
             var profile = JsonSerializer.Deserialize<Profile?>(jsonString, JsonOptions.Options) ?? throw new ApplicationException("Could not deserialize settings.");
-            
+
             profile.Filename = Guid.NewGuid().ToString();
             profile.FixLoadedPanels();
             await SaveAsync(profile);
+            Logger.LogInformation("Uploaded profile: {fileName}", profile.Filename);
             return profile;
         } catch (Exception ex) {
-            Logger.LogWarning("Could not deserialize settings. Trying to Reload Existing {Message}", ex.Message);
+            Logger.LogError(ex, "Could not deserialize uploaded profile");
             return null;
         }
     }
 
-    /// <summary>
-    ///     Retrieves the directory path used to store profile-related configuration files.
-    ///     Ensures the directory exists by creating it if necessary.
-    /// </summary>
-    private static string GetProfileStorageDir() {
-        var storageDir = Path.Combine(FileSystem.AppDataDirectory, "DCCPanelController");
-        if (!Directory.Exists(storageDir)) Directory.CreateDirectory(storageDir);
-        return storageDir;
+    private static void MigrateProfilesToNewLocation() {
+        var oldStorageDir = Path.Combine(FileSystem.AppDataDirectory, "DCCPanelController");
+        if (!Directory.Exists(oldStorageDir)) return;
+
+        var newStorageDir = DirectoryHelper.GetProfileDirectory();
+        try {
+            var files = Directory.GetFiles(oldStorageDir, "*.json");
+            if (files.Length > 0) {
+                Logger.LogInformation("Migrating {count} profile files from old location to new location", files.Length);
+                foreach (var file in files) {
+                    try {
+                        var fileName = Path.GetFileName(file);
+                        var newFilePath = Path.Combine(newStorageDir, fileName);
+                        if (!File.Exists(newFilePath)) {
+                            File.Move(file, newFilePath);
+                            Logger.LogInformation("Migrated profile: {fileName}", fileName);
+                        }
+                    } catch (Exception ex) {
+                        Logger.LogWarning(ex, "Failed to migrate profile: {file}", file);
+                    }
+                }
+            }
+        } catch (Exception ex) {
+            Logger.LogError(ex, "Error during profile migration from {oldStorageDir} to {newStorageDir}", oldStorageDir, newStorageDir);
+        }
     }
 
     /// <summary>
@@ -149,11 +171,11 @@ public static class JsonRepository {
     /// </summary>
     public static string GetStorageFilePath(string profileName = "default") {
         try {
-            var storageDir = GetProfileStorageDir();
+            MigrateProfilesToNewLocation();
             var file = profileName.EndsWith(".json", StringComparison.OrdinalIgnoreCase) ? profileName : profileName + ".json";
-            return Path.Combine(storageDir, file);
+            return DirectoryHelper.GetProfile(file);
         } catch (Exception ex) {
-            Logger.LogCritical("Unable to determine where to store the Config File. {Message}", ex.Message);
+            Logger.LogCritical(ex, "Unable to determine where to store the Config File for profile: {profileName}", profileName);
             throw;
         }
     }

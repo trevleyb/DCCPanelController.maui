@@ -1,5 +1,6 @@
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities.Interfaces;
+using Microsoft.Extensions.Logging;
 using Route = DCCPanelController.Models.DataModel.Accessories.Route;
 
 namespace DCCPanelController.View.Properties.DynamicProperties.Renderers;
@@ -9,6 +10,7 @@ internal sealed class RouteRenderer : BaseRenderer, IPropertyRenderer {
     public bool CanRender(PropertyContext ctx) => ctx.EditorKind == EditorKinds.Route;
 
     public object CreateView(PropertyContext ctx) {
+        try {
         var entity = ctx.FirstOwnerAs<IEntity>();
         if (entity == null) return new InvalidRenderer("Cant find owning Route: Route Renderer").CreateView(ctx);
 
@@ -39,6 +41,10 @@ internal sealed class RouteRenderer : BaseRenderer, IPropertyRenderer {
 
         var wrapped = WrapPicker(ctx, picker, GetFieldWidth(ctx));
         return WrapWithLabel(ctx, AddBorder(wrapped));
+        } catch (Exception ex) {
+            Logger.LogError(ex, "Error creating Route Renderer for property {PropertyName}", ctx.Row?.Field?.Meta?.Label);
+            return new InvalidRenderer(ex.Message).CreateView(ctx);
+        }
     }
 
     private int SelectedIndex(string value, List<Route> routes) => routes.FindIndex(i => i.Name == value);

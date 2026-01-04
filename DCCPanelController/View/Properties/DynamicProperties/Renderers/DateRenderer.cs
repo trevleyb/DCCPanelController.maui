@@ -1,3 +1,5 @@
+using Microsoft.Extensions.Logging;
+
 namespace DCCPanelController.View.Properties.DynamicProperties.Renderers;
 
 internal sealed class DateRenderer : BaseRenderer, IPropertyRenderer {
@@ -5,6 +7,7 @@ internal sealed class DateRenderer : BaseRenderer, IPropertyRenderer {
     public bool CanRender(PropertyContext ctx) => ctx.EditorKind == EditorKinds.Date;
 
     public object CreateView(PropertyContext ctx) {
+        try {
         var row = ctx.Row;
         var dp = new DatePicker {
             TextColor = Colors.Black,
@@ -18,5 +21,9 @@ internal sealed class DateRenderer : BaseRenderer, IPropertyRenderer {
         dp.DateSelected += (s, e) => SetValue(row, e.NewDate);
         dp.IsEnabled = !row.Field.Meta.IsReadOnlyInRunMode;
         return WrapWithLabel(ctx, AddBorder(dp));
+        } catch (Exception ex) {
+            Logger.LogError(ex, "Error creating Date Renderer for property {PropertyName}", ctx.Row?.Field?.Meta?.Label);
+            return new InvalidRenderer(ex.Message).CreateView(ctx);
+        }
     }
 }

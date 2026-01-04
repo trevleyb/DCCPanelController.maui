@@ -128,7 +128,6 @@ public class GridGestureHelper : IDisposable {
 
     #region Gesture Event Handlers
     private void OnTapped(object? sender, TappedEventArgs e) {
-        LogHelper.Logger.LogDebug($"OnTapped called: {e.Buttons} LP={_longPressActive} TapSuppressed={TapsSuppressed()} GestureOwner={_gestureOwner}");
         if (_longPressActive || TapsSuppressed() || _gestureOwner == GestureOwner.LongPress || IsSelecting)
             return;
 
@@ -136,7 +135,6 @@ public class GridGestureHelper : IDisposable {
         var args = new GridGestureEventArgs(sender, pos.Col, pos.Row);
 
         if (!EnableDoubleTap) {
-            LogHelper.Logger.LogDebug($"SingleTap called: {e.Buttons} GestureOwner={_gestureOwner}");
             // Fire single-tap immediately
             args.TapCount = 1;
             SingleTap?.Invoke(this, args);
@@ -176,17 +174,14 @@ public class GridGestureHelper : IDisposable {
             } else {
                 switch (count) {
                     case 1:
-                        LogHelper.Logger.LogDebug($"OnTapTimerElapsed: Count = 1");
                         SingleTap?.Invoke(this, gestureArgs);
                     break;
 
                     case 2:
-                        LogHelper.Logger.LogDebug($"OnTapTimerElapsed: Count = 2");
                         DoubleTap?.Invoke(this, gestureArgs);
                     break;
 
                     case>= 3:
-                        LogHelper.Logger.LogDebug($"OnTapTimerElapsed: Count > 2");
                         // Could add TripleTap event if needed
                     break;
                 }
@@ -196,7 +191,6 @@ public class GridGestureHelper : IDisposable {
     }
 
     private async void OnLongPress(object? sender, LongPressCompletedEventArgs e) {
-        LogHelper.Logger.LogDebug($"OnLongPress called");
         try {
             if (IsSelecting || _tileDragActive) return;
             if (_lpInvokedThisPress) return;
@@ -209,7 +203,6 @@ public class GridGestureHelper : IDisposable {
 
     #region Pointer Event Handlers
     private void OnPointerPressed(object? sender, PointerEventArgs e) {
-        LogHelper.Logger.LogDebug($"OnPointerPressed called: {_longPressActive} {_longPressDetected} {_lpInvokedThisPress}");
         _lpInvokedThisPress = false;
         _longPressActive = false;
         _longPressDetected = false;
@@ -226,11 +219,8 @@ public class GridGestureHelper : IDisposable {
         _longPressStartPos = e.GetPosition(_grid) ?? new Point(0, 0);
         _pointerDownPos = e.GetPosition(_grid);
 
-        LogHelper.Logger.LogDebug($"OnPointerPressed: {gridCell.Col},{gridCell.Row} @ {_longPressStartPos}");
-        
         //var tilesAtPosition = GridPositionHelper.GetTilesAt(gridCell.Col, gridCell.Row, _grid);
         var tilesAtPosition = GridPositionHelper.GetTilesCovering(gridCell.Col, gridCell.Row, _grid);
-        LogHelper.Logger.LogDebug($"Tiles found at position: {tilesAtPosition.Count}");
 
         // Check for potential tile drag in design mode
         if (tilesAtPosition.Count > 0) {
@@ -326,7 +316,6 @@ public class GridGestureHelper : IDisposable {
 
     private void OnPointerReleased(object? sender, PointerEventArgs e) {
         var currentPos = e.GetPosition(_grid) ?? new Point(0, 0);
-        LogHelper.Logger.LogDebug($"OnPointerReleased: {currentPos.X},{currentPos.Y}");
 
         _lastMoveProcessedMs = 0;
         _lastProcessedCol = -1;
@@ -372,7 +361,6 @@ public class GridGestureHelper : IDisposable {
                 SuppressTapsFor(500);
 
                 var gestureArgs = new GridGestureEventArgs(sender, _tappedCol, _tappedRow);
-                LogHelper.Logger.LogDebug($"OnPointerReleased: LongPress called: {gestureArgs.TapCount}");
                 LongPress?.Invoke(this, gestureArgs);
                 ResetGestureState();
                 return;
@@ -390,8 +378,6 @@ public class GridGestureHelper : IDisposable {
                 if (cell is { } gridCell) {
                     _gestureOwner = GestureOwner.Tap;
                     var args = new GridGestureEventArgs(sender, gridCell.Col, gridCell.Row);
-
-                    LogHelper.Logger.LogDebug($"OnPointerReleased: Tap detected at {gridCell.Col},{gridCell.Row}");
 
                     if (!EnableDoubleTap) {
                         // Fire single-tap immediately

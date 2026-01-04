@@ -1,3 +1,5 @@
+using Microsoft.Extensions.Logging;
+
 namespace DCCPanelController.View.Properties.DynamicProperties.Renderers;
 
 internal sealed class MultilineTextRenderer : BaseRenderer, IPropertyRenderer {
@@ -6,6 +8,7 @@ internal sealed class MultilineTextRenderer : BaseRenderer, IPropertyRenderer {
     public bool CanRender(PropertyContext ctx) => ctx.EditorKind == EditorKinds.Multiline;
 
     public object CreateView(PropertyContext ctx) {
+        try {
         var row = ctx.Row;
         var editor = new Editor {
             TextColor = Colors.Black,
@@ -14,5 +17,9 @@ internal sealed class MultilineTextRenderer : BaseRenderer, IPropertyRenderer {
         editor.TextChanged += (s, e) => SetValue(row, e.NewTextValue);
         editor.IsEnabled = !row.Field.Meta.IsReadOnlyInRunMode;
         return WrapWithLabel(ctx, editor);
+        } catch (Exception ex) {
+            Logger.LogError(ex, "Error creating MultiLine Renderer for property {PropertyName}", ctx.Row?.Field?.Meta?.Label);
+            return new InvalidRenderer(ex.Message).CreateView(ctx);
+        }
     }
 }

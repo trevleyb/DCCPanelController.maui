@@ -34,9 +34,10 @@ public partial class PanelEditorViewModel : ObservableObject {
     private readonly ProfileService               _profileService;
     private readonly ConnectionService            _connectionService;
 
-    [ObservableProperty] private EditModeEnum    _editMode = EditModeEnum.Move;
-    [ObservableProperty] private bool            _gridVisible;
-    [ObservableProperty] private bool            _havePropertiesChanged;
+    [ObservableProperty] private EditModeEnum _editMode = EditModeEnum.Move;
+    [ObservableProperty] private TrackVisibilityEnum _trackVisibility = TrackVisibilityEnum.All;
+    [ObservableProperty] private bool         _gridVisible;
+    [ObservableProperty] private bool         _havePropertiesChanged;
 
     [NotifyPropertyChangedFor(nameof(CanEditProperties))]
     [NotifyPropertyChangedFor(nameof(CanEditTileProperties))]
@@ -45,6 +46,7 @@ public partial class PanelEditorViewModel : ObservableObject {
     [NotifyPropertyChangedFor(nameof(CanChangeLayers))]
     [NotifyPropertyChangedFor(nameof(CanDeleteTiles))]
     [NotifyPropertyChangedFor(nameof(CanToggleGrid))]
+    [NotifyPropertyChangedFor(nameof(CanToggleNonTrackVisible))]
     [NotifyPropertyChangedFor(nameof(CanPressBackButton))]
     [NotifyPropertyChangedFor(nameof(ShowEditTextBox))]
     [ObservableProperty] private bool _isNavigationDrawerOpen;
@@ -56,6 +58,8 @@ public partial class PanelEditorViewModel : ObservableObject {
     [NotifyPropertyChangedFor(nameof(CanChangeLayers))]
     [NotifyPropertyChangedFor(nameof(CanDeleteTiles))]
     [NotifyPropertyChangedFor(nameof(CanToggleGrid))]
+    [NotifyPropertyChangedFor(nameof(CanToggleNonTrackVisible))]
+
     [NotifyPropertyChangedFor(nameof(CanPressBackButton))]
     [NotifyPropertyChangedFor(nameof(ShowEditTextBox))]
     [ObservableProperty] private bool _isProcessing;
@@ -76,6 +80,7 @@ public partial class PanelEditorViewModel : ObservableObject {
     [NotifyPropertyChangedFor(nameof(CanRotateTiles))]
     [NotifyPropertyChangedFor(nameof(CanChangeLayers))]
     [NotifyPropertyChangedFor(nameof(CanDeleteTiles))]
+    [NotifyPropertyChangedFor(nameof(CanToggleNonTrackVisible))]
     [NotifyPropertyChangedFor(nameof(ShowEditTextBox))]
     [NotifyPropertyChangedFor(nameof(HavePropertiesChanged))]
     [ObservableProperty] private ObservableCollection<ITile> _selectedTiles = [];
@@ -123,6 +128,7 @@ public partial class PanelEditorViewModel : ObservableObject {
     public bool CanChangeLayers => HasSelectedEntities && !IsNavigationDrawerOpen && !IsProcessing;
     public bool CanDeleteTiles => HasSelectedEntities && !IsNavigationDrawerOpen && !IsProcessing;
     public bool CanToggleGrid => !IsNavigationDrawerOpen && !IsProcessing;
+    public bool CanToggleNonTrackVisible => !IsNavigationDrawerOpen && !IsProcessing;
     public bool CanPressBackButton => !IsNavigationDrawerOpen && !IsProcessing;
 
     public int SelectedEntitiesCount => SelectedEntities.Count;
@@ -304,6 +310,7 @@ public partial class PanelEditorViewModel : ObservableObject {
     [RelayCommand]
     private async Task SaveAsync() {
         ClearSelectedItem();
+        _panelView.SetNonTrackVisibility(TrackVisibilityEnum.All);
         try {
             IsProcessing = true;
             OnPropertyChanged(nameof(CanPressBackButton));
@@ -416,6 +423,17 @@ public partial class PanelEditorViewModel : ObservableObject {
 
     [RelayCommand]
     private async Task ToggleGridAsync() => GridVisible = !GridVisible;
+
+    [RelayCommand]
+    private async Task ToggleNonTrackVisible() {
+        TrackVisibility = TrackVisibility switch {
+            TrackVisibilityEnum.All       => TrackVisibilityEnum.Tracks,
+            TrackVisibilityEnum.Tracks    => TrackVisibilityEnum.NonTracks,
+            TrackVisibilityEnum.NonTracks => TrackVisibilityEnum.All,
+            _                             => TrackVisibilityEnum.All,
+        };
+        await _panelView.SetNonTrackVisibility(TrackVisibility);
+    }
 
     [RelayCommand]
     private async Task EditPanelPropertiesPopupAsync() {

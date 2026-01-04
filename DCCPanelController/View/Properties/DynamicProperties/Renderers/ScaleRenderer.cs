@@ -1,5 +1,6 @@
 using System.Globalization;
 using CommunityToolkit.Maui.Behaviors;
+using Microsoft.Extensions.Logging;
 
 namespace DCCPanelController.View.Properties.DynamicProperties.Renderers;
 
@@ -8,6 +9,7 @@ internal sealed class ScaleRenderer : BaseRenderer, IPropertyRenderer {
     public bool CanRender(PropertyContext ctx) => ctx.EditorKind == EditorKinds.Scale;
 
     public object CreateView(PropertyContext ctx) {
+        try {
         var row = ctx.Row;
         var min = 0;
         var max = 5;
@@ -45,6 +47,10 @@ internal sealed class ScaleRenderer : BaseRenderer, IPropertyRenderer {
         grid.Add(stepper, 1);
         grid.IsEnabled = !row.Field.Meta.IsReadOnlyInRunMode;
         return WrapWithLabel(ctx, grid);
+        } catch (Exception ex) {
+            Logger.LogError(ex, "Error creating Scale Renderer for property {PropertyName}", ctx.Row?.Field?.Meta?.Label);
+            return new InvalidRenderer(ex.Message).CreateView(ctx);
+        }
     }
 
     private static string ConvertOpacityToPercentage(object? opacity) {
