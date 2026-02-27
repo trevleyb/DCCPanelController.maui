@@ -1,8 +1,8 @@
-# Contributing to DCCPanelControler
+# Contributing to DCCPanelController
 
 Thank you for your interest in contributing.
 
-DCCPanelControler is licensed under the GNU General Public License v3.0 (or later). All contributions must comply with this license.
+DCCPanelController is licensed under the GNU General Public License v3.0 (or later). All contributions must comply with this license.
 
 ---
 
