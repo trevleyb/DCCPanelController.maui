@@ -1,11 +1,48 @@
-# DCC Control Panel 
+# DCCPanelController (MAUI)
 
-This solution is my attempt ot build a cross-platform control panel layout manager for model railroads. The idea is that you can build panels using a schematic and control your layout. So it supports things like switches/turnouts, lights, routes etc and is built to connect to WiThrottle or JMRI (with or without WiThrottle). It also supports occupancy so can show, if using JMRI, that a block of track is occupied. 
+A cross-platform **model railroad control panel layout designer and controller** built with **.NET MAUI**.
 
-The code is written using .net Maui so that it can be cross platform. I have been building and testing it on a iPad, iPhone and Mac, but it needs a little work to get the UI right for Android and I have not tested it on Windows. 
+Design schematic-style panels (turnouts, lights, routes, sensors/occupancy, etc.), then operate your layout from the same UI. The app is designed to connect to **JMRI** and/or **WiThrottle** servers and can display **occupancy** when sourced from JMRI. :contentReference[oaicite:6]{index=6}
 
-It does work. You can create profiles and profiles can have panels and you can swipe between panels and control your model railroad. 
+## Status
 
-I have decided to open source this on the basis that it is not used for commercial purposes and this code base needs to be updated with any changes. 
+This project is actively used and works end-to-end (profiles → panels → swipe between panels → operate accessories). Platform coverage is best on iPad/iPhone/Mac today; Android and Windows may need UI refinement and broader testing. :contentReference[oaicite:7]{index=7}
 
-Trevor, February 2026
+## Features
+
+- **Panel Designer**
+  - Create and edit control panels using a schematic/grid approach
+  - Palette-style placement of controls (turnouts, lights, sensors, blocks, routes, etc.)
+- **Operator Mode**
+  - Swipe between panels and operate your layout in real time :contentReference[oaicite:8]{index=8}
+- **Connectivity**
+  - Connect to **JMRI** and/or **WiThrottle**
+  - Show **occupancy / blocks in use** when using JMRI as the source :contentReference[oaicite:9]{index=9}
+- **Profiles**
+  - Multiple profiles, each with one or more panels :contentReference[oaicite:10]{index=10}
+- **Simulator / Testing Views**
+  - Includes simulator/testing UI for development (see project views in the solution) :contentReference[oaicite:11]{index=11}
+
+## Supported Platforms
+
+Target frameworks include: **Android**, **iOS**, **Mac Catalyst**, and **Windows**. :contentReference[oaicite:12]{index=12}
+
+> Note: Actual runtime support depends on having the platform toolchains installed (Xcode for iOS/Mac, Android SDK for Android, Visual Studio on Windows for Windows).
+
+## Getting Started (Developers)
+
+### Prerequisites
+
+- **.NET SDK** with MAUI workloads installed
+- Platform toolchains as needed:
+  - macOS: Xcode (for iOS/Mac Catalyst)
+  - Android: Android SDK / emulator
+  - Windows: Visual Studio + Windows tooling
+
+### Build & Run
+
+From the repo root:
+
+```bash
+dotnet restore
+dotnet build DCCPanelController.sln
